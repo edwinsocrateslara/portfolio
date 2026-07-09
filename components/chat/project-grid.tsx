@@ -10,13 +10,13 @@ export function ProjectGrid({ onProjectClick }: ProjectGridProps) {
     <section id="work">
       {/* Header row */}
       <div
-        className="mb-10 flex items-baseline justify-between flex-wrap gap-2"
+        className="mb-12 flex items-baseline justify-between flex-wrap gap-2"
       >
         <h2
           style={{
             fontSize: 48,
-            fontWeight: 400,
-            lineHeight: 0.95,
+            fontWeight: 500,
+            lineHeight: 1.15,
             color: "#ffffff",
             margin: 0,
           }}
@@ -25,7 +25,7 @@ export function ProjectGrid({ onProjectClick }: ProjectGridProps) {
         </h2>
         <span
           className="font-mono text-[12px] uppercase tracking-[0.5px]"
-          style={{ color: "#fa520f" }}
+          style={{ color: "rgb(var(--color-accent))" }}
         >
           01 — {String(projects.length).padStart(2, "0")}
         </span>

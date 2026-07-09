@@ -2,15 +2,14 @@ export function NowPlaying() {
   return (
     <footer
       style={{
-        background: "linear-gradient(180deg, rgba(250, 82, 15, 0.15) 0%, #0f0f0f 100%)",
-        padding: "80px 24px 48px",
+        background: "linear-gradient(180deg, rgb(var(--color-accent) / 0.15) 0%, rgb(var(--color-bg)) 100%)",
+        padding: "80px 0 48px",
         borderTop: "1px solid #262626",
       }}
     >
       <div
+        className="mx-auto max-w-7xl px-6"
         style={{
-          maxWidth: 1280,
-          margin: "0 auto",
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "space-between",
@@ -24,7 +23,7 @@ export function NowPlaying() {
               display: "flex",
               alignItems: "center",
               gap: 12,
-              marginBottom: 16,
+              marginBottom: 8,
             }}
           >
             <span
@@ -32,12 +31,12 @@ export function NowPlaying() {
               style={{
                 width: 8,
                 height: 8,
-                background: "#fa520f",
+                background: "rgb(var(--color-accent))",
               }}
             />
             <span
               style={{
-                fontSize: 11,
+                fontSize: 10,
                 color: "#ffffff",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px",
@@ -50,7 +49,7 @@ export function NowPlaying() {
             style={{
               fontSize: 24,
               fontWeight: 400,
-              lineHeight: 1.3,
+              lineHeight: 1.6,
               color: "#ffffff",
               maxWidth: 500,
             }}
@@ -59,7 +58,8 @@ export function NowPlaying() {
           </p>
           <p
             style={{
-              fontSize: 14,
+              fontSize: 16,
+              lineHeight: 1.6,
               color: "#ffffff",
               opacity: 0.6,
               marginTop: 8,
@@ -79,7 +79,7 @@ export function NowPlaying() {
               letterSpacing: "0.5px",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#fa520f"
+              e.currentTarget.style.color = "rgb(var(--color-accent))"
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = "#ffffff"
@@ -99,7 +99,7 @@ export function NowPlaying() {
               letterSpacing: "0.5px",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#fa520f"
+              e.currentTarget.style.color = "rgb(var(--color-accent))"
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = "#ffffff"

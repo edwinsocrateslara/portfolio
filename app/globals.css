@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Mistral AI Inspired Dark Palette ────────────────────────────── */
+/* ── Dark Palette ────────────────────────────────────────────────── */
 :root {
   /* Primary */
-  --mistral-orange:     250 82 15;    /* #fa520f — Core brand orange */
-  --mistral-flame:      251 100 36;   /* #fb6424 — Warmer variant */
-  --block-orange:       255 129 5;    /* #ff8105 — Pure orange */
+  --brand-primary:      30 150 252;     /* #1e96fc — Core brand blue */
+  --warm-accent:        251 100 36;     /* #fb6424 — Warm variant (unused) */
+  --block-accent:       30 150 252;     /* #1e96fc — Block accent blue */
 
   /* Sunshine Scale */
   --sunshine-900:       255 138 0;    /* #ff8a00 — Deep amber */
@@ -18,7 +18,7 @@
   --bright-yellow:      255 217 0;    /* #ffd900 — Brightest */
 
   /* Dark Surfaces */
-  --dark-bg:            15 15 15;     /* #0f0f0f — Deepest background */
+  --dark-bg:            20 20 19;      /* #141413 — Deepest background */
   --dark-surface:       26 26 26;     /* #1a1a1a — Card background */
   --dark-surface-2:     38 38 38;     /* #262626 — Elevated surface */
   --dark-border:        51 51 51;     /* #333333 — Subtle borders */
@@ -31,13 +31,13 @@
   /* Semantic mappings */
   --color-bg:           var(--dark-bg);
   --color-surface:      var(--dark-surface);
-  --color-accent:       var(--mistral-orange);
+  --color-accent:       var(--brand-primary);
   --color-ink:          var(--text-primary);
 
   /* Dark mode shadow system - subtle warm glow */
   --golden-shadow:
-    rgba(250, 82, 15, 0.08) 0px 4px 24px,
-    rgba(250, 82, 15, 0.04) 0px 8px 48px;
+    rgba(30, 150, 252, 0.08) 0px 4px 24px,
+    rgba(30, 150, 252, 0.04) 0px 8px 48px;
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -53,7 +53,7 @@ html {
 }
 
 body {
-  background-color: #0f0f0f;
+  background-color: rgb(var(--color-bg));
   color: #ffffff;
   margin: 0;
   font-family: Arial, ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -69,12 +69,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(250, 82, 15, 0.4);
+  background: rgba(30, 150, 252, 0.4);
   border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(250, 82, 15, 0.6);
+  background: rgba(30, 150, 252, 0.6);
 }
 
 /* ── Animations ───────────────────────────────────────────────── */
@@ -100,49 +100,49 @@ body {
 /* ── Mistral Typography ───────────────────────────────────────── */
 .text-display {
   font-size: 82px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.0;
   letter-spacing: -2.05px;
 }
 
 .text-section {
   font-size: 56px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 0.95;
 }
 
 .text-subsection {
   font-size: 48px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 0.95;
 }
 
 .text-heading {
   font-size: 32px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.15;
 }
 
 .text-card-title {
   font-size: 30px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.20;
 }
 
 .text-feature {
   font-size: 24px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.33;
 }
 
 /* ── Dark Mode Shadow Utilities ───────────────────────────────── */
 .shadow-golden {
   box-shadow:
-    rgba(250, 82, 15, 0.12) 0px 4px 24px,
-    rgba(250, 82, 15, 0.06) 0px 8px 48px;
+    rgba(30, 150, 252, 0.12) 0px 4px 24px,
+    rgba(30, 150, 252, 0.06) 0px 8px 48px;
 }
 
 .shadow-golden-sm {
   box-shadow:
-    rgba(250, 82, 15, 0.08) 0px 2px 12px;
+    rgba(30, 150, 252, 0.08) 0px 2px 12px;
 }

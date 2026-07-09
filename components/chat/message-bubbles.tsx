@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { SpiralMark } from "@/components/spiral-mark"
+import { PromptChip } from "@/components/chat/prompt-chip"
 
 // Message types
 export type MessageKind =
@@ -86,7 +86,7 @@ export function TextBubble({ text }: { text: string }) {
               )
               .replace(
                 /\[([^\]]+)\]\(([^)]+)\)/g,
-                '<a href="$2" target="_blank" rel="noopener" style="color:#fa520f;text-decoration:underline;text-underline-offset:3px">$1</a>'
+                '<a href="$2" target="_blank" rel="noopener" style="color:rgb(var(--color-accent));text-decoration:underline;text-underline-offset:3px">$1</a>'
               ),
           }}
         />
@@ -110,7 +110,8 @@ export function ProjectHeaderBubble({
         background: "#1a1a1a",
         padding: "16px 20px 16px 16px",
         maxWidth: 480,
-        boxShadow: "rgba(250, 82, 15, 0.08) 0px 4px 24px",
+        borderRadius: 8,
+        boxShadow: "rgb(var(--color-accent) / 0.08) 0px 4px 24px",
       }}
     >
       <div
@@ -149,7 +150,7 @@ export function ProjectHeaderBubble({
             fontWeight: 400,
             letterSpacing: "0.5px",
             textTransform: "uppercase",
-            color: "#fa520f",
+            color: "rgb(var(--color-accent))",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
             overflow: "hidden",
@@ -162,7 +163,7 @@ export function ProjectHeaderBubble({
             fontSize: 18,
             lineHeight: 1.2,
             color: "#ffffff",
-            fontWeight: 400,
+            fontWeight: 500,
           }}
         >
           {project.projectTitle}
@@ -194,13 +195,7 @@ export function ImageBubble({
       <div
         style={{
           overflow: "hidden",
-          background: "#1a1a1a",
           aspectRatio: "16 / 10",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 16,
-          boxShadow: "rgba(250, 82, 15, 0.08) 0px 4px 24px",
           position: "relative",
         }}
       >
@@ -208,17 +203,14 @@ export function ImageBubble({
           src={image.url}
           alt={image.alt || ""}
           fill
-          className="object-contain p-4"
-          style={{
-            filter: "drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4))",
-          }}
+          className="object-cover"
           sizes="520px"
         />
       </div>
       {(caption || image.alt) && (
         <figcaption
           style={{
-            margin: "10px 0 0",
+            margin: "8px 0 0",
             fontSize: 12,
             color: "#787878",
             lineHeight: 1.5,
@@ -239,6 +231,7 @@ export function ImageRowBubble({
   images: { url: string; alt?: string }[]
   caption?: string
 }) {
+  const cellSize = images.length === 1 ? "560px" : images.length === 2 ? "276px" : "180px"
   return (
     <figure style={{ margin: 0, maxWidth: 560 }}>
       <div
@@ -253,13 +246,7 @@ export function ImageRowBubble({
             key={i}
             style={{
               overflow: "hidden",
-              background: "#1a1a1a",
-              aspectRatio: "3 / 4",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 12,
-              boxShadow: "rgba(250, 82, 15, 0.06) 0px 4px 16px",
+              aspectRatio: "16 / 10",
               position: "relative",
             }}
           >
@@ -267,11 +254,8 @@ export function ImageRowBubble({
               src={img.url}
               alt={img.alt || ""}
               fill
-              className="object-contain p-2"
-              style={{
-                filter: "drop-shadow(0 6px 14px rgba(0, 0, 0, 0.3))",
-              }}
-              sizes="180px"
+              className="object-cover"
+              sizes={cellSize}
             />
           </div>
         ))}
@@ -279,7 +263,7 @@ export function ImageRowBubble({
       {caption && (
         <figcaption
           style={{
-            margin: "10px 0 0",
+            margin: "8px 0 0",
             fontSize: 12,
             color: "#787878",
             lineHeight: 1.5,
@@ -306,7 +290,8 @@ export function ImpactBubble({
         background: "#1a1a1a",
         padding: "16px 20px",
         maxWidth: 520,
-        boxShadow: "rgba(250, 82, 15, 0.06) 0px 4px 16px",
+        borderRadius: 8,
+        boxShadow: "rgb(var(--color-accent) / 0.06) 0px 4px 16px",
       }}
     >
       <div
@@ -318,11 +303,11 @@ export function ImpactBubble({
           fontWeight: 400,
           letterSpacing: "0.5px",
           textTransform: "uppercase",
-          color: "#fa520f",
+          color: "rgb(var(--color-accent))",
           marginBottom: 12,
         }}
       >
-        <span style={{ fontSize: 10 }}>■</span> {label || "Impact"}
+        <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--color-accent))", flexShrink: 0, verticalAlign: "middle", marginRight: 6 }} /> {label || "Impact"}
       </div>
       <ul
         style={{
@@ -331,7 +316,7 @@ export function ImpactBubble({
           listStyle: "none",
           display: "flex",
           flexDirection: "column",
-          gap: 10,
+          gap: 8,
         }}
       >
         {items.map((x, i) => (
@@ -350,7 +335,7 @@ export function ImpactBubble({
               style={{
                 flexShrink: 0,
                 width: 20,
-                color: "#fa520f",
+                color: "rgb(var(--color-accent))",
                 fontWeight: 400,
                 fontSize: 13,
               }}
@@ -383,43 +368,20 @@ export function FollowupsBubble({
       {chips?.length > 0 && (
         <div
           style={{
-            marginTop: text ? 14 : 0,
+            marginTop: text ? 24 : 0,
             display: "flex",
             flexWrap: "wrap",
             gap: 8,
           }}
         >
           {chips.map((c, i) => (
-            <button
+            <PromptChip
               key={i}
+              label={c.text}
               onClick={() => onPick?.(c)}
               disabled={disabled}
-              style={{
-                padding: "10px 16px",
-                fontSize: 14,
-                background: "#1a1a1a",
-                color: "#ffffff",
-                transition: "all 0.15s",
-                cursor: disabled ? "default" : "pointer",
-                opacity: disabled ? 0.5 : 1,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                border: "none",
-                fontFamily: "inherit",
-              }}
-              onMouseEnter={(e) => {
-                if (!disabled) {
-                  e.currentTarget.style.background = "#262626"
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#1a1a1a"
-              }}
-            >
-              <span style={{ color: "#fa520f" }}>→</span>
-              {c.text}
-            </button>
+              prefix="→"
+            />
           ))}
         </div>
       )}
@@ -430,11 +392,8 @@ export function FollowupsBubble({
 // Typing indicator
 export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean }) {
   return (
-    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-      <div style={{ flexShrink: 0, width: 24 }}>
-        {showAvatar && <SpiralMark size={24} />}
-      </div>
-      <div style={{ display: "flex", gap: 6 }}>
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 8 }}>
         {[0, 150, 300].map((d) => (
           <span
             key={d}
@@ -442,7 +401,7 @@ export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean })
             style={{
               width: 8,
               height: 8,
-              background: "#fa520f",
+              background: "rgb(var(--color-accent))",
               animationDelay: `${d}ms`,
             }}
           />
@@ -468,11 +427,8 @@ export function AssistantBubble({
   return (
     <div
       className="animate-slide-up"
-      style={{ display: "flex", gap: 12 }}
+      style={{ display: "flex" }}
     >
-      <div style={{ flexShrink: 0, width: 24, marginTop: 2 }}>
-        {showAvatar && <SpiralMark size={24} />}
-      </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
         {kind === "project-header" && (
@@ -522,10 +478,11 @@ export function UserBubble({ content }: { content: string }) {
         style={{
           maxWidth: "85%",
           padding: "12px 16px",
-          background: "#fa520f",
+          background: "rgb(var(--color-accent))",
           color: "#ffffff",
           fontSize: 16,
           lineHeight: 1.5,
+          borderRadius: "18px 18px 4px 18px",
         }}
       >
         {content}

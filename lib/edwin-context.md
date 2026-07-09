@@ -4,20 +4,75 @@
 
 In his own words: "I'm Edwin, a product designer interested in AI products and workflows."
 
-He has experience crafting user-centric products and systems that solve complex problems, adept at using human-centered design principles alongside business goals.
+Senior Product Designer with 10+ years of experience specialising in AI-driven user experiences, conversational design, and agentic workflows. Adept at translating complex business goals into intuitive, elegant, and high-impact user experiences across workforce development, e-commerce, and fintech. Deep expertise in user-centered design, robust design systems, and scalable product strategies.
 
 He has a track record across consumer fintech, live commerce, automotive, e-commerce, and AI — consistently taking on projects where the design problem is tied to business performance, not just aesthetics. He pushes back on stakeholders when constraints would compromise the user experience, and he backs those decisions with reasoning and outcomes.
 
-He is currently the lead product designer at FutureFit AI, a B2B and B2G AI-powered workforce development platform.
+He is currently the lead product designer (contract) at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
+
+He is based in Toronto, Ontario, Canada. He is bilingual: English and Spanish.
 
 ## Contact
 
 - **Email:** edwinsocrateslara@gmail.com
 - **Portfolio:** edwinsocrates.com
 
-## Tools
+## Tools & Methodologies
 
-Figma, Shadcn, v0, Claude Code, Lovable, OpenAI API, Maze, UserTesting, GitHub
+**Tools:** Figma, Aura Build, Claude Code, Lovable, OpenAI API, v0, GitHub, Shadcn, Maze, UserTesting, ProtoPie, Marvel App, Lottie Lab, Magic Animator, Jitter, Miro
+
+**Methodologies:** Design Thinking, Information Architecture, Design Systems, User Research, Prototyping, A/B Testing, Accessibility, Agile/Scrum, Product Strategy, UX Strategy, Conversational Design, Agentic Workflow Design
+
+## Work History (Chronological)
+
+- **FutureFit AI** — Lead Product Designer (Contract), Oct 2025–Present
+- **Complex NTWRK** — Lead Product Designer, Apr 2022–Oct 2025
+- **Super.com** — Senior Product Designer, Nov 2021–Apr 2022
+- **Backbase** — Senior Product Designer, Nov 2020–Nov 2021
+- **Meridian Credit Union** — Senior Product Designer, May 2019–Nov 2020
+- **Contracting** — Senior Product Designer, Dec 2015–May 2019 *(BMO, TD Bank, Viafoura, Volkswagen)*
+
+---
+
+## Additional Roles Not in Portfolio Case Studies
+
+### Super.com — Senior Product Designer (Nov 2021–Apr 2022)
+
+Super.com is a travel and financial services super-app.
+
+- Led UX design for SuperCash, a credit-building cashback card — 50,000+ cards issued within 7 months of launch.
+- Shipped the MVP of the unified super app, integrating hotel booking, e-commerce, and financial services following the company's rebrand to Super.com.
+
+---
+
+### Backbase — Senior Product Designer (Nov 2020–Nov 2021)
+
+Backbase is a digital banking platform used by financial institutions across North America and Europe.
+
+- Directed the full lifecycle UX/UI and technical integration of Backbase's platform across NA and EU financial institutions, customising solutions for regional compliance requirements.
+- Facilitated cross-functional teams (development, product, compliance) to navigate complex integration challenges and deliver scalable digital banking solutions.
+
+---
+
+### Contracting — Senior Product Designer (Dec 2015–May 2019)
+
+**Bank of Montreal (BMO):** Led the end-to-end redesign of the bank's entire public website and core navigation to better direct users to the bank's products.
+
+**Toronto-Dominion Bank (TD / MBNA):** Led redesign of the MBNA credit card application process, enhancing UX and optimising the application journey.
+
+**Viafoura:** Spearheaded the design of a commenting and community engagement tool used by USA Today, The Telegraph, The Globe and Mail, CBC, The Independent, Dow Jones, and many more. Also built a data segmenting and insights tool that tracks user behaviour and engagement to help media publishers understand audience preferences.
+
+**Volkswagen:** Conceptualised and designed the cross-brand car comparison tool — see Volkswagen case study in portfolio for full detail.
+
+---
+
+## Education
+
+- **Graduate Diploma, Interactive Design** — CFC Media Lab, Toronto, Ontario
+- **Certificate, Graphic Design** — Toronto School of Art, Toronto, Ontario
+- **Diploma, Advertising** — Sheridan College, Oakville, Ontario
+
+---
 
 ## Projects
 
@@ -153,5 +208,32 @@ Case study coming soon.
 
 ## Available Documents
 
-- **Resume:** Edwin's 2026 résumé (one-pager covering ~6 years of work)
+- **Resume:** Edwin's 2026 résumé (one-pager covering 10+ years of experience)
 - **Meridian Case Study:** Detailed PDF case study of the Meridian Credit Union redesign
+
+---
+
+## Personal
+
+### Background
+
+Edwin has 10+ years of product design experience spanning consumer fintech, live commerce, automotive, e-commerce, B2B SaaS, and AI products. He has consistently worked as the lead or sole designer on products with real business stakes — not supporting roles on large teams.
+
+### What He's Looking For
+
+Edwin is open to:
+- **Lead or Senior Product Designer** roles at companies building with AI — either AI-native products or teams using AI to accelerate product development
+- **Freelance or contract** engagements for product design, prototyping, or design systems work
+- Companies where design is close to the product and engineering — not purely execution-layer
+
+He is less interested in large enterprise design org roles where output is primarily documentation or handoff artifacts.
+
+### Availability
+
+Currently employed as Lead Product Designer at FutureFit AI. Open to conversations about the right opportunity. Best reached by email.
+
+### Contact
+
+- **Email:** edwinsocrateslara@gmail.com
+- **Portfolio:** edwinsocrates.com
+- **LinkedIn:** linkedin.com/in/edwinsocrateslara

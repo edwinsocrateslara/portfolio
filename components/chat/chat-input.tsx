@@ -49,20 +49,21 @@ export function ChatInput({
         placeholder={placeholder}
         rows={1}
         disabled={isLoading}
-        className="w-full resize-none py-5 pl-5 pr-14 text-[16px] leading-[1.5] focus:outline-none disabled:opacity-50 transition-shadow"
+        className="w-full resize-none py-5 pl-5 pr-14 text-[16px] leading-[1.5] focus:outline-none disabled:opacity-40 transition-shadow"
         style={{
           background: "#1a1a1a",
           color: "#ffffff",
-          caretColor: "#fa520f",
-          boxShadow: "rgba(250, 82, 15, 0.08) 0px 4px 24px",
+          borderRadius: 12,
+          caretColor: "rgb(var(--color-accent))",
+          boxShadow: "rgb(var(--color-accent) / 0.08) 0px 4px 24px",
         }}
         onFocus={(e) => {
           e.currentTarget.style.boxShadow =
-            "0 0 0 2px #fa520f, rgba(250, 82, 15, 0.15) 0px 8px 32px"
+            "0 0 0 2px rgb(var(--color-accent)), rgb(var(--color-accent) / 0.15) 0px 8px 32px"
         }}
         onBlur={(e) => {
           e.currentTarget.style.boxShadow =
-            "rgba(250, 82, 15, 0.08) 0px 4px 24px"
+            "rgb(var(--color-accent) / 0.08) 0px 4px 24px"
         }}
         aria-label="Chat input"
       />
@@ -72,9 +73,10 @@ export function ChatInput({
         onClick={onSubmit}
         disabled={!canSubmit}
         aria-label="Send message"
-        className="absolute right-3 bottom-3 flex h-11 items-center justify-center gap-2 px-4 transition-all disabled:opacity-30 uppercase tracking-[0.5px]"
+        className="absolute right-3 bottom-3 flex h-11 items-center justify-center gap-2 px-4 transition-all disabled:opacity-40 uppercase tracking-[0.5px]"
         style={{
-          background: canSubmit ? "#fa520f" : "#262626",
+          background: canSubmit ? "rgb(var(--color-accent))" : "#262626",
+          borderRadius: 8,
         }}
       >
         <span

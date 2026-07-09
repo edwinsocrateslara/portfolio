@@ -4,12 +4,13 @@ import React, { useState, useRef, useEffect, useCallback } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ArrowLeft } from "lucide-react"
-import { SpiralMark } from "@/components/spiral-mark"
 import { ChatInput } from "@/components/chat/chat-input"
+import { PromptChip } from "@/components/chat/prompt-chip"
 import { ProjectGrid } from "@/components/chat/project-grid"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { NowPlaying } from "@/components/chat/now-playing"
 import { DOCS } from "@/lib/constants"
+import { CONTENT_WIDTH } from "@/lib/layout"
 import {
   buildResponse,
   INTRO_SEQUENCE,
@@ -21,6 +22,8 @@ import {
   TypingIndicator,
   type StructuredMessage,
 } from "@/components/chat/message-bubbles"
+
+const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 
 const PROMPT_CHIPS = [
   "Walk me through your work",
@@ -118,7 +121,7 @@ export default function HomePage() {
   // Build conversation history from structured messages for API context
   // Convert all message types to text so API understands the project context
   const buildApiHistory = useCallback(() => {
-    const history: { id: string; role: "user" | "assistant"; content: string }[] = []
+    const history: { id: string; role: "user" | "assistant"; parts: { type: "text"; text: string }[] }[] = []
 
     for (const m of structuredMessages) {
       let content = ""
@@ -151,7 +154,7 @@ export default function HomePage() {
         history.push({
           id: m.id,
           role: m.role as "user" | "assistant",
-          content,
+          parts: [{ type: "text", text: content }],
         })
       }
     }
@@ -290,7 +293,7 @@ export default function HomePage() {
   /* ── LANDING ──────────────────────────────────────────────── */
   if (mode === "landing") {
     return (
-      <div className="min-h-dvh overflow-y-auto" style={{ background: "#0f0f0f" }}>
+      <div className="min-h-dvh overflow-y-auto" style={{ background: "rgb(var(--color-bg))" }}>
         {/* Hero section — Dark canvas */}
         <div className="mx-auto max-w-7xl px-6 pt-16 pb-16">
           {/* Top bar */}
@@ -299,7 +302,6 @@ export default function HomePage() {
             style={{ animationDelay: "0ms" }}
           >
             <div className="flex items-center gap-3">
-              <SpiralMark size={24} />
               <span
                 className="text-[11px] font-normal tracking-[0.5px] uppercase"
                 style={{ color: "#ffffff" }}
@@ -310,7 +312,7 @@ export default function HomePage() {
                 className="px-3 py-1 text-[11px] font-normal inline-flex items-center gap-2 uppercase"
                 style={{
                   background: "#1a1a1a",
-                  color: "#fa520f",
+                  color: "rgb(var(--color-accent))",
                 }}
               >
                 <span
@@ -318,7 +320,7 @@ export default function HomePage() {
                   style={{
                     width: 6,
                     height: 6,
-                    background: "#fa520f",
+                    background: "rgb(var(--color-accent))",
                   }}
                 />
                 Available
@@ -340,7 +342,7 @@ export default function HomePage() {
                   className="text-[14px] tracking-[0.5px] transition-colors"
                   style={{ color: "#b4b4b4" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#fa520f"
+                    e.currentTarget.style.color = "rgb(var(--color-accent))"
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = "#b4b4b4"
@@ -354,26 +356,26 @@ export default function HomePage() {
 
           {/* Hero — Massive display typography */}
           <div
-            className="mb-16 animate-fade-in"
+            className="mb-8 animate-fade-in"
             style={{ animationDelay: "60ms" }}
           >
             <h1
-              className="mb-6"
+              className="mb-2"
               style={{
-                fontSize: "clamp(36px, 5vw, 64px)",
-                fontWeight: 400,
+                fontSize: "clamp(24px, 4vw, 48px)",
+                fontWeight: 500,
                 lineHeight: 1.1,
                 letterSpacing: "-1px",
                 color: "#ffffff",
               }}
             >
               I&apos;m Edwin, a product designer interested in{" "}
-              <span style={{ color: "#fa520f" }}>AI products and workflows</span>.
+              <span style={{ color: "rgb(var(--color-accent))" }}>AI products and workflows</span>.
             </h1>
             <p
               style={{
-                fontSize: 18,
-                lineHeight: 1.5,
+                fontSize: 16,
+                lineHeight: 1.6,
                 color: "#b4b4b4",
                 maxWidth: 600,
               }}
@@ -383,32 +385,10 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Input with callout label */}
           <div
-            className="mb-6 animate-fade-in relative"
-            style={{ animationDelay: "100ms" }}
+            className="mb-4 animate-fade-in"
+            style={{ animationDelay: "100ms", maxWidth: CONTENT_WIDTH }}
           >
-            <div
-              style={{
-                position: "absolute",
-                top: -14,
-                left: 16,
-                zIndex: 2,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "4px 12px",
-                background: "#fa520f",
-                color: "#ffffff",
-                fontSize: 10,
-                fontWeight: 400,
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
-              }}
-            >
-              <SpiralMark size={10} />
-              Ask my AI assistant
-            </div>
             <ChatInput
               value={input}
               onChange={setInput}
@@ -424,25 +404,12 @@ export default function HomePage() {
             style={{ animationDelay: "150ms" }}
           >
             {PROMPT_CHIPS.map((chip) => (
-              <button
+              <PromptChip
                 key={chip}
-                type="button"
+                label={chip}
                 onClick={() => handleChipSelect(chip)}
                 disabled={isTyping}
-                className="px-4 py-3 text-[14px] transition-all disabled:opacity-40"
-                style={{
-                  background: "#1a1a1a",
-                  color: "#ffffff",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#262626"
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#1a1a1a"
-                }}
-              >
-                {chip}
-              </button>
+              />
             ))}
           </div>
         </div>
@@ -475,7 +442,7 @@ export default function HomePage() {
 
   /* ── CHAT ─────────────────────────────────────────────────── */
   return (
-    <div className="flex h-dvh flex-col" style={{ background: "#0f0f0f" }}>
+    <div className="flex h-dvh flex-col" style={{ background: "rgb(var(--color-bg))" }}>
       {/* Header */}
       <header
         className="flex h-14 shrink-0 items-center justify-between px-5"
@@ -487,7 +454,7 @@ export default function HomePage() {
           className="flex items-center gap-2 text-[14px] transition-colors uppercase tracking-[0.5px]"
           style={{ color: "#b4b4b4" }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = "#fa520f"
+            e.currentTarget.style.color = "rgb(var(--color-accent))"
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = "#b4b4b4"
@@ -498,7 +465,6 @@ export default function HomePage() {
         </button>
 
         <div className="flex items-center gap-2">
-          <SpiralMark size={20} />
           <span
             className="text-[11px] font-normal tracking-[0.5px] uppercase"
             style={{ color: "#ffffff" }}
@@ -514,7 +480,7 @@ export default function HomePage() {
           className="text-[14px] transition-colors uppercase tracking-[0.5px]"
           style={{ color: "#b4b4b4" }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = "#fa520f"
+            e.currentTarget.style.color = "rgb(var(--color-accent))"
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = "#b4b4b4"
@@ -525,9 +491,9 @@ export default function HomePage() {
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-5">
         <div
-          style={{ maxWidth: 760, margin: "0 auto", padding: "32px 20px 8px" }}
+          style={{ ...CHAT_COLUMN, paddingTop: 32, paddingBottom: 8 }}
           className="flex flex-col gap-4"
         >
           {/* Structured messages (scripted) */}
@@ -556,22 +522,11 @@ export default function HomePage() {
               if (message.role === "user") {
                 return null // Already shown in structured messages
               }
-              // Convert API message to text bubble
-              // Handle both string content and parts array (AI SDK v5)
-              let textContent = ""
-              if (typeof message.content === "string") {
-                textContent = message.content
-              } else if (Array.isArray(message.content)) {
-                textContent = message.content
-                  .filter((p) => p.type === "text")
-                  .map((p) => (p as { type: "text"; text: string }).text)
-                  .join("")
-              } else if ("parts" in message && Array.isArray((message as { parts?: unknown[] }).parts)) {
-                textContent = ((message as { parts: { type: string; text?: string }[] }).parts)
-                  .filter((p) => p.type === "text" && p.text)
-                  .map((p) => p.text!)
-                  .join("")
-              }
+              // Convert API message parts to a flat text bubble
+              const textContent = message.parts
+                .filter((p): p is { type: "text"; text: string } => p.type === "text")
+                .map((p) => p.text)
+                .join("")
 
               // Don't render empty messages
               if (!textContent) return null
@@ -609,13 +564,12 @@ export default function HomePage() {
 
       {/* Bottom input */}
       <div
-        className="px-5 pb-6 pt-4"
+        className="px-5 pb-6 pt-1"
         style={{
-          borderTop: "1px solid #333333",
-          background: "#1a1a1a",
+          background: "linear-gradient(to bottom, transparent 0%, rgb(var(--color-bg)) 40%)",
         }}
       >
-        <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <div style={CHAT_COLUMN}>
           <ChatInput
             value={input}
             onChange={setInput}
@@ -623,12 +577,6 @@ export default function HomePage() {
             isLoading={isTyping || isApiLoading}
             placeholder="Ask a follow-up..."
           />
-          <p
-            className="mt-3 text-center text-[12px] uppercase tracking-[0.5px]"
-            style={{ color: "#787878" }}
-          >
-            edwinsocrates.com
-          </p>
         </div>
       </div>
     </div>
