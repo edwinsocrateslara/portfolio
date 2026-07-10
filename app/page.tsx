@@ -293,7 +293,7 @@ export default function HomePage() {
   /* ── LANDING ──────────────────────────────────────────────── */
   if (mode === "landing") {
     return (
-      <div className="min-h-dvh overflow-y-auto" style={{ background: "rgb(var(--color-bg))" }}>
+      <div className="min-h-dvh overflow-y-auto" style={{ background: "rgb(var(--bureau-bg))" }}>
         {/* Hero section — Dark canvas */}
         <div className="mx-auto max-w-7xl px-6 pt-16 pb-16">
           {/* Top bar */}
@@ -301,33 +301,39 @@ export default function HomePage() {
             className="mb-20 flex items-center justify-between animate-fade-in"
             style={{ animationDelay: "0ms" }}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-[10px]">
               <span
-                className="text-[11px] font-normal tracking-[0.5px] uppercase"
-                style={{ color: "#ffffff" }}
+                className="uppercase"
+                style={{
+                  font: "700 15px/1 var(--ff-plex-mono)",
+                  letterSpacing: "1px",
+                  color: "rgb(var(--bureau-text-primary))",
+                }}
               >
                 EdwinOS
               </span>
               <span
-                className="px-3 py-1 text-[11px] font-normal inline-flex items-center gap-2 uppercase"
                 style={{
-                  background: "#1a1a1a",
-                  color: "rgb(var(--color-accent))",
+                  width: 6,
+                  height: 6,
+                  borderRadius: 9999,
+                  background: "rgb(var(--bureau-text-primary))",
+                  display: "inline-block",
+                }}
+              />
+              <span
+                className="uppercase"
+                style={{
+                  font: "600 10px/1 var(--ff-plex-mono)",
+                  letterSpacing: "1.4px",
+                  color: "rgb(var(--bureau-text-muted))",
                 }}
               >
-                <span
-                  className="animate-pulse"
-                  style={{
-                    width: 6,
-                    height: 6,
-                    background: "rgb(var(--color-accent))",
-                  }}
-                />
                 Available
               </span>
             </div>
 
-            <nav className="flex items-center gap-6">
+            <nav className="flex items-center gap-[30px]">
               {[
                 { label: "WORK", href: "#work" },
                 { label: "AI", href: "#ai" },
@@ -339,13 +345,19 @@ export default function HomePage() {
                   href={href}
                   target={href.startsWith("#") ? undefined : "_blank"}
                   rel="noopener noreferrer"
-                  className="text-[14px] tracking-[0.5px] transition-colors"
-                  style={{ color: "#b4b4b4" }}
+                  className="transition-colors"
+                  style={{
+                    font: "500 11px/1 var(--ff-plex-mono)",
+                    letterSpacing: "1.4px",
+                    color: "rgb(var(--bureau-text-secondary))",
+                  }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "rgb(var(--color-accent))"
+                    e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
+                    e.currentTarget.style.textDecoration = "underline"
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#b4b4b4"
+                    e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
+                    e.currentTarget.style.textDecoration = "none"
                   }}
                 >
                   {label}
@@ -360,24 +372,30 @@ export default function HomePage() {
             style={{ animationDelay: "60ms" }}
           >
             <h1
-              className="mb-2"
+              className="type-hero mb-2"
               style={{
-                fontSize: "clamp(24px, 4vw, 48px)",
-                fontWeight: 500,
-                lineHeight: 1.1,
-                letterSpacing: "-1px",
-                color: "#ffffff",
+                maxWidth: 900,
+                color: "rgb(var(--bureau-text-primary))",
               }}
             >
               I&apos;m Edwin, a product designer interested in{" "}
-              <span style={{ color: "rgb(var(--color-accent))" }}>AI products and workflows</span>.
+              <span
+                style={{
+                  textDecoration: "underline",
+                  textDecorationThickness: "2px",
+                  textUnderlineOffset: "5px",
+                  textDecorationColor: "rgb(var(--bureau-border-strong))",
+                }}
+              >
+                AI products and workflows
+              </span>
+              .
             </h1>
             <p
               style={{
-                fontSize: 16,
-                lineHeight: 1.6,
-                color: "#b4b4b4",
-                maxWidth: 600,
+                font: "400 16px/1.6 var(--ff-archivo)",
+                color: "rgb(var(--bureau-text-secondary))",
+                maxWidth: 520,
               }}
             >
               I combine AI and design to create user-centric products and
@@ -417,7 +435,7 @@ export default function HomePage() {
         {/* Section divider */}
         <div
           className="mx-auto max-w-7xl px-6"
-          style={{ borderTop: "1px solid #333333" }}
+          style={{ borderTop: "1px solid rgb(var(--bureau-border))" }}
         />
 
         {/* Side of Desk section */}
@@ -426,7 +444,7 @@ export default function HomePage() {
         {/* Section divider */}
         <div
           className="mx-auto max-w-7xl px-6"
-          style={{ borderTop: "1px solid #333333" }}
+          style={{ borderTop: "1px solid rgb(var(--bureau-border))" }}
         />
 
         {/* Project grid */}
@@ -442,22 +460,27 @@ export default function HomePage() {
 
   /* ── CHAT ─────────────────────────────────────────────────── */
   return (
-    <div className="flex h-dvh flex-col" style={{ background: "rgb(var(--color-bg))" }}>
+    <div className="flex h-dvh flex-col" style={{ background: "rgb(var(--bureau-bg))" }}>
       {/* Header */}
       <header
         className="flex h-14 shrink-0 items-center justify-between px-5"
-        style={{ borderBottom: "1px solid #333333" }}
+        style={{ borderBottom: "1px solid rgb(var(--bureau-border))" }}
       >
         <button
           type="button"
           onClick={handleBack}
-          className="flex items-center gap-2 text-[14px] transition-colors uppercase tracking-[0.5px]"
-          style={{ color: "#b4b4b4" }}
+          className="flex items-center gap-2 transition-colors"
+          style={{
+            font: "600 11px/1 var(--ff-plex-mono)",
+            letterSpacing: "1.4px",
+            textTransform: "uppercase",
+            color: "rgb(var(--bureau-text-secondary))",
+          }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = "rgb(var(--color-accent))"
+            e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = "#b4b4b4"
+            e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
           }}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -466,8 +489,12 @@ export default function HomePage() {
 
         <div className="flex items-center gap-2">
           <span
-            className="text-[11px] font-normal tracking-[0.5px] uppercase"
-            style={{ color: "#ffffff" }}
+            style={{
+              font: "700 12px/1 var(--ff-plex-mono)",
+              letterSpacing: "2px",
+              textTransform: "uppercase",
+              color: "rgb(var(--bureau-text-primary))",
+            }}
           >
             EdwinOS
           </span>
@@ -477,13 +504,18 @@ export default function HomePage() {
           href="https://www.edwinsocrates.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[14px] transition-colors uppercase tracking-[0.5px]"
-          style={{ color: "#b4b4b4" }}
+          className="transition-colors"
+          style={{
+            font: "600 11px/1 var(--ff-plex-mono)",
+            letterSpacing: "1.4px",
+            textTransform: "uppercase",
+            color: "rgb(var(--bureau-text-secondary))",
+          }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = "rgb(var(--color-accent))"
+            e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = "#b4b4b4"
+            e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
           }}
         >
           Portfolio
@@ -566,7 +598,7 @@ export default function HomePage() {
       <div
         className="px-5 pb-6 pt-1"
         style={{
-          background: "linear-gradient(to bottom, transparent 0%, rgb(var(--color-bg)) 40%)",
+          background: "linear-gradient(to bottom, transparent 0%, rgb(var(--bureau-bg)) 40%)",
         }}
       >
         <div style={CHAT_COLUMN}>
