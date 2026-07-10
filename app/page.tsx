@@ -145,7 +145,7 @@ export default function HomePage() {
           if (text) content = text
           break
         }
-        // Skip image and image-row as they don't add conversational context
+        // Skip image, image-row, and doc-link as they don't add conversational context
         default:
           continue
       }

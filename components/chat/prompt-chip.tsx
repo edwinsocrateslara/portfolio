@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 interface PromptChipProps {
   label: string
   onClick: () => void
@@ -8,6 +10,8 @@ interface PromptChipProps {
 }
 
 export function PromptChip({ label, onClick, disabled = false, prefix }: PromptChipProps) {
+  const [hovered, setHovered] = useState(false)
+
   return (
     <button
       type="button"
@@ -15,34 +19,23 @@ export function PromptChip({ label, onClick, disabled = false, prefix }: PromptC
       disabled={disabled}
       style={{
         padding: "10px 16px",
-        fontSize: 14,
-        color: "#b4b4b4",
-        background: "#1a1a1a",
-        border: "1px solid #2a2a2a",
-        borderRadius: 9999,
+        font: "500 13px var(--ff-archivo)",
+        color: `rgb(var(--bureau-text-${hovered && !disabled ? "primary" : "secondary"}))`,
+        background: `rgb(var(--bureau-${hovered && !disabled ? "elevated" : "surface"}))`,
+        border: `1px solid rgb(var(--bureau-${hovered && !disabled ? "border-strong" : "border"}))`,
+        borderRadius: "var(--bureau-radius-chip)",
         transition: "all 0.15s",
         cursor: disabled ? "default" : "pointer",
         opacity: disabled ? 0.4 : 1,
         display: "inline-flex",
         alignItems: "center",
-        gap: 8,
-        fontFamily: "inherit",
+        gap: 9,
       }}
-      onMouseEnter={(e) => {
-        if (!disabled) {
-          e.currentTarget.style.background = "#262626"
-          e.currentTarget.style.borderColor = "#3a3a3a"
-          e.currentTarget.style.color = "#ffffff"
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = "#1a1a1a"
-        e.currentTarget.style.borderColor = "#2a2a2a"
-        e.currentTarget.style.color = "#b4b4b4"
-      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {prefix && (
-        <span style={{ color: "rgb(var(--color-accent))", flexShrink: 0 }}>
+        <span style={{ font: "400 13px var(--ff-plex-mono)", color: "rgb(var(--bureau-text-muted))", flexShrink: 0 }}>
           {prefix}
         </span>
       )}

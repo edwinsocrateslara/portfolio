@@ -1,4 +1,5 @@
 import { projects } from "./projects"
+import type { DocKey } from "./constants"
 
 type MessageTemplate =
   | { kind: "text"; text: string }
@@ -25,6 +26,7 @@ type MessageTemplate =
       text?: string
       chips: { text: string; slug?: string }[]
     }
+  | { kind: "doc-link"; docKey: DocKey }
 
 // Build a project stream from project data
 function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
@@ -237,6 +239,7 @@ export function buildResponse(
           kind: "text",
           text: "My 2026 résumé is a one-pager — last ~6 years across Complex NTWRK, Meridian, Volkswagen, Coinley AI, and now FutureFit AI.",
         },
+        { kind: "doc-link", docKey: "resume" },
         {
           kind: "followups",
           text: "It's here: [Edwin Socrates Lara — Résumé 2026](https://dochub.com/edwinsocrateslara/orO7lgeVLk9z02JKjMP2p5/edwin-socrates-lara-2026-docx)\n\nHappy to walk through any section in more detail.",

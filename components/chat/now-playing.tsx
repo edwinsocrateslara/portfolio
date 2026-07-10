@@ -2,9 +2,9 @@ export function NowPlaying() {
   return (
     <footer
       style={{
-        background: "linear-gradient(180deg, rgb(var(--color-accent) / 0.15) 0%, rgb(var(--color-bg)) 100%)",
+        background: "rgb(var(--bureau-bg))",
         padding: "80px 0 48px",
-        borderTop: "1px solid #262626",
+        borderTop: "1px solid rgb(var(--bureau-border))",
       }}
     >
       <div
@@ -22,24 +22,23 @@ export function NowPlaying() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 12,
-              marginBottom: 8,
+              gap: 8,
+              marginBottom: 14,
             }}
           >
             <span
-              className="animate-pulse"
               style={{
                 width: 8,
                 height: 8,
-                background: "rgb(var(--color-accent))",
+                background: "rgb(var(--bureau-text-secondary))",
               }}
             />
             <span
               style={{
-                fontSize: 10,
-                color: "#ffffff",
+                font: "600 10px/1 var(--ff-plex-mono)",
+                letterSpacing: "2px",
                 textTransform: "uppercase",
-                letterSpacing: "0.5px",
+                color: "rgb(var(--bureau-text-secondary))",
               }}
             >
               Currently
@@ -47,42 +46,47 @@ export function NowPlaying() {
           </div>
           <p
             style={{
-              fontSize: 24,
-              fontWeight: 400,
-              lineHeight: 1.6,
-              color: "#ffffff",
-              maxWidth: 500,
+              font: "600 19px/1.3 var(--ff-archivo)",
+              color: "rgb(var(--bureau-text-primary))",
+              maxWidth: 420,
+              margin: 0,
             }}
           >
             Designing the AI coach experience at FutureFit AI
           </p>
           <p
             style={{
-              fontSize: 16,
-              lineHeight: 1.6,
-              color: "#ffffff",
-              opacity: 0.6,
-              marginTop: 8,
+              font: "400 13px/1 var(--ff-archivo)",
+              color: "rgb(var(--bureau-text-muted))",
+              marginTop: 12,
+              margin: "12px 0 0",
             }}
           >
             Toronto, Canada
           </p>
         </div>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 26,
+            alignItems: "center",
+            font: "600 11px/1 var(--ff-plex-mono)",
+            letterSpacing: "1.4px",
+            color: "rgb(var(--bureau-text-secondary))",
+          }}
+        >
           <a
             href="mailto:edwinsocrateslara@gmail.com"
             style={{
-              fontSize: 14,
-              color: "#ffffff",
               textDecoration: "none",
               textTransform: "uppercase",
-              letterSpacing: "0.5px",
+              color: "inherit",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = "rgb(var(--color-accent))"
+              e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#ffffff"
+              e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
             }}
           >
             Email
@@ -92,17 +96,15 @@ export function NowPlaying() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontSize: 14,
-              color: "#ffffff",
               textDecoration: "none",
               textTransform: "uppercase",
-              letterSpacing: "0.5px",
+              color: "inherit",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = "rgb(var(--color-accent))"
+              e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#ffffff"
+              e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
             }}
           >
             Portfolio

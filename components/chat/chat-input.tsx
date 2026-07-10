@@ -40,7 +40,10 @@ export function ChatInput({
   const canSubmit = value.trim().length > 0 && !isLoading
 
   return (
-    <div className={cn("relative", className)}>
+    <div
+      className={cn("relative", className)}
+      style={{ opacity: isLoading ? 0.55 : 1, transition: "opacity 0.15s" }}
+    >
       <textarea
         ref={textareaRef}
         value={value}
@@ -49,49 +52,60 @@ export function ChatInput({
         placeholder={placeholder}
         rows={1}
         disabled={isLoading}
-        className="w-full resize-none py-5 pl-5 pr-14 text-[16px] leading-[1.5] focus:outline-none disabled:opacity-40 transition-shadow"
+        className="w-full resize-none py-5 pl-5 pr-14 leading-[1.5] focus:outline-none transition-shadow"
         style={{
-          background: "#1a1a1a",
-          color: "#ffffff",
-          borderRadius: 12,
-          caretColor: "rgb(var(--color-accent))",
-          boxShadow: "rgb(var(--color-accent) / 0.08) 0px 4px 24px",
+          font: "400 15px var(--ff-archivo)",
+          background: "rgb(var(--bureau-surface))",
+          color: "rgb(var(--bureau-text-primary))",
+          border: "1px solid rgb(var(--bureau-border))",
+          borderRadius: "var(--bureau-radius-btn)",
+          caretColor: "rgb(var(--bureau-accent))",
         }}
         onFocus={(e) => {
-          e.currentTarget.style.boxShadow =
-            "0 0 0 2px rgb(var(--color-accent)), rgb(var(--color-accent) / 0.15) 0px 8px 32px"
+          e.currentTarget.style.borderColor = "rgb(var(--bureau-text-secondary))"
+          e.currentTarget.style.boxShadow = "var(--bureau-focus-ring)"
         }}
         onBlur={(e) => {
-          e.currentTarget.style.boxShadow =
-            "rgb(var(--color-accent) / 0.08) 0px 4px 24px"
+          e.currentTarget.style.borderColor = "rgb(var(--bureau-border))"
+          e.currentTarget.style.boxShadow = "none"
         }}
         aria-label="Chat input"
       />
-      <style>{`textarea::placeholder { color: #787878; }`}</style>
+      <style>{`textarea::placeholder { color: rgb(var(--bureau-text-muted)); }`}</style>
       <button
         type="button"
         onClick={onSubmit}
         disabled={!canSubmit}
-        aria-label="Send message"
-        className="absolute right-3 bottom-3 flex h-11 items-center justify-center gap-2 px-4 transition-all disabled:opacity-40 uppercase tracking-[0.5px]"
+        aria-label={isLoading ? "Sending" : "Send message"}
+        className="absolute right-3 bottom-3 flex h-11 items-center justify-center gap-2 px-3 uppercase tracking-[1px]"
         style={{
-          background: canSubmit ? "rgb(var(--color-accent))" : "#262626",
-          borderRadius: 8,
+          font: `${canSubmit ? 700 : 600} 11px var(--ff-plex-mono)`,
+          background: canSubmit ? "rgb(var(--bureau-accent))" : "transparent",
+          border: `1px solid rgb(var(--bureau-${canSubmit ? "accent" : "border"}))`,
+          borderRadius: "var(--bureau-radius-btn)",
+          color: canSubmit ? "rgb(var(--bureau-on-accent))" : "rgb(var(--bureau-text-muted))",
+          cursor: isLoading ? "not-allowed" : canSubmit ? "pointer" : "default",
         }}
       >
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 400,
-            color: "#ffffff",
-          }}
-        >
-          Send
-        </span>
-        <ArrowUp
-          className="h-4 w-4"
-          style={{ color: "#ffffff" }}
-        />
+        {isLoading ? (
+          <>
+            <span
+              className="animate-bureau-pulse"
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: 9999,
+                background: "rgb(var(--bureau-text-muted))",
+              }}
+            />
+            Sending
+          </>
+        ) : (
+          <>
+            Send
+            <ArrowUp className="h-3.5 w-3.5" />
+          </>
+        )}
       </button>
     </div>
   )
