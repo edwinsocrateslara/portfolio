@@ -40,6 +40,37 @@
     rgba(30, 150, 252, 0.04) 0px 8px 48px;
 }
 
+/* ── EdwinOS visual identity — Direction 1D "Bureau" ─────────────
+   Achromatic dark, near-square edges, one type family (Archivo) +
+   a mono label voice (IBM Plex Mono). Source: Claude Design handoff
+   bundle, EdwinOS 1D.dc.html. --text-muted raised from the locked
+   #767676 to #8f8f8f — the former fails WCAG AA (3.4-4.1:1) on these
+   surfaces for small text; #8f8f8f clears AA (4.8-6.1:1). */
+:root {
+  --bureau-bg:              19 19 19;      /* #131313 */
+  --bureau-surface:         28 28 28;      /* #1c1c1c */
+  --bureau-elevated:        36 36 36;      /* #242424 */
+  --bureau-border:          52 52 52;      /* #343434 */
+  --bureau-border-strong:   74 74 74;      /* #4a4a4a */
+  --bureau-text-primary:    232 232 232;   /* #e8e8e8 */
+  --bureau-text-secondary:  160 160 160;   /* #a0a0a0 */
+  --bureau-text-muted:      143 143 143;   /* #8f8f8f, AA-adjusted (was #767676) */
+  --bureau-accent:          255 255 255;   /* #ffffff */
+  --bureau-on-accent:       19 19 19;      /* #131313 */
+
+  /* Radius — flat 2px everywhere; kept as distinct named tokens per spec */
+  --bureau-radius-card: 2px;
+  --bureau-radius-btn:  2px;
+  --bureau-radius-chip: 2px;
+
+  /* Focus ring — input focus state */
+  --bureau-focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.11);
+
+  /* Font stacks — UI/prose (Archivo) and the mono "system voice" (IBM Plex Mono) */
+  --ff-archivo:    var(--font-archivo), system-ui, sans-serif;
+  --ff-plex-mono:  var(--font-plex-mono), ui-monospace, monospace;
+}
+
 /* ── Base ─────────────────────────────────────────────────────── */
 *,
 *::before,
@@ -96,6 +127,52 @@ body {
 .animate-cursor-blink { animation: cursor-blink 1s steps(1) infinite; }
 .animate-fade-in      { animation: fade-in 0.35s ease-out both; }
 .animate-slide-up     { animation: slide-up 0.3s ease-out both; }
+
+/* ── Bureau 1D — pulse (typing dots, sending indicator) ────────── */
+@keyframes bureau-pulse {
+  0%, 100% { opacity: 0.25; }
+  50%       { opacity: 1; }
+}
+.animate-bureau-pulse { animation: bureau-pulse 1.1s ease-in-out infinite; }
+
+/* ── Bureau 1D — type scale ───────────────────────────────────────
+   Archivo carries prose/headings; IBM Plex Mono is the "system voice"
+   for nav, eyebrows, tags, indices, badges, captions, SEND. */
+.type-hero {
+  font: 800 52px/1.04 var(--ff-archivo, inherit);
+  letter-spacing: -1.6px;
+}
+.type-h2 {
+  font: 700 34px/1.10 var(--ff-archivo, inherit);
+  letter-spacing: -1px;
+}
+.type-card-h3 {
+  font: 600 17px/1.25 var(--ff-archivo, inherit);
+}
+.type-prose {
+  font: 400 16px/1.7 var(--ff-archivo, inherit);
+}
+.type-prose-2 {
+  font: 400 15px/1.55 var(--ff-archivo, inherit);
+}
+.type-label {
+  font: 600 10px/1 var(--ff-plex-mono, monospace);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+.type-nav {
+  font: 500 11px/1 var(--ff-plex-mono, monospace);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+.type-meta {
+  font: 400 11px/1 var(--ff-plex-mono, monospace);
+}
+
+@media (max-width: 640px) {
+  .type-hero { font-size: 30px; line-height: 1.06; letter-spacing: -1px; }
+  .type-h2   { font-size: 26px; line-height: 1.12; letter-spacing: -0.6px; }
+}
 
 /* ── Mistral Typography ───────────────────────────────────────── */
 .text-display {
