@@ -22,26 +22,24 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
       onClick={() => onClick(project.slug)}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="w-full text-left overflow-hidden"
+      className="w-full text-left"
       style={{
-        background: "#1a1a1a",
-        borderRadius: 8,
-        boxShadow: hover
-          ? "rgb(var(--color-accent) / 0.15) 0px 8px 32px, rgb(var(--color-accent) / 0.10) 0px 16px 48px"
-          : "rgb(var(--color-accent) / 0.08) 0px 4px 16px",
-        transition: "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      {/* Image area — 4:3 aspect */}
+      {/* Image area — 16:11 aspect, grayscale(.15) → grayscale(0) + border-strong + lift on hover */}
       <div
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: "4 / 3",
+          aspectRatio: "16 / 11",
           overflow: "hidden",
-          background: "#262626",
+          background: "rgb(var(--bureau-elevated))",
+          border: `1px solid rgb(var(--bureau-${hover ? "border-strong" : "border"}))`,
+          borderRadius: "var(--bureau-radius-card)",
+          transform: hover ? "translateY(-1px)" : "translateY(0)",
+          transition: "border-color 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -54,8 +52,8 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
           className="object-contain p-[6%]"
           style={{
             transform: hover ? "scale(1.02)" : "scale(1)",
-            transition: "transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)",
-            filter: "drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4))",
+            transition: "transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.2s",
+            filter: hover ? "grayscale(0)" : "grayscale(.15)",
           }}
           sizes="(max-width: 560px) 100vw, (max-width: 860px) 50vw, 33vw"
         />
@@ -65,19 +63,17 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
               position: "absolute",
               top: 12,
               left: 12,
-              padding: "4px 8px",
-              fontSize: 10,
-              fontWeight: 400,
-              letterSpacing: "0.5px",
-              textTransform: "uppercase",
-              background: "#1f1f1f",
-              color: "#ffffff",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
+              padding: "4px 7px",
+              font: "600 9px/1 var(--ff-plex-mono)",
+              letterSpacing: "0.8px",
+              background: "rgba(19, 19, 19, .72)",
+              border: "1px solid rgb(var(--bureau-border))",
+              borderRadius: "var(--bureau-radius-chip)",
+              color: "rgb(var(--bureau-text-primary))",
+              backdropFilter: "blur(4px)",
             }}
           >
-            <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--color-accent))", flexShrink: 0 }} /> AI
+            AI
           </div>
         )}
         {project.status === "wip" && (
@@ -86,27 +82,26 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
               position: "absolute",
               top: 12,
               right: 12,
-              padding: "4px 8px",
-              fontSize: 10,
-              fontWeight: 400,
+              padding: "4px 7px",
+              font: "700 8px/1 var(--ff-plex-mono)",
+              letterSpacing: "0.8px",
               textTransform: "uppercase",
-              letterSpacing: "0.5px",
-              background: "rgb(var(--color-accent))",
-              color: "#ffffff",
+              borderRadius: "var(--bureau-radius-chip)",
+              background: "rgb(var(--bureau-accent))",
+              color: "rgb(var(--bureau-on-accent))",
             }}
           >
             In progress
           </div>
         )}
         <div
-          className="font-mono"
           style={{
             position: "absolute",
-            bottom: 12,
+            bottom: 10,
             right: 12,
-            fontSize: 11,
-            color: "rgb(var(--color-accent))",
-            fontWeight: 400,
+            font: "500 11px/1 var(--ff-plex-mono)",
+            color: "rgb(var(--bureau-text-primary))",
+            textShadow: "0 1px 3px rgba(0, 0, 0, .6)",
           }}
         >
           {String(index + 1).padStart(2, "0")}
@@ -125,31 +120,27 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
       >
         <span
           style={{
-            fontSize: 10,
-            fontWeight: 400,
-            letterSpacing: "0.5px",
+            font: "600 10px/1 var(--ff-plex-mono)",
+            letterSpacing: "1.2px",
             textTransform: "uppercase",
-            color: "rgb(var(--color-accent))",
+            color: "rgb(var(--bureau-text-secondary))",
           }}
         >
           {project.client}
         </span>
         <h3
+          className="type-card-h3"
           style={{
-            fontSize: 20,
-            lineHeight: 1.2,
-            color: "#ffffff",
+            color: "rgb(var(--bureau-text-primary))",
             margin: 0,
-            fontWeight: 500,
           }}
         >
           {project.projectTitle}
         </h3>
         <p
           style={{
-            fontSize: 16,
-            lineHeight: 1.6,
-            color: "#b4b4b4",
+            font: "400 13.5px/1.5 var(--ff-archivo)",
+            color: "rgb(var(--bureau-text-secondary))",
             margin: 0,
             display: "-webkit-box",
             WebkitLineClamp: 2,
@@ -170,17 +161,17 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
             gap: 8,
           }}
         >
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {project.tags.slice(0, 2).map((t) => (
               <span
                 key={t}
                 style={{
-                  padding: "4px 8px",
-                  fontSize: 11,
-                  color: "#b4b4b4",
-                  background: "#262626",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.3px",
+                  padding: "4px 7px",
+                  font: "600 9px/1 var(--ff-plex-mono)",
+                  letterSpacing: "0.6px",
+                  color: "rgb(var(--bureau-text-muted))",
+                  border: "1px solid rgb(var(--bureau-border))",
+                  borderRadius: "var(--bureau-radius-chip)",
                 }}
               >
                 {t}
@@ -189,14 +180,13 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
           </div>
           <span
             style={{
-              fontSize: 12,
-              color: hover ? "rgb(var(--color-accent))" : "#ffffff",
+              font: "600 10px/1 var(--ff-plex-mono)",
+              letterSpacing: "1px",
+              color: "rgb(var(--bureau-text-primary))",
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
-              transition: "color 0.15s",
               textTransform: "uppercase",
-              letterSpacing: "0.5px",
             }}
           >
             View

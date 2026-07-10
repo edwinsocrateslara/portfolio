@@ -12,28 +12,24 @@ export function ProjectGrid({ onProjectClick }: ProjectGridProps) {
       <div
         className="mb-12 flex items-baseline justify-between flex-wrap gap-2"
       >
-        <h2
-          style={{
-            fontSize: 48,
-            fontWeight: 500,
-            lineHeight: 1.15,
-            color: "#ffffff",
-            margin: 0,
-          }}
-        >
+        <h2 className="type-h2" style={{ margin: 0, color: "rgb(var(--bureau-text-primary))" }}>
           Selected Work
         </h2>
         <span
-          className="font-mono text-[12px] uppercase tracking-[0.5px]"
-          style={{ color: "rgb(var(--color-accent))" }}
+          style={{
+            font: "500 12px/1 var(--ff-plex-mono)",
+            letterSpacing: "1.5px",
+            color: "rgb(var(--bureau-text-muted))",
+          }}
         >
           01 — {String(projects.length).padStart(2, "0")}
         </span>
       </div>
       <div
-        className="grid gap-5"
+        className="grid"
         style={{
           gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 26,
         }}
       >
         {projects.map((project, index) => (

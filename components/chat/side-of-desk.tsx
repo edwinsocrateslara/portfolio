@@ -39,12 +39,13 @@ function SideProjectCard({ project }: { project: SideProject }) {
       rel="noopener noreferrer"
       style={{
         display: "block",
-        background: hovered ? "#1f1f1f" : "#1a1a1a",
-        border: `1px solid ${hovered ? "#3a3a3a" : "#262626"}`,
-        borderRadius: 8,
-        padding: "clamp(24px, 3vw, 36px) clamp(24px, 3vw, 40px)",
+        background: "rgb(var(--bureau-surface))",
+        border: `1px solid rgb(var(--bureau-${hovered ? "border-strong" : "border"}))`,
+        borderRadius: "var(--bureau-radius-card)",
+        padding: "clamp(24px, 3vw, 30px) clamp(24px, 3vw, 32px)",
         textDecoration: "none",
-        transition: "background 0.15s, border-color 0.15s",
+        transition: "border-color 0.15s, transform 0.15s",
+        transform: hovered ? "translateY(-1px)" : "translateY(0)",
         cursor: "pointer",
       }}
       onMouseEnter={() => setHovered(true)}
@@ -62,12 +63,11 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Company eyebrow */}
           <div
             style={{
-              fontSize: 10,
-              fontWeight: 400,
-              letterSpacing: "0.5px",
+              font: "600 10px/1 var(--ff-plex-mono)",
+              letterSpacing: "1.4px",
               textTransform: "uppercase",
-              color: "rgb(var(--color-accent))",
-              marginBottom: 8,
+              color: "rgb(var(--bureau-text-secondary))",
+              marginBottom: 12,
             }}
           >
             {project.companies.join(" · ")}
@@ -76,10 +76,8 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Title */}
           <h3
             style={{
-              fontSize: "clamp(18px, 2vw, 22px)",
-              fontWeight: 400,
-              lineHeight: 1.2,
-              color: "#ffffff",
+              font: "600 20px/1.2 var(--ff-archivo)",
+              color: "rgb(var(--bureau-text-primary))",
               margin: "0 0 8px",
             }}
           >
@@ -89,10 +87,9 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Description */}
           <p
             style={{
-              fontSize: 16,
-              lineHeight: 1.6,
-              color: "#b4b4b4",
-              margin: "0 0 20px",
+              font: "400 14px/1.55 var(--ff-archivo)",
+              color: "rgb(var(--bureau-text-secondary))",
+              margin: "0 0 18px",
             }}
           >
             {project.description}
@@ -101,10 +98,12 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* View → CTA */}
           <span
             style={{
-              fontSize: 12,
-              color: "rgb(var(--color-accent))",
+              font: "600 11px/1 var(--ff-plex-mono)",
+              letterSpacing: "1.2px",
               textTransform: "uppercase",
-              letterSpacing: "0.5px",
+              color: "rgb(var(--bureau-text-primary))",
+              borderBottom: "1px solid rgb(var(--bureau-border-strong))",
+              paddingBottom: 3,
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
@@ -130,13 +129,13 @@ function SideProjectCard({ project }: { project: SideProject }) {
               <span
                 style={{
                   display: "inline-block",
-                  fontSize: 10,
-                  fontWeight: 400,
-                  letterSpacing: "0.5px",
+                  font: "600 9px/1 var(--ff-plex-mono)",
+                  letterSpacing: "1px",
                   textTransform: "uppercase",
-                  padding: "4px 8px",
-                  background: "rgb(var(--color-accent))",
-                  color: "#ffffff",
+                  padding: "5px 9px",
+                  border: "1px solid rgb(var(--bureau-border-strong))",
+                  borderRadius: "var(--bureau-radius-chip)",
+                  color: "rgb(var(--bureau-text-secondary))",
                 }}
               >
                 In Progress
@@ -145,13 +144,13 @@ function SideProjectCard({ project }: { project: SideProject }) {
               <span
                 style={{
                   display: "inline-block",
-                  fontSize: 10,
-                  fontWeight: 400,
-                  letterSpacing: "0.5px",
+                  font: "700 9px/1 var(--ff-plex-mono)",
+                  letterSpacing: "1px",
                   textTransform: "uppercase",
-                  padding: "4px 8px",
-                  border: "1px solid rgb(var(--color-accent) / 0.4)",
-                  color: "rgb(var(--color-accent))",
+                  padding: "5px 9px",
+                  borderRadius: "var(--bureau-radius-chip)",
+                  background: "rgb(var(--bureau-accent))",
+                  color: "rgb(var(--bureau-on-accent))",
                 }}
               >
                 Live
@@ -183,28 +182,19 @@ export function SideOfDesk() {
         <div>
           <div
             style={{
-              fontSize: 10,
-              fontWeight: 400,
-              letterSpacing: "0.5px",
+              font: "600 10px/1 var(--ff-plex-mono)",
+              letterSpacing: "2px",
               textTransform: "uppercase",
-              color: "rgb(var(--color-accent))",
-              marginBottom: 8,
+              color: "rgb(var(--bureau-text-secondary))",
+              marginBottom: 18,
               display: "flex",
               alignItems: "center",
               gap: 8,
             }}
           >
-            <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--color-accent))", flexShrink: 0 }} /> AI Practice
+            <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--bureau-text-secondary))", flexShrink: 0 }} /> AI Practice
           </div>
-          <h2
-            style={{
-              fontSize: 48,
-              fontWeight: 500,
-              lineHeight: 1.15,
-              color: "#ffffff",
-              margin: 0,
-            }}
-          >
+          <h2 className="type-h2" style={{ margin: 0, color: "rgb(var(--bureau-text-primary))" }}>
             Vibe Coded Prototypes & Tools
           </h2>
         </div>
