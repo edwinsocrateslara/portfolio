@@ -19,7 +19,7 @@ export function PromptChip({ label, onClick, disabled = false, prefix }: PromptC
       disabled={disabled}
       style={{
         padding: "10px 16px",
-        font: "500 13px var(--ff-archivo)",
+        fontFamily: "var(--ff-archivo)", fontWeight: 500, fontSize: "13px",
         color: `rgb(var(--bureau-text-${hovered && !disabled ? "primary" : "secondary"}))`,
         background: `rgb(var(--bureau-${hovered && !disabled ? "elevated" : "surface"}))`,
         border: `1px solid rgb(var(--bureau-${hovered && !disabled ? "border-strong" : "border"}))`,
@@ -35,7 +35,7 @@ export function PromptChip({ label, onClick, disabled = false, prefix }: PromptC
       onMouseLeave={() => setHovered(false)}
     >
       {prefix && (
-        <span style={{ font: "400 13px var(--ff-plex-mono)", color: "rgb(var(--bureau-text-muted))", flexShrink: 0 }}>
+        <span style={{ fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "13px", color: "rgb(var(--bureau-text-muted))", flexShrink: 0 }}>
           {prefix}
         </span>
       )}

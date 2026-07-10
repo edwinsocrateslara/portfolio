@@ -17,7 +17,7 @@ export function ProjectGrid({ onProjectClick }: ProjectGridProps) {
         </h2>
         <span
           style={{
-            font: "500 12px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "12px", lineHeight: "1",
             letterSpacing: "1.5px",
             color: "rgb(var(--bureau-text-muted))",
           }}

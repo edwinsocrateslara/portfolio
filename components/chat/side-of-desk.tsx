@@ -63,7 +63,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Company eyebrow */}
           <div
             style={{
-              font: "600 10px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
               letterSpacing: "1.4px",
               textTransform: "uppercase",
               color: "rgb(var(--bureau-text-secondary))",
@@ -76,7 +76,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Title */}
           <h3
             style={{
-              font: "600 20px/1.2 var(--ff-archivo)",
+              fontFamily: "var(--ff-archivo)", fontWeight: 600, fontSize: "20px", lineHeight: "1.2",
               color: "rgb(var(--bureau-text-primary))",
               margin: "0 0 8px",
             }}
@@ -87,7 +87,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Description */}
           <p
             style={{
-              font: "400 14px/1.55 var(--ff-archivo)",
+              fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "14px", lineHeight: "1.55",
               color: "rgb(var(--bureau-text-secondary))",
               margin: "0 0 18px",
             }}
@@ -98,7 +98,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* View → CTA */}
           <span
             style={{
-              font: "600 11px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
               letterSpacing: "1.2px",
               textTransform: "uppercase",
               color: "rgb(var(--bureau-text-primary))",
@@ -129,7 +129,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
               <span
                 style={{
                   display: "inline-block",
-                  font: "600 9px/1 var(--ff-plex-mono)",
+                  fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
                   letterSpacing: "1px",
                   textTransform: "uppercase",
                   padding: "5px 9px",
@@ -144,7 +144,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
               <span
                 style={{
                   display: "inline-block",
-                  font: "700 9px/1 var(--ff-plex-mono)",
+                  fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "9px", lineHeight: "1",
                   letterSpacing: "1px",
                   textTransform: "uppercase",
                   padding: "5px 9px",
@@ -182,7 +182,7 @@ export function SideOfDesk() {
         <div>
           <div
             style={{
-              font: "600 10px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
               letterSpacing: "2px",
               textTransform: "uppercase",
               color: "rgb(var(--bureau-text-secondary))",

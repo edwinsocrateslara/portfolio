@@ -26,7 +26,7 @@
   --bureau-radius-chip: 2px;
 
   /* Focus ring — input focus state */
-  --bureau-focus-ring: 0 0 0 3px rgba(255, 255, 255, 0.11);
+  --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
   /* Font stacks — UI/prose (Archivo) and the mono "system voice" (IBM Plex Mono) */
   --ff-archivo:    var(--font-archivo), system-ui, sans-serif;
@@ -100,35 +100,62 @@ body {
 /* ── Bureau 1D — type scale ───────────────────────────────────────
    Archivo carries prose/headings; IBM Plex Mono is the "system voice"
    for nav, eyebrows, tags, indices, badges, captions, SEND. */
+/* CSS var()s cannot fill just the font-family slot of the `font`
+   shorthand — the whole declaration is silently dropped if you try.
+   Longhand properties only. */
 .type-hero {
-  font: 800 52px/1.04 var(--ff-archivo, inherit);
+  font-family: var(--ff-archivo);
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 1.04;
   letter-spacing: -1.6px;
 }
 .type-h2 {
-  font: 700 34px/1.10 var(--ff-archivo, inherit);
+  font-family: var(--ff-archivo);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.10;
   letter-spacing: -1px;
 }
 .type-card-h3 {
-  font: 600 17px/1.25 var(--ff-archivo, inherit);
+  font-family: var(--ff-archivo);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.25;
 }
 .type-prose {
-  font: 400 16px/1.7 var(--ff-archivo, inherit);
+  font-family: var(--ff-archivo);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.7;
 }
 .type-prose-2 {
-  font: 400 15px/1.55 var(--ff-archivo, inherit);
+  font-family: var(--ff-archivo);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.55;
 }
 .type-label {
-  font: 600 10px/1 var(--ff-plex-mono, monospace);
+  font-family: var(--ff-plex-mono);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1;
   letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 .type-nav {
-  font: 500 11px/1 var(--ff-plex-mono, monospace);
+  font-family: var(--ff-plex-mono);
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1;
   letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 .type-meta {
-  font: 400 11px/1 var(--ff-plex-mono, monospace);
+  font-family: var(--ff-plex-mono);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1;
 }
 
 @media (max-width: 640px) {

@@ -90,7 +90,7 @@ function Avatar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        font: "700 11px var(--ff-plex-mono)",
+        fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "11px",
         color: "rgb(var(--bureau-text-primary))",
       }}
     >
@@ -104,7 +104,7 @@ export function TextBubble({ text }: { text: string }) {
   if (!text) return null
 
   return (
-    <div style={{ font: "400 16px/1.7 var(--ff-archivo)", color: "rgb(var(--bureau-text-primary))" }}>
+    <div style={{ fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "16px", lineHeight: "1.7", color: "rgb(var(--bureau-text-primary))" }}>
       {text.split("\n").map((p, i) => (
         <p
           key={i}
@@ -179,7 +179,7 @@ export function ProjectHeaderBubble({
       >
         <div
           style={{
-            font: "600 10px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
             letterSpacing: "1.4px",
             textTransform: "uppercase",
             color: "rgb(var(--bureau-text-secondary))",
@@ -192,14 +192,14 @@ export function ProjectHeaderBubble({
         </div>
         <div
           style={{
-            font: "700 20px/1.2 var(--ff-archivo)",
+            fontFamily: "var(--ff-archivo)", fontWeight: 700, fontSize: "20px", lineHeight: "1.2",
             letterSpacing: "-0.4px",
             color: "rgb(var(--bureau-text-primary))",
           }}
         >
           {project.projectTitle}
         </div>
-        <div style={{ font: "400 13px/1 var(--ff-archivo)", color: "rgb(var(--bureau-text-muted))" }}>
+        <div style={{ fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "13px", lineHeight: "1", color: "rgb(var(--bureau-text-muted))" }}>
           {project.role}
           {project.year && (
             <>
@@ -246,7 +246,7 @@ export function ImageBubble({
         <figcaption
           style={{
             margin: "8px 0 0",
-            font: "400 11px/1.4 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "11px", lineHeight: "1.4",
             letterSpacing: "0.4px",
             color: "rgb(var(--bureau-text-muted))",
           }}
@@ -303,7 +303,7 @@ export function ImageRowBubble({
         <figcaption
           style={{
             margin: "8px 0 0",
-            font: "400 11px/1.4 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "11px", lineHeight: "1.4",
             letterSpacing: "0.4px",
             color: "rgb(var(--bureau-text-muted))",
           }}
@@ -339,7 +339,7 @@ export function ImpactBubble({
           display: "inline-flex",
           alignItems: "center",
           gap: 9,
-          font: "600 10px/1 var(--ff-plex-mono)",
+          fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
           letterSpacing: "1.6px",
           textTransform: "uppercase",
           color: "rgb(var(--bureau-text-secondary))",
@@ -362,7 +362,7 @@ export function ImpactBubble({
           <li
             key={i}
             style={{
-              font: "400 15px/1.55 var(--ff-archivo)",
+              fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "15px", lineHeight: "1.55",
               color: "rgb(var(--bureau-text-primary))",
               display: "flex",
               gap: 14,
@@ -374,7 +374,7 @@ export function ImpactBubble({
               style={{
                 flexShrink: 0,
                 width: 20,
-                font: "500 12px/1.5 var(--ff-plex-mono)",
+                fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "12px", lineHeight: "1.5",
                 color: "rgb(var(--bureau-text-muted))",
               }}
             >
@@ -418,7 +418,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          font: "700 8px/1 var(--ff-plex-mono)",
+          fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "8px", lineHeight: "1",
           letterSpacing: "0.5px",
           color: "rgb(var(--bureau-text-secondary))",
         }}
@@ -429,7 +429,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
         <span
           style={{
             display: "block",
-            font: "600 14px/1.2 var(--ff-archivo)",
+            fontFamily: "var(--ff-archivo)", fontWeight: 600, fontSize: "14px", lineHeight: "1.2",
             color: "rgb(var(--bureau-text-primary))",
           }}
         >
@@ -438,7 +438,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
         <span
           style={{
             display: "block",
-            font: "400 11px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "11px", lineHeight: "1",
             letterSpacing: "0.4px",
             color: "rgb(var(--bureau-text-muted))",
             marginTop: 5,
@@ -447,7 +447,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
           PDF
         </span>
       </span>
-      <span style={{ font: "600 13px/1 var(--ff-plex-mono)", color: "rgb(var(--bureau-text-primary))" }}>
+      <span style={{ fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "13px", lineHeight: "1", color: "rgb(var(--bureau-text-primary))" }}>
         ↓
       </span>
     </a>
@@ -503,7 +503,7 @@ export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean })
           display: "flex",
           alignItems: "center",
           gap: 8,
-          font: "600 9px/1 var(--ff-plex-mono)",
+          fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
           letterSpacing: "1.6px",
           textTransform: "uppercase",
           color: "rgb(var(--bureau-text-muted))",
@@ -602,7 +602,7 @@ export function UserBubble({ content }: { content: string }) {
           background: "rgb(var(--bureau-elevated))",
           border: "1px solid rgb(var(--bureau-border))",
           borderRadius: "var(--bureau-radius-btn)",
-          font: "400 15px/1.5 var(--ff-archivo)",
+          fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "15px", lineHeight: "1.5",
           color: "rgb(var(--bureau-text-primary))",
         }}
       >

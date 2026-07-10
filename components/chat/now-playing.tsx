@@ -35,7 +35,7 @@ export function NowPlaying() {
             />
             <span
               style={{
-                font: "600 10px/1 var(--ff-plex-mono)",
+                fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
                 letterSpacing: "2px",
                 textTransform: "uppercase",
                 color: "rgb(var(--bureau-text-secondary))",
@@ -46,7 +46,7 @@ export function NowPlaying() {
           </div>
           <p
             style={{
-              font: "600 19px/1.3 var(--ff-archivo)",
+              fontFamily: "var(--ff-archivo)", fontWeight: 600, fontSize: "19px", lineHeight: "1.3",
               color: "rgb(var(--bureau-text-primary))",
               maxWidth: 420,
               margin: 0,
@@ -56,7 +56,7 @@ export function NowPlaying() {
           </p>
           <p
             style={{
-              font: "400 13px/1 var(--ff-archivo)",
+              fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "13px", lineHeight: "1",
               color: "rgb(var(--bureau-text-muted))",
               marginTop: 12,
               margin: "12px 0 0",
@@ -70,7 +70,7 @@ export function NowPlaying() {
             display: "flex",
             gap: 26,
             alignItems: "center",
-            font: "600 11px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
             letterSpacing: "1.4px",
             color: "rgb(var(--bureau-text-secondary))",
           }}

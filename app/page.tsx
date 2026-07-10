@@ -305,7 +305,7 @@ export default function HomePage() {
               <span
                 className="uppercase"
                 style={{
-                  font: "700 15px/1 var(--ff-plex-mono)",
+                  fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "15px", lineHeight: "1",
                   letterSpacing: "1px",
                   color: "rgb(var(--bureau-text-primary))",
                 }}
@@ -324,7 +324,7 @@ export default function HomePage() {
               <span
                 className="uppercase"
                 style={{
-                  font: "600 10px/1 var(--ff-plex-mono)",
+                  fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
                   letterSpacing: "1.4px",
                   color: "rgb(var(--bureau-text-muted))",
                 }}
@@ -347,7 +347,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="transition-colors"
                   style={{
-                    font: "500 11px/1 var(--ff-plex-mono)",
+                    fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "11px", lineHeight: "1",
                     letterSpacing: "1.4px",
                     color: "rgb(var(--bureau-text-secondary))",
                   }}
@@ -393,7 +393,7 @@ export default function HomePage() {
             </h1>
             <p
               style={{
-                font: "400 16px/1.6 var(--ff-archivo)",
+                fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "16px", lineHeight: "1.6",
                 color: "rgb(var(--bureau-text-secondary))",
                 maxWidth: 520,
               }}
@@ -471,7 +471,7 @@ export default function HomePage() {
           onClick={handleBack}
           className="flex items-center gap-2 transition-colors"
           style={{
-            font: "600 11px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
             letterSpacing: "1.4px",
             textTransform: "uppercase",
             color: "rgb(var(--bureau-text-secondary))",
@@ -490,7 +490,7 @@ export default function HomePage() {
         <div className="flex items-center gap-2">
           <span
             style={{
-              font: "700 12px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "12px", lineHeight: "1",
               letterSpacing: "2px",
               textTransform: "uppercase",
               color: "rgb(var(--bureau-text-primary))",
@@ -506,7 +506,7 @@ export default function HomePage() {
           rel="noopener noreferrer"
           className="transition-colors"
           style={{
-            font: "600 11px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
             letterSpacing: "1.4px",
             textTransform: "uppercase",
             color: "rgb(var(--bureau-text-secondary))",

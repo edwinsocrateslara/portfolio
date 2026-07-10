@@ -64,9 +64,9 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
               top: 12,
               left: 12,
               padding: "4px 7px",
-              font: "600 9px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
               letterSpacing: "0.8px",
-              background: "rgba(19, 19, 19, .72)",
+              background: "rgb(var(--bureau-bg) / 0.72)",
               border: "1px solid rgb(var(--bureau-border))",
               borderRadius: "var(--bureau-radius-chip)",
               color: "rgb(var(--bureau-text-primary))",
@@ -83,7 +83,7 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
               top: 12,
               right: 12,
               padding: "4px 7px",
-              font: "700 8px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "8px", lineHeight: "1",
               letterSpacing: "0.8px",
               textTransform: "uppercase",
               borderRadius: "var(--bureau-radius-chip)",
@@ -99,7 +99,7 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
             position: "absolute",
             bottom: 10,
             right: 12,
-            font: "500 11px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "11px", lineHeight: "1",
             color: "rgb(var(--bureau-text-primary))",
             textShadow: "0 1px 3px rgba(0, 0, 0, .6)",
           }}
@@ -120,7 +120,7 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
       >
         <span
           style={{
-            font: "600 10px/1 var(--ff-plex-mono)",
+            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
             letterSpacing: "1.2px",
             textTransform: "uppercase",
             color: "rgb(var(--bureau-text-secondary))",
@@ -139,7 +139,7 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
         </h3>
         <p
           style={{
-            font: "400 13.5px/1.5 var(--ff-archivo)",
+            fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "13.5px", lineHeight: "1.5",
             color: "rgb(var(--bureau-text-secondary))",
             margin: 0,
             display: "-webkit-box",
@@ -167,7 +167,7 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
                 key={t}
                 style={{
                   padding: "4px 7px",
-                  font: "600 9px/1 var(--ff-plex-mono)",
+                  fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
                   letterSpacing: "0.6px",
                   color: "rgb(var(--bureau-text-muted))",
                   border: "1px solid rgb(var(--bureau-border))",
@@ -180,7 +180,7 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
           </div>
           <span
             style={{
-              font: "600 10px/1 var(--ff-plex-mono)",
+              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
               letterSpacing: "1px",
               color: "rgb(var(--bureau-text-primary))",
               display: "inline-flex",

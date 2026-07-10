@@ -54,7 +54,7 @@ export function ChatInput({
         disabled={isLoading}
         className="w-full resize-none py-5 pl-5 pr-14 leading-[1.5] focus:outline-none transition-shadow"
         style={{
-          font: "400 15px var(--ff-archivo)",
+          fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "15px",
           background: "rgb(var(--bureau-surface))",
           color: "rgb(var(--bureau-text-primary))",
           border: "1px solid rgb(var(--bureau-border))",
@@ -79,7 +79,9 @@ export function ChatInput({
         aria-label={isLoading ? "Sending" : "Send message"}
         className="absolute right-3 bottom-3 flex h-11 items-center justify-center gap-2 px-3 uppercase tracking-[1px]"
         style={{
-          font: `${canSubmit ? 700 : 600} 11px var(--ff-plex-mono)`,
+          fontFamily: "var(--ff-plex-mono)",
+          fontWeight: canSubmit ? 700 : 600,
+          fontSize: "11px",
           background: canSubmit ? "rgb(var(--bureau-accent))" : "transparent",
           border: `1px solid rgb(var(--bureau-${canSubmit ? "accent" : "border"}))`,
           borderRadius: "var(--bureau-radius-btn)",
