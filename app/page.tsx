@@ -14,7 +14,6 @@ import { CONTENT_WIDTH } from "@/lib/layout"
 import {
   buildResponse,
   INTRO_SEQUENCE,
-  type MessageTemplate,
 } from "@/lib/scripted-responses"
 import {
   AssistantBubble,
@@ -22,6 +21,7 @@ import {
   TypingIndicator,
   type StructuredMessage,
 } from "@/components/chat/message-bubbles"
+import { useScriptedStream, generateMessageId } from "@/hooks/use-scripted-stream"
 
 const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 
@@ -37,27 +37,20 @@ function createTransport() {
   return new DefaultChatTransport({ api: "/api/chat" })
 }
 
-// Typing delay ranges (ms)
-const TYPING_DELAY = { min: 400, max: 900 }
-
-function getTypingDelay() {
-  return Math.random() * (TYPING_DELAY.max - TYPING_DELAY.min) + TYPING_DELAY.min
-}
-
-let messageIdCounter = 0
-function generateId() {
-  return `msg-${++messageIdCounter}-${Date.now()}`
-}
-
 export default function HomePage() {
   const [mode, setMode] = useState<Mode>("landing")
   const [input, setInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Structured messages for scripted flow
-  const [structuredMessages, setStructuredMessages] = useState<StructuredMessage[]>([])
-  const [isTyping, setIsTyping] = useState(false)
-  const [pendingMessages, setPendingMessages] = useState<MessageTemplate[]>([])
+  // Structured messages for scripted flow — reveal queue/timing/firstOfStreak
+  // logic lives in useScriptedStream, shared with the case-study review route.
+  const {
+    messages: structuredMessages,
+    isTyping,
+    enqueue: queueScriptedMessages,
+    appendImmediate,
+    reset: resetStream,
+  } = useScriptedStream()
 
   // Track if we've exhausted scripted responses and should use API
   const [useApiMode, setUseApiMode] = useState(false)
@@ -79,44 +72,6 @@ export default function HomePage() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
   }, [structuredMessages, apiMessages, isTyping, mode])
-
-  // Process pending scripted messages with typing delays
-  useEffect(() => {
-    if (pendingMessages.length === 0 || isTyping) return
-
-    const processNext = async () => {
-      setIsTyping(true)
-      await new Promise((r) => setTimeout(r, getTypingDelay()))
-
-      const [next, ...rest] = pendingMessages
-      const newMessage: StructuredMessage = {
-        id: generateId(),
-        role: "assistant",
-        firstOfStreak: structuredMessages.length === 0 ||
-          structuredMessages[structuredMessages.length - 1]?.role === "user",
-        ...next,
-      } as StructuredMessage
-
-      setStructuredMessages((prev) => {
-        // Mark previous messages as not first of streak if needed
-        const updated = [...prev]
-        if (updated.length > 0 && updated[updated.length - 1].role === "assistant") {
-          // This is a continuation, don't show avatar
-          newMessage.firstOfStreak = false
-        }
-        return [...updated, newMessage]
-      })
-      setPendingMessages(rest)
-      setIsTyping(false)
-    }
-
-    processNext()
-  }, [pendingMessages, isTyping, structuredMessages])
-
-  // Queue scripted messages
-  const queueScriptedMessages = useCallback((templates: MessageTemplate[]) => {
-    setPendingMessages(templates)
-  }, [])
 
   // Build conversation history from structured messages for API context
   // Convert all message types to text so API understands the project context
@@ -172,14 +127,14 @@ export default function HomePage() {
 
     // Add user message
     const userMessage: StructuredMessage = {
-      id: generateId(),
+      id: generateMessageId(),
       role: "user",
       kind: "text",
       text: userText,
       firstOfStreak: true,
     } as StructuredMessage & { kind: "text"; text: string }
 
-    setStructuredMessages((prev) => [...prev, userMessage])
+    appendImmediate(userMessage)
 
     // Try to get a scripted response
     const { response, projectSlug } = buildResponse(userText, { currentProjectSlug })
@@ -201,7 +156,7 @@ export default function HomePage() {
         sendMessage({ text: userText })
       }, 0)
     }
-  }, [input, isTyping, isApiLoading, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
+  }, [input, isTyping, isApiLoading, appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
 
   // Handle chip selection
   const handleChipSelect = useCallback((text: string) => {
@@ -209,14 +164,14 @@ export default function HomePage() {
 
     // Add user message
     const userMessage: StructuredMessage = {
-      id: generateId(),
+      id: generateMessageId(),
       role: "user",
       kind: "text",
       text: text,
       firstOfStreak: true,
     } as StructuredMessage & { kind: "text"; text: string }
 
-    setStructuredMessages((prev) => [...prev, userMessage])
+    appendImmediate(userMessage)
 
     // Get scripted response
     const { response, projectSlug } = buildResponse(text, { currentProjectSlug })
@@ -224,20 +179,20 @@ export default function HomePage() {
       queueScriptedMessages(response)
       if (projectSlug) setCurrentProjectSlug(projectSlug)
     }
-  }, [queueScriptedMessages, currentProjectSlug])
+  }, [appendImmediate, queueScriptedMessages, currentProjectSlug])
 
   // Handle followup chip clicks
   const handleFollowupChip = useCallback((chip: { text: string; slug?: string }) => {
     // Add user message
     const userMessage: StructuredMessage = {
-      id: generateId(),
+      id: generateMessageId(),
       role: "user",
       kind: "text",
       text: chip.text,
       firstOfStreak: true,
     } as StructuredMessage & { kind: "text"; text: string }
 
-    setStructuredMessages((prev) => [...prev, userMessage])
+    appendImmediate(userMessage)
 
     // Get scripted response (with optional slug for project-specific)
     const { response, projectSlug } = buildResponse(chip.text, {
@@ -258,7 +213,7 @@ export default function HomePage() {
         sendMessage({ text: chip.text })
       }, 0)
     }
-  }, [queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
+  }, [appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
 
   // Handle project click from grid
   const handleProjectClick = useCallback((slug: string) => {
@@ -276,13 +231,12 @@ export default function HomePage() {
   const handleBack = useCallback(() => {
     setMode("landing")
     setInput("")
-    setStructuredMessages([])
-    setPendingMessages([])
+    resetStream()
     setApiMessages([])
     setUseApiMode(false)
     setApiHistoryCount(0)
     setCurrentProjectSlug(null)
-  }, [setApiMessages])
+  }, [resetStream, setApiMessages])
 
   // Find last assistant message index for followup chip activation
   const lastAssistantIdx = structuredMessages.reduce(
