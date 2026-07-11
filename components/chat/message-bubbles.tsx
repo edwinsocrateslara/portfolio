@@ -6,6 +6,7 @@ import { DOCS, type DocKey } from "@/lib/constants"
 import type { ProofLinks as ProofLinksData } from "@/lib/projects"
 import { ArchitectureSection } from "@/components/case-study/architecture-section"
 import { ProofLinks } from "@/components/case-study/proof-links"
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 // Message types
 export type MessageKind =
@@ -556,12 +557,13 @@ export function AssistantBubble({
   onChipPick?: (chip: { text: string; slug?: string }) => void
   isLastAssistant?: boolean
 }) {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const showAvatar = message.firstOfStreak !== false
   const kind = message.kind || "text"
 
   return (
     <div
-      className="animate-slide-up"
+      className={prefersReducedMotion ? undefined : "animate-slide-up"}
       style={{ display: "flex", gap: 14 }}
     >
       {showAvatar ? <Avatar /> : <span style={{ width: 26, flexShrink: 0 }} />}
@@ -617,9 +619,11 @@ export function AssistantBubble({
 
 // User message bubble
 export function UserBubble({ content }: { content: string }) {
+  const prefersReducedMotion = usePrefersReducedMotion()
+
   return (
     <div
-      className="animate-slide-up"
+      className={prefersReducedMotion ? undefined : "animate-slide-up"}
       style={{ display: "flex", justifyContent: "flex-end" }}
     >
       <div

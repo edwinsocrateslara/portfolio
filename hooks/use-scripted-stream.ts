@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import type { StructuredMessage } from "@/components/chat/message-bubbles"
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 // Distributes Omit over a union so each variant keeps its own extra fields
 // (plain Omit<Union, K> collapses to the intersection of member keys).
@@ -26,13 +27,41 @@ export function generateMessageId() {
 // 400-900ms "typing" pause — the mechanism traditional case studies already
 // use in the live chat. Shared by the chat page and the case-study review
 // route so both stream identically.
+//
+// Under prefers-reduced-motion, delays and entrance animations (the latter
+// handled by AssistantBubble/UserBubble themselves) are skipped entirely —
+// the whole queue is revealed at once, with isTyping never becoming true, so
+// input stays enabled immediately.
 export function useScriptedStream() {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const [messages, setMessages] = useState<StructuredMessage[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const [pending, setPending] = useState<MessageBlock[]>([])
 
   useEffect(() => {
     if (pending.length === 0 || isTyping) return
+
+    if (prefersReducedMotion) {
+      setMessages((prev) => {
+        const updated = [...prev]
+        for (const next of pending) {
+          const newMessage: StructuredMessage = {
+            id: generateMessageId(),
+            role: "assistant",
+            firstOfStreak:
+              updated.length === 0 || updated[updated.length - 1]?.role === "user",
+            ...next,
+          } as StructuredMessage
+          if (updated.length > 0 && updated[updated.length - 1].role === "assistant") {
+            newMessage.firstOfStreak = false
+          }
+          updated.push(newMessage)
+        }
+        return updated
+      })
+      setPending([])
+      return
+    }
 
     const processNext = async () => {
       setIsTyping(true)
@@ -60,7 +89,7 @@ export function useScriptedStream() {
     }
 
     processNext()
-  }, [pending, isTyping, messages])
+  }, [pending, isTyping, messages, prefersReducedMotion])
 
   // Replace the pending queue — matches the traditional flow's existing
   // "replace, don't append" semantics (a new turn always sets a fresh queue).
