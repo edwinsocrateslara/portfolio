@@ -27,16 +27,24 @@ const PROJECTS: SideProject[] = [
     url: "#",
     status: "live",
   },
+  {
+    companies: ["Case study preview"],
+    title: "Vibe-coded case study layout",
+    description:
+      "A second case-study structure for tools and prototypes — engineering decisions instead of design process. Placeholder content, for reviewing the layout.",
+    url: "/case-study/placeholder-vibe-project",
+  },
 ]
 
 function SideProjectCard({ project }: { project: SideProject }) {
   const [hovered, setHovered] = useState(false)
+  const isInternal = project.url.startsWith("/")
 
   return (
     <a
       href={project.url}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={isInternal ? undefined : "_blank"}
+      rel={isInternal ? undefined : "noopener noreferrer"}
       style={{
         display: "block",
         background: "rgb(var(--bureau-surface))",
