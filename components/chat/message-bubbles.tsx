@@ -1,11 +1,14 @@
 "use client"
 
 import Image from "next/image"
+import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { DOCS, type DocKey } from "@/lib/constants"
 import type { ProofLinks as ProofLinksData } from "@/lib/projects"
+import { CONTENT_WIDTH } from "@/lib/layout"
 import { ArchitectureSection } from "@/components/case-study/architecture-section"
 import { ProofLinks } from "@/components/case-study/proof-links"
+import { ImageLightbox } from "@/components/chat/image-lightbox"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 // Message types
@@ -232,6 +235,23 @@ export function ProjectHeaderBubble({
   )
 }
 
+// Shared visual style for a clickable case-study image thumbnail —
+// a real <button> (not a div) so it's keyboard-reachable and
+// Enter/Space-activated by default.
+const IMAGE_TRIGGER_STYLE = {
+  display: "block",
+  width: "100%",
+  margin: 0,
+  padding: 0,
+  border: "1px solid rgb(var(--bureau-border))",
+  background: "rgb(var(--bureau-elevated))",
+  borderRadius: "var(--bureau-radius-card)",
+  cursor: "pointer",
+  position: "relative",
+  overflow: "hidden",
+  aspectRatio: "16 / 9",
+} as const
+
 // Single image bubble
 export function ImageBubble({
   image,
@@ -240,17 +260,17 @@ export function ImageBubble({
   image: { url: string; alt?: string }
   caption?: string
 }) {
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+
   return (
-    <figure style={{ margin: 0, maxWidth: 520 }}>
-      <div
-        style={{
-          overflow: "hidden",
-          aspectRatio: "4 / 3",
-          position: "relative",
-          border: "1px solid rgb(var(--bureau-border))",
-          borderRadius: "var(--bureau-radius-card)",
-          background: "rgb(var(--bureau-elevated))",
-        }}
+    <figure style={{ margin: 0 }}>
+      <button
+        type="button"
+        ref={triggerRef}
+        onClick={() => setLightboxOpen(true)}
+        aria-label={image.alt ? `Open image: ${image.alt}` : "Open image full-screen"}
+        style={IMAGE_TRIGGER_STYLE}
       >
         <Image
           src={image.url}
@@ -258,9 +278,9 @@ export function ImageBubble({
           fill
           className="object-cover"
           style={{ filter: "grayscale(.15)" }}
-          sizes="520px"
+          sizes={`${CONTENT_WIDTH}px`}
         />
-      </div>
+      </button>
       {(caption || image.alt) && (
         <figcaption
           style={{
@@ -273,11 +293,22 @@ export function ImageBubble({
           {caption || image.alt}
         </figcaption>
       )}
+      {lightboxOpen && (
+        <ImageLightbox
+          images={[image]}
+          initialIndex={0}
+          onClose={() => {
+            setLightboxOpen(false)
+            triggerRef.current?.focus()
+          }}
+        />
+      )}
     </figure>
   )
 }
 
-// Row of images
+// Full-width, stacked column of images (was a side-by-side grid — each
+// image now gets the full chat-column width instead of a ~1/3 thumbnail)
 export function ImageRowBubble({
   images,
   caption,
@@ -285,27 +316,22 @@ export function ImageRowBubble({
   images: { url: string; alt?: string }[]
   caption?: string
 }) {
-  const cellSize = images.length === 1 ? "560px" : images.length === 2 ? "276px" : "180px"
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const triggerRefs = useRef<(HTMLButtonElement | null)[]>([])
+
   return (
-    <figure style={{ margin: 0, maxWidth: 560 }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${images.length}, 1fr)`,
-          gap: 14,
-        }}
-      >
+    <figure style={{ margin: 0 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {images.map((img, i) => (
-          <div
+          <button
             key={i}
-            style={{
-              overflow: "hidden",
-              aspectRatio: "4 / 3",
-              position: "relative",
-              border: "1px solid rgb(var(--bureau-border))",
-              borderRadius: "var(--bureau-radius-card)",
-              background: "rgb(var(--bureau-elevated))",
+            type="button"
+            ref={(el) => {
+              triggerRefs.current[i] = el
             }}
+            onClick={() => setLightboxIndex(i)}
+            aria-label={img.alt ? `Open image: ${img.alt}` : `Open image ${i + 1} of ${images.length}`}
+            style={IMAGE_TRIGGER_STYLE}
           >
             <Image
               src={img.url}
@@ -313,9 +339,9 @@ export function ImageRowBubble({
               fill
               className="object-cover"
               style={{ filter: "grayscale(.15)" }}
-              sizes={cellSize}
+              sizes={`${CONTENT_WIDTH}px`}
             />
-          </div>
+          </button>
         ))}
       </div>
       {caption && (
@@ -329,6 +355,17 @@ export function ImageRowBubble({
         >
           {caption}
         </figcaption>
+      )}
+      {lightboxIndex !== null && (
+        <ImageLightbox
+          images={images}
+          initialIndex={lightboxIndex}
+          onClose={() => {
+            const openedFrom = lightboxIndex
+            setLightboxIndex(null)
+            triggerRefs.current[openedFrom]?.focus()
+          }}
+        />
       )}
     </figure>
   )
