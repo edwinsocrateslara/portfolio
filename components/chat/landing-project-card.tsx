@@ -28,12 +28,12 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
         flexDirection: "column",
       }}
     >
-      {/* Image area — 16:11 aspect, grayscale(.15) → grayscale(0) + border-strong + lift on hover */}
+      {/* Image area — 1:1 aspect, grayscale(.15) → grayscale(0) + border-strong + lift on hover */}
       <div
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: "16 / 11",
+          aspectRatio: "1 / 1",
           overflow: "hidden",
           background: "rgb(var(--bureau-elevated))",
           border: `1px solid rgb(var(--bureau-${hover ? "border-strong" : "border"}))`,

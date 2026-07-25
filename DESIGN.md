@@ -95,9 +95,10 @@ without color.
 
 - **Nav** — mono 11 uppercase, `text-secondary`; hover → `text-primary` +
   1px underline. Availability dot `text-primary`, 6px.
-- **Card** — `surface` fill or none, 1px `border`, radius 2. Image 16:11,
-  `grayscale(.15)`. Index bottom-right, mono. Hover: border →
-  `border-strong`, image `grayscale(0)`, lift 1px.
+- **Card** — `surface` fill or none, 1px `border`, radius 2. Image **1:1**
+  (matches the source preview images — all 7 are square), `grayscale(.15)`.
+  Index bottom-right, mono. Hover: border → `border-strong`, image
+  `grayscale(0)`, lift 1px.
 - **Chip / tag** — 1px `border`, `surface`, radius 2. Tag text `text-muted`
   mono 9; prompt-chip `text-secondary` UI 13 with a mono `→` prefix.
 - **Badge** — default = 1px `border-strong` + mono `text-secondary`.
@@ -116,6 +117,14 @@ without color.
 Full-saturation photos are the only color on the page. Apply
 `grayscale(.15)` so they sit inside the achromatic system while staying
 photographic; drop to `grayscale(0)` on hover.
+
+Two fixed aspect ratios, set by the actual asset dimensions rather than a
+layout choice — do not crop assets to a third ratio:
+
+- **Card / preview imagery** (`previewImage`, used in the project grid) —
+  **1:1**. All 7 source previews are square (2048×2048, one at 2160×2160).
+- **In-case-study detail imagery** (`images[]`) — **16:9**. All 25 source
+  detail images are 3840×2160.
 
 ## Do
 
