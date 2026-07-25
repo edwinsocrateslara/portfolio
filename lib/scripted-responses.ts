@@ -52,18 +52,17 @@ function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
     })
   }
 
-  // Add images (first 2-3)
+  // Add images (all of them)
   if (p.images && p.images.length > 0) {
-    const imagesToShow = p.images.slice(0, Math.min(3, p.images.length))
-    if (imagesToShow.length === 1) {
+    if (p.images.length === 1) {
       stream.push({
         kind: "image",
-        image: { url: imagesToShow[0].url, alt: imagesToShow[0].alt },
+        image: { url: p.images[0].url, alt: p.images[0].alt },
       })
     } else {
       stream.push({
         kind: "image-row",
-        images: imagesToShow.map((img) => ({ url: img.url, alt: img.alt })),
+        images: p.images.map((img) => ({ url: img.url, alt: img.alt })),
       })
     }
   }

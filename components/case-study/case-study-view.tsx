@@ -27,11 +27,10 @@ const FOLLOWUP_CHIPS = [
 
 function ImagesSection({ images }: { images: Project["images"] }) {
   if (!images || images.length === 0) return null
-  const shown = images.slice(0, Math.min(3, images.length))
-  if (shown.length === 1) {
-    return <ImageBubble image={{ url: shown[0].url, alt: shown[0].alt }} />
+  if (images.length === 1) {
+    return <ImageBubble image={{ url: images[0].url, alt: images[0].alt }} />
   }
-  return <ImageRowBubble images={shown.map((img) => ({ url: img.url, alt: img.alt }))} />
+  return <ImageRowBubble images={images.map((img) => ({ url: img.url, alt: img.alt }))} />
 }
 
 function TraditionalSections({ project }: { project: Project }) {
@@ -80,13 +79,12 @@ function buildVibeCodedBlocks(project: Project): MessageBlock[] {
   }
 
   const images = project.images || []
-  const shownImages = images.slice(0, Math.min(3, images.length))
-  if (shownImages.length === 1) {
-    blocks.push({ kind: "image", image: { url: shownImages[0].url, alt: shownImages[0].alt } })
-  } else if (shownImages.length > 1) {
+  if (images.length === 1) {
+    blocks.push({ kind: "image", image: { url: images[0].url, alt: images[0].alt } })
+  } else if (images.length > 1) {
     blocks.push({
       kind: "image-row",
-      images: shownImages.map((img) => ({ url: img.url, alt: img.alt })),
+      images: images.map((img) => ({ url: img.url, alt: img.alt })),
     })
   }
 
