@@ -10,7 +10,7 @@ He has a track record across consumer fintech, live commerce, automotive, e-comm
 
 He is currently the lead product designer (contract) at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
 
-He is based in Toronto, Ontario, Canada. He is bilingual: English and Spanish.
+He is based in Toronto, Ontario, Canada.
 
 ## Contact
 
@@ -19,7 +19,7 @@ He is based in Toronto, Ontario, Canada. He is bilingual: English and Spanish.
 
 ## Tools & Methodologies
 
-**Tools:** Figma, Aura Build, Claude Code, Lovable, OpenAI API, v0, GitHub, Shadcn, Maze, UserTesting, ProtoPie, Marvel App, Lottie Lab, Magic Animator, Jitter, Miro
+**Tools:** Figma, Aura Build, Claude Code, Claude Design, Lovable, OpenAI API, Anthropic API, v0, GitHub, Shadcn, Supabase, Vercel, Maze, UserTesting, Hotjar, Useberry, Lottie Lab, Magic Animator, Jitter, Miro
 
 **Methodologies:** Design Thinking, Information Architecture, Design Systems, User Research, Prototyping, A/B Testing, Accessibility, Agile/Scrum, Product Strategy, UX Strategy, Conversational Design, Agentic Workflow Design
 
@@ -79,19 +79,19 @@ Backbase is a digital banking platform used by financial institutions across Nor
 ### Meridian Credit Union — Mobile Banking Redesign
 - **Slug:** retail-banking
 - **Status:** Live
-- **Role:** Lead Product Designer
+- **Role:** Senior Product Designer
 
-Meridian serves 370,000+ members and manages $26B+ in assets. Edwin led the complete end-to-end redesign of their mobile banking app.
+Meridian serves 370,000+ customers and manages $26B+ in assets. Edwin led the complete end-to-end redesign of their mobile banking app.
 
-**Challenge:** App Store reviews were damaging. Users cited poor UX, a dated interface, and missing features — specifically investing and credit/borrowing. Meridian risked losing members to digital-first competitors.
+**Challenge:** User reviews for the Meridian app cited poor user experience, a dated UI, and a lack of key features — specifically investing and borrowing/credit cards. Without a major redesign, Meridian would lose customers to competitors with better digital experiences.
 
 **What Edwin did:** Redesigned the full app and created a new design system. He pushed for two additions that stakeholders initially resisted: a price-matching feature and animations on positive financial actions like deposits and bill payments.
 
-Stakeholders wanted to preserve the conservative brand aesthetic. Edwin's read was that the target demographic — younger, price-conscious members — needed something that felt modern and engaging to stay competitive with fintech challengers.
+Stakeholders wanted to keep the conservative look and feel of the old app, but that ran the risk of losing customers due to a poor app experience.
 
-**Why price-matching:** A tangible money-saving tool gives users a reason to engage with the app beyond basic transactions.
+**Why price-matching:** Price-matching gave younger, price-conscious customers a desirable money-saving tool and reason to engage with the app beyond basic transactions.
 
-**Why animations:** Moments of delight on positive financial actions (a deposit, a bill payment) create emotional connection. For users who grew up with Cash App and Robinhood, a static confirmation screen is a missed opportunity.
+**Why animations:** Animations created an engaging experience tailored for the target demographic.
 
 **Outcome:** Overwhelming positive App Store reviews within the first month of launch. The design was adopted across Meridian's entire ecosystem.
 
@@ -102,7 +102,7 @@ Stakeholders wanted to preserve the conservative brand aesthetic. Edwin's read w
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-Complex NTWRK is a live commerce and limited-drop platform targeting sneaker and streetwear culture.
+Complex NTWRK is a live commerce and limited-drop platform whose audience is music fans.
 
 **Challenge:** Users were window-shopping but not buying. Engagement was low and average watch time was short. The platform needed urgency.
 
@@ -123,7 +123,7 @@ This was a high-stakes bet. The safe play was static auction pages per product. 
 ### Volkswagen — Cross-Brand Car Comparison Tool
 - **Slug:** car-comparison
 - **Status:** Live
-- **Role:** Lead Product Designer
+- **Role:** Senior Product Designer
 
 **Challenge:** VW had no comparison tool, and car comparison is a standard part of the purchase process. VW wanted to meet buyer expectations while moving prospects toward a dealership or online build — but initially wanted VW-only vehicles in the tool.
 
@@ -134,9 +134,9 @@ He proposed including other brands, but designed the entire experience to favor 
 - VW-specific marketing content (videos of safety tech like brake assist) is integrated throughout
 - Visual call-outs consistently highlight VW advantages
 
-**The result:** A tool that feels fair to users — because it is — while systematically building the case for VW at every step.
+**The result:** An experience that gives users the utility they expected while upselling VW at every touchpoint.
 
-**Outcome:** Serves 112,000+ users monthly across Canada.
+**Outcome:** Serves 112,000+ customers across Canada on a monthly basis.
 
 ---
 
@@ -145,11 +145,11 @@ He proposed including other brands, but designed the entire experience to favor 
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-After Complex acquired NTWRK, two distinct platforms needed to merge: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops.
+After NTWRK acquired Complex, two distinct platforms needed to merge: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops.
 
-**Challenge:** Complex users came for editorial content — music, culture, news — not shopping. A traditional homepage-to-shop funnel would have been invisible to the core audience. The risk was launching a shop that existing Complex users never discovered.
+**Challenge:** Complex users came for media content, not shopping. A traditional homepage-to-shop funnel would have been invisible to the core audience. The risk was launching a shop that existing Complex users never discovered.
 
-**What Edwin did:** Mapped the information architecture across both platforms, then designed a mobile-first integration strategy. Because Complex's audience lives primarily on social media rather than on Complex.com's homepage, he designed product pages built to be shared. When users tap through from Instagram or TikTok, they land on pages that feel native to mobile — seamless purchase path, no friction.
+**What Edwin did:** Mapped the information architecture across both platforms, then designed a mobile-first integration strategy. Because Complex's audience lives primarily on social media rather than on Complex.com's homepage, he designed product pages built to be shared. When users tap through from Instagram or TikTok, they land on pages that feel native to mobile, giving them a seamless shopping experience.
 
 **Outcome:** Launched with 50+ brands on day one. Currently receives approximately 1M monthly users. Supporting $100M+ in revenue.
 
@@ -179,13 +179,13 @@ He could've built something fully custom, but unfamiliar workflows create fear a
 - **Status:** Live (App Store)
 - **Role:** Lead Product Designer
 
-**Challenge:** First-time crypto investors face a brutal learning curve — blockchain concepts, candlestick charts, data interpretation, portfolio management — all at once. Traditional platforms overwhelm beginners with complexity.
+**Challenge:** First-time crypto investors have to learn investing basics, blockchain concepts, candlestick charts, and data interpretation all at once. Traditional investing platforms overwhelm beginners with complex interfaces and workflows.
 
-**What Edwin did:** Designed the MVP for a conversational AI investment advisor. Rather than a charts-and-data dashboard, the primary interface is a chat agent that guides users through decisions. He collaborated closely with the developer to select the backend: Firebase for infrastructure, CoinMarketCap API for real-time data.
+**What Edwin did:** He helped build and release the MVP for a crypto investing platform, designing a chat-based interface for users to receive investment advice. He worked closely with a developer on exploring and selecting a technical back-end: Firebase to build and manage the app, and the CoinMarketCap API to display real-time cryptocurrency information.
 
-**The risk:** AI giving financial advice is inherently sensitive. The conversational format was designed specifically to build trust incrementally — start with education, earn the right to give advice.
+**The risk:** A regular crypto app wouldn't differentiate Coinley in the beginner market they were targeting. But introducing AI agents for investment advice was risky, as users might not trust AI to guide financial decisions. First-time investors needed a tutor to guide them through the process, so Edwin designed the AI as a conversational agent to make investing feel accessible rather than intimidating.
 
-**Outcome:** Shipped and live on the App Store.
+**Outcome:** Released on the App Store.
 
 ---
 
@@ -217,20 +217,11 @@ Case study coming soon.
 
 ### Background
 
-Edwin has 10+ years of product design experience spanning consumer fintech, live commerce, automotive, e-commerce, B2B SaaS, and AI products. He has consistently worked as the lead or sole designer on products with real business stakes — not supporting roles on large teams.
-
-### What He's Looking For
-
-Edwin is open to:
-- **Lead or Senior Product Designer** roles at companies building with AI — either AI-native products or teams using AI to accelerate product development
-- **Freelance or contract** engagements for product design, prototyping, or design systems work
-- Companies where design is close to the product and engineering — not purely execution-layer
-
-He is less interested in large enterprise design org roles where output is primarily documentation or handoff artifacts.
+Edwin has 10+ years of product design experience spanning consumer fintech, live commerce, automotive, e-commerce, and AI products.
 
 ### Availability
 
-Currently employed as Lead Product Designer at FutureFit AI. Open to conversations about the right opportunity. Best reached by email.
+Currently Lead Product Designer at FutureFit AI. Best reached by email.
 
 ### Contact
 

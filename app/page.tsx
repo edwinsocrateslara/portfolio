@@ -178,8 +178,19 @@ export default function HomePage() {
     if (response) {
       queueScriptedMessages(response)
       if (projectSlug) setCurrentProjectSlug(projectSlug)
+    } else {
+      // Fall through to the API (which refuses anything not in its reference
+      // document) rather than leaving the chip silently unanswered — not
+      // every chip still has a scripted response behind it.
+      setUseApiMode(true)
+      const history = buildApiHistory()
+      setApiHistoryCount(history.length + 1)
+      setApiMessages(history)
+      setTimeout(() => {
+        sendMessage({ text })
+      }, 0)
     }
-  }, [appendImmediate, queueScriptedMessages, currentProjectSlug])
+  }, [appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
 
   // Handle followup chip clicks
   const handleFollowupChip = useCallback((chip: { text: string; slug?: string }) => {

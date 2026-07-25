@@ -1,0 +1,29 @@
+=============================================================
+PLACEHOLDER — NOT THE VERBATIM RESUME
+=============================================================
+The verbatim plain-text resume has not been pasted yet. This file
+is a slot-holder so the source layout is complete; it must be
+REPLACED WHOLESALE with the real resume text, not appended to.
+
+Do not treat anything below as resume prose. It is a record of the
+resume facts Edwin stated directly when commissioning the source-file
+migration, kept here only so the changes that depend on them remain
+traceable until the real file lands.
+
+FACTS STATED BY EDWIN (not resume text):
+
+Role titles
+  Senior Product Designer  — Meridian, Super.com, Backbase, and the
+                             contracting period (including Volkswagen)
+  Lead Product Designer    — Complex NTWRK, FutureFit AI
+  (Coinley AI does not appear on the resume at all.)
+
+Dates
+  FutureFit AI     Oct 2025 – present
+  Complex NTWRK    Apr 2022 – Oct 2025   (back to back, no gap)
+  Volkswagen       within the contracting period, Dec 2015 – May 2019
+
+Other
+  NTWRK acquired Complex (not the reverse).
+  Tools present on the resume that were missing from edwin-context.md:
+    Claude Design, Supabase, Vercel, Anthropic API, Hotjar, Useberry

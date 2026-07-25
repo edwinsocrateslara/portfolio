@@ -173,11 +173,11 @@ export function buildResponse(
         },
         {
           kind: "text",
-          text: "**Most recent:** I'm currently at **FutureFit AI**, designing an AI career coach for job-seekers. Before that, I shipped an AI crypto investing app at **Coinley AI** that's live on the App Store.",
+          text: "**Most recent:** I'm currently at **FutureFit AI**, designing an AI career coach for job-seekers. Before that, I was at **Complex NTWRK**. I also helped build and release the MVP for **Coinley AI**, a crypto investing platform on the App Store.",
         },
         {
           kind: "text",
-          text: "**Fintech:** Led the end-to-end redesign of **Meridian Credit Union's** mobile apps — 370,000+ members, overwhelmingly positive App Store reviews after launch.",
+          text: "**Fintech:** Led the end-to-end redesign of **Meridian Credit Union's** mobile apps — 370,000+ customers, overwhelmingly positive app store reviews after launch.",
         },
         {
           kind: "text",
@@ -185,7 +185,7 @@ export function buildResponse(
         },
         {
           kind: "text",
-          text: "**Automotive:** Built a cross-brand car comparison tool for **Volkswagen** that serves 112,000+ monthly users across Canada.",
+          text: "**Automotive:** Built a cross-brand car comparison tool for **Volkswagen** that serves 112,000+ customers across Canada on a monthly basis.",
         },
         {
           kind: "followups",
@@ -201,34 +201,11 @@ export function buildResponse(
     }
   }
 
-  // AI design philosophy
-  if (
-    t.includes("design with ai") ||
-    t.includes("ai design") ||
-    t.includes("design ai")
-  ) {
-    return {
-      response: [
-        {
-          kind: "text",
-          text: "Short version: AI-first design isn't about hiding the model behind a dashboard. It's about making the AI feel genuinely invested in what the user's trying to do.",
-        },
-        {
-          kind: "text",
-          text: "Three moves I reach for —\n\n**1.** Design the AI as a coach or collaborator, not a tool. Chat-first flows let it ask a follow-up instead of forcing the user to interpret a chart.\n\n**2.** Make the AI's reasoning visible at the right fidelity — enough to build trust, not so much that it overwhelms.\n\n**3.** Build a design system AI tools (v0, Lovable, Claude Code) can consume, so prompts produce your design language, not theirs.",
-        },
-        {
-          kind: "followups",
-          text: "That's the shape of the work at FutureFit and Coinley AI. Want to see either one?",
-          chips: [
-            { text: "Show me FutureFit AI", slug: "ai-workforce-development" },
-            { text: "Show me Coinley AI", slug: "ai-investing" },
-          ],
-        },
-      ],
-      projectSlug: null,
-    }
-  }
+  // NOTE: there is deliberately no scripted answer for "how do you design
+  // with AI" / design-process questions. The previous one asserted a design
+  // philosophy with no basis in any source file. Until Edwin writes it in
+  // lib/sources/voice.md, these fall through to the API, whose system prompt
+  // refuses anything not in the reference document.
 
   // Resume
   if (t.includes("resume") || t.includes("résumé") || t.includes("cv")) {
@@ -236,7 +213,7 @@ export function buildResponse(
       response: [
         {
           kind: "text",
-          text: "My 2026 résumé is a one-pager — last ~6 years across Complex NTWRK, Meridian, Volkswagen, Coinley AI, and now FutureFit AI.",
+          text: "My 2026 résumé is a one-pager — Complex NTWRK, Super.com, Backbase, Meridian, the contracting years including Volkswagen, and now FutureFit AI.",
         },
         { kind: "doc-link", docKey: "resume" },
         {
@@ -252,25 +229,23 @@ export function buildResponse(
     }
   }
 
-  // Stakeholder pushback
+  // Stakeholder pushback — only the two documented instances. The framing
+  // that used to wrap them ("a risk the stakeholder hasn't articulated yet",
+  // the closing pattern statement) was invented and has been removed; any
+  // generalised philosophy belongs in lib/sources/voice.md first.
   if (t.includes("stakeholder") || t.includes("pushback")) {
     return {
       response: [
         {
           kind: "text",
-          text: 'I try to reframe pushback as "a risk the stakeholder hasn\'t articulated yet."',
+          text: "At **Meridian**, stakeholders wanted to keep the conservative look and feel of the old app. I pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
         },
         {
           kind: "text",
-          text: "At **Meridian**, leadership wanted to preserve the conservative look of the old app — the real fear was alienating existing members. I kept familiar navigation patterns while pushing for things the target demographic actually wanted: price-matching, delightful micro-interactions.",
-        },
-        {
-          kind: "text",
-          text: 'At **VW**, the brief said "compare only VW vehicles." I pushed back — that would be less useful than what competitors offered. We landed on cross-brand comparison with VW advantages built into the structure.',
+          text: 'At **VW**, stakeholders wanted a tool that only compared Volkswagen vehicles against each other. I pushed to include other brands — restricting it to VW-only would have made the tool less useful for potential buyers — but designed the comparison experience to favour and upsell VW throughout.',
         },
         {
           kind: "followups",
-          text: "Pattern: find the risk underneath the objection, then design something that answers both.",
           chips: [
             { text: "Show me the Meridian redesign", slug: "retail-banking" },
             { text: "Show me the VW comparison tool", slug: "car-comparison" },
@@ -291,7 +266,7 @@ export function buildResponse(
         },
         {
           kind: "text",
-          text: "The short version: generative UI tools (v0, Lovable, Claude Code, Cursor) are only as good as the primitives they can reach for. Figma-first systems that ship as screenshots let AI-produced UI drift — wrong spacing, wrong tokens, invented components.",
+          text: "The short version: generative UI tools (v0, Lovable, Claude Code) are only as good as the primitives they can reach for. Figma-first systems that ship as screenshots let AI-produced UI drift — wrong spacing, wrong tokens, invented components.",
         },
         {
           kind: "followups",
@@ -309,7 +284,7 @@ export function buildResponse(
       response: [
         {
           kind: "text",
-          text: "Toronto — remote-first across Canadian and US teams. Available for new work now.",
+          text: "Toronto, Ontario, Canada.",
         },
       ],
       projectSlug: null,

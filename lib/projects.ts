@@ -14,6 +14,11 @@ export interface Project {
   client: string
   projectTitle: string
   tagline: string
+  // `role` is sourced from lib/sources/resume.txt, NOT framer-export.json —
+  // a deliberate exception to the otherwise-strict 1:1 mapping. The Framer
+  // export says "Lead product designer" on every row, including Meridian and
+  // Volkswagen, where the résumé (and LinkedIn) say Senior. The résumé wins.
+  // Do not "correct" these back to the export in a future audit.
   role: string
   status: "live" | "wip"
   tags: string[]
@@ -80,7 +85,7 @@ export const projects: Project[] = [
     projectTitle: "Mobile Banking Redesign",
     tagline:
       "I led the end-to-end redesign of Meridian Credit Union apps which now serves over 370,000 customers and supports over $26 billion in managed assets.",
-    role: "Lead Product Designer",
+    role: "Senior Product Designer",
     status: "live",
     tags: ["mobile", "fintech", "redesign", "design systems"],
     previewImage: {
@@ -216,7 +221,7 @@ export const projects: Project[] = [
     projectTitle: "Cross-Brand Car Comparison Tool",
     tagline:
       "I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.",
-    role: "Lead Product Designer",
+    role: "Senior Product Designer",
     status: "live",
     tags: ["automotive", "web", "e-commerce", "conversion"],
     previewImage: {
