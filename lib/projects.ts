@@ -49,297 +49,294 @@ export const projects: Project[] = [
     client: "FutureFit AI",
     projectTitle: "AI Workforce Development Platform",
     tagline:
-      "Building a B2B and B2G AI-powered workforce development platform with an AI coach that helps users navigate job search and career development.",
+      "I'm building a business-to-business and business-to-government AI-powered workforce development platform, featuring an AI coach that will assist users navigate the job search process and provide career coaching.",
     role: "Lead Product Designer",
     status: "wip",
     tags: ["AI", "design systems", "workforce", "B2B"],
     previewImage: {
-      url: "https://framerusercontent.com/images/oYR8CP8kVduq6F5uyfOKbfqNM.png",
-      alt: "FutureFit AI platform preview",
+      url: "/framer/ai-workforce-development/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/1LIXcNkshk927udC5loCF9CgQ.png",
-        alt: "FutureFit AI interface",
+        url: "/framer/ai-workforce-development/image-1.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/gFk0tf92bDnitqHsUHdRpSGx0D4.png",
-        alt: "FutureFit AI design details",
+        url: "/framer/ai-workforce-development/image-2.png",
+        alt: "", // TODO: alt text
       },
     ],
-    challenge:
-      "Job-seekers, career-changers, and fresh graduates face overwhelming and fragmented career support. Existing tools are passive — they don't coach, follow up, or adapt to individual users. The platform needed to make AI feel like a real career ally, not just another tool.",
-    impacts: ["Work in progress — case study coming soon."],
+    // Framer's Formatted Text 3 is empty ("<p><br></p>") and Formatted Text 2
+    // has no "What was at stake" / "Why I made this decision" clauses for
+    // this row — no challenge/atStake/decision content exists in the export.
+    impacts: ["work in progress; coming soon."],
     roleDescription:
-      "Conducting user research to uncover the specific pain points of new job-seekers, career-changers, and recent graduates. Designing the AI coach experience and deploying it to clients. Building an AI-compatible design system using design tokens and Shadcn for use in tools like v0, Lovable, and Claude Code.",
-    atStake:
-      "If the AI coach feels generic or robotic, users won't trust it with something as high-stakes as their job search. The design had to make the AI feel genuinely invested in the user's success.",
-    decision:
-      "Designing the AI as a conversational coach — not a dashboard or checklist tool — so that guidance feels personal and responsive rather than automated.",
+      "Lead product designer.\n\nCurrent focus:\n- conducting user research to uncover issues faced by new job-seekers, individuals undergoing career transitions, and fresh grads;\n- understanding how AI can coach individuals to obtain better outcomes in cold outreaches; improved resumes; better accountability, etc.\n- creating and designing the AI coach and deploying to clients;\n- creating an AI-compatible design system using design tokens and Shadcn, for use in AI development tools, such as V0, Lovable, and Claude Code.",
   },
   {
     slug: "retail-banking",
-    client: "Meridian Credit Union",
+    client: "Meridian",
     projectTitle: "Mobile Banking Redesign",
     tagline:
-      "End-to-end redesign of the Meridian Credit Union mobile apps, serving 370,000+ members and supporting $26B+ in managed assets.",
+      "I led the end-to-end redesign of Meridian Credit Union apps which now serves over 370,000 customers and supports over $26 billion in managed assets.",
     role: "Lead Product Designer",
     status: "live",
     tags: ["mobile", "fintech", "redesign", "design systems"],
     previewImage: {
-      url: "https://framerusercontent.com/images/mhEG6U9Z8HY3ZQ4WVBA4xUdG4.png",
-      alt: "Meridian mobile app redesign preview",
+      url: "/framer/retail-banking/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/YecS0VRFYPpdSQ2wqURpQYkJM.jpg",
-        alt: "Meridian app screens",
+        url: "/framer/retail-banking/image-1.jpg",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/i5PtoaEcvLycHUYHql4mLsvLaMU.jpg",
-        alt: "Meridian design system components",
+        url: "/framer/retail-banking/image-2.jpg",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/QCOP7oFpLRKH3itSc2K6qqwYfIA.jpg",
-        alt: "Meridian app feature screens",
+        url: "/framer/retail-banking/image-3.jpg",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/z8hHU9MYLNv4kSSXQhjE1Ee4cE.jpg",
-        alt: "Meridian animated transaction states",
+        url: "/framer/retail-banking/image-4.jpg",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/mymAT7v0S22d7npoKsJ8WVCNdqo.jpg",
-        alt: "Meridian price-matching feature",
+        url: "/framer/retail-banking/image-5.jpg",
+        alt: "", // TODO: alt text
       },
     ],
     challenge:
-      "App Store reviews were damaging. Users cited poor UX, a dated UI, and missing key features — specifically investing and borrowing/credit cards. Without a major redesign, Meridian risked losing members to digital-first competitors who offered a more modern experience.",
+      "Users reviews for the Meridian app cited poor user experience, and UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.",
     impacts: [
-      "Within the first month of launch, the redesigned app received overwhelming positive user reviews in the App Store.",
+      "Within the first month of launch, the redesigned app received overwhelming positive user reviews in the app store.",
       "Meridian Credit Union adopted the new design across its entire ecosystem.",
     ],
     roleDescription:
-      "Lead product designer. Created a new design system and pushed for two additions that stakeholders initially resisted: a price-matching feature and animations on positive actions like deposits and bill payments.",
+      "Lead product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
     atStake:
-      "Stakeholders wanted to preserve the conservative look and feel of the old app. The risk was a redesign that felt safe internally but failed to resonate with the target demographic — younger, price-conscious members who had modern fintech alternatives.",
+      "Stakeholders wanted to keep the conservative look and feel of the old app, but we ran the risk of losing users due to a poor app experience.",
     decision:
-      "Price-matching gave users a tangible money-saving tool and a reason to engage beyond basic transactions. Animations on positive financial actions (deposits, bill payments) created moments of delight that match what the target demographic expects from apps like Cash App and Robinhood. Both decisions were about making the app feel worth using — not just functional.",
+      "Price-matching gave younger, price-conscious users a desirable money-saving tool and reason to engage with the app beyond basic transactions. Animations created an engaging experience tailored for our target demographic.",
   },
   {
     slug: "ai-investing",
     client: "Coinley AI",
     projectTitle: "AI Crypto Investing App",
     tagline:
-      "Designed and shipped the MVP for a conversational AI crypto investing platform, available on the App Store.",
+      "I helped build and release the MVP for a crypto investing platform on the App Store.",
     role: "Lead Product Designer",
     status: "live",
     tags: ["AI", "mobile", "fintech", "MVP", "crypto"],
     previewImage: {
-      url: "https://framerusercontent.com/images/U41M5uD5R3UnCrJjmw2lGN9sdM.png",
-      alt: "Coinley AI app preview",
+      url: "/framer/ai-investing/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/Q7XxfF6VboWSsqsuR4bZ3F8drfY.png",
-        alt: "Coinley AI chat interface",
+        url: "/framer/ai-investing/image-1.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/jOsgkBzoP4BwDlrfP011Fe9YTmM.png",
-        alt: "Coinley AI investment screens",
+        url: "/framer/ai-investing/image-2.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/qkzbZaXCQFF87pQmjIfdW1g6wA.png",
-        alt: "Coinley AI portfolio view",
+        url: "/framer/ai-investing/image-3.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/8vqodEjPL12T54sZP7Z4QAVM.png",
-        alt: "Coinley AI market data view",
+        url: "/framer/ai-investing/image-4.png",
+        alt: "", // TODO: alt text
       },
     ],
     challenge:
-      "Traditional investing platforms overwhelm beginners with complex interfaces. First-time crypto investors have to learn blockchain concepts, candlestick charts, data interpretation, and portfolio management all at once. The interface itself becomes a barrier.",
-    impacts: [
-      "Shipped and live on the App Store as a fully functional MVP.",
-      "Integrated Firebase for backend and CoinMarketCap API for real-time cryptocurrency data.",
-    ],
+      "Traditional investing platforms overwhelm beginners with complex interfaces and workflows. We wanted to make investing accessible through conversational AI.",
+    // Framer's Formatted Text 2 header here is "KEY LEARNINGS", not "KEY
+    // IMPACTS" — per the settled mapping, learnings content isn't relabeled
+    // into impacts. No impacts field is populated for this row.
     roleDescription:
-      "Lead Product Designer. Designed a chat-based interface where an AI agent guides users through investment decisions. Collaborated closely with the developer to evaluate and select the technical backend — Firebase for infrastructure and CoinMarketCap API for real-time data.",
+      "Lead Product Designer. I designed a chat-based interface for users to receive investment advice.",
     atStake:
-      "A standard crypto app wouldn't differentiate Coinley in the beginner market. But introducing AI for investment advice carried real trust risk — if users don't trust the AI, they won't act on its guidance, especially with financial decisions.",
+      "A regular crypto app wouldn't differentiate Coinley in the beginner market they were targeting. But introducing AI agents for investment advice was risky as users might not trust AI to guide financial decisions.",
     decision:
-      "Designed the AI as a conversational agent rather than a dashboard tool. The goal was to make investing feel like getting advice from a knowledgeable friend — something that builds trust incrementally through conversation rather than asking users to interpret charts immediately.",
+      "First-time crypto investors have to learn investing basics, blockchain concepts, candlestick charts, and data interpretation all at once. They needed a tutor to guide them through the process. I designed the AI as a conversational agent to make investing feel accessible rather than intimidating.",
   },
   {
     slug: "live-selling",
     client: "Complex NTWRK",
     projectTitle: "Live Selling & Auction Experience",
-    tagline:
-      "End-to-end design of a live-selling and auction feature that became the platform's primary revenue driver.",
+    tagline: "I led the end-to-end design of a live-selling and auction experience.",
     role: "Lead Product Designer",
     status: "live",
     tags: ["live commerce", "mobile", "real-time", "e-commerce"],
     previewImage: {
-      url: "https://framerusercontent.com/images/MnqWnCukRKj1V1uHPomORtlxmk.png",
-      alt: "Complex NTWRK live selling experience preview",
+      url: "/framer/live-selling/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/fl7miqI4kLtozmVX8pjcZscmk0E.png",
-        alt: "Complex NTWRK live auction interface",
+        url: "/framer/live-selling/image-1.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/3WXpM3rekP9FMTv7oxpqzZV3SA.png",
-        alt: "Complex NTWRK bid and countdown UI",
+        url: "/framer/live-selling/image-2.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/YRNFxAkIMXzcZA9As7GdgtD6T14.png",
-        alt: "Complex NTWRK live chat integration",
+        url: "/framer/live-selling/image-3.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/xHFeTq4jKi2Yee9YSvSAHBFYTE.png",
-        alt: "Complex NTWRK product details during live show",
+        url: "/framer/live-selling/image-4.png",
+        alt: "", // TODO: alt text
       },
     ],
     challenge:
-      "Users were window-shopping but not buying. Engagement was low and average watch time was short. The platform needed a mechanism that would create urgency and convert passive viewers into active buyers.",
+      "Users were window-shopping but not buying. Engagement was low and watch-time was short. We needed to create a feature that would increase user engagement and revenue on the platform.",
     impacts: [
-      "Auctions made up 63% of revenue within the first year, with 23% quarterly growth.",
-      "2,269+ auction shows conducted, featuring 59,000+ items.",
-      "172% increase in chat messages per show.",
-      "5-minute increase in average watch time.",
+      "Within its first year of launch: auctions made up 63% of revenue, with a quarterly growth rate of 23%",
+      "over 2,269+ auction shows conducted, 59K+ items featured",
+      "172% increase in chat messages per show",
+      "5 minute increase in average watch time.",
     ],
     roleDescription:
-      "Lead product designer. Designed a net-new real-time auction/live-selling interface — a single mobile screen combining live chat, bid updates, countdown timers, and dynamically updated product details as sellers changed items mid-show.",
+      "Lead product designer. I designed a real-time auction/live-selling interface combining live-chat, bid updates, countdown timers and product details into a single mobile screen.",
     atStake:
-      "The interface had to surface a lot of real-time information in a very small space. The safe play was static auction pages per product. This was a net-new product category for the company — if the UI confused users during a live show, the launch would fail publicly.",
+      "The interface required providing a lot of real-time information in a small space. The safe approach would have been to create static auction pages for each product. This was a net-new product for the company and if the UI failed or confused users during live shows, the launch would fail.",
     decision:
-      "Live selling and auctions work because of urgency — buyers need to react in 30-60 second windows. A static interface would mute the energy of the format entirely. The bet was that a dynamic, multi-signal UI matched the pace of the experience and would drive faster purchase decisions.",
+      "Live selling and auctions demand real-time updates and interactions between buyer and seller. I believed that this format would create urgency and encourage fast purchase decisions in 30-60 second windows.",
   },
   {
     slug: "car-comparison",
     client: "Volkswagen",
     projectTitle: "Cross-Brand Car Comparison Tool",
     tagline:
-      "Designed a car comparison tool that gives buyers genuine utility while systematically upselling Volkswagen at every touchpoint. Serves 112,000+ users monthly across Canada.",
+      "I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.",
     role: "Lead Product Designer",
     status: "live",
     tags: ["automotive", "web", "e-commerce", "conversion"],
     previewImage: {
-      url: "https://framerusercontent.com/images/ZVLYXl62gksREBpOCLxJhttVHEI.png",
-      alt: "Volkswagen car comparison tool preview",
+      url: "/framer/car-comparison/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/zecOCikKPMEukzBJqEJEFx1rk.png",
-        alt: "Volkswagen comparison interface",
+        url: "/framer/car-comparison/image-1.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/kOuaaWCgO3WevMDSaDbAFkMZFUA.png",
-        alt: "Volkswagen vehicle comparison details",
+        url: "/framer/car-comparison/image-2.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/ennlv8WOo05XWKWybvqeV0c4Ls.png",
-        alt: "Volkswagen comparison feature highlights",
+        url: "/framer/car-comparison/image-3.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/HDwgEpwkjinY2WdDAq5JXc904yk.png",
-        alt: "Volkswagen upsell touchpoints in comparison",
+        url: "/framer/car-comparison/image-4.png",
+        alt: "", // TODO: alt text
       },
     ],
     challenge:
-      "VW had no comparison tool, and car comparison is a standard part of the purchase process. VW needed to meet buyer expectations while using the tool to move prospects down the sales funnel — toward visiting a dealership or building a vehicle online.",
+      "VW didn't have a comparison tool and recognized that a comparison tool is a big part of the purchase process. VW wanted to meet the needs of potential buyers, but also wanted to create a tool that would help potential buyers move down the sales funnel (e.g. either visiting a dealership or building a vehicle online).",
     impacts: [
-      "Serves 112,000+ users monthly across Canada since launch.",
+      "Since it's launch, the tool serves over 112,000 customers across Canada on a monthly basis.",
     ],
     roleDescription:
-      "Lead product designer. Pushed back on the initial brief to include competitor vehicles in the comparison, then designed the entire experience to favor VW at every touchpoint.",
+      "Lead product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.",
     atStake:
-      "VW stakeholders initially wanted a tool that only compared Volkswagen vehicles against each other. A VW-only tool would have been less useful than what competitors already offered — buyers would simply go elsewhere to do their research, and VW would lose the opportunity entirely.",
+      "VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.",
     decision:
-      "Included other brands to give users the utility they expected, but built VW advantages into the structure of the experience: the first vehicle loaded is always a Volkswagen; VW-specific marketing content (videos of brake assist and safety tech) is integrated throughout; visual call-outs consistently highlight VW advantages in each comparison dimension. The tool feels fair to users because it is — while building the case for VW at every step.",
+      "I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decision to create an experience that would give users the utility they expected while upselling VW at every touchpoint.",
   },
   {
     slug: "ecommerce",
     client: "Complex NTWRK",
     projectTitle: "E-commerce Platform Integration",
     tagline:
-      "Designed the e-commerce experience that integrated NTWRK into Complex.com post-acquisition. Now supporting ~1M monthly users and $100M+ in revenue.",
+      "I designed an e-commerce experience that integrated NTWRK into Complex.com's brand post-acquisition.",
     role: "Lead Product Designer",
     status: "live",
     tags: ["e-commerce", "mobile", "social commerce", "acquisition integration"],
     previewImage: {
-      url: "https://framerusercontent.com/images/WVh3PMdQhpPpXW5dFa477LuFs.png",
-      alt: "Complex NTWRK e-commerce integration preview",
+      url: "/framer/ecommerce/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/XvezNg0HNikL6lx3gWC0jw7myE.png",
-        alt: "Complex NTWRK shopping experience",
+        url: "/framer/ecommerce/image-1.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/58QxHV01mM3F4Fnv6aBOI60fy8.png",
-        alt: "Complex NTWRK mobile product pages",
+        url: "/framer/ecommerce/image-2.png",
+        alt: "", // TODO: alt text
       },
     ],
     challenge:
-      "After acquiring Complex, NTWRK needed to merge two platforms: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops. The goal was a unified experience where fans could browse Complex content and purchase exclusive drops and evergreen merch — without it feeling bolted on.",
+      "After acquiring Complex, NTWRK needed to merge two platforms: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops. The goal was to create a unified media and shopping experience where music fans could browse Complex content and purchase both exclusive drops and evergreen merch.",
     impacts: [
-      "Launched with 50+ brands on day one.",
-      "Currently receives approximately 1M monthly users.",
-      "Supporting $100M+ in revenue.",
+      "launched with over 50 brands on day one",
+      "currently receive approximately 1M monthly users",
+      "supporting over $100M in revenue",
     ],
     roleDescription:
-      "Lead Product Designer. Audited both Complex.com and NTWRK's e-commerce platform, mapped the information architecture across both, and designed a mobile-first integration strategy that prioritized social media as the primary entry point.",
+      "Lead Product Designer. I designed a mobile-first shopping experience that leveraged Complex.com's social media presence to introduce users to NTWRK's e-commerce platform.",
     atStake:
-      "Complex users came for editorial content — music, culture, news — not shopping. If the shop was buried behind a homepage-first navigation flow, the core audience would never find it. The risk was launching a shop that existing Complex users never discovered.",
+      "Complex users came for media content, not shopping. If we pushed them through a traditional homepage-to-shop flow, they'd ignore it. We risked launching a shop that existing Complex users would never discover or use.",
+    // Source defect carried verbatim: "not on on Complex.com's homepage" and
+    // the repeated "When users clicked through from Instagram or TikTok,"
+    // clause are duplicated in Framer's own text — see migration report.
     decision:
-      "Skipped the homepage-first strategy entirely. Because Complex's audience lives on social media rather than on Complex.com's homepage, I designed mobile-first product pages built to be shared. When a user taps through from Instagram or TikTok, they land on a page that feels native to mobile — giving them a seamless shopping experience while establishing Complex as a shopping destination through the channels where its audience already spends time.",
+      "I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.",
   },
   {
     slug: "product-management",
     client: "Complex NTWRK",
     projectTitle: "Seller Dashboard",
-    tagline:
-      "Designed the primary tool for sellers to manage products on Complex NTWRK. Within the first year: 400 sellers, 210K+ products, 106K+ orders, $10.5M+ revenue.",
+    tagline: "I created the primary tool for sellers to manage products on Complex NTWRK.",
     role: "Lead Product Designer",
     status: "live",
     tags: ["B2B", "dashboard", "product management", "e-commerce"],
     previewImage: {
-      url: "https://framerusercontent.com/images/xZ8h8dJCwdW5NXpTOYPrV6qdo.png",
-      alt: "Complex NTWRK Seller Dashboard preview",
+      url: "/framer/product-management/preview-image.png",
+      alt: "", // TODO: alt text
     },
     images: [
       {
-        url: "https://framerusercontent.com/images/rFwFJwPyVIR9k09btWdgurBBdo.png",
-        alt: "Seller Dashboard product listing view",
+        url: "/framer/product-management/image-1.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/uqlvFbnz8MUD6LIiSigZCTDMHUM.png",
-        alt: "Seller Dashboard inventory management",
+        url: "/framer/product-management/image-2.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/Sl1qkatCZdmLY1vkiSyYWpuLyI.png",
-        alt: "Seller Dashboard order management",
+        url: "/framer/product-management/image-3.png",
+        alt: "", // TODO: alt text
       },
       {
-        url: "https://framerusercontent.com/images/1pyJBJbHaWJu9KzUuv7m0p4vOA.png",
-        alt: "Seller Dashboard channel management",
+        url: "/framer/product-management/image-4.png",
+        alt: "", // TODO: alt text
       },
     ],
     challenge:
-      "Sellers linking Shopify stores to Complex NTWRK hit constant failures — inventory uploaded incorrectly, product counts were inaccurate, and navigating between two disconnected systems was confusing. Many sellers weren't familiar with Shopify at all, breaking the fundamental assumption the integration relied on. Premium sellers are the lifeblood of the marketplace. Platform failures that cost sellers sales send them to competitors.",
+      "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and Sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
     impacts: [
-      "Nearly 400 sellers using Seller Dashboard within the first year.",
-      "210,000+ products managed through the platform.",
-      "106,372+ orders fulfilled.",
-      "$10,500,000+ in revenue generated.",
+      "Within the first year of launch: nearly 400 sellers use Seller Dashboard;",
+      "Seller Dashboard manages 210K+ products;",
+      "106,372+ orders fulfilled;",
+      "$10,500,000+ revenue generated",
     ],
     roleDescription:
-      "Lead product designer. Designed a custom product management dashboard purpose-built for Complex NTWRK's sales channels — live-selling, auctions, and buy-now — while making it feel familiar to sellers coming from Shopify.",
+      "Lead product designer. I designed a custom product management dashboard to mitigate issues from poor integration with Shopify.",
     atStake:
-      "Complex NTWRK depends on premium sellers to supply inventory for exclusive drops and auctions. Incorrect product data and inventory mismatches meant buyers tried to purchase products that didn't exist. Losing seller trust means losing the inventory that makes the platform worth visiting.",
+      "Complex NTWRK depends on premium sellers. Incorrect product data and inventory mismatches meant buyers tried to purchase products that didn't exist. When sellers lose sales and customers due to platform failures, they leave for competitors.",
     decision:
-      "Rather than building something fully custom (which would have introduced fear and hesitation during seller onboarding), I designed the dashboard to feel like Shopify for users who knew Shopify — while building in features specific to Complex NTWRK's sales channels. Familiarity reduced the learning curve; the unique features gave sellers control over channels that Shopify never supported.",
+      "I could've designed a completely custom dashboard for Complex NTWRK, but unfamiliar workflows would've scared off new sellers. Instead, I made it feel familiar to Shopify users while integrating features for Complex NTWRK's unique sales channels (live-selling, auctions, buy-now). Familiarity reduced onboarding friction and kept sellers confident in the system.",
   },
 ]
 
