@@ -27,13 +27,6 @@ const PROJECTS: SideProject[] = [
     url: "#",
     status: "live",
   },
-  {
-    companies: ["Case study preview"],
-    title: "Vibe-coded case study layout",
-    description:
-      "A second case-study structure for tools and prototypes — engineering decisions instead of design process. Placeholder content, for reviewing the layout.",
-    url: "/case-study/placeholder-vibe-project",
-  },
 ]
 
 function SideProjectCard({ project }: { project: SideProject }) {

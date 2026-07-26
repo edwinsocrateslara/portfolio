@@ -359,57 +359,6 @@ export function getProjectsByTag(tag: string): Project[] {
   )
 }
 
-// ── Vibe-coded case-study variant: placeholder for visual review only ──────
-// Deliberately NOT part of `projects` above — never wired into scripted
-// responses, chip lists, or the project grid. Reachable only by navigating
-// directly to /case-study/placeholder-vibe-project. Every text field is
-// prefixed "[PLACEHOLDER]" so it can never be mistaken for real content.
-
-export const placeholderVibeCodedProject: Project = {
-  slug: "placeholder-vibe-project",
-  client: "[PLACEHOLDER] Personal Project",
-  projectTitle: "[PLACEHOLDER] Vibe-Coded Prototype Name",
-  tagline:
-    "[PLACEHOLDER] One-line summary of what this tool does, for card previews and grids.",
-  role: "[PLACEHOLDER] Built by Edwin",
-  status: "wip",
-  tags: ["[PLACEHOLDER] AI", "[PLACEHOLDER] Tool"],
-  previewImage: {
-    url: "https://picsum.photos/id/180/640/440",
-    alt: "[PLACEHOLDER] prototype interface preview",
-  },
-  images: [
-    {
-      url: "https://picsum.photos/id/0/480/360",
-      alt: "[PLACEHOLDER] prototype screen one",
-    },
-    {
-      url: "https://picsum.photos/id/2/480/360",
-      alt: "[PLACEHOLDER] prototype screen two",
-    },
-  ],
-  variant: "vibe-coded",
-  whatItIs:
-    "[PLACEHOLDER] A tool that does X for Y so that Z.",
-  problem:
-    "[PLACEHOLDER] An itch I had, or a gap the team needed filled — describe the recurring friction that made this worth building.",
-  architecture:
-    "[PLACEHOLDER] Two to three sentences of concrete architecture: the frontend framework, where data is stored, where the LLM sits in the flow, and how a request moves end to end.",
-  stack: ["[PLACEHOLDER] Next.js", "[PLACEHOLDER] Supabase", "[PLACEHOLDER] Claude API", "[PLACEHOLDER] Vercel Cron"],
-  keyDecision:
-    "[PLACEHOLDER] Symptom — what broke or felt wrong. Diagnosis — the actual cause once dug into. Fix — the technical choice made in response.",
-  impacts: [
-    "[PLACEHOLDER] Impact item — users, usage volume, or what manual process this replaced.",
-    "[PLACEHOLDER] Second impact item.",
-  ],
-  tradeoff:
-    "[PLACEHOLDER] What was deliberately given up (robustness, coverage, polish) and why that was the right call for a prototype at this stage.",
-  whatsNext:
-    "[PLACEHOLDER] The honest gap between this prototype and a real product — what's missing before it could ship broadly.",
-  proofLinks: {
-    demo: "https://placeholder.example/demo",
-    repo: "https://github.com/placeholder-org/placeholder-vibe-project",
-  },
-}
-
-export const PLACEHOLDER_PROJECT_IDS: string[] = [placeholderVibeCodedProject.slug]
+// The "vibe-coded" case-study variant is still supported by the Project type
+// and rendered by case-study-view.tsx, but no project currently uses it. The
+// placeholder that exercised it was removed before merge rather than shipped.

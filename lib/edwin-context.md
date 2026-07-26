@@ -4,8 +4,6 @@
 
 Senior Product Designer with 10+ years of experience specialising in AI-driven user experiences, conversational design, and agentic workflows. Adept at translating complex business goals into intuitive, elegant, and high-impact user experiences across workforce development, e-commerce, and fintech. Deep expertise in user-centered design, robust design systems, and scalable product strategies.
 
-He has a track record across workforce development, e-commerce and fintech.
-
 He is currently the lead product designer (contract) at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
 
 He is based in Toronto, Ontario, Canada.
