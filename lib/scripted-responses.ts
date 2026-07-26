@@ -213,12 +213,12 @@ export function buildResponse(
       response: [
         {
           kind: "text",
-          text: "My 2026 résumé is a one-pager — Complex NTWRK, Super.com, Backbase, Meridian, the contracting years including Volkswagen, and now FutureFit AI.",
+          text: "My résumé — Complex NTWRK, Super.com, Backbase, Meridian, the contracting years including Volkswagen, and now FutureFit AI.",
         },
         { kind: "doc-link", docKey: "resume" },
         {
           kind: "followups",
-          text: "It's here: [Edwin Socrates Lara — Résumé 2026](https://dochub.com/edwinsocrateslara/orO7lgeVLk9z02JKjMP2p5/edwin-socrates-lara-2026-docx)\n\nHappy to walk through any section in more detail.",
+          text: "It's here: [Edwin Socrates Lara — Résumé](https://dochub.com/edwinsocrateslara/orO7lgeVLk9z02JKjMP2p5/edwin-socrates-lara-2026-docx)\n\nHappy to walk through any section in more detail.",
           chips: [
             { text: "Walk me through your work" },
             { text: "How do you design with AI?" },

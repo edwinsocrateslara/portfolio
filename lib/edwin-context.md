@@ -2,11 +2,9 @@
 
 ## Who Edwin Is
 
-In his own words: "I'm Edwin, a product designer interested in AI products and workflows."
-
 Senior Product Designer with 10+ years of experience specialising in AI-driven user experiences, conversational design, and agentic workflows. Adept at translating complex business goals into intuitive, elegant, and high-impact user experiences across workforce development, e-commerce, and fintech. Deep expertise in user-centered design, robust design systems, and scalable product strategies.
 
-He has a track record across consumer fintech, live commerce, automotive, e-commerce, and AI — consistently taking on projects where the design problem is tied to business performance, not just aesthetics. He pushes back on stakeholders when constraints would compromise the user experience, and he backs those decisions with reasoning and outcomes.
+He has a track record across workforce development, e-commerce and fintech.
 
 He is currently the lead product designer (contract) at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
 
@@ -102,7 +100,7 @@ Stakeholders wanted to keep the conservative look and feel of the old app, but t
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-Complex NTWRK is a live commerce and limited-drop platform whose audience is music fans.
+Complex NTWRK offers exclusive access to celebrities, brands, and limited drops. Its audience is music fans.
 
 **Challenge:** Users were window-shopping but not buying. Engagement was low and average watch time was short. The platform needed urgency.
 
@@ -208,8 +206,8 @@ Case study coming soon.
 
 ## Available Documents
 
-- **Resume:** Edwin's 2026 résumé (one-pager covering 10+ years of experience)
-- **Meridian Case Study:** Detailed PDF case study of the Meridian Credit Union redesign
+- **Resume:** Edwin's résumé
+- **Meridian Case Study:** Meridian Credit Union redesign
 
 ---
 
@@ -217,7 +215,7 @@ Case study coming soon.
 
 ### Background
 
-Edwin has 10+ years of product design experience spanning consumer fintech, live commerce, automotive, e-commerce, and AI products.
+Edwin has 10+ years of product design experience across workforce development, e-commerce and fintech.
 
 ### Availability
 
