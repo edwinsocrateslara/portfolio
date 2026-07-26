@@ -158,8 +158,9 @@ export default function HomePage() {
     }
   }, [input, isTyping, isApiLoading, appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
 
-  // Handle chip selection
-  const handleChipSelect = useCallback((text: string) => {
+  // Handle chip selection. `slug` is set when the chip names a specific
+  // project (follow-up chips carry one; the landing prompt chips don't).
+  const handleChipSelect = useCallback((text: string, slug?: string) => {
     setMode("chat")
 
     // Add user message
@@ -174,7 +175,10 @@ export default function HomePage() {
     appendImmediate(userMessage)
 
     // Get scripted response
-    const { response, projectSlug } = buildResponse(text, { currentProjectSlug })
+    const { response, projectSlug } = buildResponse(text, {
+      preloadedSlug: slug,
+      currentProjectSlug,
+    })
     if (response) {
       queueScriptedMessages(response)
       if (projectSlug) setCurrentProjectSlug(projectSlug)
@@ -191,6 +195,23 @@ export default function HomePage() {
       }, 0)
     }
   }, [appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
+
+  // Follow-up chips on the case-study route hand off to this page via
+  // /?ask=<text>&slug=<slug>, since the chat state lives here. Read it once on
+  // mount, fire the same handler the landing chips use, then strip the query so
+  // a refresh doesn't replay it. Uses window.location rather than
+  // useSearchParams to avoid forcing this page out of static prerendering.
+  const handoffFiredRef = useRef(false)
+  useEffect(() => {
+    if (handoffFiredRef.current) return
+    const params = new URLSearchParams(window.location.search)
+    const ask = params.get("ask")
+    if (!ask) return
+    handoffFiredRef.current = true
+    const slug = params.get("slug") || undefined
+    window.history.replaceState(null, "", window.location.pathname)
+    handleChipSelect(ask, slug)
+  }, [handleChipSelect])
 
   // Handle followup chip clicks
   const handleFollowupChip = useCallback((chip: { text: string; slug?: string }) => {

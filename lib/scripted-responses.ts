@@ -102,7 +102,7 @@ function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
 export const INTRO_SEQUENCE: MessageTemplate[] = [
   {
     kind: "text",
-    text: "Hey! I'm Edwin's AI assistant. I can walk you through his work, answer questions about his design process, or show you specific projects.",
+    text: "Hey! I'm Edwin's AI assistant. I can walk you through his work, show you specific projects, or pull up his résumé.",
   },
   {
     kind: "text",

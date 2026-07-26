@@ -1,29 +1,115 @@
-=============================================================
-PLACEHOLDER — NOT THE VERBATIM RESUME
-=============================================================
-The verbatim plain-text resume has not been pasted yet. This file
-is a slot-holder so the source layout is complete; it must be
-REPLACED WHOLESALE with the real resume text, not appended to.
+EDWIN SOCRATES LARA
 
-Do not treat anything below as resume prose. It is a record of the
-resume facts Edwin stated directly when commissioning the source-file
-migration, kept here only so the changes that depend on them remain
-traceable until the real file lands.
+edwinsocrateslara@gmail.com
+linkedin.com/in/edwinsocrateslara
+www.edwinsocrates.com
 
-FACTS STATED BY EDWIN (not resume text):
 
-Role titles
-  Senior Product Designer  — Meridian, Super.com, Backbase, and the
-                             contracting period (including Volkswagen)
-  Lead Product Designer    — Complex NTWRK, FutureFit AI
-  (Coinley AI does not appear on the resume at all.)
+PROFESSIONAL SUMMARY
 
-Dates
-  FutureFit AI     Oct 2025 – present
-  Complex NTWRK    Apr 2022 – Oct 2025   (back to back, no gap)
-  Volkswagen       within the contracting period, Dec 2015 – May 2019
+Highly accomplished Senior Product Designer with 10+ years of experience
+specialising in AI-driven user experiences, conversational design, and agentic
+workflows. Adept at translating complex business goals into intuitive, elegant,
+and high-impact user experiences driving digital innovation across workforce
+development, e-commerce and fintech. Deep expertise in user-centered design,
+developing robust design systems, and crafting scalable product strategies.
 
-Other
-  NTWRK acquired Complex (not the reverse).
-  Tools present on the resume that were missing from edwin-context.md:
-    Claude Design, Supabase, Vercel, Anthropic API, Hotjar, Useberry
+
+SKILLS & METHODOLOGIES
+
+Claude Code, Claude Design, Supabase, Github, Vercel, Anthropic API, Open AI
+API, Hotjar, v0, Lovable, Aura Build, Figma, Shadcn, Maze, UserTesting,
+Useberry, Lottie Lab, Magic Animator, Jitter, Miro, Design Thinking,
+Information Architecture, Design Systems, User Research, Prototyping, A/B
+Testing, Accessibility, Agile/Scrum, Product Strategy, UX Strategy
+
+
+EXPERIENCE
+
+FutureFit AI — Toronto, Ontario
+Lead Product Designer (Contract)
+Oct 2025 – Present
+
+Building an AI-powered workforce development platform that helps businesses and
+governments guide unemployed and underemployed people toward meaningful
+opportunities. Building data driven user-testing and research practices to
+deeply understand B2G, B2B, and B2C users. Designing chat driven UX and agentic
+AI experiences that enhance workforce development. Creating an AI-compatible
+design system using design tokens and Shadcn, for use in AI development tools,
+such as V0, Lovable, and Claude Code.
+
+
+Complex NTWRK — Toronto, Ontario
+Lead Product Designer
+Apr 2022 – Oct 2025
+
+Spearheaded the design and launch of the "Auctions" feature, directly
+contributing to 63% of company revenue and achieving 23% quarterly growth, a
+172% increase in chat messages per show, and 5-minute increase in average show
+watch time. Designed and iterated the Seller Dashboard, a critical product
+management and order fulfillment tool utilized by 400+ sellers to process
+106,000+ orders, generating over $10.5 million in total revenue. Led the
+end-to-end design integration during acquisition of Complex, merging e-commerce
+and media into a unified platform.
+
+
+Super.com — Toronto, Ontario
+Senior Product Designer
+Nov 2021 – Apr 2022
+
+Led the UX design for SuperCash credit-building cashback card, achieving
+50,000+ cards issued within 7 months of launch. Shipped MVP of unified "super
+app," integrating hotel booking, e-commerce and financial services post-rebrand
+to Super.com.
+
+
+Backbase — Toronto, Ontario
+Senior Product Designer
+Nov 2020 – Nov 2021
+
+Directed the full lifecycle UX/UI and technical integration of Backbase's
+platform across NA and EU financial institutions, customizing solutions for
+regional compliance and needs. Facilitated cross-functional teams (development,
+product, compliance) to navigate complex integration challenges, ensuring the
+delivery of scalable and user-centric digital banking solutions.
+
+
+Meridian Credit Union — Toronto, Ontario
+Senior Product Designer
+May 2019 – Nov 2020
+
+Led the redesign of the Meridian Credit Union mobile app for 370,000+ users,
+significantly enhancing usability, engagement and improving retention.
+Established a comprehensive IA and design system to ensure a cohesive and
+user-friendly digital banking experience. Conducted extensive user-centric
+research, including user testing and surveys, and analyzed key data to inform
+design decisions and understand specific consumer banking behaviors.
+
+
+Contracting — Toronto, Ontario
+Senior Product Designer
+Dec 2015 – May 2019
+
+Fintech: Bank of Montreal: Led the end-to-end redesign of the bank's entire
+public website and core navigation to better direct users to the bank's
+products. Toronto-Dominion Bank: Led redesign initiatives for MBNA credit card
+application process, enhancing user experience and optimizing the user's credit
+card application journey. Viafoura: Spearheaded the design of a commenting and
+chat tool utilized by USA Today, The Telegraph, The Globe and Mail, CBC, The
+Independent, and Dow Jones and many more to help foster community engagement on
+their websites. Developed a data segmenting and insights tool that tracks user
+behaviour and engagement to help media publishers understand user preferences.
+Volkswagen: Conceptualized and designed a car comparison tool for Volkswagen
+that serves over 112,000 customers per month to date.
+
+
+EDUCATION
+
+Graduate Diploma, Interactive Design
+CFC Media Lab, Toronto, Ontario, Canada
+
+Certificate, Graphic Design
+Toronto School of Art, Toronto, Ontario, Canada
+
+Diploma, Advertising
+Sheridan College, Oakville, Ontario, Canada

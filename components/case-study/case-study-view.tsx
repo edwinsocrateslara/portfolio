@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import type { Project } from "@/lib/projects"
 import { CONTENT_WIDTH } from "@/lib/layout"
 import { ChatInput } from "@/components/chat/chat-input"
@@ -24,6 +25,20 @@ const FOLLOWUP_CHIPS = [
   { text: "How do you design with AI?" },
   { text: "Show me your résumé" },
 ]
+
+// The chat state lives on the landing page, so a chip picked here hands off
+// to it via a query param rather than trying to answer in place.
+function useChipHandoff() {
+  const router = useRouter()
+  return useCallback(
+    (chip: { text: string; slug?: string }) => {
+      const params = new URLSearchParams({ ask: chip.text })
+      if (chip.slug) params.set("slug", chip.slug)
+      router.push(`/?${params.toString()}`)
+    },
+    [router]
+  )
+}
 
 function ImagesSection({ images }: { images: Project["images"] }) {
   if (!images || images.length === 0) return null
@@ -118,6 +133,7 @@ function VibeCodedCaseStudy({ project }: { project: Project }) {
   const { messages, isTyping, enqueue } = useScriptedStream()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hasStartedRef = useRef(false)
+  const handleChipPick = useChipHandoff()
 
   // Kick off the reveal once on mount. Guarded so React StrictMode's
   // dev-only double-invoke of effects can't queue the stream twice.
@@ -141,7 +157,12 @@ function VibeCodedCaseStudy({ project }: { project: Project }) {
           className="flex flex-col gap-4"
         >
           {messages.map((message, i) => (
-            <AssistantBubble key={message.id} message={message} isLastAssistant={i === lastAssistantIdx} />
+            <AssistantBubble
+              key={message.id}
+              message={message}
+              onChipPick={handleChipPick}
+              isLastAssistant={i === lastAssistantIdx}
+            />
           ))}
           {isTyping && <TypingIndicator showAvatar={messages.length === 0} />}
           <div ref={messagesEndRef} />
@@ -169,6 +190,7 @@ function VibeCodedCaseStudy({ project }: { project: Project }) {
 
 function TraditionalCaseStudy({ project }: { project: Project }) {
   const [input, setInput] = useState("")
+  const handleChipPick = useChipHandoff()
 
   return (
     <>
@@ -193,6 +215,7 @@ function TraditionalCaseStudy({ project }: { project: Project }) {
               <FollowupsBubble
                 text="Want to explore another project or ask something specific?"
                 chips={FOLLOWUP_CHIPS}
+                onPick={handleChipPick}
               />
             </div>
           </div>
