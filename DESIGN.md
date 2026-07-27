@@ -162,6 +162,37 @@ Mono carries the "system voice"; Archivo carries all human-readable prose
 and headings. That split is what keeps an achromatic palette legible
 without color.
 
+## Chat column alignment
+
+The messages pane scrolls and the input does not, so the scrollbar takes
+width from one and not the other. Left unhandled, the content column sat
+2px left of the input at desktop and 4px narrow on mobile.
+
+Both sides now reserve a scrollbar gutter:
+
+- the messages pane gets `scrollbar-gutter: stable`, so the space is
+  reserved whether or not it is currently overflowing;
+- the input wrapper gets `overflow: hidden` + `scrollbar-gutter: stable`,
+  which reserves the identical gutter without ever showing a scrollbar.
+
+Reserving a gutter is deliberate rather than padding by
+`--chat-scrollbar`. That token is the WebKit thumb width; Firefox ignores
+`::-webkit-scrollbar` and takes `scrollbar-width: thin`, whose rendered
+width is browser- and platform-defined and cannot be set to a length. A
+fixed padding would therefore be wrong in Firefox, while a reserved
+gutter matches whatever that browser actually uses.
+
+`scrollbar-width` is scoped behind `@supports not
+selector(::-webkit-scrollbar)`. Chrome 121+ also honours it, and setting
+it there disables `::-webkit-scrollbar` entirely — collapsing the 4px
+thumb to a zero-width overlay scrollbar.
+
+Verified by measuring `getBoundingClientRect` at 1440px and 480px, in
+both the overflowing and non-overflowing states: text bubble, image,
+impact card and follow-up chips all share the input's left and right
+edges. The impact card is narrower on the right by design
+(`max-width: 520px`).
+
 ## Components
 
 - **Nav** — `.type-nav`, `text-secondary`; hover → `text-primary` +

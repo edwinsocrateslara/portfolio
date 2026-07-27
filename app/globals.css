@@ -67,6 +67,12 @@
   --type-h2-size:      32px;  --type-h2-lh:      48px;
   --type-hero-size:    52px;  --type-hero-lh:    78px;
 
+  /* Scrollbar width for the chat message area. The messages pane reserves
+     this as a stable gutter and the input below it pads its right edge by
+     the same amount, so the two columns stay edge-aligned whether or not
+     the pane is currently overflowing. */
+  --chat-scrollbar: 4px;
+
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
@@ -95,8 +101,11 @@ body {
 }
 
 /* ── Custom scrollbar ─────────────────────────────────────────── */
+/* WebKit: an explicit width makes this a classic, space-consuming
+   scrollbar rather than a macOS overlay one — deliberate, the thumb is
+   part of the design. */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: var(--chat-scrollbar);
 }
 
 ::-webkit-scrollbar-track {
@@ -110,6 +119,21 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--bureau-text-muted));
+}
+
+/* Firefox only. It ignores ::-webkit-scrollbar, so it needs the standard
+   properties — but scoping matters: Chrome 121+ also honours
+   `scrollbar-width`, and setting it there DISABLES ::-webkit-scrollbar,
+   collapsing the 4px thumb to an overlay scrollbar of zero width. The
+   feature query keeps this out of WebKit.
+
+   Firefox accepts no length here; `thin` is browser/platform defined and
+   is NOT 4px, so --chat-scrollbar under-reserves there. See DESIGN.md. */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--bureau-border-strong)) transparent;
+  }
 }
 
 /* ── Animations ───────────────────────────────────────────────── */

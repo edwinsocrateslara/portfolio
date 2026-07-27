@@ -42,7 +42,7 @@ export default function HomePage() {
   const [input, setInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Structured messages for scripted flow — reveal queue/timing/firstOfStreak
+  // Structured messages for scripted flow — reveal queue and timing
   // logic lives in useScriptedStream, shared with the case-study review route.
   const {
     messages: structuredMessages,
@@ -131,7 +131,6 @@ export default function HomePage() {
       role: "user",
       kind: "text",
       text: userText,
-      firstOfStreak: true,
     } as StructuredMessage & { kind: "text"; text: string }
 
     appendImmediate(userMessage)
@@ -169,7 +168,6 @@ export default function HomePage() {
       role: "user",
       kind: "text",
       text: text,
-      firstOfStreak: true,
     } as StructuredMessage & { kind: "text"; text: string }
 
     appendImmediate(userMessage)
@@ -221,7 +219,6 @@ export default function HomePage() {
       role: "user",
       kind: "text",
       text: chip.text,
-      firstOfStreak: true,
     } as StructuredMessage & { kind: "text"; text: string }
 
     appendImmediate(userMessage)
@@ -480,7 +477,7 @@ export default function HomePage() {
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-5">
+      <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarGutter: "stable" }}>
         <div
           style={{ ...CHAT_COLUMN, paddingTop: 32, paddingBottom: 8 }}
           className="flex flex-col gap-4"
@@ -530,22 +527,14 @@ export default function HomePage() {
                     role: "assistant",
                     kind: "text",
                     text: textContent,
-                    firstOfStreak: true,
                   }}
                   isLastAssistant={isLast}
                 />
               )
             })}
 
-          {/* Typing indicator */}
-          {(isTyping || (useApiMode && isApiLoading)) && (
-            <TypingIndicator
-              showAvatar={
-                structuredMessages.length === 0 ||
-                structuredMessages[structuredMessages.length - 1]?.role === "user"
-              }
-            />
-          )}
+          {/* Typing indicator — shown only while a message is streaming in */}
+          {(isTyping || (useApiMode && isApiLoading)) && <TypingIndicator />}
 
           <div ref={messagesEndRef} />
         </div>
@@ -555,6 +544,15 @@ export default function HomePage() {
       <div
         className="px-5 pb-6 pt-1"
         style={{
+          // Reserve the same scrollbar gutter the messages pane above
+          // reserves, so both columns centre in the same available width.
+          // `overflow: hidden` makes this a scroll container so the gutter
+          // applies, without ever showing a scrollbar. Deliberately NOT a
+          // fixed padding of --chat-scrollbar: that value is only correct
+          // in WebKit, and Firefox's `thin` is a different, unsettable
+          // width. Reserving a gutter matches whatever the browser uses.
+          overflow: "hidden",
+          scrollbarGutter: "stable",
           background: "linear-gradient(to bottom, transparent 0%, rgb(var(--bureau-bg)) 40%)",
         }}
       >

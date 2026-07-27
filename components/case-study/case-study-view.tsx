@@ -164,7 +164,7 @@ function VibeCodedCaseStudy({ project }: { project: Project }) {
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto px-5">
+      <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarGutter: "stable" }}>
         <div
           style={{ ...CHAT_COLUMN, paddingTop: "var(--space-group)", paddingBottom: "var(--space-within)" }}
           className="flex flex-col gap-4"
@@ -177,13 +177,22 @@ function VibeCodedCaseStudy({ project }: { project: Project }) {
               isLastAssistant={i === lastAssistantIdx}
             />
           ))}
-          {isTyping && <TypingIndicator showAvatar={messages.length === 0} />}
+          {isTyping && <TypingIndicator />}
           <div ref={messagesEndRef} />
         </div>
       </div>
       <div
         className="px-5 pb-6 pt-1"
         style={{
+          // Reserve the same scrollbar gutter the messages pane above
+          // reserves, so both columns centre in the same available width.
+          // `overflow: hidden` makes this a scroll container so the gutter
+          // applies, without ever showing a scrollbar. Deliberately NOT a
+          // fixed padding of --chat-scrollbar: that value is only correct
+          // in WebKit, and Firefox's `thin` is a different, unsettable
+          // width. Reserving a gutter matches whatever the browser uses.
+          overflow: "hidden",
+          scrollbarGutter: "stable",
           background: "linear-gradient(to bottom, transparent 0%, rgb(var(--bureau-bg)) 40%)",
         }}
       >
@@ -207,36 +216,42 @@ function TraditionalCaseStudy({ project }: { project: Project }) {
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto px-5">
+      <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarGutter: "stable" }}>
         <div
           style={{ ...CHAT_COLUMN, paddingTop: "var(--space-group)", paddingBottom: "var(--space-within)" }}
           className="flex flex-col gap-4"
         >
-          <div style={{ display: "flex", gap: "var(--space-between)" }}>
-            <span style={{ width: "var(--space-24)", flexShrink: 0 }} />
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "var(--space-group)" }}>
-              <ProjectHeaderBubble
-                project={{
-                  slug: project.slug,
-                  client: project.client,
-                  projectTitle: project.projectTitle,
-                  role: project.role,
-                  previewImage: project.previewImage.url,
-                }}
-              />
-              <TraditionalSections project={project} />
-              <FollowupsBubble
-                text="Want to explore another project or ask something specific?"
-                chips={FOLLOWUP_CHIPS}
-                onPick={handleChipPick}
-              />
-            </div>
+          <div style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: "var(--space-group)" }}>
+            <ProjectHeaderBubble
+              project={{
+                slug: project.slug,
+                client: project.client,
+                projectTitle: project.projectTitle,
+                role: project.role,
+                previewImage: project.previewImage.url,
+              }}
+            />
+            <TraditionalSections project={project} />
+            <FollowupsBubble
+              text="Want to explore another project or ask something specific?"
+              chips={FOLLOWUP_CHIPS}
+              onPick={handleChipPick}
+            />
           </div>
         </div>
       </div>
       <div
         className="px-5 pb-6 pt-1"
         style={{
+          // Reserve the same scrollbar gutter the messages pane above
+          // reserves, so both columns centre in the same available width.
+          // `overflow: hidden` makes this a scroll container so the gutter
+          // applies, without ever showing a scrollbar. Deliberately NOT a
+          // fixed padding of --chat-scrollbar: that value is only correct
+          // in WebKit, and Firefox's `thin` is a different, unsettable
+          // width. Reserving a gutter matches whatever the browser uses.
+          overflow: "hidden",
+          scrollbarGutter: "stable",
           background: "linear-gradient(to bottom, transparent 0%, rgb(var(--bureau-bg)) 40%)",
         }}
       >

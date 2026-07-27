@@ -9,8 +9,8 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never
 
 // A block "template" — everything a caller needs to describe one message,
-// minus the id/role/firstOfStreak the stream assigns as it reveals it.
-export type MessageBlock = DistributiveOmit<StructuredMessage, "id" | "role" | "firstOfStreak">
+// minus the id/role the stream assigns as it reveals it.
+export type MessageBlock = DistributiveOmit<StructuredMessage, "id" | "role">
 
 const TYPING_DELAY = { min: 400, max: 900 }
 
@@ -48,13 +48,8 @@ export function useScriptedStream() {
           const newMessage: StructuredMessage = {
             id: generateMessageId(),
             role: "assistant",
-            firstOfStreak:
-              updated.length === 0 || updated[updated.length - 1]?.role === "user",
             ...next,
           } as StructuredMessage
-          if (updated.length > 0 && updated[updated.length - 1].role === "assistant") {
-            newMessage.firstOfStreak = false
-          }
           updated.push(newMessage)
         }
         return updated
@@ -71,19 +66,10 @@ export function useScriptedStream() {
       const newMessage: StructuredMessage = {
         id: generateMessageId(),
         role: "assistant",
-        firstOfStreak:
-          messages.length === 0 || messages[messages.length - 1]?.role === "user",
         ...next,
       } as StructuredMessage
 
-      setMessages((prev) => {
-        const updated = [...prev]
-        if (updated.length > 0 && updated[updated.length - 1].role === "assistant") {
-          // This is a continuation, don't show avatar
-          newMessage.firstOfStreak = false
-        }
-        return [...updated, newMessage]
-      })
+      setMessages((prev) => [...prev, newMessage])
       setPending(rest)
       setIsTyping(false)
     }

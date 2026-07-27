@@ -27,7 +27,11 @@ export function ChatInput({
     const el = textareaRef.current
     if (!el) return
     el.style.height = "auto"
-    el.style.height = `${Math.min(el.scrollHeight, 180)}px`
+    // scrollHeight is content + padding but excludes the border, while
+    // box-sizing is border-box — so assigning it raw made the field 2px
+    // short of its own content and left the resting height indeterminate.
+    const borderY = el.offsetHeight - el.clientHeight
+    el.style.height = `${Math.min(el.scrollHeight + borderY, 180)}px`
   }, [value])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -52,7 +56,7 @@ export function ChatInput({
         placeholder={placeholder}
         rows={1}
         disabled={isLoading}
-        className="type-body w-full resize-none py-5 pl-5 pr-14 focus:outline-none transition-shadow"
+        className="type-body block w-full resize-none py-5 pl-5 pr-14 focus:outline-none transition-shadow"
         style={{
           background: "rgb(var(--bureau-surface))",
           color: "rgb(var(--bureau-text-primary))",
@@ -76,10 +80,19 @@ export function ChatInput({
         onClick={onSubmit}
         disabled={!canSubmit}
         aria-label={isLoading ? "Sending" : "Send message"}
-        className={`type-label absolute right-3 bottom-3 flex h-11 items-center justify-center gap-2 px-3 ${
+        className={`type-label absolute flex items-center justify-center gap-2 px-3 ${
           canSubmit ? "font-bold" : "font-semibold"
         }`}
         style={{
+          // Bottom-anchored at a fixed height so it stays a button rather
+          // than stretching when the textarea grows. At rest the field is
+          // 2*20px padding + 24px line-height + 2*1px border = 66px, so a
+          // 42px button leaves an equal 12px above, right and below.
+          // 42 and 66 are off the 4px grid for the same reason line-height
+          // is: both are derived from padding + content + border.
+          right: "var(--space-12)",
+          bottom: "var(--space-12)",
+          height: 42,
           background: canSubmit ? "rgb(var(--bureau-accent))" : "transparent",
           border: `1px solid rgb(var(--bureau-${canSubmit ? "accent" : "border"}))`,
           borderRadius: "var(--bureau-radius-btn)",

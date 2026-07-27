@@ -27,7 +27,6 @@ export interface BaseMessage {
   id: string
   role: "user" | "assistant"
   kind?: MessageKind
-  firstOfStreak?: boolean
 }
 
 export interface TextMessage extends BaseMessage {
@@ -97,29 +96,6 @@ export type StructuredMessage =
   | DocLinkMessage
   | ArchitectureMessage
   | ProofLinksMessage
-
-// Avatar shown beside assistant messages
-function Avatar() {
-  return (
-    <span
-      style={{
-        width: "var(--space-24)",
-        height: "var(--space-24)",
-        flexShrink: 0,
-        borderRadius: "var(--bureau-radius-chip)",
-        background: "rgb(var(--bureau-elevated))",
-        border: "1px solid rgb(var(--bureau-border))",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "rgb(var(--bureau-text-primary))",
-      }}
-      className="type-badge"
-    >
-      E
-    </span>
-  )
-}
 
 // Text bubble with markdown-like formatting
 export function TextBubble({ text }: { text: string }) {
@@ -536,20 +512,21 @@ export function FollowupsBubble({
   )
 }
 
-// Typing indicator
-export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean }) {
+// Typing indicator — occupies the streaming slot on its own. There is no
+// persistent avatar or reserved gutter: this appears while a message
+// streams in and is unmounted once it has rendered, leaving no space
+// behind.
+export function TypingIndicator() {
   return (
-    <div style={{ display: "flex", gap: "var(--space-between)" }}>
-      {showAvatar && <Avatar />}
-      <div
-        className="type-label"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-within)",
-          color: "rgb(var(--bureau-text-muted))",
-        }}
-      >
+    <div
+      className="type-label"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "var(--space-within)",
+        color: "rgb(var(--bureau-text-muted))",
+      }}
+    >
         {[0, 200, 400].map((d) => (
           <span
             key={d}
@@ -563,8 +540,7 @@ export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean })
             }}
           />
         ))}
-        <span style={{ marginLeft: "var(--space-4)" }}>Generating</span>
-      </div>
+      <span style={{ marginLeft: "var(--space-4)" }}>Generating</span>
     </div>
   )
 }
@@ -580,16 +556,14 @@ export function AssistantBubble({
   isLastAssistant?: boolean
 }) {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const showAvatar = message.firstOfStreak !== false
   const kind = message.kind || "text"
 
   return (
     <div
       className={prefersReducedMotion ? undefined : "animate-slide-up"}
-      style={{ display: "flex", gap: "var(--space-between)" }}
+      style={{ minWidth: 0 }}
     >
-      {showAvatar ? <Avatar /> : <span style={{ width: "var(--space-24)", flexShrink: 0 }} />}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ minWidth: 0 }}>
         {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
         {kind === "project-header" && (
           <ProjectHeaderBubble
