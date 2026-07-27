@@ -14,6 +14,7 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 // Message types
 export type MessageKind =
   | "text"
+  | "section-heading"
   | "project-header"
   | "image"
   | "image-row"
@@ -34,6 +35,11 @@ export interface TextMessage extends BaseMessage {
   text: string
 }
 
+export interface SectionHeadingMessage extends BaseMessage {
+  kind: "section-heading"
+  text: string
+}
+
 export interface ProjectHeaderMessage extends BaseMessage {
   kind: "project-header"
   project: {
@@ -50,6 +56,12 @@ export interface ImageMessage extends BaseMessage {
   kind: "image"
   image: { url: string; alt?: string }
   caption?: string
+  // The project's full image set, so a single image placed on its own in
+  // the reveal still opens a lightbox that can page through all of them.
+  // Without this, splitting the images across the page would shrink each
+  // lightbox to one item.
+  group?: { url: string; alt?: string }[]
+  groupIndex?: number
 }
 
 export interface ImageRowMessage extends BaseMessage {
@@ -88,6 +100,7 @@ export interface ProofLinksMessage extends BaseMessage {
 
 export type StructuredMessage =
   | TextMessage
+  | SectionHeadingMessage
   | ProjectHeaderMessage
   | ImageMessage
   | ImageRowMessage
@@ -121,6 +134,20 @@ export function TextBubble({ text }: { text: string }) {
         />
       ))}
     </div>
+  )
+}
+
+// Section heading — the "KEY IMPACTS" / "MY ROLE" / "THE CHALLENGE" rules
+// from the original Framer page. Mono eyebrow voice, matching the label on
+// the impact card and the client eyebrows elsewhere. No new type token.
+export function SectionHeading({ text }: { text: string }) {
+  return (
+    <h3
+      className="type-label"
+      style={{ margin: 0, color: "rgb(var(--bureau-text-secondary))" }}
+    >
+      {text}
+    </h3>
   )
 }
 
@@ -227,9 +254,13 @@ const IMAGE_TRIGGER_STYLE = {
 export function ImageBubble({
   image,
   caption,
+  group,
+  groupIndex,
 }: {
   image: { url: string; alt?: string }
   caption?: string
+  group?: { url: string; alt?: string }[]
+  groupIndex?: number
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -264,8 +295,8 @@ export function ImageBubble({
       )}
       {lightboxOpen && (
         <ImageLightbox
-          images={[image]}
-          initialIndex={0}
+          images={group && group.length > 0 ? group : [image]}
+          initialIndex={group && group.length > 0 ? (groupIndex ?? 0) : 0}
           onClose={() => {
             setLightboxOpen(false)
             triggerRef.current?.focus()
@@ -565,6 +596,9 @@ export function AssistantBubble({
     >
       <div style={{ minWidth: 0 }}>
         {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
+        {kind === "section-heading" && (
+          <SectionHeading text={(message as SectionHeadingMessage).text} />
+        )}
         {kind === "project-header" && (
           <ProjectHeaderBubble
             project={(message as ProjectHeaderMessage).project}
@@ -574,6 +608,8 @@ export function AssistantBubble({
           <ImageBubble
             image={(message as ImageMessage).image}
             caption={(message as ImageMessage).caption}
+            group={(message as ImageMessage).group}
+            groupIndex={(message as ImageMessage).groupIndex}
           />
         )}
         {kind === "image-row" && (

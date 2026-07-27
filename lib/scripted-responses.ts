@@ -3,6 +3,7 @@ import type { DocKey } from "./constants"
 
 type MessageTemplate =
   | { kind: "text"; text: string }
+  | { kind: "section-heading"; text: string }
   | {
       kind: "project-header"
       project: {
@@ -14,7 +15,13 @@ type MessageTemplate =
         previewImage: string
       }
     }
-  | { kind: "image"; image: { url: string; alt?: string }; caption?: string }
+  | {
+      kind: "image"
+      image: { url: string; alt?: string }
+      caption?: string
+      group?: { url: string; alt?: string }[]
+      groupIndex?: number
+    }
   | {
       kind: "image-row"
       images: { url: string; alt?: string }[]
@@ -28,8 +35,25 @@ type MessageTemplate =
     }
   | { kind: "doc-link"; docKey: DocKey }
 
-// Build a project stream from project data
+// Build a project stream from project data.
+//
+// Order mirrors the original Framer project page:
+//   header -> tagline -> image 1 -> KEY IMPACTS -> MY ROLE (role, what was
+//   at stake, why) -> image 2 -> THE CHALLENGE -> remaining images.
+//
+// The data is uneven — ai-workforce-development has no challenge, atStake
+// or decision; ai-investing has no impacts; two projects have only two
+// images. A missing section drops out entirely, heading included, and the
+// images keep their slots rather than shifting up to fill the gap.
 function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
+  const images = p.images ?? []
+  const all = images.map((img) => ({ url: img.url, alt: img.alt }))
+
+  // Every image opens a lightbox over the whole set regardless of where it
+  // sits in the reveal, so splitting them up doesn't strand each one alone.
+  const imageAt = (i: number): MessageTemplate | null =>
+    all[i] ? { kind: "image", image: all[i], group: all, groupIndex: i } : null
+
   const stream: MessageTemplate[] = [
     {
       kind: "project-header",
@@ -44,47 +68,48 @@ function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
     { kind: "text", text: p.tagline },
   ]
 
-  // Add challenge
-  if (p.challenge) {
-    stream.push({
-      kind: "text",
-      text: `**The challenge:** ${p.challenge}`,
-    })
+  const push = (block: MessageTemplate | null) => {
+    if (block) stream.push(block)
   }
 
-  // Add images (all of them)
-  if (p.images && p.images.length > 0) {
-    if (p.images.length === 1) {
+  // 3. Image 1
+  push(imageAt(0))
+
+  // 4. KEY IMPACTS — the impact card carries its own heading.
+  if (p.impacts && p.impacts.length > 0) {
+    stream.push({ kind: "impact", label: "Key impacts", items: p.impacts })
+  }
+
+  // 5. MY ROLE — role, then what was at stake, then why.
+  if (p.roleDescription || p.atStake || p.decision) {
+    stream.push({ kind: "section-heading", text: "My role" })
+    if (p.roleDescription) stream.push({ kind: "text", text: p.roleDescription })
+    if (p.atStake) {
+      stream.push({ kind: "text", text: `**What was at stake:** ${p.atStake}` })
+    }
+    if (p.decision) {
       stream.push({
-        kind: "image",
-        image: { url: p.images[0].url, alt: p.images[0].alt },
-      })
-    } else {
-      stream.push({
-        kind: "image-row",
-        images: p.images.map((img) => ({ url: img.url, alt: img.alt })),
+        kind: "text",
+        text: `**Why I made those decisions:** ${p.decision}`,
       })
     }
   }
 
-  // Add decision/approach
-  if (p.decision) {
-    stream.push({
-      kind: "text",
-      text: `**Key decision:** ${p.decision}`,
-    })
+  // 6. Image 2
+  push(imageAt(1))
+
+  // 7. THE CHALLENGE
+  if (p.challenge) {
+    stream.push({ kind: "section-heading", text: "The challenge" })
+    stream.push({ kind: "text", text: p.challenge })
   }
 
-  // Add impacts
-  if (p.impacts && p.impacts.length > 0) {
-    stream.push({
-      kind: "impact",
-      label: "Impact",
-      items: p.impacts,
-    })
-  }
+  // 8. Everything after image 2, in order. Emitted as individual images
+  // rather than an image-row: a row would give those images a lightbox
+  // containing only themselves, while separate blocks each carry the whole
+  // set. Visually identical — both stack full-width with the same gap.
+  for (let i = 2; i < all.length; i++) push(imageAt(i))
 
-  // Add follow-ups
   stream.push({
     kind: "followups",
     text: "Want to explore another project or ask something specific?",
