@@ -128,6 +128,19 @@ function buildVibeCodedBlocks(project: Project): MessageBlock[] {
   return blocks
 }
 
+// ⚠ DORMANT — no project currently sets variant: "vibe-coded", so nothing
+// renders this. It is kept for future software and tooling case studies,
+// where architecture / stack / tradeoff describe the work better than the
+// traditional challenge / at-stake / decision shape.
+//
+// It is NOT a skin over TraditionalCaseStudy: that one renders statically in
+// one pass, while this streams its blocks through useScriptedStream the way
+// the main chat flow does. Consolidating them later means choosing one render
+// model, not merging two templates.
+//
+// With zero users, nothing will catch this rotting. Changes to
+// TraditionalCaseStudy (or to the Project fields, or the bubble components)
+// should be mirrored here deliberately.
 function VibeCodedCaseStudy({ project }: { project: Project }) {
   const [input, setInput] = useState("")
   const { messages, isTyping, enqueue } = useScriptedStream()

@@ -10,24 +10,33 @@ interface SideProject {
   status?: "in-progress" | "live"
 }
 
-const PROJECTS: SideProject[] = [
-  {
-    companies: ["FutureFit AI"],
-    title: "Sample prototype one",
-    description:
-      "Short placeholder description of what this prototype does and the problem it solves.",
-    url: "#",
-    status: "in-progress",
-  },
-  {
-    companies: ["FutureFit AI", "Coinley AI"],
-    title: "Sample prototype two",
-    description:
-      "Another placeholder description covering the second prototype's purpose and outcome.",
-    url: "#",
-    status: "live",
-  },
-]
+// Placeholder cards, dev-only. They exist to visualise the section's end
+// state while there is no real content for it. The ternary is deliberate:
+// `process.env.NODE_ENV` is inlined at build time, so in a production build
+// this collapses to a constant-false condition and the minifier drops the
+// array literal entirely — the placeholder copy and its "#" hrefs never
+// reach the client bundle. Replace with real entries when they exist.
+const PROJECTS: SideProject[] =
+  process.env.NODE_ENV === "development"
+    ? [
+        {
+          companies: ["FutureFit AI"],
+          title: "Sample prototype one",
+          description:
+            "Short placeholder description of what this prototype does and the problem it solves.",
+          url: "#",
+          status: "in-progress",
+        },
+        {
+          companies: ["FutureFit AI", "Coinley AI"],
+          title: "Sample prototype two",
+          description:
+            "Another placeholder description covering the second prototype's purpose and outcome.",
+          url: "#",
+          status: "live",
+        },
+      ]
+    : []
 
 function SideProjectCard({ project }: { project: SideProject }) {
   const [hovered, setHovered] = useState(false)
@@ -165,6 +174,11 @@ function SideProjectCard({ project }: { project: SideProject }) {
 }
 
 export function SideOfDesk() {
+  // With the placeholders gone in production there is nothing to show, and a
+  // bare heading over an empty list reads as broken. Drop the whole section
+  // until it has real entries.
+  if (PROJECTS.length === 0) return null
+
   return (
     <section
       id="ai"
