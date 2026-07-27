@@ -20,8 +20,8 @@ const CONTROL_BUTTON_STYLE: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: 40,
-  height: 40,
+  width: "var(--space-40)",
+  height: "var(--space-40)",
   padding: 0,
   border: "1px solid rgb(var(--bureau-border))",
   background: "rgb(var(--bureau-surface))",
@@ -114,7 +114,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 24,
+        padding: "var(--space-group)",
       }}
     >
       <div
@@ -123,7 +123,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         aria-modal="true"
         aria-label="Image viewer"
         onClick={(e) => e.stopPropagation()}
-        style={{ position: "relative", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}
+        style={{ position: "relative", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-between)" }}
       >
         <div
           style={{
@@ -152,7 +152,9 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
                 style={{
                   ...CONTROL_BUTTON_STYLE,
                   position: "absolute",
-                  left: 12,
+                  left: "var(--space-12)",
+                  // Centring math against the 40px control, not a spacing
+                  // choice. Documented exception.
                   top: "calc(50% - 20px)",
                 }}
               >
@@ -165,7 +167,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
                 style={{
                   ...CONTROL_BUTTON_STYLE,
                   position: "absolute",
-                  right: 12,
+                  right: "var(--space-12)",
                   top: "calc(50% - 20px)",
                 }}
               >
@@ -177,13 +179,8 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
 
         {hasMultiple && (
           <div
-            style={{
-              fontFamily: "var(--ff-plex-mono)",
-              fontWeight: 500,
-              fontSize: "11px",
-              letterSpacing: "1.4px",
-              color: "rgb(var(--bureau-text-secondary))",
-            }}
+            className="type-nav"
+            style={{ color: "rgb(var(--bureau-text-secondary))" }}
           >
             {String(currentIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
           </div>
@@ -194,7 +191,12 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
           ref={closeButtonRef}
           onClick={onClose}
           aria-label="Close"
-          style={{ ...CONTROL_BUTTON_STYLE, position: "absolute", top: -8, right: -8 }}
+          style={{
+            ...CONTROL_BUTTON_STYLE,
+            position: "absolute",
+            top: "calc(-1 * var(--space-within))",
+            right: "calc(-1 * var(--space-within))",
+          }}
         >
           <X size={18} />
         </button>

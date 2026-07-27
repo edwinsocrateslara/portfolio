@@ -59,13 +59,14 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
         />
         {isAiProject && (
           <div
+            className="type-badge"
             style={{
               position: "absolute",
-              top: 12,
-              left: 12,
-              padding: "4px 7px",
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
-              letterSpacing: "0.8px",
+              top: "var(--space-12)",
+              left: "var(--space-12)",
+              // Asymmetric: optical compensation for uppercase mono's
+              // trailing letter-space. Documented exception.
+              padding: "var(--space-4) 7px",
               background: "rgb(var(--bureau-bg) / 0.72)",
               border: "1px solid rgb(var(--bureau-border))",
               borderRadius: "var(--bureau-radius-chip)",
@@ -78,14 +79,13 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
         )}
         {project.status === "wip" && (
           <div
+            className="type-badge"
             style={{
               position: "absolute",
-              top: 12,
-              right: 12,
-              padding: "4px 7px",
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "8px", lineHeight: "1",
-              letterSpacing: "0.8px",
-              textTransform: "uppercase",
+              top: "var(--space-12)",
+              right: "var(--space-12)",
+              // Asymmetric: see AI badge above. Documented exception.
+              padding: "var(--space-4) 7px",
               borderRadius: "var(--bureau-radius-chip)",
               background: "rgb(var(--bureau-accent))",
               color: "rgb(var(--bureau-on-accent))",
@@ -95,11 +95,11 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
           </div>
         )}
         <div
+          className="type-nav"
           style={{
             position: "absolute",
-            bottom: 10,
-            right: 12,
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "11px", lineHeight: "1",
+            bottom: "var(--space-8)",
+            right: "var(--space-12)",
             color: "rgb(var(--bureau-text-primary))",
             textShadow: "0 1px 3px rgba(0, 0, 0, .6)",
           }}
@@ -111,20 +111,16 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
       {/* Body */}
       <div
         style={{
-          padding: "20px 24px 24px",
+          padding: "var(--space-20) var(--space-24) var(--space-24)",
           display: "flex",
           flexDirection: "column",
-          gap: 8,
+          gap: "var(--space-within)",
           flex: 1,
         }}
       >
         <span
-          style={{
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-            letterSpacing: "1.2px",
-            textTransform: "uppercase",
-            color: "rgb(var(--bureau-text-secondary))",
-          }}
+          className="type-label"
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
           {project.client}
         </span>
@@ -138,8 +134,8 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
           {project.projectTitle}
         </h3>
         <p
+          className="type-caption"
           style={{
-            fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "13.5px", lineHeight: "1.5",
             color: "rgb(var(--bureau-text-secondary))",
             margin: 0,
             display: "-webkit-box",
@@ -153,22 +149,22 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
         <div
           style={{
             marginTop: "auto",
-            paddingTop: 16,
+            paddingTop: "var(--space-between)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            gap: 8,
+            gap: "var(--space-within)",
           }}
         >
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-within)" }}>
             {project.tags.slice(0, 2).map((t) => (
               <span
                 key={t}
+                className="type-label"
                 style={{
-                  padding: "4px 7px",
-                  fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
-                  letterSpacing: "0.6px",
+                  // Asymmetric: see badges above. Documented exception.
+                  padding: "var(--space-4) 7px",
                   color: "rgb(var(--bureau-text-muted))",
                   border: "1px solid rgb(var(--bureau-border))",
                   borderRadius: "var(--bureau-radius-chip)",
@@ -179,14 +175,12 @@ export function LandingProjectCard({ project, index, onClick }: LandingProjectCa
             ))}
           </div>
           <span
+            className="type-label"
             style={{
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-              letterSpacing: "1px",
               color: "rgb(var(--bureau-text-primary))",
               display: "inline-flex",
               alignItems: "center",
-              gap: 8,
-              textTransform: "uppercase",
+              gap: "var(--space-within)",
             }}
           >
             View

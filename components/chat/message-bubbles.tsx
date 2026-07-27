@@ -103,8 +103,8 @@ function Avatar() {
   return (
     <span
       style={{
-        width: 26,
-        height: 26,
+        width: "var(--space-24)",
+        height: "var(--space-24)",
         flexShrink: 0,
         borderRadius: "var(--bureau-radius-chip)",
         background: "rgb(var(--bureau-elevated))",
@@ -112,9 +112,9 @@ function Avatar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "11px",
         color: "rgb(var(--bureau-text-primary))",
       }}
+      className="type-badge"
     >
       E
     </span>
@@ -126,11 +126,11 @@ export function TextBubble({ text }: { text: string }) {
   if (!text) return null
 
   return (
-    <div style={{ fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "16px", lineHeight: "1.7", color: "rgb(var(--bureau-text-primary))" }}>
+    <div className="type-body" style={{ color: "rgb(var(--bureau-text-primary))" }}>
       {text.split("\n").map((p, i) => (
         <p
           key={i}
-          style={{ margin: i === 0 ? 0 : "12px 0 0" }}
+          style={{ margin: i === 0 ? 0 : "var(--space-within) 0 0" }}
           dangerouslySetInnerHTML={{
             __html: p
               .replace(
@@ -159,18 +159,18 @@ export function ProjectHeaderBubble({
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 16,
+        gap: "var(--space-between)",
         background: "rgb(var(--bureau-surface))",
         border: "1px solid rgb(var(--bureau-border))",
-        padding: 16,
+        padding: "var(--space-between)",
         maxWidth: 480,
         borderRadius: "var(--bureau-radius-card)",
       }}
     >
       <div
         style={{
-          width: 70,
-          height: 70,
+          width: "var(--space-64)",
+          height: "var(--space-64)",
           flexShrink: 0,
           background: "rgb(var(--bureau-elevated))",
           border: "1px solid rgb(var(--bureau-border))",
@@ -187,7 +187,7 @@ export function ProjectHeaderBubble({
           alt=""
           fill
           className="object-contain p-1"
-          sizes="70px"
+          sizes="64px"
         />
       </div>
       <div
@@ -196,14 +196,12 @@ export function ProjectHeaderBubble({
           flexDirection: "column",
           minWidth: 0,
           flex: 1,
-          gap: 4,
+          gap: "var(--space-4)",
         }}
       >
         <div
+          className="type-label"
           style={{
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
             color: "rgb(var(--bureau-text-secondary))",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
@@ -213,15 +211,12 @@ export function ProjectHeaderBubble({
           {project.client}
         </div>
         <div
-          style={{
-            fontFamily: "var(--ff-archivo)", fontWeight: 700, fontSize: "20px", lineHeight: "1.2",
-            letterSpacing: "-0.4px",
-            color: "rgb(var(--bureau-text-primary))",
-          }}
+          className="type-title"
+          style={{ color: "rgb(var(--bureau-text-primary))" }}
         >
           {project.projectTitle}
         </div>
-        <div style={{ fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "13px", lineHeight: "1", color: "rgb(var(--bureau-text-muted))" }}>
+        <div className="type-caption" style={{ color: "rgb(var(--bureau-text-muted))" }}>
           {project.role}
           {project.year && (
             <>
@@ -284,9 +279,7 @@ export function ImageBubble({
       {(caption || image.alt) && (
         <figcaption
           style={{
-            margin: "8px 0 0",
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "11px", lineHeight: "1.4",
-            letterSpacing: "0.4px",
+            margin: "var(--space-within) 0 0",
             color: "rgb(var(--bureau-text-muted))",
           }}
         >
@@ -321,7 +314,7 @@ export function ImageRowBubble({
 
   return (
     <figure style={{ margin: 0 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-between)" }}>
         {images.map((img, i) => (
           <button
             key={i}
@@ -347,9 +340,7 @@ export function ImageRowBubble({
       {caption && (
         <figcaption
           style={{
-            margin: "8px 0 0",
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "11px", lineHeight: "1.4",
-            letterSpacing: "0.4px",
+            margin: "var(--space-within) 0 0",
             color: "rgb(var(--bureau-text-muted))",
           }}
         >
@@ -385,7 +376,7 @@ export function ImpactBubble({
         background: "rgb(var(--bureau-surface))",
         border: "1px solid rgb(var(--bureau-border))",
         borderLeft: "2px solid rgb(var(--bureau-accent))",
-        padding: "20px 22px",
+        padding: "var(--space-20) var(--space-24)",
         maxWidth: 520,
         borderRadius: "var(--bureau-radius-card)",
       }}
@@ -394,15 +385,12 @@ export function ImpactBubble({
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: 9,
-          fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-          letterSpacing: "1.6px",
-          textTransform: "uppercase",
+          gap: "var(--space-within)",
           color: "rgb(var(--bureau-text-secondary))",
-          marginBottom: 14,
+          marginBottom: "var(--space-between)",
         }}
       >
-        <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--bureau-accent))", flexShrink: 0 }} /> {label || "Impact"}
+        <span style={{ display: "inline-block", width: "var(--space-8)", height: "var(--space-8)", background: "rgb(var(--bureau-accent))", flexShrink: 0 }} /> {label || "Impact"}
       </div>
       <ul
         style={{
@@ -411,26 +399,25 @@ export function ImpactBubble({
           listStyle: "none",
           display: "flex",
           flexDirection: "column",
-          gap: 8,
+          gap: "var(--space-within)",
         }}
       >
         {items.map((x, i) => (
           <li
             key={i}
+            className="type-body"
             style={{
-              fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "15px", lineHeight: "1.55",
               color: "rgb(var(--bureau-text-primary))",
               display: "flex",
-              gap: 14,
+              gap: "var(--space-between)",
               alignItems: "baseline",
             }}
           >
             <span
-              className="font-mono"
+              className="type-nav"
               style={{
                 flexShrink: 0,
-                width: 20,
-                fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "12px", lineHeight: "1.5",
+                width: "var(--space-20)",
                 color: "rgb(var(--bureau-text-muted))",
               }}
             >
@@ -455,27 +442,27 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 14,
+        gap: "var(--space-between)",
         border: "1px solid rgb(var(--bureau-border))",
         borderRadius: "var(--bureau-radius-card)",
         background: "rgb(var(--bureau-surface))",
-        padding: "14px 16px",
+        padding: "var(--space-between)",
         maxWidth: 480,
         textDecoration: "none",
       }}
     >
       <span
+        className="type-badge"
         style={{
-          width: 34,
-          height: 34,
+          // 34 -> 32 to land on the grid; the glyph also grew 8px -> 12px.
+          width: "var(--space-32)",
+          height: "var(--space-32)",
           flexShrink: 0,
           border: "1px solid rgb(var(--bureau-border-strong))",
           borderRadius: "var(--bureau-radius-card)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "8px", lineHeight: "1",
-          letterSpacing: "0.5px",
           color: "rgb(var(--bureau-text-secondary))",
         }}
       >
@@ -483,27 +470,27 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       </span>
       <span style={{ flex: 1, minWidth: 0 }}>
         <span
+          className="type-card-h3"
           style={{
             display: "block",
-            fontFamily: "var(--ff-archivo)", fontWeight: 600, fontSize: "14px", lineHeight: "1.2",
             color: "rgb(var(--bureau-text-primary))",
           }}
         >
           {doc.label}
         </span>
         <span
+          className="type-meta"
           style={{
             display: "block",
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 400, fontSize: "11px", lineHeight: "1",
-            letterSpacing: "0.4px",
             color: "rgb(var(--bureau-text-muted))",
+            // Optical title-to-meta gap. Documented exception.
             marginTop: 5,
           }}
         >
           PDF
         </span>
       </span>
-      <span style={{ fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "13px", lineHeight: "1", color: "rgb(var(--bureau-text-primary))" }}>
+      <span className="type-label" style={{ color: "rgb(var(--bureau-text-primary))" }}>
         ↓
       </span>
     </a>
@@ -528,10 +515,10 @@ export function FollowupsBubble({
       {chips?.length > 0 && (
         <div
           style={{
-            marginTop: text ? 18 : 0,
+            marginTop: text ? "var(--space-between)" : 0,
             display: "flex",
             flexWrap: "wrap",
-            gap: 10,
+            gap: "var(--space-within)",
           }}
         >
           {chips.map((c, i) => (
@@ -552,16 +539,14 @@ export function FollowupsBubble({
 // Typing indicator
 export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean }) {
   return (
-    <div style={{ display: "flex", gap: 14 }}>
+    <div style={{ display: "flex", gap: "var(--space-between)" }}>
       {showAvatar && <Avatar />}
       <div
+        className="type-label"
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 8,
-          fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
-          letterSpacing: "1.6px",
-          textTransform: "uppercase",
+          gap: "var(--space-within)",
           color: "rgb(var(--bureau-text-muted))",
         }}
       >
@@ -570,15 +555,15 @@ export function TypingIndicator({ showAvatar = true }: { showAvatar?: boolean })
             key={d}
             className="animate-bureau-pulse"
             style={{
-              width: 5,
-              height: 5,
+              width: "var(--space-4)",
+              height: "var(--space-4)",
               borderRadius: 9999,
               background: "rgb(var(--bureau-text-secondary))",
               animationDelay: `${d}ms`,
             }}
           />
         ))}
-        <span style={{ marginLeft: 4 }}>Generating</span>
+        <span style={{ marginLeft: "var(--space-4)" }}>Generating</span>
       </div>
     </div>
   )
@@ -601,9 +586,9 @@ export function AssistantBubble({
   return (
     <div
       className={prefersReducedMotion ? undefined : "animate-slide-up"}
-      style={{ display: "flex", gap: 14 }}
+      style={{ display: "flex", gap: "var(--space-between)" }}
     >
-      {showAvatar ? <Avatar /> : <span style={{ width: 26, flexShrink: 0 }} />}
+      {showAvatar ? <Avatar /> : <span style={{ width: "var(--space-24)", flexShrink: 0 }} />}
       <div style={{ flex: 1, minWidth: 0 }}>
         {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
         {kind === "project-header" && (
@@ -664,13 +649,13 @@ export function UserBubble({ content }: { content: string }) {
       style={{ display: "flex", justifyContent: "flex-end" }}
     >
       <div
+        className="type-body"
         style={{
           maxWidth: "70%",
-          padding: "12px 16px",
+          padding: "var(--space-within) var(--space-between)",
           background: "rgb(var(--bureau-elevated))",
           border: "1px solid rgb(var(--bureau-border))",
           borderRadius: "var(--bureau-radius-btn)",
-          fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "15px", lineHeight: "1.5",
           color: "rgb(var(--bureau-text-primary))",
         }}
       >

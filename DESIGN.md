@@ -137,6 +137,7 @@ voice. Size is the scale; family, weight, and case are the voice.
 | `.type-title` | Archivo | 700 | title |
 | `.type-card-h3` | Archivo | 600 | body |
 | `.type-body` | Archivo | 400 | body |
+| `.type-caption` | Archivo | 400 | label — supporting prose |
 | `.type-badge` | Plex Mono | 700 | label, uppercase |
 | `.type-label` | Plex Mono | 600 | label, uppercase |
 | `.type-nav` | Plex Mono | 500 | label, uppercase |
@@ -145,6 +146,11 @@ voice. Size is the scale; family, weight, and case are the voice.
 At ≤640px the two largest steps move **down the ramp rather than off it**:
 `hero` takes the `h2` step (32/48), `h2` takes `subhead` (24/36). No
 mobile-only sizes exist.
+
+The classes live in `@layer components`, so Tailwind utilities — which
+come later in the cascade — can override a single property without an
+inline style. A state-driven weight change is `font-bold`, not
+`style={{ fontWeight }}`.
 
 **These classes are the only way to set type.** Components must not
 re-declare `font-family`, `font-weight`, `font-size`, `line-height`, or
@@ -164,6 +170,7 @@ without color.
   (matches the source preview images — all 7 are square), `grayscale(.15)`.
   Index bottom-right, mono. Hover: border → `border-strong`, image
   `grayscale(0)`, lift 1px.
+- **Grid gutter** (Selected Work) — `group` (32px).
 - **Chip / tag** — 1px `border`, `surface`, radius 2. Tag text `text-muted`
   `.type-meta`; prompt-chip `text-secondary` `.type-body` with a mono `→`
   prefix.

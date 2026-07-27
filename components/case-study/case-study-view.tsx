@@ -166,7 +166,7 @@ function VibeCodedCaseStudy({ project }: { project: Project }) {
     <>
       <div className="flex-1 overflow-y-auto px-5">
         <div
-          style={{ ...CHAT_COLUMN, paddingTop: 32, paddingBottom: 8 }}
+          style={{ ...CHAT_COLUMN, paddingTop: "var(--space-group)", paddingBottom: "var(--space-within)" }}
           className="flex flex-col gap-4"
         >
           {messages.map((message, i) => (
@@ -209,12 +209,12 @@ function TraditionalCaseStudy({ project }: { project: Project }) {
     <>
       <div className="flex-1 overflow-y-auto px-5">
         <div
-          style={{ ...CHAT_COLUMN, paddingTop: 32, paddingBottom: 8 }}
+          style={{ ...CHAT_COLUMN, paddingTop: "var(--space-group)", paddingBottom: "var(--space-within)" }}
           className="flex flex-col gap-4"
         >
-          <div style={{ display: "flex", gap: 14 }}>
-            <span style={{ width: 26, flexShrink: 0 }} />
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", gap: "var(--space-between)" }}>
+            <span style={{ width: "var(--space-24)", flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "var(--space-group)" }}>
               <ProjectHeaderBubble
                 project={{
                   slug: project.slug,
@@ -266,27 +266,14 @@ export function CaseStudyView({ project }: { project: Project }) {
       >
         <Link
           href="/"
-          className="flex items-center gap-2"
-          style={{
-            fontFamily: "var(--ff-plex-mono)",
-            fontWeight: 600,
-            fontSize: "11px",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
-            color: "rgb(var(--bureau-text-secondary))",
-          }}
+          className="type-label flex items-center gap-2"
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
           ← Back
         </Link>
         <span
-          style={{
-            fontFamily: "var(--ff-plex-mono)",
-            fontWeight: 700,
-            fontSize: "12px",
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            color: "rgb(var(--bureau-text-primary))",
-          }}
+          className="type-badge"
+          style={{ color: "rgb(var(--bureau-text-primary))" }}
         >
           EdwinOS
         </span>
@@ -294,14 +281,8 @@ export function CaseStudyView({ project }: { project: Project }) {
           href="https://www.edwinsocrates.com"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            fontFamily: "var(--ff-plex-mono)",
-            fontWeight: 600,
-            fontSize: "11px",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
-            color: "rgb(var(--bureau-text-secondary))",
-          }}
+          className="type-label"
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
           Portfolio
         </a>

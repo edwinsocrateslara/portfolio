@@ -52,7 +52,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
         background: "rgb(var(--bureau-surface))",
         border: `1px solid rgb(var(--bureau-${hovered ? "border-strong" : "border"}))`,
         borderRadius: "var(--bureau-radius-card)",
-        padding: "clamp(24px, 3vw, 30px) clamp(24px, 3vw, 32px)",
+        padding: "clamp(var(--space-24), 3vw, var(--space-32))",
         textDecoration: "none",
         transition: "border-color 0.15s, transform 0.15s",
         transform: hovered ? "translateY(-1px)" : "translateY(0)",
@@ -66,18 +66,16 @@ function SideProjectCard({ project }: { project: SideProject }) {
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "space-between",
-          gap: 24,
+          gap: "var(--space-group)",
         }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Company eyebrow */}
           <div
+            className="type-label"
             style={{
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-              letterSpacing: "1.4px",
-              textTransform: "uppercase",
               color: "rgb(var(--bureau-text-secondary))",
-              marginBottom: 12,
+              marginBottom: "var(--space-within)",
             }}
           >
             {project.companies.join(" · ")}
@@ -85,10 +83,10 @@ function SideProjectCard({ project }: { project: SideProject }) {
 
           {/* Title */}
           <h3
+            className="type-title"
             style={{
-              fontFamily: "var(--ff-archivo)", fontWeight: 600, fontSize: "20px", lineHeight: "1.2",
               color: "rgb(var(--bureau-text-primary))",
-              margin: "0 0 8px",
+              margin: "0 0 var(--space-within)",
             }}
           >
             {project.title}
@@ -97,26 +95,26 @@ function SideProjectCard({ project }: { project: SideProject }) {
           {/* Description */}
           <p
             style={{
-              fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "14px", lineHeight: "1.55",
               color: "rgb(var(--bureau-text-secondary))",
-              margin: "0 0 18px",
+              margin: "0 0 var(--space-between)",
             }}
+            className="type-caption"
           >
             {project.description}
           </p>
 
           {/* View → CTA */}
           <span
+            className="type-label"
             style={{
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
-              letterSpacing: "1.2px",
-              textTransform: "uppercase",
               color: "rgb(var(--bureau-text-primary))",
               borderBottom: "1px solid rgb(var(--bureau-border-strong))",
+              // Optical: cap-height-to-underline gap on uppercase mono.
+              // 4px visibly loosens it. Documented exception.
               paddingBottom: 3,
               display: "inline-flex",
               alignItems: "center",
-              gap: 8,
+              gap: "var(--space-within)",
             }}
           >
             View
@@ -134,14 +132,14 @@ function SideProjectCard({ project }: { project: SideProject }) {
 
         {/* Status badge */}
         {project.status && (
-          <div style={{ flexShrink: 0, paddingTop: 4 }}>
+          <div style={{ flexShrink: 0, paddingTop: "var(--space-4)" }}>
             {project.status === "in-progress" ? (
               <span
+                className="type-label"
                 style={{
                   display: "inline-block",
-                  fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "9px", lineHeight: "1",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
+                  // Asymmetric: optical compensation for uppercase mono
+                  // tracking. Documented exception.
                   padding: "5px 9px",
                   border: "1px solid rgb(var(--bureau-border-strong))",
                   borderRadius: "var(--bureau-radius-chip)",
@@ -152,11 +150,10 @@ function SideProjectCard({ project }: { project: SideProject }) {
               </span>
             ) : (
               <span
+                className="type-badge"
                 style={{
                   display: "inline-block",
-                  fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "9px", lineHeight: "1",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
+                  // Asymmetric: see above. Documented exception.
                   padding: "5px 9px",
                   borderRadius: "var(--bureau-radius-chip)",
                   background: "rgb(var(--bureau-accent))",
@@ -190,21 +187,19 @@ export function SideOfDesk() {
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "space-between",
-          marginBottom: 48,
-          gap: 24,
+          marginBottom: "var(--space-group)",
+          gap: "var(--space-group)",
         }}
       >
         <div>
           <div
+            className="type-label"
             style={{
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
               color: "rgb(var(--bureau-text-secondary))",
-              marginBottom: 18,
+              marginBottom: "var(--space-between)",
               display: "flex",
               alignItems: "center",
-              gap: 8,
+              gap: "var(--space-within)",
             }}
           >
             <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--bureau-text-secondary))", flexShrink: 0 }} /> AI Practice
@@ -216,7 +211,7 @@ export function SideOfDesk() {
       </div>
 
       {/* Card list */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-between)" }}>
         {PROJECTS.map((project) => (
           <SideProjectCard key={project.title} project={project} />
         ))}

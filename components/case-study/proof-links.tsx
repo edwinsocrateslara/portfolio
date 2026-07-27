@@ -18,29 +18,27 @@ function ProofLinkItem({ glyph, label, meta, href }: ProofLinkItemProps) {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 14,
+        gap: "var(--space-between)",
         border: "1px solid rgb(var(--bureau-border))",
         borderRadius: "var(--bureau-radius-card)",
         background: "rgb(var(--bureau-surface))",
-        padding: "14px 16px",
+        padding: "var(--space-between)",
         textDecoration: "none",
       }}
     >
       <span
+        className="type-badge"
         style={{
-          width: 40,
-          height: 34,
+          // Widened from 40x34: the glyph moved 8px -> 12px and "VIDEO"
+          // no longer fits 40px. 34 was also off the 4px grid.
+          width: "var(--space-48)",
+          height: "var(--space-32)",
           flexShrink: 0,
           border: "1px solid rgb(var(--bureau-border-strong))",
           borderRadius: "var(--bureau-radius-card)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "var(--ff-plex-mono)",
-          fontWeight: 700,
-          fontSize: "8px",
-          lineHeight: "1",
-          letterSpacing: "0.5px",
           color: "rgb(var(--bureau-text-secondary))",
         }}
       >
@@ -48,41 +46,29 @@ function ProofLinkItem({ glyph, label, meta, href }: ProofLinkItemProps) {
       </span>
       <span style={{ flex: 1, minWidth: 0 }}>
         <span
+          className="type-card-h3"
           style={{
             display: "block",
-            fontFamily: "var(--ff-archivo)",
-            fontWeight: 600,
-            fontSize: "14px",
-            lineHeight: "1.2",
             color: "rgb(var(--bureau-text-primary))",
           }}
         >
           {label}
         </span>
         <span
+          className="type-meta"
           style={{
             display: "block",
-            fontFamily: "var(--ff-plex-mono)",
-            fontWeight: 400,
-            fontSize: "11px",
-            lineHeight: "1",
-            letterSpacing: "0.4px",
             color: "rgb(var(--bureau-text-muted))",
+            // Optical: title-to-meta gap, tighter than `within` because the
+            // meta line's own leading already separates them. Documented
+            // exception.
             marginTop: 5,
           }}
         >
           {meta}
         </span>
       </span>
-      <span
-        style={{
-          fontFamily: "var(--ff-plex-mono)",
-          fontWeight: 600,
-          fontSize: "13px",
-          lineHeight: "1",
-          color: "rgb(var(--bureau-text-primary))",
-        }}
-      >
+      <span className="type-label" style={{ color: "rgb(var(--bureau-text-primary))" }}>
         ↗
       </span>
     </a>
@@ -105,7 +91,7 @@ export function ProofLinks({ links }: { links: ProofLinksData }) {
   if (items.length === 0) return null
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 480 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-within)", maxWidth: 480 }}>
       {items.map((item) => (
         <ProofLinkItem key={item.glyph} {...item} />
       ))}

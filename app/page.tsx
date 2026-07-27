@@ -287,39 +287,31 @@ export default function HomePage() {
             className="mb-20 flex items-center justify-between animate-fade-in"
             style={{ animationDelay: "0ms" }}
           >
-            <div className="flex items-center gap-[10px]">
+            <div className="flex items-center gap-within">
               <span
-                className="uppercase"
-                style={{
-                  fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "15px", lineHeight: "1",
-                  letterSpacing: "1px",
-                  color: "rgb(var(--bureau-text-primary))",
-                }}
+                className="type-title"
+                style={{ color: "rgb(var(--bureau-text-primary))" }}
               >
                 EdwinOS
               </span>
               <span
                 style={{
-                  width: 6,
-                  height: 6,
+                  width: "var(--space-8)",
+                  height: "var(--space-8)",
                   borderRadius: 9999,
                   background: "rgb(var(--bureau-text-primary))",
                   display: "inline-block",
                 }}
               />
               <span
-                className="uppercase"
-                style={{
-                  fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-                  letterSpacing: "1.4px",
-                  color: "rgb(var(--bureau-text-muted))",
-                }}
+                className="type-label"
+                style={{ color: "rgb(var(--bureau-text-muted))" }}
               >
                 Available
               </span>
             </div>
 
-            <nav className="flex items-center gap-[30px]">
+            <nav className="flex items-center gap-group">
               {[
                 { label: "WORK", href: "#work" },
                 { label: "AI", href: "#ai" },
@@ -331,12 +323,8 @@ export default function HomePage() {
                   href={href}
                   target={href.startsWith("#") ? undefined : "_blank"}
                   rel="noopener noreferrer"
-                  className="transition-colors"
-                  style={{
-                    fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "11px", lineHeight: "1",
-                    letterSpacing: "1.4px",
-                    color: "rgb(var(--bureau-text-secondary))",
-                  }}
+                  className="type-nav transition-colors"
+                  style={{ color: "rgb(var(--bureau-text-secondary))" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
                     e.currentTarget.style.textDecoration = "underline"
@@ -378,8 +366,8 @@ export default function HomePage() {
               .
             </h1>
             <p
+              className="type-body"
               style={{
-                fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "16px", lineHeight: "1.6",
                 color: "rgb(var(--bureau-text-secondary))",
                 maxWidth: 520,
               }}
@@ -455,13 +443,8 @@ export default function HomePage() {
         <button
           type="button"
           onClick={handleBack}
-          className="flex items-center gap-2 transition-colors"
-          style={{
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
-            color: "rgb(var(--bureau-text-secondary))",
-          }}
+          className="type-label flex items-center gap-2 transition-colors"
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
           onMouseEnter={(e) => {
             e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
           }}
@@ -474,14 +457,7 @@ export default function HomePage() {
         </button>
 
         <div className="flex items-center gap-2">
-          <span
-            style={{
-              fontFamily: "var(--ff-plex-mono)", fontWeight: 700, fontSize: "12px", lineHeight: "1",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
-              color: "rgb(var(--bureau-text-primary))",
-            }}
-          >
+          <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
             EdwinOS
           </span>
         </div>
@@ -490,13 +466,8 @@ export default function HomePage() {
           href="https://www.edwinsocrates.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="transition-colors"
-          style={{
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
-            color: "rgb(var(--bureau-text-secondary))",
-          }}
+          className="type-label transition-colors"
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
           onMouseEnter={(e) => {
             e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
           }}

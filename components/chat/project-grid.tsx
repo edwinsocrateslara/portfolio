@@ -15,13 +15,7 @@ export function ProjectGrid({ onProjectClick }: ProjectGridProps) {
         <h2 className="type-h2" style={{ margin: 0, color: "rgb(var(--bureau-text-primary))" }}>
           Selected Work
         </h2>
-        <span
-          style={{
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 500, fontSize: "12px", lineHeight: "1",
-            letterSpacing: "1.5px",
-            color: "rgb(var(--bureau-text-muted))",
-          }}
-        >
+        <span className="type-nav" style={{ color: "rgb(var(--bureau-text-muted))" }}>
           01 — {String(projects.length).padStart(2, "0")}
         </span>
       </div>
@@ -29,7 +23,7 @@ export function ProjectGrid({ onProjectClick }: ProjectGridProps) {
         className="grid"
         style={{
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 26,
+          gap: "var(--space-group)",
         }}
       >
         {projects.map((project, index) => (

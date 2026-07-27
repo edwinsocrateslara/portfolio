@@ -158,93 +158,110 @@ body {
    shorthand — the whole declaration is silently dropped if you try.
    Longhand properties only. */
 
-/* Archivo — prose and headings */
-.type-hero {
-  font-family: var(--ff-archivo);
-  font-weight: 800;
-  font-size: var(--type-hero-size);
-  line-height: var(--type-hero-lh);
-  letter-spacing: -1.6px;
-}
-.type-h2 {
-  font-family: var(--ff-archivo);
-  font-weight: 700;
-  font-size: var(--type-h2-size);
-  line-height: var(--type-h2-lh);
-  letter-spacing: -1px;
-}
-.type-subhead {
-  font-family: var(--ff-archivo);
-  font-weight: 700;
-  font-size: var(--type-subhead-size);
-  line-height: var(--type-subhead-lh);
-  letter-spacing: -0.6px;
-}
-.type-title {
-  font-family: var(--ff-archivo);
-  font-weight: 700;
-  font-size: var(--type-title-size);
-  line-height: var(--type-title-lh);
-  letter-spacing: -0.4px;
-}
-.type-card-h3 {
-  font-family: var(--ff-archivo);
-  font-weight: 600;
-  font-size: var(--type-body-size);
-  line-height: var(--type-body-lh);
-}
-.type-body {
-  font-family: var(--ff-archivo);
-  font-weight: 400;
-  font-size: var(--type-body-size);
-  line-height: var(--type-body-lh);
-}
-
-/* IBM Plex Mono — system voice */
-/* Badges and glyph tiles — the heaviest mono weight, for text that sits
-   on an inverted fill or inside a bordered tile. */
-.type-badge {
-  font-family: var(--ff-plex-mono);
-  font-weight: 700;
-  font-size: var(--type-label-size);
-  line-height: var(--type-label-lh);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-.type-label {
-  font-family: var(--ff-plex-mono);
-  font-weight: 600;
-  font-size: var(--type-label-size);
-  line-height: var(--type-label-lh);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-}
-.type-nav {
-  font-family: var(--ff-plex-mono);
-  font-weight: 500;
-  font-size: var(--type-label-size);
-  line-height: var(--type-label-lh);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-}
-.type-meta {
-  font-family: var(--ff-plex-mono);
-  font-weight: 400;
-  font-size: var(--type-label-size);
-  line-height: var(--type-label-lh);
-}
-
-/* Mobile steps down the ramp rather than off it — hero takes the h2
-   step, h2 takes subhead. Line-height stays 1.5x at every size. */
-@media (max-width: 640px) {
+/* Wrapped in @layer components so Tailwind utilities, which come
+   later in the cascade, can override a .type-* declaration. Without
+   this a font-bold or text-* utility silently loses to these rules
+   and the only escape hatch is an inline style — which is exactly
+   what this system is trying to eliminate. */
+@layer components {
+  /* Archivo — prose and headings */
   .type-hero {
+    font-family: var(--ff-archivo);
+    font-weight: 800;
+    font-size: var(--type-hero-size);
+    line-height: var(--type-hero-lh);
+    letter-spacing: -1.6px;
+  }
+  .type-h2 {
+    font-family: var(--ff-archivo);
+    font-weight: 700;
     font-size: var(--type-h2-size);
     line-height: var(--type-h2-lh);
     letter-spacing: -1px;
   }
-  .type-h2 {
+  .type-subhead {
+    font-family: var(--ff-archivo);
+    font-weight: 700;
     font-size: var(--type-subhead-size);
     line-height: var(--type-subhead-lh);
     letter-spacing: -0.6px;
+  }
+  .type-title {
+    font-family: var(--ff-archivo);
+    font-weight: 700;
+    font-size: var(--type-title-size);
+    line-height: var(--type-title-lh);
+    letter-spacing: -0.4px;
+  }
+  .type-card-h3 {
+    font-family: var(--ff-archivo);
+    font-weight: 600;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+  }
+  .type-body {
+    font-family: var(--ff-archivo);
+    font-weight: 400;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+  }
+  /* Supporting prose — taglines, locations, role lines, card descriptions.
+     Archivo, because it is human-readable prose rather than system chrome,
+     but at the label step so it reads as secondary to the body text and
+     headings it sits beside. */
+  .type-caption {
+    font-family: var(--ff-archivo);
+    font-weight: 400;
+    font-size: var(--type-label-size);
+    line-height: var(--type-label-lh);
+  }
+
+  /* IBM Plex Mono — system voice */
+  /* Badges and glyph tiles — the heaviest mono weight, for text that sits
+     on an inverted fill or inside a bordered tile. */
+  .type-badge {
+    font-family: var(--ff-plex-mono);
+    font-weight: 700;
+    font-size: var(--type-label-size);
+    line-height: var(--type-label-lh);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .type-label {
+    font-family: var(--ff-plex-mono);
+    font-weight: 600;
+    font-size: var(--type-label-size);
+    line-height: var(--type-label-lh);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+  .type-nav {
+    font-family: var(--ff-plex-mono);
+    font-weight: 500;
+    font-size: var(--type-label-size);
+    line-height: var(--type-label-lh);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+  .type-meta {
+    font-family: var(--ff-plex-mono);
+    font-weight: 400;
+    font-size: var(--type-label-size);
+    line-height: var(--type-label-lh);
+  }
+
+  /* Mobile steps down the ramp rather than off it — hero takes the h2
+     step, h2 takes subhead. Line-height stays 1.5x at every size. */
+  @media (max-width: 640px) {
+    .type-hero {
+      font-size: var(--type-h2-size);
+      line-height: var(--type-h2-lh);
+      letter-spacing: -1px;
+    }
+    .type-h2 {
+      font-size: var(--type-subhead-size);
+      line-height: var(--type-subhead-lh);
+      letter-spacing: -0.6px;
+    }
   }
 }

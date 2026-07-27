@@ -3,7 +3,7 @@ export function NowPlaying() {
     <footer
       style={{
         background: "rgb(var(--bureau-bg))",
-        padding: "80px 0 48px",
+        padding: "var(--space-section) 0 var(--space-group)",
         borderTop: "1px solid rgb(var(--bureau-border))",
       }}
     >
@@ -14,7 +14,7 @@ export function NowPlaying() {
           alignItems: "flex-end",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: 24,
+          gap: "var(--space-group)",
         }}
       >
         <div>
@@ -22,31 +22,27 @@ export function NowPlaying() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 8,
-              marginBottom: 14,
+              gap: "var(--space-within)",
+              marginBottom: "var(--space-between)",
             }}
           >
             <span
               style={{
-                width: 8,
-                height: 8,
+                width: "var(--space-8)",
+                height: "var(--space-8)",
                 background: "rgb(var(--bureau-text-secondary))",
               }}
             />
             <span
-              style={{
-                fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "10px", lineHeight: "1",
-                letterSpacing: "2px",
-                textTransform: "uppercase",
-                color: "rgb(var(--bureau-text-secondary))",
-              }}
+              className="type-label"
+              style={{ color: "rgb(var(--bureau-text-secondary))" }}
             >
               Currently
             </span>
           </div>
           <p
+            className="type-title"
             style={{
-              fontFamily: "var(--ff-archivo)", fontWeight: 600, fontSize: "19px", lineHeight: "1.3",
               color: "rgb(var(--bureau-text-primary))",
               maxWidth: 420,
               margin: 0,
@@ -55,23 +51,21 @@ export function NowPlaying() {
             Designing the AI coach experience at FutureFit AI
           </p>
           <p
+            className="type-caption"
             style={{
-              fontFamily: "var(--ff-archivo)", fontWeight: 400, fontSize: "13px", lineHeight: "1",
               color: "rgb(var(--bureau-text-muted))",
-              marginTop: 12,
-              margin: "12px 0 0",
+              margin: "var(--space-within) 0 0",
             }}
           >
             Toronto, Canada
           </p>
         </div>
         <div
+          className="type-label"
           style={{
             display: "flex",
-            gap: 26,
+            gap: "var(--space-group)",
             alignItems: "center",
-            fontFamily: "var(--ff-plex-mono)", fontWeight: 600, fontSize: "11px", lineHeight: "1",
-            letterSpacing: "1.4px",
             color: "rgb(var(--bureau-text-secondary))",
           }}
         >
