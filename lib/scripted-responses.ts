@@ -1,60 +1,12 @@
 import { projects } from "./projects"
-import type { DocKey } from "./constants"
+import { buildProjectBodyBlocks } from "./project-flow"
+import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
-type MessageTemplate =
-  | { kind: "text"; text: string }
-  | { kind: "section-heading"; text: string }
-  | {
-      kind: "project-header"
-      project: {
-        slug: string
-        client: string
-        projectTitle: string
-        role: string
-        year?: string
-        previewImage: string
-      }
-    }
-  | {
-      kind: "image"
-      image: { url: string; alt?: string }
-      caption?: string
-      group?: { url: string; alt?: string }[]
-      groupIndex?: number
-    }
-  | {
-      kind: "image-row"
-      images: { url: string; alt?: string }[]
-      caption?: string
-    }
-  | { kind: "impact"; label?: string; items: string[] }
-  | {
-      kind: "followups"
-      text?: string
-      chips: { text: string; slug?: string }[]
-    }
-  | { kind: "doc-link"; docKey: DocKey }
-
-// Build a project stream from project data.
-//
-// Order mirrors the original Framer project page:
-//   header -> tagline -> image 1 -> KEY IMPACTS -> MY ROLE (role, what was
-//   at stake, why) -> image 2 -> THE CHALLENGE -> remaining images.
-//
-// The data is uneven — ai-workforce-development has no challenge, atStake
-// or decision; ai-investing has no impacts; two projects have only two
-// images. A missing section drops out entirely, heading included, and the
-// images keep their slots rather than shifting up to fill the gap.
-function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
-  const images = p.images ?? []
-  const all = images.map((img) => ({ url: img.url, alt: img.alt }))
-
-  // Every image opens a lightbox over the whole set regardless of where it
-  // sits in the reveal, so splitting them up doesn't strand each one alone.
-  const imageAt = (i: number): MessageTemplate | null =>
-    all[i] ? { kind: "image", image: all[i], group: all, groupIndex: i } : null
-
-  const stream: MessageTemplate[] = [
+// The chat reveal: header, the shared body, then follow-up chips. The order
+// of the body lives in lib/project-flow.ts and is shared with the standalone
+// /case-study route so the two cannot drift.
+function projectStream(p: (typeof projects)[0]): MessageBlock[] {
+  return [
     {
       kind: "project-header",
       project: {
@@ -65,66 +17,21 @@ function projectStream(p: (typeof projects)[0]): MessageTemplate[] {
         previewImage: p.previewImage.url,
       },
     },
-    { kind: "text", text: p.tagline },
+    ...buildProjectBodyBlocks(p),
+    {
+      kind: "followups",
+      text: "Want to explore another project or ask something specific?",
+      chips: [
+        { text: "Walk me through your work" },
+        { text: "How do you design with AI?" },
+        { text: "Show me your résumé" },
+      ],
+    },
   ]
-
-  const push = (block: MessageTemplate | null) => {
-    if (block) stream.push(block)
-  }
-
-  // 3. Image 1
-  push(imageAt(0))
-
-  // 4. KEY IMPACTS — the impact card carries its own heading.
-  if (p.impacts && p.impacts.length > 0) {
-    stream.push({ kind: "impact", label: "Key impacts", items: p.impacts })
-  }
-
-  // 5. MY ROLE — role, then what was at stake, then why.
-  if (p.roleDescription || p.atStake || p.decision) {
-    stream.push({ kind: "section-heading", text: "My role" })
-    if (p.roleDescription) stream.push({ kind: "text", text: p.roleDescription })
-    if (p.atStake) {
-      stream.push({ kind: "text", text: `**What was at stake:** ${p.atStake}` })
-    }
-    if (p.decision) {
-      stream.push({
-        kind: "text",
-        text: `**Why I made those decisions:** ${p.decision}`,
-      })
-    }
-  }
-
-  // 6. Image 2
-  push(imageAt(1))
-
-  // 7. THE CHALLENGE
-  if (p.challenge) {
-    stream.push({ kind: "section-heading", text: "The challenge" })
-    stream.push({ kind: "text", text: p.challenge })
-  }
-
-  // 8. Everything after image 2, in order. Emitted as individual images
-  // rather than an image-row: a row would give those images a lightbox
-  // containing only themselves, while separate blocks each carry the whole
-  // set. Visually identical — both stack full-width with the same gap.
-  for (let i = 2; i < all.length; i++) push(imageAt(i))
-
-  stream.push({
-    kind: "followups",
-    text: "Want to explore another project or ask something specific?",
-    chips: [
-      { text: "Walk me through your work" },
-      { text: "How do you design with AI?" },
-      { text: "Show me your résumé" },
-    ],
-  })
-
-  return stream
 }
 
 // Initial intro sequence - a warm welcome
-export const INTRO_SEQUENCE: MessageTemplate[] = [
+export const INTRO_SEQUENCE: MessageBlock[] = [
   {
     kind: "text",
     text: "Hey! I'm Edwin's AI assistant. I can walk you through his work, show you specific projects, or pull up his résumé.",
@@ -149,7 +56,7 @@ export const INTRO_SEQUENCE: MessageTemplate[] = [
 export function buildResponse(
   text: string,
   options?: { preloadedSlug?: string; currentProjectSlug?: string | null }
-): { response: MessageTemplate[] | null; projectSlug: string | null } {
+): { response: MessageBlock[] | null; projectSlug: string | null } {
   const t = text.toLowerCase()
   const { preloadedSlug, currentProjectSlug } = options || {}
 
@@ -320,4 +227,4 @@ export function buildResponse(
   return { response: null, projectSlug: currentProjectSlug || null }
 }
 
-export type { MessageTemplate }
+export type { MessageBlock }

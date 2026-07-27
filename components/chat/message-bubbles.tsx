@@ -10,6 +10,7 @@ import { ArchitectureSection } from "@/components/case-study/architecture-sectio
 import { ProofLinks } from "@/components/case-study/proof-links"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
+import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
 // Message types
 export type MessageKind =
@@ -576,6 +577,80 @@ export function TypingIndicator() {
   )
 }
 
+// Renders one block's content. The single switch over message kinds —
+// AssistantBubble wraps it for the chat stream, and the standalone
+// case-study route renders blocks with it directly, so neither maintains
+// its own copy of this mapping.
+//
+// Takes MessageBlock rather than StructuredMessage so callers holding a
+// template (no id/role assigned yet) can render it; a StructuredMessage is
+// assignable, having only extra fields.
+export function MessageContent({
+  message,
+  onChipPick,
+  isLastAssistant,
+}: {
+  message: MessageBlock
+  onChipPick?: (chip: { text: string; slug?: string }) => void
+  isLastAssistant?: boolean
+}) {
+  const kind = message.kind || "text"
+
+  return (
+    <>
+      {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
+      {kind === "section-heading" && (
+        <SectionHeading text={(message as SectionHeadingMessage).text} />
+      )}
+      {kind === "project-header" && (
+        <ProjectHeaderBubble
+          project={(message as ProjectHeaderMessage).project}
+        />
+      )}
+      {kind === "image" && (
+        <ImageBubble
+          image={(message as ImageMessage).image}
+          caption={(message as ImageMessage).caption}
+          group={(message as ImageMessage).group}
+          groupIndex={(message as ImageMessage).groupIndex}
+        />
+      )}
+      {kind === "image-row" && (
+        <ImageRowBubble
+          images={(message as ImageRowMessage).images}
+          caption={(message as ImageRowMessage).caption}
+        />
+      )}
+      {kind === "impact" && (
+        <ImpactBubble
+          label={(message as ImpactMessage).label}
+          items={(message as ImpactMessage).items}
+        />
+      )}
+      {kind === "doc-link" && (
+        <DocLinkBubble docKey={(message as DocLinkMessage).docKey} />
+      )}
+      {kind === "architecture" && (
+        <ArchitectureSection
+          architecture={(message as ArchitectureMessage).architecture}
+          stack={(message as ArchitectureMessage).stack}
+        />
+      )}
+      {kind === "proof-links" && (
+        <ProofLinks links={(message as ProofLinksMessage).links} />
+      )}
+      {kind === "followups" && (
+        <FollowupsBubble
+          text={(message as FollowupsMessage).text}
+          chips={(message as FollowupsMessage).chips}
+          onPick={onChipPick}
+          disabled={!isLastAssistant}
+        />
+      )}
+    </>
+  )
+}
+
 // Assistant message wrapper
 export function AssistantBubble({
   message,
@@ -587,7 +662,6 @@ export function AssistantBubble({
   isLastAssistant?: boolean
 }) {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const kind = message.kind || "text"
 
   return (
     <div
@@ -595,55 +669,11 @@ export function AssistantBubble({
       style={{ minWidth: 0 }}
     >
       <div style={{ minWidth: 0 }}>
-        {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
-        {kind === "section-heading" && (
-          <SectionHeading text={(message as SectionHeadingMessage).text} />
-        )}
-        {kind === "project-header" && (
-          <ProjectHeaderBubble
-            project={(message as ProjectHeaderMessage).project}
-          />
-        )}
-        {kind === "image" && (
-          <ImageBubble
-            image={(message as ImageMessage).image}
-            caption={(message as ImageMessage).caption}
-            group={(message as ImageMessage).group}
-            groupIndex={(message as ImageMessage).groupIndex}
-          />
-        )}
-        {kind === "image-row" && (
-          <ImageRowBubble
-            images={(message as ImageRowMessage).images}
-            caption={(message as ImageRowMessage).caption}
-          />
-        )}
-        {kind === "impact" && (
-          <ImpactBubble
-            label={(message as ImpactMessage).label}
-            items={(message as ImpactMessage).items}
-          />
-        )}
-        {kind === "doc-link" && (
-          <DocLinkBubble docKey={(message as DocLinkMessage).docKey} />
-        )}
-        {kind === "architecture" && (
-          <ArchitectureSection
-            architecture={(message as ArchitectureMessage).architecture}
-            stack={(message as ArchitectureMessage).stack}
-          />
-        )}
-        {kind === "proof-links" && (
-          <ProofLinks links={(message as ProofLinksMessage).links} />
-        )}
-        {kind === "followups" && (
-          <FollowupsBubble
-            text={(message as FollowupsMessage).text}
-            chips={(message as FollowupsMessage).chips}
-            onPick={onChipPick}
-            disabled={!isLastAssistant}
-          />
-        )}
+        <MessageContent
+          message={message}
+          onChipPick={onChipPick}
+          isLastAssistant={isLastAssistant}
+        />
       </div>
     </div>
   )

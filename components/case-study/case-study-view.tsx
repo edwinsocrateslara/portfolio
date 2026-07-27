@@ -7,16 +7,14 @@ import type { Project } from "@/lib/projects"
 import { CONTENT_WIDTH } from "@/lib/layout"
 import { ChatInput } from "@/components/chat/chat-input"
 import {
-  TextBubble,
   AssistantBubble,
   TypingIndicator,
   ProjectHeaderBubble,
-  ImageBubble,
-  ImageRowBubble,
-  ImpactBubble,
+  MessageContent,
   FollowupsBubble,
 } from "@/components/chat/message-bubbles"
 import { useScriptedStream, type MessageBlock } from "@/hooks/use-scripted-stream"
+import { buildProjectBodyBlocks } from "@/lib/project-flow"
 
 const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 
@@ -40,24 +38,16 @@ function useChipHandoff() {
   )
 }
 
-function ImagesSection({ images }: { images: Project["images"] }) {
-  if (!images || images.length === 0) return null
-  if (images.length === 1) {
-    return <ImageBubble image={{ url: images[0].url, alt: images[0].alt }} />
-  }
-  return <ImageRowBubble images={images.map((img) => ({ url: img.url, alt: img.alt }))} />
-}
-
+// Renders the shared body flow. The order lives in lib/project-flow.ts and
+// is the same one the chat reveal streams — this route previously kept its
+// own ordering, which is how the two drifted and how roleDescription and
+// atStake ended up rendered nowhere on this page.
 function TraditionalSections({ project }: { project: Project }) {
   return (
     <>
-      <TextBubble text={project.tagline} />
-      {project.challenge && <TextBubble text={`**The challenge:** ${project.challenge}`} />}
-      <ImagesSection images={project.images} />
-      {project.decision && <TextBubble text={`**Key decision:** ${project.decision}`} />}
-      {project.impacts && project.impacts.length > 0 && (
-        <ImpactBubble label="Impact" items={project.impacts} />
-      )}
+      {buildProjectBodyBlocks(project).map((block, i) => (
+        <MessageContent key={i} message={block} />
+      ))}
     </>
   )
 }
