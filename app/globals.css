@@ -25,6 +25,48 @@
   --bureau-radius-btn:  2px;
   --bureau-radius-chip: 2px;
 
+  /* ── Spacing: relatedness levels ───────────────────────────────
+     Spacing encodes how related two things are. Reach for one of
+     these four before reaching for a raw step — the level is the
+     meaning, the pixel value is an implementation detail. Each
+     level is double the one before it. */
+  --space-within:  8px;   /* parts of one thing   — label to its value */
+  --space-between: 16px;  /* things in a group    — cards in a list */
+  --space-group:   32px;  /* between groups       — a list and the next block */
+  --space-section: 64px;  /* major regions        — landing page bands */
+
+  /* ── Spacing: raw scale ────────────────────────────────────────
+     For element DIMENSIONS (widths, heights, control sizes), which
+     express size rather than relatedness, and for the rare spacing
+     case no level fits. All multiples of 4. --space-4 is also the
+     documented tight half-step inside `within` for optical cases. */
+  --space-4:  4px;
+  --space-8:  8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-80: 80px;
+
+  /* ── Type scale — 7 steps, every size a multiple of 4 ──────────
+     Line-height is DERIVED: always exactly 1.5x the font size, so it
+     is exempt from the multiple-of-4 rule (12px type -> 18px leading).
+     Paired here so the two can never drift apart. */
+  /* 12px is the floor. There is deliberately no step below it — an 8px
+     step existed and only served to preserve text below a reasonable
+     legibility floor. */
+  --type-label-size:   12px;  --type-label-lh:   18px;
+  --type-body-size:    16px;  --type-body-lh:    24px;
+  --type-title-size:   20px;  --type-title-lh:   30px;
+  --type-subhead-size: 24px;  --type-subhead-lh: 36px;
+  --type-h2-size:      32px;  --type-h2-lh:      48px;
+  --type-hero-size:    52px;  --type-hero-lh:    78px;
+
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
@@ -97,68 +139,112 @@ body {
 }
 .animate-bureau-pulse { animation: bureau-pulse 1.1s ease-in-out infinite; }
 
-/* ── Bureau 1D — type scale ───────────────────────────────────────
-   Archivo carries prose/headings; IBM Plex Mono is the "system voice"
-   for nav, eyebrows, tags, indices, badges, captions, SEND. */
+/* ── Bureau 1D — type ─────────────────────────────────────────────
+   These classes are the ONLY way to set type. Components must not
+   re-declare font-family, font-weight, font-size, line-height, or
+   letter-spacing inline — that is how 17 sizes accumulated.
+
+   Seven sizes, every one a multiple of 4. More classes than sizes:
+   several share a size and differ only in voice (Archivo for prose
+   and headings, IBM Plex Mono for system chrome). Size is the scale;
+   family, weight, and case are the voice.
+
+   Line-height is always exactly 1.5x the size, taken from the paired
+   token so the two cannot drift.
+
+   Letter-spacing is optical tracking, not layout — it is sub-pixel by
+   nature and exempt from the multiple-of-4 rule. */
 /* CSS var()s cannot fill just the font-family slot of the `font`
    shorthand — the whole declaration is silently dropped if you try.
    Longhand properties only. */
+
+/* Archivo — prose and headings */
 .type-hero {
   font-family: var(--ff-archivo);
   font-weight: 800;
-  font-size: 52px;
-  line-height: 1.04;
+  font-size: var(--type-hero-size);
+  line-height: var(--type-hero-lh);
   letter-spacing: -1.6px;
 }
 .type-h2 {
   font-family: var(--ff-archivo);
   font-weight: 700;
-  font-size: 34px;
-  line-height: 1.10;
+  font-size: var(--type-h2-size);
+  line-height: var(--type-h2-lh);
   letter-spacing: -1px;
+}
+.type-subhead {
+  font-family: var(--ff-archivo);
+  font-weight: 700;
+  font-size: var(--type-subhead-size);
+  line-height: var(--type-subhead-lh);
+  letter-spacing: -0.6px;
+}
+.type-title {
+  font-family: var(--ff-archivo);
+  font-weight: 700;
+  font-size: var(--type-title-size);
+  line-height: var(--type-title-lh);
+  letter-spacing: -0.4px;
 }
 .type-card-h3 {
   font-family: var(--ff-archivo);
   font-weight: 600;
-  font-size: 17px;
-  line-height: 1.25;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
 }
-.type-prose {
+.type-body {
   font-family: var(--ff-archivo);
   font-weight: 400;
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
 }
-.type-prose-2 {
-  font-family: var(--ff-archivo);
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 1.55;
+
+/* IBM Plex Mono — system voice */
+/* Badges and glyph tiles — the heaviest mono weight, for text that sits
+   on an inverted fill or inside a bordered tile. */
+.type-badge {
+  font-family: var(--ff-plex-mono);
+  font-weight: 700;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-lh);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
 }
 .type-label {
   font-family: var(--ff-plex-mono);
   font-weight: 600;
-  font-size: 10px;
-  line-height: 1;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-lh);
   letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 .type-nav {
   font-family: var(--ff-plex-mono);
   font-weight: 500;
-  font-size: 11px;
-  line-height: 1;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-lh);
   letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 .type-meta {
   font-family: var(--ff-plex-mono);
   font-weight: 400;
-  font-size: 11px;
-  line-height: 1;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-lh);
 }
 
+/* Mobile steps down the ramp rather than off it — hero takes the h2
+   step, h2 takes subhead. Line-height stays 1.5x at every size. */
 @media (max-width: 640px) {
-  .type-hero { font-size: 30px; line-height: 1.06; letter-spacing: -1px; }
-  .type-h2   { font-size: 26px; line-height: 1.12; letter-spacing: -0.6px; }
+  .type-hero {
+    font-size: var(--type-h2-size);
+    line-height: var(--type-h2-lh);
+    letter-spacing: -1px;
+  }
+  .type-h2 {
+    font-size: var(--type-subhead-size);
+    line-height: var(--type-subhead-lh);
+    letter-spacing: -0.6px;
+  }
 }

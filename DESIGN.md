@@ -50,42 +50,107 @@ named tokens (`--bureau-radius-card`, `--bureau-radius-btn`,
 `--bureau-radius-chip`) since the source spec names them separately, even
 though all three currently resolve to the same value.
 
+## The 4px rule
+
+Every spacing value, every element dimension, and every font size is a
+multiple of 4.
+
+**Line-height is the one derived value, and it is exempt.** It is always
+exactly 1.5× the font size, which means it lands off the grid at most
+steps — 12px type gets 18px leading, 20px type gets 30px. That is correct
+and intentional. Forcing line-height onto multiples of 4 would either
+break the 1.5 ratio or constrain the type scale to sizes divisible by 8.
+The ratio matters more than the grid here, because leading is a
+relationship between two numbers rather than a measurement in space.
+
+Other exceptions, all deliberate: **1px** borders and hairlines, the
+**2px** radii below, and **9999px** for fully-round pills. Letter-spacing
+is optical tracking rather than layout, is sub-pixel by nature, and is
+also exempt.
+
 ## Spacing
 
-No dedicated spacing tokens — Tailwind's default scale already matches the
-spec's 8px-derived scale exactly at these keys: `1`=4px, `2`=8px, `3`=12px,
-`4`=16px, `6`=24px, `8`=32px, `14`=56px, `16`=64px. Use those directly (as
-Tailwind classes or as the literal px numbers in inline styles, matching
-this codebase's existing convention).
+Spacing encodes **relatedness**. Before reaching for a pixel value, decide
+how related the two things are, then use the level that expresses it. Each
+level is double the one before, so the jumps read as distinct rather than
+as noise.
 
-Named spacing concepts from the spec, used as literals:
-- Section gap: `64px` desktop, `40px` mobile
-- Grid gutter (Selected Work grid): `26px`
-- Grid: 3 columns desktop → 1 column mobile
+| Token | Value | Use for |
+|---|---|---|
+| `--space-within` | `8px` | Parts of one thing — a label and its value, an icon and its text |
+| `--space-between` | `16px` | Things in a group — cards in a list, stacked images |
+| `--space-group` | `32px` | Between groups — a list and the block after it |
+| `--space-section` | `64px` | Major regions — the bands of the landing page |
+
+Available as Tailwind utilities too: `p-within`, `gap-between`,
+`mb-group`, `py-section`.
+
+The level is the meaning; the pixel value is an implementation detail. If
+two levels both seem plausible, that is a signal to reconsider the
+grouping rather than to invent a value in between.
+
+### Raw scale
+
+For element **dimensions** — widths, heights, control sizes — which
+express size rather than relatedness, and for the rare spacing case no
+level fits:
+
+`--space-4` `8` `12` `16` `20` `24` `32` `40` `48` `56` `64` `80`
+
+`--space-4` (4px) doubles as the documented tight half-step inside
+`within`, for optical cases where 8px is visibly too loose.
+
+Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 
 ## Typography
 
 One UI/prose family (**Archivo**, weights 400–800) plus a mono "system
-voice" (**IBM Plex Mono**, weights 400–600) for nav, eyebrows, tags,
+voice" (**IBM Plex Mono**, weights 400–700) for nav, eyebrows, tags,
 indices, badges, captions, and the SEND button. Loaded via
 `next/font/google` in `app/layout.tsx` as `--font-archivo` /
 `--font-plex-mono`; `tailwind.config.ts` maps `font-sans` → Archivo and
 `font-mono` → IBM Plex Mono. No serif anywhere in this system.
 
-Type scale — implemented both as CSS utility classes in `globals.css`
-(`.type-*`) and as Tailwind `fontSize` entries (`text-*`) referencing the
-same literal values, for use wherever fits the surrounding code:
+**Six sizes, every one a multiple of 4, every line-height exactly 1.5×.**
+**12px is the floor** — there is no step below it, so nothing on the site
+renders below a reasonable legibility threshold. The size/line-height
+pairs are tokens (`--type-*-size` / `--type-*-lh`) so the two cannot drift
+apart.
 
-| Role | Spec | Mobile |
-|---|---|---|
-| `hero` | Archivo 800, 52px/1.04, -1.6px | 30px/1.06, -1px |
-| `h2` | Archivo 700, 34px/1.10, -1px | 26px/1.12, -0.6px |
-| `card-h3` | Archivo 600, 17px/1.25 | — |
-| `prose` | Archivo 400, 16px/1.7 (chat body) | — |
-| `prose-2` | Archivo 400, 15px/1.55 (landing body) | — |
-| `label` | Plex Mono 600, 10px/1, +1.4px, uppercase | — |
-| `nav` | Plex Mono 500, 11px/1, +1.4px, uppercase | — |
-| `meta` | Plex Mono 400/500, 11px/1 (captions) | — |
+| Step | Size / line-height |
+|---|---|
+| `label` | 12 / 18 |
+| `body` | 16 / 24 |
+| `title` | 20 / 30 |
+| `subhead` | 24 / 36 |
+| `h2` | 32 / 48 |
+| `hero` | 52 / 78 |
+
+There are more classes than sizes: several share a size and differ only in
+voice. Size is the scale; family, weight, and case are the voice.
+
+| Class | Family | Weight | Step |
+|---|---|---|---|
+| `.type-hero` | Archivo | 800 | hero |
+| `.type-h2` | Archivo | 700 | h2 |
+| `.type-subhead` | Archivo | 700 | subhead |
+| `.type-title` | Archivo | 700 | title |
+| `.type-card-h3` | Archivo | 600 | body |
+| `.type-body` | Archivo | 400 | body |
+| `.type-badge` | Plex Mono | 700 | label, uppercase |
+| `.type-label` | Plex Mono | 600 | label, uppercase |
+| `.type-nav` | Plex Mono | 500 | label, uppercase |
+| `.type-meta` | Plex Mono | 400 | label |
+
+At ≤640px the two largest steps move **down the ramp rather than off it**:
+`hero` takes the `h2` step (32/48), `h2` takes `subhead` (24/36). No
+mobile-only sizes exist.
+
+**These classes are the only way to set type.** Components must not
+re-declare `font-family`, `font-weight`, `font-size`, `line-height`, or
+`letter-spacing` inline. Seventeen distinct font sizes accumulated in this
+codebase precisely because inline re-declaration was available and easier
+than picking a role.
 
 Mono carries the "system voice"; Archivo carries all human-readable prose
 and headings. That split is what keeps an achromatic palette legible
@@ -93,14 +158,15 @@ without color.
 
 ## Components
 
-- **Nav** — mono 11 uppercase, `text-secondary`; hover → `text-primary` +
-  1px underline. Availability dot `text-primary`, 6px.
+- **Nav** — `.type-nav`, `text-secondary`; hover → `text-primary` +
+  1px underline. Availability dot `text-primary`, 8px.
 - **Card** — `surface` fill or none, 1px `border`, radius 2. Image **1:1**
   (matches the source preview images — all 7 are square), `grayscale(.15)`.
   Index bottom-right, mono. Hover: border → `border-strong`, image
   `grayscale(0)`, lift 1px.
 - **Chip / tag** — 1px `border`, `surface`, radius 2. Tag text `text-muted`
-  mono 9; prompt-chip `text-secondary` UI 13 with a mono `→` prefix.
+  `.type-meta`; prompt-chip `text-secondary` `.type-body` with a mono `→`
+  prefix.
 - **Badge** — default = 1px `border-strong` + mono `text-secondary`.
   **Live/active = filled `accent` on `on-accent`** — the one deliberate
   inversion in the system, reserved for "this is on."
@@ -130,10 +196,12 @@ layout choice — do not crop assets to a third ratio:
 
 - Keep all color and radius values as `var()` references to the tokens
   above — never a hardcoded hex, `rgb()`, or `hsl()` literal in a component.
-- Keep spacing to the documented scale.
-- Use mono (`type-label` / `type-nav` / `type-meta`) for anything that is
-  system chrome (nav, tags, indices, badges, captions) and Archivo for
-  anything a human reads as prose.
+- Set type with a `.type-*` class, always. Pick the role, not the size.
+- Choose a spacing **level** by asking how related the two things are.
+  Reach for a raw step only for element dimensions.
+- Use mono (`type-badge` / `type-label` / `type-nav` / `type-meta`) for
+  anything that is system chrome (nav, tags, indices, badges, captions) and
+  Archivo for anything a human reads as prose.
 - Reserve the accent-filled/inverted treatment for "this is live / on."
 
 ## Don't
@@ -141,7 +209,15 @@ layout choice — do not crop assets to a third ratio:
 - Don't introduce a second hue. If something needs to stand out, reach for
   weight, size, underline, or the outline→filled badge inversion — not
   color.
-- Don't add a new border-radius value. Everything is 2px.
+- Don't set `font-family`, `font-weight`, `font-size`, `line-height`, or
+  `letter-spacing` inline. Add a `.type-*` class, or a new one if no role
+  fits.
+- Don't add a font size outside the six steps, and don't set a
+  line-height that isn't 1.5× its size.
+- Don't use a spacing value that isn't a multiple of 4. If a level feels
+  wrong, the grouping is probably wrong.
+- Don't add a new border-radius value. Everything is 2px (or 9999px for
+  fully-round pills).
 - Don't duplicate a token's value directly in a component; reference the
   variable.
 - Don't regenerate a component's structure to apply this system — restyle

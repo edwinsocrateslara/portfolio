@@ -32,15 +32,16 @@ const config: Config = {
         sans: ["var(--font-archivo)", "system-ui", "sans-serif"],
         mono: ["var(--font-plex-mono)", "ui-monospace", "monospace"],
       },
-      fontSize: {
-        hero:      ["52px", { lineHeight: "1.04", letterSpacing: "-1.6px", fontWeight: "800" }],
-        h2:        ["34px", { lineHeight: "1.10", letterSpacing: "-1px", fontWeight: "700" }],
-        "card-h3": ["17px", { lineHeight: "1.25", fontWeight: "600" }],
-        prose:     ["16px", { lineHeight: "1.7", fontWeight: "400" }],
-        "prose-2": ["15px", { lineHeight: "1.55", fontWeight: "400" }],
-        label:     ["10px", { lineHeight: "1", letterSpacing: "1.4px", fontWeight: "600" }],
-        nav:       ["11px", { lineHeight: "1", letterSpacing: "1.4px", fontWeight: "500" }],
-        meta:      ["11px", { lineHeight: "1", fontWeight: "400" }],
+      // No `fontSize` here on purpose. The type scale lives in exactly one
+      // place — the .type-* classes in app/globals.css. A `fontSize` block
+      // duplicated those values by hand and had zero consumers; keeping it
+      // only offered a second, silently-diverging way to set type.
+      spacing: {
+        // Relatedness levels — prefer these over raw steps.
+        within: "var(--space-within)",
+        between: "var(--space-between)",
+        group: "var(--space-group)",
+        section: "var(--space-section)",
       },
     },
   },
