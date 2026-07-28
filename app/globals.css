@@ -142,6 +142,25 @@ body {
   to   { opacity: 1; }
 }
 
+/* ⚠ This animates `transform`, and .animate-slide-up applies it with
+   `fill-mode: both`. The final keyframe therefore PERSISTS after the
+   animation ends, leaving `transform: translateY(0)` — computed as
+   matrix(1,0,0,1,0,0), which is not `none`.
+
+   A non-none transform makes an element the containing block for
+   `position: fixed` descendants. AssistantBubble carries this class, so
+   ANY fixed-position thing rendered inside a chat message — modal,
+   lightbox, tooltip, dropdown, popover — will size and position itself
+   against the message bubble instead of the viewport.
+
+   Raising z-index does not help: the element is geometrically confined,
+   not painted underneath. The fix is to portal out to document.body.
+   ImageLightbox does this; see components/chat/image-lightbox.tsx.
+
+   This took real diagnostic time to find, because the symptom (page
+   chrome rendering "over" the overlay) looks exactly like a stacking
+   bug. It is not. Check the overlay's getBoundingClientRect first — if
+   it matches the bubble rather than the viewport, this is why. */
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0);   }
@@ -162,6 +181,17 @@ body {
   50%       { opacity: 1; }
 }
 .animate-bureau-pulse { animation: bureau-pulse 1.1s ease-in-out infinite; }
+
+/* ── Lightbox controls ─────────────────────────────────────────────
+   These sit on a near-opaque scrim where the browser default focus ring
+   is both off-palette (blue) and low contrast. Replaced with an
+   achromatic accent outline — kept deliberately visible, and scoped to
+   :focus-visible so it appears for keyboard users without ringing on
+   every mouse click. */
+.lightbox-control:focus-visible {
+  outline: 2px solid rgb(var(--bureau-accent));
+  outline-offset: 2px;
+}
 
 /* ── Bureau 1D — type ─────────────────────────────────────────────
    These classes are the ONLY way to set type. Components must not

@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { createPortal } from "react-dom"
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
@@ -32,6 +33,7 @@ const CONTROL_BUTTON_STYLE: CSSProperties = {
 
 export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
+  const [mounted, setMounted] = useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -46,17 +48,29 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
     setCurrentIndex((i) => (i + 1) % images.length)
   }, [images.length])
 
-  // Lock body scroll and move focus into the dialog while open.
+  // createPortal needs a DOM; this only ever mounts on a click, but guard
+  // anyway so the component is safe to render during SSR.
+  useEffect(() => setMounted(true), [])
+
+  // Lock body scroll while open.
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = "hidden"
-    closeButtonRef.current?.focus()
     return () => {
       document.body.style.overflow = previousOverflow
     }
   }, [])
 
+  // Move focus into the dialog. Deliberately keyed to `mounted`, not []:
+  // the first render returns null for the portal guard, so the close
+  // button does not exist yet and an on-mount focus call would silently
+  // no-op against a null ref.
+  useEffect(() => {
+    if (mounted) closeButtonRef.current?.focus()
+  }, [mounted])
+
   // Esc to close, arrow keys to navigate, Tab trapped inside the dialog.
+  // Bound to document, so portalling doesn't affect any of it.
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -99,10 +113,19 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [onClose, goPrev, goNext, hasMultiple])
 
+  if (!mounted) return null
+
   const image = images[currentIndex]
   const transitionClass = prefersReducedMotion ? undefined : "animate-fade-in"
 
-  return (
+  // Portalled to <body>. Rendered in place, `position: fixed` resolved
+  // against the AssistantBubble wrapper instead of the viewport: its
+  // `animate-slide-up` animation fills a transform, and any non-none
+  // transform makes an element the containing block for fixed descendants.
+  // The overlay was therefore sized to the message bubble, leaving the
+  // header, input and left of the page uncovered. A higher z-index cannot
+  // fix that — only escaping the ancestor can.
+  return createPortal(
     <div
       onClick={onClose}
       className={transitionClass}
@@ -110,7 +133,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         position: "fixed",
         inset: 0,
         zIndex: 100,
-        background: "rgb(var(--bureau-bg) / 0.92)",
+        background: "rgb(var(--bureau-bg) / 0.97)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -123,7 +146,14 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         aria-modal="true"
         aria-label="Image viewer"
         onClick={(e) => e.stopPropagation()}
-        style={{ position: "relative", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-between)" }}
+        style={{
+          position: "relative",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "var(--space-between)",
+        }}
       >
         <div
           style={{
@@ -143,12 +173,31 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
             />
           </div>
 
+          {/* Anchored to the image's own top-right corner, inset by the same
+              12px as the arrows, rather than floating above the frame. */}
+          <button
+            type="button"
+            ref={closeButtonRef}
+            onClick={onClose}
+            aria-label="Close"
+            className="lightbox-control"
+            style={{
+              ...CONTROL_BUTTON_STYLE,
+              position: "absolute",
+              top: "var(--space-12)",
+              right: "var(--space-12)",
+            }}
+          >
+            <X size={18} />
+          </button>
+
           {hasMultiple && (
             <>
               <button
                 type="button"
                 onClick={goPrev}
                 aria-label="Previous image"
+                className="lightbox-control"
                 style={{
                   ...CONTROL_BUTTON_STYLE,
                   position: "absolute",
@@ -164,6 +213,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
                 type="button"
                 onClick={goNext}
                 aria-label="Next image"
+                className="lightbox-control"
                 style={{
                   ...CONTROL_BUTTON_STYLE,
                   position: "absolute",
@@ -178,29 +228,12 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         </div>
 
         {hasMultiple && (
-          <div
-            className="type-nav"
-            style={{ color: "rgb(var(--bureau-text-secondary))" }}
-          >
+          <div className="type-nav" style={{ color: "rgb(var(--bureau-text-secondary))" }}>
             {String(currentIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
           </div>
         )}
-
-        <button
-          type="button"
-          ref={closeButtonRef}
-          onClick={onClose}
-          aria-label="Close"
-          style={{
-            ...CONTROL_BUTTON_STYLE,
-            position: "absolute",
-            top: "calc(-1 * var(--space-within))",
-            right: "calc(-1 * var(--space-within))",
-          }}
-        >
-          <X size={18} />
-        </button>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
