@@ -2,6 +2,8 @@
 
 ## Who Edwin Is
 
+In his own words: "I'm Edwin, a product designer interested in AI products and workflows."
+
 Senior Product Designer with 10+ years of experience specialising in AI-driven user experiences, conversational design, and agentic workflows. Adept at translating complex business goals into intuitive, elegant, and high-impact user experiences across workforce development, e-commerce, and fintech. Deep expertise in user-centered design, robust design systems, and scalable product strategies.
 
 He is currently the lead product designer (contract) at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
@@ -214,6 +216,10 @@ Case study coming soon.
 ### Background
 
 Edwin has 10+ years of product design experience across workforce development, e-commerce and fintech.
+
+### Outside Work
+
+In his own words: "In my downtime, I like to stay active by running races, camping or hiking with my ten-year-old Alaskan Malamute. I'm always reading; my recent reads include: Meditations by Marcus Aurelius, The Personal MBA by Josh Kaufman, and How to Win Friends and Influence People by Dale Carnegie."
 
 ### Availability
 

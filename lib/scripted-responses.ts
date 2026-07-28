@@ -210,6 +210,38 @@ export function buildResponse(
     }
   }
 
+  // Outside work — verbatim from lib/sources/voice.md. Do not paraphrase:
+  // this is the only place the site says anything about Edwin personally,
+  // and the wording is his.
+  if (
+    t.includes("downtime") ||
+    t.includes("hobb") ||
+    t.includes("free time") ||
+    t.includes("outside work") ||
+    t.includes("outside of work") ||
+    t.includes("spare time") ||
+    t.includes("for fun") ||
+    t.includes("reading") ||
+    t.includes("book")
+  ) {
+    return {
+      response: [
+        {
+          kind: "text",
+          text: "In my downtime, I like to stay active by running races, camping or hiking with my ten-year-old Alaskan Malamute. I'm always reading; my recent reads include: Meditations by Marcus Aurelius, The Personal MBA by Josh Kaufman, and How to Win Friends and Influence People by Dale Carnegie.",
+        },
+        {
+          kind: "followups",
+          chips: [
+            { text: "Walk me through your work" },
+            { text: "Show me your résumé" },
+          ],
+        },
+      ],
+      projectSlug: null,
+    }
+  }
+
   // Location
   if (t.includes("based") || t.includes("where") || t.includes("location")) {
     return {
