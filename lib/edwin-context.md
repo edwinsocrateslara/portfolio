@@ -81,7 +81,7 @@ Backbase is a digital banking platform used by financial institutions across Nor
 
 Meridian serves 370,000+ customers and manages $26B+ in assets. Edwin led the complete end-to-end redesign of their mobile banking app.
 
-**Challenge:** User reviews for the Meridian app cited poor user experience, a dated UI, and a lack of key features — specifically investing and borrowing/credit cards. Without a major redesign, Meridian would lose customers to competitors with better digital experiences.
+**Challenge:** User reviews for the Meridian app cited poor user experience, a dated UI, and a lack of key features, specifically investing and borrowing/credit cards. Without a major redesign, Meridian would lose customers to competitors with better digital experiences.
 
 **What Edwin did:** Redesigned the full app and created a new design system. He pushed for two additions that stakeholders initially resisted: a price-matching feature and animations on positive financial actions like deposits and bill payments.
 
@@ -104,11 +104,11 @@ Complex NTWRK offers exclusive access to celebrities, brands, and limited drops.
 
 **Challenge:** Users were window-shopping but not buying. Engagement was low and average watch time was short. The platform needed urgency.
 
-**What Edwin did:** Designed a net-new real-time auction/live-selling interface — a single mobile screen that combined live chat, bid updates, countdown timers, and dynamically updated product details as sellers changed items mid-show.
+**What Edwin did:** Designed a net-new real-time auction/live-selling interface, a single mobile screen that combined live chat, bid updates, countdown timers, and dynamically updated product details as sellers changed items mid-show.
 
 This was a high-stakes bet. The safe play was static auction pages per product. Instead, Edwin designed something that required users to absorb a lot of real-time information in a small space during fast-moving 30-60 second windows.
 
-**Why:** Live selling works because of urgency — buyers need to react in seconds. A static interface would have muted the energy of the format. The dynamic multi-signal UI matched the pace of the experience.
+**Why:** Live selling works because of urgency. Buyers need to react in seconds. A static interface would have muted the energy of the format. The dynamic multi-signal UI matched the pace of the experience.
 
 **Outcome (first year):**
 - Auctions made up 63% of revenue, with 23% quarterly growth
@@ -123,7 +123,7 @@ This was a high-stakes bet. The safe play was static auction pages per product. 
 - **Status:** Live
 - **Role:** Senior Product Designer
 
-**Challenge:** VW had no comparison tool, and car comparison is a standard part of the purchase process. VW wanted to meet buyer expectations while moving prospects toward a dealership or online build — but initially wanted VW-only vehicles in the tool.
+**Challenge:** VW had no comparison tool, and car comparison is a standard part of the purchase process. VW wanted to meet buyer expectations while moving prospects toward a dealership or online build, but initially wanted VW-only vehicles in the tool.
 
 **What Edwin did:** He pushed back. A VW-only tool would have been less useful than what competitors already offered. Buyers would go elsewhere to research, and VW would lose the opportunity entirely.
 
@@ -158,9 +158,9 @@ After NTWRK acquired Complex, two distinct platforms needed to merge: Complex's 
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-**Challenge:** Sellers connecting Shopify stores to Complex NTWRK hit constant failures — inventory uploaded incorrectly, product counts inaccurate, and sellers had to navigate two disconnected systems. Many sellers weren't familiar with Shopify at all. Platform failures that cost sellers sales send them to competitors.
+**Challenge:** Sellers connecting Shopify stores to Complex NTWRK hit constant failures: inventory uploaded incorrectly, product counts inaccurate, and sellers had to navigate two disconnected systems. Many sellers weren't familiar with Shopify at all. Platform failures that cost sellers sales send them to competitors.
 
-**What Edwin did:** Designed a custom product management dashboard built specifically for Complex NTWRK's sales channels (live-selling, auctions, buy-now). The key design decision was intentional familiarity — making it feel like Shopify for users coming from Shopify, while actually being a purpose-built system.
+**What Edwin did:** Designed a custom product management dashboard built specifically for Complex NTWRK's sales channels (live-selling, auctions, buy-now). The key design decision was intentional familiarity: making it feel like Shopify for users coming from Shopify, while actually being a purpose-built system.
 
 He could've built something fully custom, but unfamiliar workflows create fear and hesitation during seller onboarding. Familiarity kept sellers confident while giving them features Shopify never supported.
 
