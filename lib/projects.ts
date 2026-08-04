@@ -86,16 +86,19 @@ export const projects: Project[] = [
     tags: ["AI", "design systems", "workforce", "B2B"],
     previewImage: {
       url: "/framer/ai-workforce-development/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Career Explorer conversation where the AI coach reads a job-seeker's stated priorities and returns two matched roles, each tagged as a strong match.",
     },
     images: [
       {
         url: "/framer/ai-workforce-development/image-1.png",
-        alt: "", // TODO: alt text
+        alt:
+          "AI coach summarising a job-seeker's priorities and surfacing matched roles with employer, location, seniority and work-arrangement tags.",
       },
       {
         url: "/framer/ai-workforce-development/image-2.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Job detail view with salary, location and seniority, an Ask AI panel offering prompts like tailoring a resume or predicting salary range, and a sidebar of other strong matches.",
       },
     ],
     // Framer's Formatted Text 3 is empty ("<p><br></p>") and Formatted Text 2
@@ -116,28 +119,34 @@ export const projects: Project[] = [
     tags: ["mobile", "fintech", "redesign", "design systems"],
     previewImage: {
       url: "/framer/retail-banking/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Accounts screen showing Deposits tab with a total balance and a chequing account, over the bank's multi-coloured arc graphic.",
     },
     images: [
       {
         url: "/framer/retail-banking/image-1.jpg",
-        alt: "", // TODO: alt text
+        alt:
+          "Accounts home with tabs for All, Deposits, Investing and Borrowing, a total deposits card, and a chequing account balance.",
       },
       {
         url: "/framer/retail-banking/image-2.jpg",
-        alt: "", // TODO: alt text
+        alt:
+          "Bill payment flow across three screens: the biller list, the payment form with Now, Later and Ongoing scheduling options, and the confirmation.",
       },
       {
         url: "/framer/retail-banking/image-3.jpg",
-        alt: "", // TODO: alt text
+        alt:
+          "Chequing account detail on the Summary tab, showing balance, account type, interest rate and direct deposit details.",
       },
       {
         url: "/framer/retail-banking/image-4.jpg",
-        alt: "", // TODO: alt text
+        alt:
+          "Money transfer flows: an Interac e-Transfer with amount and security question, transfers between linked accounts including an external bank, and the transfers menu.",
       },
       {
         url: "/framer/retail-banking/image-5.jpg",
-        alt: "", // TODO: alt text
+        alt:
+          "Cheque deposit with camera capture, and the price-matching feature: receipt scanning onboarding with partner retailers, and a receipts list tracking submitted purchases.",
       },
     ],
     challenge:
@@ -164,24 +173,29 @@ export const projects: Project[] = [
     tags: ["AI", "mobile", "fintech", "MVP", "crypto"],
     previewImage: {
       url: "/framer/ai-investing/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Crypto wallet totalling just over $20,000, with separate Bitcoin, Dash, Ethereum and Litecoin holdings showing dollar value and coin amount.",
     },
     images: [
       {
         url: "/framer/ai-investing/image-1.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Wallet home listing four cryptocurrency holdings under a combined total, each with its dollar value and quantity.",
       },
       {
         url: "/framer/ai-investing/image-2.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Conversational investing across three screens: asking the assistant to check finances, typing a reply, and placing a $5,250 investment in IOTA after the assistant offers to send an analysis.",
       },
       {
         url: "/framer/ai-investing/image-3.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Bitcoin holding detail with current price, weekly change, and a dated activity list of sent, bought, sold, requested and traded transactions marked pending or complete.",
       },
       {
         url: "/framer/ai-investing/image-4.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Marketing site and mobile app side by side, headlined \"A personal broker for cryptocurrency\" with an App Store download link and a preview of the chat interface.",
       },
     ],
     challenge:
@@ -206,24 +220,29 @@ export const projects: Project[] = [
     tags: ["live commerce", "mobile", "real-time", "e-commerce"],
     previewImage: {
       url: "/framer/live-selling/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Live auction stream with a seller presenting sneakers, viewer comments scrolling over the video, and a bid panel showing the current price, a 30-second countdown and a bid button.",
     },
     images: [
       {
         url: "/framer/live-selling/image-1.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Live shopping screen combining the seller's video, viewer comments, the item on offer, a countdown and bid buttons.",
       },
       {
         url: "/framer/live-selling/image-2.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Custom bid entry sliding over the live stream, showing the current bid, a typed higher amount, and a numeric keypad.",
       },
       {
         url: "/framer/live-selling/image-3.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Product catalogue panel over the live stream, split into auction and buy-now tabs, with sneaker cards labelled current or upcoming.",
       },
       {
         url: "/framer/live-selling/image-4.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Tagging a friend in the live chat with an autocomplete list, a shipping costs and handling time breakdown, and a billing and shipping summary.",
       },
     ],
     challenge:
@@ -252,24 +271,29 @@ export const projects: Project[] = [
     tags: ["automotive", "web", "e-commerce", "conversion"],
     previewImage: {
       url: "/framer/car-comparison/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Vehicle comparison tool with a suggested Volkswagen Beetle in the first slot, a Mazda in the second, an empty third slot, and a Compare Vehicles button.",
     },
     images: [
       {
         url: "/framer/car-comparison/image-1.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Comparison tool at the start, with a Volkswagen preselected in the first slot and two empty slots inviting the shopper to add vehicles.",
       },
       {
         url: "/framer/car-comparison/image-2.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Side-by-side comparison of a Volkswagen, a Mazda and a Honda, filtered to safety features, with rows for ABS, anti-theft protection and brake assist.",
       },
       {
         url: "/framer/car-comparison/image-3.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Vehicle picker with make, model and year dropdowns for adding a car to the comparison.",
       },
       {
         url: "/framer/car-comparison/image-4.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Brake Assist System feature detail with a video of the Volkswagen Beetle and thumbnails for related features like electronic stability control and lane keeping assist.",
       },
     ],
     challenge:
@@ -295,16 +319,19 @@ export const projects: Project[] = [
     tags: ["e-commerce", "mobile", "social commerce", "acquisition integration"],
     previewImage: {
       url: "/framer/ecommerce/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Product page for a Malbon x New Balance jacket, with collection description, size selector, price, and add to bag and Apple Pay buttons.",
     },
     images: [
       {
         url: "/framer/ecommerce/image-1.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Shopping grid of the collection with filters and sort, alongside the same product page rendered on mobile.",
       },
       {
         url: "/framer/ecommerce/image-2.png",
-        alt: "", // TODO: alt text
+        alt:
+          "The same product page on desktop and phone, showing how the layout reflows between them.",
       },
     ],
     challenge:
@@ -334,24 +361,29 @@ export const projects: Project[] = [
     tags: ["B2B", "dashboard", "product management", "e-commerce"],
     previewImage: {
       url: "/framer/product-management/preview-image.png",
-      alt: "", // TODO: alt text
+      alt:
+        "Seller dashboard product catalogue as a table of sneakers with price, quantity, category, handling time, shipping profile and created date, one row selected.",
     },
     images: [
       {
         url: "/framer/product-management/image-1.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Product catalogue table with bulk actions for delete, duplicate, edit and filter, and a Create Product button.",
       },
       {
         url: "/framer/product-management/image-2.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Order detail with order IDs, the purchased item and ship-by date, customer contact and shipping address, a fulfil items action, and an empty shipments panel.",
       },
       {
         url: "/framer/product-management/image-3.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Product creation form with title, price and description fields, an image uploader showing two images added, and a shipping profile selector.",
       },
       {
         url: "/framer/product-management/image-4.png",
-        alt: "", // TODO: alt text
+        alt:
+          "Shipping label creation with package template, weight, dimensions and carrier rate options.",
       },
     ],
     challenge:
