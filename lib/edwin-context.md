@@ -38,7 +38,7 @@ He is based in Toronto, Ontario, Canada.
 
 Super.com is a travel and financial services super-app.
 
-- Led UX design for SuperCash, a credit-building cashback card — 50,000+ cards issued within 7 months of launch.
+- Led UX design for SuperCash, a credit-building cashback card, achieving 50,000+ cards issued within 7 months of launch.
 - Shipped the MVP of the unified super app, integrating hotel booking, e-commerce, and financial services following the company's rebrand to Super.com.
 
 ---
@@ -60,7 +60,7 @@ Backbase is a digital banking platform used by financial institutions across Nor
 
 **Viafoura:** Spearheaded the design of a commenting and community engagement tool used by USA Today, The Telegraph, The Globe and Mail, CBC, The Independent, Dow Jones, and many more. Also built a data segmenting and insights tool that tracks user behaviour and engagement to help media publishers understand audience preferences.
 
-**Volkswagen:** Conceptualised and designed the cross-brand car comparison tool — see Volkswagen case study in portfolio for full detail.
+**Volkswagen:** Conceptualised and designed the cross-brand car comparison tool. See the Volkswagen case study in the portfolio for full detail.
 
 ---
 
@@ -72,26 +72,72 @@ Backbase is a digital banking platform used by financial institutions across Nor
 
 ---
 
+<!-- BEGIN GENERATED: projects (scripts/build-context.mjs) -->
+
 ## Projects
 
-### Meridian Credit Union — Mobile Banking Redesign
+Generated from lib/projects.ts by scripts/build-context.mjs. Do not edit
+by hand: run the script. Every string below is the project data verbatim,
+so it cannot drift from what the site renders.
+
+Not traceable to lib/sources/: projectTitle. See the
+comment on that field in lib/projects.ts.
+
+### FutureFit AI — AI Workforce Development Platform
+- **Slug:** ai-workforce-development
+- **Status:** Work in progress
+- **Role:** Lead Product Designer
+
+I'm building a business-to-business and business-to-government AI-powered workforce development platform, featuring an AI coach that will assist users navigate the job search process and provide career coaching.
+
+**Key impacts:**
+- work in progress; coming soon.
+
+**My role:** Lead product designer.
+
+Current focus:
+- conducting user research to uncover issues faced by new job-seekers, individuals undergoing career transitions, and fresh grads;
+- understanding how AI can coach individuals to obtain better outcomes in cold outreaches; improved resumes; better accountability, etc.
+- creating and designing the AI coach and deploying to clients;
+- creating an AI-compatible design system using design tokens and Shadcn, for use in AI development tools, such as V0, Lovable, and Claude Code.
+
+---
+
+### Meridian — Mobile Banking Redesign
 - **Slug:** retail-banking
 - **Status:** Live
 - **Role:** Senior Product Designer
 
-Meridian serves 370,000+ customers and manages $26B+ in assets. Edwin led the complete end-to-end redesign of their mobile banking app.
+I led the end-to-end redesign of Meridian Credit Union apps which now serves over 370,000 customers and supports over $26 billion in managed assets.
 
-**Challenge:** User reviews for the Meridian app cited poor user experience, a dated UI, and a lack of key features, specifically investing and borrowing/credit cards. Without a major redesign, Meridian would lose customers to competitors with better digital experiences.
+**Key impacts:**
+- Within the first month of launch, the redesigned app received overwhelming positive user reviews in the app store.
+- Meridian Credit Union adopted the new design across its entire ecosystem.
 
-**What Edwin did:** Redesigned the full app and created a new design system. He pushed for two additions that stakeholders initially resisted: a price-matching feature and animations on positive financial actions like deposits and bill payments.
+**My role:** Lead product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.
 
-Stakeholders wanted to keep the conservative look and feel of the old app, but that ran the risk of losing customers due to a poor app experience.
+**What was at stake:** Stakeholders wanted to keep the conservative look and feel of the old app, but we ran the risk of losing users due to a poor app experience.
 
-**Why price-matching:** Price-matching gave younger, price-conscious customers a desirable money-saving tool and reason to engage with the app beyond basic transactions.
+**Why I made those decisions:** Price-matching gave younger, price-conscious users a desirable money-saving tool and reason to engage with the app beyond basic transactions. Animations created an engaging experience tailored for our target demographic.
 
-**Why animations:** Animations created an engaging experience tailored for the target demographic.
+**The challenge:** Users reviews for the Meridian app cited poor user experience, and UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.
 
-**Outcome:** Overwhelming positive App Store reviews within the first month of launch. The design was adopted across Meridian's entire ecosystem.
+---
+
+### Coinley AI — AI Crypto Investing App
+- **Slug:** ai-investing
+- **Status:** Live
+- **Role:** Lead Product Designer
+
+I helped build and release the MVP for a crypto investing platform on the App Store.
+
+**My role:** Lead Product Designer. I designed a chat-based interface for users to receive investment advice.
+
+**What was at stake:** A regular crypto app wouldn't differentiate Coinley in the beginner market they were targeting. But introducing AI agents for investment advice was risky as users might not trust AI to guide financial decisions.
+
+**Why I made those decisions:** First-time crypto investors have to learn investing basics, blockchain concepts, candlestick charts, and data interpretation all at once. They needed a tutor to guide them through the process. I designed the AI as a conversational agent to make investing feel accessible rather than intimidating.
+
+**The challenge:** Traditional investing platforms overwhelm beginners with complex interfaces and workflows. We wanted to make investing accessible through conversational AI.
 
 ---
 
@@ -100,21 +146,21 @@ Stakeholders wanted to keep the conservative look and feel of the old app, but t
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-Complex NTWRK offers exclusive access to celebrities, brands, and limited drops. Its audience is music fans.
+I led the end-to-end design of a live-selling and auction experience.
 
-**Challenge:** Users were window-shopping but not buying. Engagement was low and average watch time was short. The platform needed urgency.
-
-**What Edwin did:** Designed a net-new real-time auction/live-selling interface, a single mobile screen that combined live chat, bid updates, countdown timers, and dynamically updated product details as sellers changed items mid-show.
-
-This was a high-stakes bet. The safe play was static auction pages per product. Instead, Edwin designed something that required users to absorb a lot of real-time information in a small space during fast-moving 30-60 second windows.
-
-**Why:** Live selling works because of urgency. Buyers need to react in seconds. A static interface would have muted the energy of the format. The dynamic multi-signal UI matched the pace of the experience.
-
-**Outcome (first year):**
-- Auctions made up 63% of revenue, with 23% quarterly growth
-- 2,269+ auction shows, 59,000+ items featured
+**Key impacts:**
+- Within its first year of launch: auctions made up 63% of revenue, with a quarterly growth rate of 23%
+- over 2,269+ auction shows conducted, 59K+ items featured
 - 172% increase in chat messages per show
-- 5-minute increase in average watch time
+- 5 minute increase in average watch time.
+
+**My role:** Lead product designer. I designed a real-time auction/live-selling interface combining live-chat, bid updates, countdown timers and product details into a single mobile screen.
+
+**What was at stake:** The interface required providing a lot of real-time information in a small space. The safe approach would have been to create static auction pages for each product. This was a net-new product for the company and if the UI failed or confused users during live shows, the launch would fail.
+
+**Why I made those decisions:** Live selling and auctions demand real-time updates and interactions between buyer and seller. I believed that this format would create urgency and encourage fast purchase decisions in 30-60 second windows.
+
+**The challenge:** Users were window-shopping but not buying. Engagement was low and watch-time was short. We needed to create a feature that would increase user engagement and revenue on the platform.
 
 ---
 
@@ -123,18 +169,18 @@ This was a high-stakes bet. The safe play was static auction pages per product. 
 - **Status:** Live
 - **Role:** Senior Product Designer
 
-**Challenge:** VW had no comparison tool, and car comparison is a standard part of the purchase process. VW wanted to meet buyer expectations while moving prospects toward a dealership or online build, but initially wanted VW-only vehicles in the tool.
+I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.
 
-**What Edwin did:** He pushed back. A VW-only tool would have been less useful than what competitors already offered. Buyers would go elsewhere to research, and VW would lose the opportunity entirely.
+**Key impacts:**
+- Since it's launch, the tool serves over 112,000 customers across Canada on a monthly basis.
 
-He proposed including other brands, but designed the entire experience to favor VW at every touchpoint:
-- The first vehicle loaded is always a Volkswagen
-- VW-specific marketing content (videos of safety tech like brake assist) is integrated throughout
-- Visual call-outs consistently highlight VW advantages
+**My role:** Lead product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.
 
-**The result:** An experience that gives users the utility they expected while upselling VW at every touchpoint.
+**What was at stake:** VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.
 
-**Outcome:** Serves 112,000+ customers across Canada on a monthly basis.
+**Why I made those decisions:** I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decision to create an experience that would give users the utility they expected while upselling VW at every touchpoint.
+
+**The challenge:** VW didn't have a comparison tool and recognized that a comparison tool is a big part of the purchase process. VW wanted to meet the needs of potential buyers, but also wanted to create a tool that would help potential buyers move down the sales funnel (e.g. either visiting a dealership or building a vehicle online).
 
 ---
 
@@ -143,13 +189,20 @@ He proposed including other brands, but designed the entire experience to favor 
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-After NTWRK acquired Complex, two distinct platforms needed to merge: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops.
+I designed an e-commerce experience that integrated NTWRK into Complex.com's brand post-acquisition.
 
-**Challenge:** Complex users came for media content, not shopping. A traditional homepage-to-shop funnel would have been invisible to the core audience. The risk was launching a shop that existing Complex users never discovered.
+**Key impacts:**
+- launched with over 50 brands on day one
+- currently receive approximately 1M monthly users
+- supporting over $100M in revenue
 
-**What Edwin did:** Mapped the information architecture across both platforms, then designed a mobile-first integration strategy. Because Complex's audience lives primarily on social media rather than on Complex.com's homepage, he designed product pages built to be shared. When users tap through from Instagram or TikTok, they land on pages that feel native to mobile, giving them a seamless shopping experience.
+**My role:** Lead Product Designer. I designed a mobile-first shopping experience that leveraged Complex.com's social media presence to introduce users to NTWRK's e-commerce platform.
 
-**Outcome:** Launched with 50+ brands on day one. Currently receives approximately 1M monthly users. Supporting $100M+ in revenue.
+**What was at stake:** Complex users came for media content, not shopping. If we pushed them through a traditional homepage-to-shop flow, they'd ignore it. We risked launching a shop that existing Complex users would never discover or use.
+
+**Why I made those decisions:** I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.
+
+**The challenge:** After acquiring Complex, NTWRK needed to merge two platforms: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops. The goal was to create a unified media and shopping experience where music fans could browse Complex content and purchase both exclusive drops and evergreen merch.
 
 ---
 
@@ -158,49 +211,25 @@ After NTWRK acquired Complex, two distinct platforms needed to merge: Complex's 
 - **Status:** Live
 - **Role:** Lead Product Designer
 
-**Challenge:** Sellers connecting Shopify stores to Complex NTWRK hit constant failures: inventory uploaded incorrectly, product counts inaccurate, and sellers had to navigate two disconnected systems. Many sellers weren't familiar with Shopify at all. Platform failures that cost sellers sales send them to competitors.
+I created the primary tool for sellers to manage products on Complex NTWRK.
 
-**What Edwin did:** Designed a custom product management dashboard built specifically for Complex NTWRK's sales channels (live-selling, auctions, buy-now). The key design decision was intentional familiarity: making it feel like Shopify for users coming from Shopify, while actually being a purpose-built system.
+**Key impacts:**
+- Within the first year of launch: nearly 400 sellers use Seller Dashboard;
+- Seller Dashboard manages 210K+ products;
+- 106,372+ orders fulfilled;
+- $10,500,000+ revenue generated
 
-He could've built something fully custom, but unfamiliar workflows create fear and hesitation during seller onboarding. Familiarity kept sellers confident while giving them features Shopify never supported.
+**My role:** Lead product designer. I designed a custom product management dashboard to mitigate issues from poor integration with Shopify.
 
-**Outcome (first year):**
-- ~400 sellers using Seller Dashboard
-- 210,000+ products managed
-- 106,372+ orders fulfilled
-- $10.5M+ in revenue generated
+**What was at stake:** Complex NTWRK depends on premium sellers. Incorrect product data and inventory mismatches meant buyers tried to purchase products that didn't exist. When sellers lose sales and customers due to platform failures, they leave for competitors.
 
----
+**Why I made those decisions:** I could've designed a completely custom dashboard for Complex NTWRK, but unfamiliar workflows would've scared off new sellers. Instead, I made it feel familiar to Shopify users while integrating features for Complex NTWRK's unique sales channels (live-selling, auctions, buy-now). Familiarity reduced onboarding friction and kept sellers confident in the system.
 
-### Coinley AI — AI Crypto Investing App
-- **Slug:** ai-investing
-- **Status:** Live (App Store)
-- **Role:** Lead Product Designer
+**The challenge:** Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and Sellers were expected to be familiar with Shopify, which was often not the case.
 
-**Challenge:** First-time crypto investors have to learn investing basics, blockchain concepts, candlestick charts, and data interpretation all at once. Traditional investing platforms overwhelm beginners with complex interfaces and workflows.
+We needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.
 
-**What Edwin did:** He helped build and release the MVP for a crypto investing platform, designing a chat-based interface for users to receive investment advice. He worked closely with a developer on exploring and selecting a technical back-end: Firebase to build and manage the app, and the CoinMarketCap API to display real-time cryptocurrency information.
-
-**The risk:** A regular crypto app wouldn't differentiate Coinley in the beginner market they were targeting. But introducing AI agents for investment advice was risky, as users might not trust AI to guide financial decisions. First-time investors needed a tutor to guide them through the process, so Edwin designed the AI as a conversational agent to make investing feel accessible rather than intimidating.
-
-**Outcome:** Released on the App Store.
-
----
-
-### FutureFit AI — AI Workforce Development Platform
-- **Slug:** ai-workforce-development
-- **Status:** Work in progress
-- **Role:** Lead Product Designer
-
-Edwin is the lead product designer on a B2B and B2G AI-powered workforce development platform. The core product is an AI coach that helps users navigate job search and career development.
-
-Current focus areas:
-- User research with new job-seekers, career-changers, and recent graduates
-- Understanding how AI can improve cold outreach outcomes, resume quality, and user accountability
-- Designing and deploying the AI coach to clients
-- Building an AI-compatible design system using design tokens and Shadcn, for use in tools like v0, Lovable, and Claude Code
-
-Case study coming soon.
+<!-- END GENERATED: projects -->
 
 ---
 

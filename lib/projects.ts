@@ -12,6 +12,12 @@ export interface ProofLinks {
 export interface Project {
   slug: string
   client: string
+  // `projectTitle` has NO SOURCE. framer-export.json carries only the client
+  // name per row, and resume.txt names employers rather than projects, so
+  // these seven strings are repo-authored labels. Kept deliberately (a case
+  // study needs a title) but declared here and in REPO_AUTHORED_FIELDS below
+  // so an audit finds them already accounted for instead of flagging them as
+  // invented. Same pattern as the `role` override.
   projectTitle: string
   tagline: string
   // `role` is sourced from lib/sources/resume.txt, NOT framer-export.json —
@@ -57,6 +63,11 @@ export interface Project {
   whatsNext?: string
   proofLinks?: ProofLinks
 }
+
+// Fields on Project that are not traceable to anything in lib/sources/.
+// scripts/build-context.mjs reads this to annotate the generated section, so
+// the provenance gap travels with the output instead of living only here.
+export const REPO_AUTHORED_FIELDS = ["projectTitle"] as const
 
 export const projects: Project[] = [
   {

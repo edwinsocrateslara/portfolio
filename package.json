@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "check:voice": "node scripts/check-voice.mjs"
+    "check:voice": "node scripts/check-voice.mjs",
+    "build:context": "node --experimental-strip-types scripts/build-context.mjs",
+    "check:context": "node --experimental-strip-types scripts/build-context.mjs --check",
+    "check:sources": "npm run check:voice && npm run check:context"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
