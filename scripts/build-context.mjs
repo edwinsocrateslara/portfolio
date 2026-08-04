@@ -16,8 +16,28 @@
 import { readFileSync, writeFileSync } from "fs"
 
 const CONTEXT = "lib/edwin-context.md"
+const PROJECTS = "lib/projects.ts"
 const BEGIN = "<!-- BEGIN GENERATED: projects (scripts/build-context.mjs) -->"
 const END = "<!-- END GENERATED: projects -->"
+
+// lib/projects.ts is imported directly rather than parsed, which relies on
+// --experimental-strip-types. That flag strips types but does NOT resolve a
+// TypeScript module graph: the moment projects.ts imports anything, the
+// import throws a module-resolution error whose message says nothing about
+// this constraint. Check for it up front and fail with an explanation.
+const projectsSource = readFileSync(PROJECTS, "utf8")
+const imports = projectsSource.match(/^\s*import\s.+$/gm)
+if (imports) {
+  console.error(
+    `${PROJECTS} now has ${imports.length} import(s):\n` +
+      imports.map((i) => "  " + i.trim()).join("\n") +
+      "\n\nThis script imports that file directly under" +
+      " --experimental-strip-types, which strips types but cannot resolve a" +
+      " TypeScript module graph. Either keep projects.ts dependency-free, or" +
+      " move this script behind a bundler/tsx and delete this check."
+  )
+  process.exit(1)
+}
 
 const { projects, REPO_AUTHORED_FIELDS } = await import("../lib/projects.ts")
 

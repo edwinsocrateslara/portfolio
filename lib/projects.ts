@@ -1,5 +1,10 @@
 export interface ProjectImage {
   url: string
+  // `alt` has NO SOURCE. framer-export.json carries image URLs with no alt
+  // text, and it is written from looking at the images rather than derived
+  // from anything in lib/sources/. Declared in REPO_AUTHORED_FIELDS below.
+  // It is for screen readers and is deliberately excluded from the generated
+  // section of lib/edwin-context.md, so the chat never quotes it back.
   alt: string
 }
 
@@ -67,7 +72,7 @@ export interface Project {
 // Fields on Project that are not traceable to anything in lib/sources/.
 // scripts/build-context.mjs reads this to annotate the generated section, so
 // the provenance gap travels with the output instead of living only here.
-export const REPO_AUTHORED_FIELDS = ["projectTitle"] as const
+export const REPO_AUTHORED_FIELDS = ["projectTitle", "alt"] as const
 
 export const projects: Project[] = [
   {
