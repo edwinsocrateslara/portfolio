@@ -1,5 +1,6 @@
 import { projects } from "./projects"
 import { buildProjectBodyBlocks } from "./project-flow"
+import { matchVoiceAnswer } from "./voice-answers"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
 // The chat reveal: header, the shared body, then follow-up chips. The order
@@ -188,22 +189,28 @@ export function buildResponse(
     }
   }
 
-  // Design systems + AI
-  if (t.includes("design system") && t.includes("ai")) {
+  // The former "design systems + AI" answer lived here. It asserted a
+  // philosophy that appears in no source file ("Figma-first systems that
+  // ship as screenshots let AI-produced UI drift", "engineers ship
+  // faster"). Deleted rather than reworded; the sourced answer to this
+  // question is the composed design-with-ai entry in voice-answers.ts.
+
+  // Everything Edwin has written about how he works, verbatim from
+  // lib/sources/voice.md via the VOICE_ANSWERS table. Placed after the
+  // project matchers so a question naming a project still gets the case
+  // study, and before the location matcher so its broader triggers don't
+  // swallow these. `npm run check:voice` asserts the copy stays verbatim.
+  const voice = matchVoiceAnswer(t)
+  if (voice) {
     return {
       response: [
-        {
-          kind: "text",
-          text: "AI-compatible design systems are where a huge amount of my attention goes right now.",
-        },
-        {
-          kind: "text",
-          text: "The short version: generative UI tools (v0, Lovable, Claude Code) are only as good as the primitives they can reach for. Figma-first systems that ship as screenshots let AI-produced UI drift — wrong spacing, wrong tokens, invented components.",
-        },
+        ...voice.paragraphs.map((text) => ({ kind: "text" as const, text })),
         {
           kind: "followups",
-          text: "At FutureFit I'm building on Shadcn + design tokens, structured so AI tools compose real components. Prompts produce your design language; engineers ship faster; designers spend time on judgment calls, not shepherding pixel mistakes.",
-          chips: [{ text: "Show me FutureFit AI", slug: "ai-workforce-development" }],
+          chips: [
+            { text: "Walk me through your work" },
+            { text: "Show me your résumé" },
+          ],
         },
       ],
       projectSlug: null,
