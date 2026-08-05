@@ -231,6 +231,181 @@ We needed a custom product management tool that worked with Complex NTWRK’s un
 
 <!-- END GENERATED: projects -->
 
+<!-- BEGIN GENERATED: deck (scripts/build-context.mjs) -->
+
+## Case Study Deck — Meridian / motusbank
+
+Generated from lib/sources/meridian-case-study.txt by scripts/build-context.mjs. Do not edit by
+hand: run the script. This is the text of the 21-slide PDF, verbatim
+except that pdftotext's column padding is collapsed to single spaces.
+
+The deck names the product motusbank; the site names the client Meridian.
+Both are correct — see the motusbank note under In His Own Words. The
+browsable version is at /case-study/meridian-deck and the PDF is
+[DOC:meridian-case-study]. Slide numbers below match that page's grid.
+
+**Slide 1**
+PAS T W OR K
+
+**Slide 2**
+MERIDIAN
+Background
+Motusbank is a digital bank geared towards Millennials and Gen Z and is a subsidiary of
+Meridian Credit Union.
+
+**Slide 3**
+TEAM
+Area VP Product Designer
+Provided guidance on roadmap. • Collected data from data team and ran
+Communicated progress to executives. surveys
+Provide resources and removed roadblocks. • Assisted in shaping the design and product
+strategy
+• Ran internal workshops
+Senior Product Manager • Helped create user stories
+Product Manager
+• Created wireframes and information
+architecture
+• Designed UI
+• Held and facilitated reviews
+5 Developers • Built prototypes
+• Conducted user testing
+• Worked closely with developers during
+handoff
+
+**Slide 4**
+OLD DESIGN
+Insights from tellers and
+previous surveys
+• In-app navigation was confusing and broken
+• Primary flows were confusing
+• Overall UI was visually unappealing to the target
+demographic
+• Missing key features that millennials look for in
+banking app, such as investing and borrowing/credit
+cards
+• Lacked the option to login via Face ID
+
+**Slide 5**
+OLD DESIGN
+Confusing navigation
+Information overload
+No way back
+Key products missing
+
+**Slide 6**
+OLD DESIGN
+Poor wayfinding throughout app poor hierarchies and
+lacking structure
+Confusing verbiage
+
+**Slide 7**
+APP STORE REVIEWS
+App is fine, the look is not Looks ok but bad UX
+App is okay but desperately needs a revamp, the colour scheme and the layout is not Seems like there hasn’t been much thought or investment in how the app works but
+pleasing to the eye. It’s like it was thrown together quickly last minute. The app should more focus on how it looks. Had high hopes that motus would have a better
+make you excited to look at your personal finances, but every time I open it I wish I experience than the meridian app but it’s the same app with different branding. For an
+could change the entire look online only bank the digital touchpoint is so important but it doesn’t leave me very
+confident in their offering. Hey at least it’s free...
+Typical Bank App
+Just started messing around with the service, but overall the look of the app left me Could be better
+underwhelmed. The functionality seems good (although the app feels a little slower - Have to log out in order to use the Contact Us option. This needs to be present
+than other bank apps) but the website layout and design is far superior. EVERYWHERE. This includes an easy link to a branch or ATM near me.
+- Have to log out in order to use the various calculators and see other MotusBank
+Ok products.
+App is okay functional wise but kinda annoying to look at in comparison to RBC’s app
+(RBC is nicer and had a better layout) Please, stay far away from this!
+Wow, I don’ know where to start. The appealing of no fee accounts and hi interest
+App shutting down saving account do not worth the lack of services you will get with this bank. The app is
+Interface seems very outdated and everytime I try to sign in, the app glitches and shuts not what you expect when you have in mind online banking. It’s poorly designed, bulky
+down. I see it was just updated a few days ago, I hope they fix this issue and make the and very slow. Each time you try to navigate in the interface, theres a waiting time of
+interface more modern. about 5sec on each click.
+Nothing special.
+The app seems very basic and cheap.The main account screen is very cluttered and
+overwhelming when you have a few accounts.
+Face ID missing
+Please add Face ID login option. Currently there’s just option for touch id (finger print)
+
+**Slide 8**
+OTHER KEY DATA & KPI’S
+Data Team Findings Board KPI’s
+• Reviewing transactions • Improve app store ratings and meet
+the following KPIs:
+• Paying bills
+• Onboard new members;
+• Depositing cheques
+• Keep members logging in;
+• Paying several bills and sending
+several e-transfers in the same • Facilitate opening products on the
+session app
+• Low user engagement
+
+**Slide 9**
+SOLUTION
+Demo
+Demo
+
+**Slide 10**
+MAKING IT FUN
+
+**Slide 11**
+MAKING IT FUN
+
+**Slide 12**
+PROCESS
+
+**Slide 13**
+PROCESS
+
+**Slide 14**
+PROCESS
+
+**Slide 15**
+PROCESS
+
+**Slide 16**
+USER TESTING
+
+**Slide 17**
+USER TESTING FEEDBACK
+Key Feedback
+- Removed recency and alphabetical lists (by default sorted by alphabet)
+- Remote cheque deposit moved from transfer into own section.
+- Removed shortcuts.
+- Updated confusing iconography.
+- Customers didn’t notice amount field at the top of the screen. Moved amount further down on page flow.
+- Confusion around camera section. Name changed from more, to apps, to camera.
+
+**Slide 18**
+BETA TEST WITH 546 USERS
+
+**Slide 19**
+UPDATED REVIEWS
+New app is beautiful
+The new app is finally competitive with the big five. Now we just need Apple Pay and
+Visa/MasterCard debit :)
+After the long waited update, app looks gorgeous
+Well done Motusbank
+Redesign: Updated rating
+New app looks great. Too bad I’m no longer a customer because I thought the previous app
+was abandoned after 9 months of no updates. But now I might try it again in the future. Great
+to see incorporation of feedback.
+Pleasant to use
+I much prefer this new redesigned app to the previous one. I continue to look forward to
+further refinement and feature upgrades but this is a terrific upgrade to start.
+
+**Slide 20**
+Adoption
+Meridian adopted the new design patterns across all mobile
+products.
+
+**Slide 21**
+IMPACT
+Impact:
+Used by 370,000 customers
+Helping manage $26 billion in assets
+
+<!-- END GENERATED: deck -->
+
 ---
 
 ## Available Documents
@@ -351,6 +526,11 @@ A 4-point spacing scale, proximity hierarchy, sibling, parent, grandparent, so s
 #### Staying current and finding inspiration
 
 I stay current by following leading design and AI voices on LinkedIn, and I use Mobbin to break down how major apps handle their flows, seeing how established products solve a problem before deciding how I want to.
+
+
+#### motusbank and Meridian
+
+The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.
 
 ### Outside Work
 
