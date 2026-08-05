@@ -8,6 +8,7 @@ import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { ProjectGrid } from "@/components/chat/project-grid"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
+import { CaseStudySection } from "@/components/chat/case-study-section"
 import { NowPlaying } from "@/components/chat/now-playing"
 import { DOCS } from "@/lib/constants"
 import { CONTENT_WIDTH } from "@/lib/layout"
@@ -28,6 +29,7 @@ const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 const PROMPT_CHIPS = [
   "Walk me through your work",
   "How do you design with AI?",
+  "See the Meridian case study",
   "Show me your résumé",
 ] as const
 
@@ -312,14 +314,19 @@ export default function HomePage() {
               {[
                 { label: "WORK", href: "#work" },
                 { label: "AI", href: "#ai" },
-                { label: "CASE STUDY", href: DOCS["meridian-case-study"].url },
+                { label: "CASE STUDY", href: "/case-study/meridian-deck" },
                 { label: "RESUME", href: DOCS["resume"].url },
+                // `#work` and `#ai` are anchors, CASE STUDY is now an internal
+                // route, RESUME is still off-site. Only the last of those wants
+                // a new tab, so the test is "is it off-site", not "is it a
+                // hash" — which is what it was when CASE STUDY pointed at a
+                // third-party PDF viewer.
               ].map(({ label, href }) => (
                 <a
                   key={label}
                   href={href}
-                  target={href.startsWith("#") ? undefined : "_blank"}
-                  rel="noopener noreferrer"
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                   className="type-nav transition-colors"
                   style={{ color: "rgb(var(--bureau-text-secondary))" }}
                   onMouseEnter={(e) => {
@@ -411,6 +418,15 @@ export default function HomePage() {
 
         {/* Side of Desk section */}
         <SideOfDesk />
+
+        {/* Section divider */}
+        <div
+          className="mx-auto max-w-7xl px-6"
+          style={{ borderTop: "1px solid rgb(var(--bureau-border))" }}
+        />
+
+        {/* Case Study deck */}
+        <CaseStudySection />
 
         {/* Section divider */}
         <div

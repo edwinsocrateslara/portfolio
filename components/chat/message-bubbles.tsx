@@ -9,6 +9,7 @@ import { CONTENT_WIDTH } from "@/lib/layout"
 import { ArchitectureSection } from "@/components/case-study/architecture-section"
 import { ProofLinks } from "@/components/case-study/proof-links"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
+import { SlideGrid } from "@/components/case-study/slide-grid"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
@@ -19,6 +20,7 @@ export type MessageKind =
   | "project-header"
   | "image"
   | "image-row"
+  | "slide-grid"
   | "impact"
   | "followups"
   | "doc-link"
@@ -71,6 +73,13 @@ export interface ImageRowMessage extends BaseMessage {
   caption?: string
 }
 
+// A compact grid of deck slides. Full-width stacked images would be roughly
+// 8,800px of scroll for a 21-slide deck.
+export interface SlideGridMessage extends BaseMessage {
+  kind: "slide-grid"
+  slides: { url: string; alt: string }[]
+}
+
 export interface ImpactMessage extends BaseMessage {
   kind: "impact"
   label?: string
@@ -105,6 +114,7 @@ export type StructuredMessage =
   | ProjectHeaderMessage
   | ImageMessage
   | ImageRowMessage
+  | SlideGridMessage
   | ImpactMessage
   | FollowupsMessage
   | DocLinkMessage
@@ -620,6 +630,9 @@ export function MessageContent({
           images={(message as ImageRowMessage).images}
           caption={(message as ImageRowMessage).caption}
         />
+      )}
+      {kind === "slide-grid" && (
+        <SlideGrid slides={(message as SlideGridMessage).slides} columns={4} />
       )}
       {kind === "impact" && (
         <ImpactBubble

@@ -19,6 +19,18 @@ export interface VoiceAnswer {
 
 export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
+    // The deck matcher in scripted-responses.ts intercepts these triggers
+    // before matchVoiceAnswer runs, and reads this paragraph by id — so the
+    // entry is not dead, it is the single source for that line and the reason
+    // check-voice.mjs asserts it against voice.md. The triggers stay here so
+    // the answer survives if the deck matcher is ever narrowed.
+    id: "motusbank",
+    triggers: ["motusbank", "motus bank", "motus"],
+    paragraphs: [
+      "The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.",
+    ],
+  },
+  {
     // Composed from three sections, verbatim and in this order: the
     // tradeoffs position leads, then process, then tools. No section
     // answers this on its own, and no connective words are added.
@@ -153,6 +165,13 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
     ],
   },
 ]
+
+/** Lookup by id, for callers that want one specific answer rather than a match. */
+export function voiceAnswerById(id: string): VoiceAnswer {
+  const found = VOICE_ANSWERS.find((a) => a.id === id)
+  if (!found) throw new Error(`No VOICE_ANSWERS entry with id "${id}"`)
+  return found
+}
 
 /** First entry whose trigger appears in the lowercased question. */
 export function matchVoiceAnswer(lowercased: string): VoiceAnswer | null {

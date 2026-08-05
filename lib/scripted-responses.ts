@@ -1,6 +1,7 @@
 import { projects } from "./projects"
 import { buildProjectBodyBlocks } from "./project-flow"
-import { matchVoiceAnswer } from "./voice-answers"
+import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
+import { meridianDeck } from "./case-study-deck"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
 // The chat reveal: header, the shared body, then follow-up chips. The order
@@ -61,10 +62,31 @@ export function buildResponse(
   const t = text.toLowerCase()
   const { preloadedSlug, currentProjectSlug } = options || {}
 
+  // The deck and the Meridian project are separate things that share a name.
+  // Bare "meridian" means the project — that is the ruling, and the deck
+  // response below sits after the project matcher to honour it. But the chip
+  // label is "See the Meridian case study", which contains "meridian", so the
+  // project matcher would swallow it before the deck matcher was ever
+  // reached. These triggers are the narrow set that unambiguously means the
+  // document: they suppress the project match rather than reordering the
+  // blocks.
+  const wantsDeck = [
+    "motusbank",
+    "motus bank",
+    "motus",
+    "case study deck",
+    "slide deck",
+    "the deck",
+    "slides",
+    "see the meridian case study",
+  ].some((k) => t.includes(k))
+
   // Project-specific responses
   const matchSlug =
     preloadedSlug ||
-    (t.includes("meridian")
+    (wantsDeck
+      ? null
+      : t.includes("meridian")
       ? "retail-banking"
       : t.includes("futurefit") || t.includes("workforce")
         ? "ai-workforce-development"
@@ -89,6 +111,39 @@ export function buildResponse(
     // New project or explicit preloaded slug - show scripted reveal
     const p = projects.find((x) => x.slug === matchSlug)
     if (p) return { response: projectStream(p), projectSlug: matchSlug }
+  }
+
+  // The case study deck. After the project matchers, per the ruling that the
+  // deck and the Meridian project reveal stay separate — the deck does not
+  // appear inside the project's chat reveal, and asking about the project
+  // does not surface the deck. `projectSlug: null` keeps the two from
+  // sharing conversation state.
+  if (wantsDeck) {
+    return {
+      response: [
+        {
+          kind: "text",
+          text: `The **${meridianDeck.title}** case study deck — ${meridianDeck.slides.length} slides covering research, the old app, the redesign, testing, and impact.`,
+        },
+        // Verbatim from lib/sources/voice.md, read by id so check-voice.mjs
+        // asserts it against the source.
+        ...voiceAnswerById("motusbank").paragraphs.map((text) => ({
+          kind: "text" as const,
+          text,
+        })),
+        { kind: "slide-grid", slides: meridianDeck.slides },
+        { kind: "doc-link", docKey: "meridian-case-study" },
+        {
+          kind: "followups",
+          text: `Any slide opens full size. The whole deck is also at [/case-study/${meridianDeck.slug}](/case-study/${meridianDeck.slug}).`,
+          chips: [
+            { text: "Show me the Meridian redesign", slug: "retail-banking" },
+            { text: "Walk me through your work" },
+          ],
+        },
+      ],
+      projectSlug: null,
+    }
   }
 
   // "Walk me through your work" - overview of all projects

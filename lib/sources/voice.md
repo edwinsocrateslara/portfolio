@@ -151,3 +151,9 @@ A 4-point spacing scale, proximity hierarchy, sibling, parent, grandparent, so s
 ## Staying current and finding inspiration
 
 I stay current by following leading design and AI voices on LinkedIn, and I use Mobbin to break down how major apps handle their flows, seeing how established products solve a problem before deciding how I want to.
+
+---
+
+## motusbank and Meridian
+
+The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.
