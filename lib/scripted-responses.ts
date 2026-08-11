@@ -135,7 +135,11 @@ export function buildResponse(
         { kind: "doc-link", docKey: "meridian-case-study" },
         {
           kind: "followups",
-          text: `Any slide opens full size. The whole deck is also at [/case-study/${meridianDeck.slug}](/case-study/${meridianDeck.slug}).`,
+          // No link to /case-study/meridian-deck here. It was the only path in
+          // the app that destroyed thread state — a real navigation remounts
+          // the shell — and it is redundant now that the rail's CASE STUDY row
+          // opens the same deck as a pane swap.
+          text: "Any slide opens full size.",
           chips: [
             { text: "Show me the Meridian redesign", slug: "retail-banking" },
             { text: "Walk me through your work" },

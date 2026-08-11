@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import { projects } from "@/lib/projects"
-import { meridianDeck } from "@/lib/case-study-deck"
 import { DOCS } from "@/lib/constants"
 import { hasSideProjects } from "@/components/chat/side-of-desk"
 
@@ -23,13 +22,14 @@ import { hasSideProjects } from "@/components/chat/side-of-desk"
 // NOT shown here — it stays the project's name in the chat card and in
 // edwin-context.md, and is too long for a 198px column.
 
-export type Pane = "chat" | "vibe-coding"
+export type Pane = "chat" | "vibe-coding" | "deck"
 
 interface SidebarProps {
   activeSlug: string | null
   activePane: Pane
   onProjectSelect: (slug: string) => void
   onSelectVibeCoding: () => void
+  onSelectDeck: () => void
   onHome: () => void
   /** Mobile sheet only — dismisses after a selection. */
   onNavigate?: () => void
@@ -42,6 +42,7 @@ export function Sidebar({
   activePane,
   onProjectSelect,
   onSelectVibeCoding,
+  onSelectDeck,
   onHome,
   onNavigate,
   open = false,
@@ -120,13 +121,18 @@ export function Sidebar({
             </button>
           )}
 
-          <a
+          {/* A button, not a link: navigating to /case-study/meridian-deck
+              would remount the shell and lose every project thread. The route
+              still exists for deep links and renders this same shell. */}
+          <button
+            type="button"
             className="rail-doc"
-            href={`/case-study/${meridianDeck.slug}`}
-            onClick={() => onNavigate?.()}
+            data-active={activePane === "deck"}
+            aria-current={activePane === "deck" ? "true" : undefined}
+            onClick={pick(onSelectDeck)}
           >
             <span className="type-label">Case Study</span>
-          </a>
+          </button>
 
           <a
             className="rail-doc"
