@@ -36,13 +36,13 @@ const config: Config = {
       // place — the .type-* classes in app/globals.css. A `fontSize` block
       // duplicated those values by hand and had zero consumers; keeping it
       // only offered a second, silently-diverging way to set type.
-      spacing: {
-        // Relatedness levels — prefer these over raw steps.
-        within: "var(--space-within)",
-        between: "var(--space-between)",
-        group: "var(--space-group)",
-        section: "var(--space-section)",
-      },
+      // No `spacing` here on purpose, for the same reason there is no
+      // `fontSize`. Relatedness levels were exposed as p-within / gap-between /
+      // mb-group / py-section and reached zero usages: the codebase settled on
+      // var(--space-*), which is the only form that works in BOTH a style
+      // object and a CSS rule. The named component classes in globals.css
+      // cannot use a Tailwind utility, so keeping these split the vocabulary
+      // by file type. One way to say 16px, not three.
     },
   },
   plugins: [animate],

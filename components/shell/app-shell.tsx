@@ -526,7 +526,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         ) : (
           <>
             <div className="pane-scroll" ref={paneScrollRef}>
-              <div style={{ ...CHAT_COLUMN, paddingBottom: "var(--space-8)" }} className="flex flex-col gap-4">
+              <div style={{ ...CHAT_COLUMN, paddingBottom: "var(--space-8)", gap: "var(--space-between)" }} className="flex flex-col">
               {/* Structured messages (scripted) */}
               {activeMessages.map((message, i) => {
                 if (message.role === "user") {

@@ -56,7 +56,7 @@ export function ChatInput({
         placeholder={placeholder}
         rows={1}
         disabled={isLoading}
-        className="type-body block w-full resize-none py-5 pl-5 pr-14 focus:outline-none transition-shadow"
+        className="type-body chat-input-field focus:outline-none transition-shadow"
         style={{
           background: "rgb(var(--bureau-surface))",
           color: "rgb(var(--bureau-text-primary))",
@@ -80,7 +80,7 @@ export function ChatInput({
         onClick={onSubmit}
         disabled={!canSubmit}
         aria-label={isLoading ? "Sending" : "Send message"}
-        className={`type-label absolute flex items-center justify-center gap-2 px-3 ${
+        className={`type-label chat-input-send absolute ${
           canSubmit ? "font-bold" : "font-semibold"
         }`}
         style={{

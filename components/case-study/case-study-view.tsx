@@ -55,10 +55,10 @@ function TraditionalCaseStudy({ project }: { project: Project }) {
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarGutter: "stable" }}>
+      <div className="review-scroll" style={{ scrollbarGutter: "stable" }}>
         <div
-          style={{ ...CHAT_COLUMN, paddingTop: "var(--space-group)", paddingBottom: "var(--space-within)" }}
-          className="flex flex-col gap-4"
+          style={{ ...CHAT_COLUMN, paddingTop: "var(--space-group)", paddingBottom: "var(--space-within)", gap: "var(--space-between)" }}
+          className="flex flex-col"
         >
           <div style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: "var(--space-group)" }}>
             <ProjectHeaderBubble
@@ -80,7 +80,7 @@ function TraditionalCaseStudy({ project }: { project: Project }) {
         </div>
       </div>
       <div
-        className="px-5 pb-6 pt-1"
+        className="review-dock"
         style={{
           // Reserve the same scrollbar gutter the messages pane above
           // reserves, so both columns centre in the same available width.
@@ -113,13 +113,13 @@ export function CaseStudyView({ project }: { project: Project }) {
     <div className="flex h-dvh flex-col" style={{ background: "rgb(var(--bureau-bg))" }}>
       {/* Header — mirrors the chat header chrome for direct visual comparison */}
       <header
-        className="flex h-14 shrink-0 items-center justify-between px-5"
+        className="review-header"
         style={{ borderBottom: "1px solid rgb(var(--bureau-border))" }}
       >
         <Link
           href="/"
-          className="type-label flex items-center gap-2"
-          style={{ color: "rgb(var(--bureau-text-secondary))" }}
+          className="type-label flex items-center"
+          style={{ color: "rgb(var(--bureau-text-secondary))", gap: "var(--space-within)" }}
         >
           ← Back
         </Link>

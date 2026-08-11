@@ -82,8 +82,11 @@ as noise.
 | `--space-group` | `32px` | Between groups — a list and the block after it |
 | `--space-section` | `64px` | Major regions — the bands of the landing page |
 
-Available as Tailwind utilities too: `p-within`, `gap-between`,
-`mb-group`, `py-section`.
+Always written as `var(--space-*)` — in a style object or in a component
+class in `globals.css`. They were briefly also exposed as Tailwind
+utilities (`p-within`, `gap-between`); those reached zero usages and are
+gone, because a utility cannot be used inside a CSS rule and keeping both
+split the vocabulary by file type.
 
 The level is the meaning; the pixel value is an implementation detail. If
 two levels both seem plausible, that is a signal to reconsider the

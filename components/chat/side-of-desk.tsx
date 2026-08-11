@@ -186,7 +186,8 @@ export function SideOfDesk() {
   return (
     <section
       id="ai"
-      className="mx-auto max-w-7xl px-6 py-20"
+      className="mx-auto max-w-7xl"
+      style={{ padding: "var(--space-80) var(--space-24)" }}
     >
       {/* Header */}
       <div

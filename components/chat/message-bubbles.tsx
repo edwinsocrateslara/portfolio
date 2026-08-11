@@ -180,7 +180,8 @@ export function ProjectHeaderBubble({
           src={project.previewImage}
           alt=""
           fill
-          className="object-contain p-1"
+          className="object-contain"
+          style={{ padding: "var(--space-4)" }}
           sizes="64px"
         />
       </div>
