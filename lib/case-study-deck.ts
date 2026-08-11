@@ -1,10 +1,10 @@
 // The Meridian case study deck.
 //
 // Deliberately NOT a Project. It has no client, role, status, tags, or
-// challenge/at-stake/decision — forcing it into that type would mean another
-// eight optional fields that every real project leaves empty, which is the
-// shape problem the dormant vibe-coded variant already demonstrates. It is a
-// document, so it gets a document's type.
+// challenge/at-stake/decision — forcing it into that type would mean a pile of
+// optional fields that every real project leaves empty. A dormant second
+// variant on Project once demonstrated that shape problem and was deleted for
+// it. This is a document, so it gets a document's type.
 //
 // `alt` here is repo-authored, like the alt on Project images: the source PDF
 // carries no alt text. It was written from viewing each rendered slide.

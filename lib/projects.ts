@@ -8,12 +8,6 @@ export interface ProjectImage {
   alt: string
 }
 
-export interface ProofLinks {
-  demo?: string
-  repo?: string
-  video?: string
-}
-
 export interface Project {
   slug: string
   client: string
@@ -47,37 +41,12 @@ export interface Project {
   previewImage: ProjectImage
   images: ProjectImage[]
 
-  // "traditional" (design-process case study) is the default when omitted.
-  // "vibe-coded" case studies use the fields below instead of
-  // challenge/impacts/roleDescription/atStake/decision.
-  //
-  // ⚠ NOTHING CURRENTLY SETS variant: "vibe-coded". All 7 projects use the
-  // traditional path. The vibe-coded path is kept for future software and
-  // tooling case studies, where architecture / stack / tradeoff describe the
-  // work better than challenge / at-stake / decision do.
-  //
-  // Because it has zero users, no test or page will catch it rotting. If you
-  // change the traditional path — fields, rendering, ordering — mirror it
-  // here and in VibeCodedCaseStudy (components/case-study/case-study-view.tsx)
-  // or the two will silently drift apart.
-  variant?: "traditional" | "vibe-coded"
-
   // Traditional case-study fields — used by all 7 projects.
   challenge?: string
   impacts?: string[]
   roleDescription?: string
   atStake?: string
   decision?: string
-
-  // Vibe-coded case-study fields — currently unused; see the note on `variant`.
-  whatItIs?: string
-  problem?: string
-  architecture?: string
-  stack?: string[]
-  keyDecision?: string
-  tradeoff?: string
-  whatsNext?: string
-  proofLinks?: ProofLinks
 }
 
 // Fields on Project that are not traceable to anything in lib/sources/.
@@ -429,6 +398,3 @@ export const projects: Project[] = [
   },
 ]
 
-// The "vibe-coded" case-study variant is still supported by the Project type
-// and rendered by case-study-view.tsx, but no project currently uses it. The
-// placeholder that exercised it was removed before merge rather than shipped.

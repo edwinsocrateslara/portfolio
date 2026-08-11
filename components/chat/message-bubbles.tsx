@@ -4,10 +4,7 @@ import Image from "next/image"
 import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { DOCS, type DocKey } from "@/lib/constants"
-import type { ProofLinks as ProofLinksData } from "@/lib/projects"
 import { CONTENT_WIDTH } from "@/lib/layout"
-import { ArchitectureSection } from "@/components/case-study/architecture-section"
-import { ProofLinks } from "@/components/case-study/proof-links"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
 import { SlideGrid } from "@/components/case-study/slide-grid"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
@@ -24,8 +21,6 @@ export type MessageKind =
   | "impact"
   | "followups"
   | "doc-link"
-  | "architecture"
-  | "proof-links"
 
 export interface BaseMessage {
   id: string
@@ -95,17 +90,6 @@ export interface DocLinkMessage extends BaseMessage {
   docKey: DocKey
 }
 
-export interface ArchitectureMessage extends BaseMessage {
-  kind: "architecture"
-  architecture: string
-  stack: string[]
-}
-
-export interface ProofLinksMessage extends BaseMessage {
-  kind: "proof-links"
-  links: ProofLinksData
-}
-
 export type StructuredMessage =
   | TextMessage
   | SectionHeadingMessage
@@ -116,8 +100,6 @@ export type StructuredMessage =
   | ImpactMessage
   | FollowupsMessage
   | DocLinkMessage
-  | ArchitectureMessage
-  | ProofLinksMessage
 
 // Text bubble with markdown-like formatting
 export function TextBubble({ text }: { text: string }) {
@@ -620,15 +602,6 @@ export function MessageContent({
       )}
       {kind === "doc-link" && (
         <DocLinkBubble docKey={(message as DocLinkMessage).docKey} />
-      )}
-      {kind === "architecture" && (
-        <ArchitectureSection
-          architecture={(message as ArchitectureMessage).architecture}
-          stack={(message as ArchitectureMessage).stack}
-        />
-      )}
-      {kind === "proof-links" && (
-        <ProofLinks links={(message as ProofLinksMessage).links} />
       )}
       {kind === "followups" && (
         <FollowupsBubble
