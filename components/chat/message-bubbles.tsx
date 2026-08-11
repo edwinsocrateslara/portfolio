@@ -58,7 +58,6 @@ export interface ProjectHeaderMessage extends BaseMessage {
 export interface ImageMessage extends BaseMessage {
   kind: "image"
   image: { url: string; alt?: string }
-  caption?: string
   // The project's full image set, so a single image placed on its own in
   // the reveal still opens a lightbox that can page through all of them.
   // Without this, splitting the images across the page would shrink each
@@ -70,7 +69,6 @@ export interface ImageMessage extends BaseMessage {
 export interface ImageRowMessage extends BaseMessage {
   kind: "image-row"
   images: { url: string; alt?: string }[]
-  caption?: string
 }
 
 // A compact grid of deck slides. Full-width stacked images would be roughly
@@ -262,14 +260,18 @@ const IMAGE_TRIGGER_STYLE = {
 } as const
 
 // Single image bubble
+// `alt` is for assistive tech only. It used to double as a visible caption
+// here via `caption || image.alt`, which printed every alt string under its
+// own image — alt text describes an image to someone who cannot see it, so
+// showing it to someone who can is redundant at best and reads as a leaked
+// annotation at worst. There is no caption element any more; if real captions
+// are ever wanted they are different copy and belong in lib/projects.ts.
 export function ImageBubble({
   image,
-  caption,
   group,
   groupIndex,
 }: {
   image: { url: string; alt?: string }
-  caption?: string
   group?: { url: string; alt?: string }[]
   groupIndex?: number
 }) {
@@ -277,7 +279,7 @@ export function ImageBubble({
   const triggerRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <figure style={{ margin: 0 }}>
+    <div>
       <button
         type="button"
         ref={triggerRef}
@@ -294,16 +296,6 @@ export function ImageBubble({
           sizes={`${CONTENT_WIDTH}px`}
         />
       </button>
-      {(caption || image.alt) && (
-        <figcaption
-          style={{
-            margin: "var(--space-within) 0 0",
-            color: "rgb(var(--bureau-text-muted))",
-          }}
-        >
-          {caption || image.alt}
-        </figcaption>
-      )}
       {lightboxOpen && (
         <ImageLightbox
           images={group && group.length > 0 ? group : [image]}
@@ -314,7 +306,7 @@ export function ImageBubble({
           }}
         />
       )}
-    </figure>
+    </div>
   )
 }
 
@@ -322,16 +314,14 @@ export function ImageBubble({
 // image now gets the full chat-column width instead of a ~1/3 thumbnail)
 export function ImageRowBubble({
   images,
-  caption,
 }: {
   images: { url: string; alt?: string }[]
-  caption?: string
 }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const triggerRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   return (
-    <figure style={{ margin: 0 }}>
+    <div>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-between)" }}>
         {images.map((img, i) => (
           <button
@@ -355,16 +345,6 @@ export function ImageRowBubble({
           </button>
         ))}
       </div>
-      {caption && (
-        <figcaption
-          style={{
-            margin: "var(--space-within) 0 0",
-            color: "rgb(var(--bureau-text-muted))",
-          }}
-        >
-          {caption}
-        </figcaption>
-      )}
       {lightboxIndex !== null && (
         <ImageLightbox
           images={images}
@@ -376,7 +356,7 @@ export function ImageRowBubble({
           }}
         />
       )}
-    </figure>
+    </div>
   )
 }
 
@@ -620,7 +600,6 @@ export function MessageContent({
       {kind === "image" && (
         <ImageBubble
           image={(message as ImageMessage).image}
-          caption={(message as ImageMessage).caption}
           group={(message as ImageMessage).group}
           groupIndex={(message as ImageMessage).groupIndex}
         />
@@ -628,7 +607,6 @@ export function MessageContent({
       {kind === "image-row" && (
         <ImageRowBubble
           images={(message as ImageRowMessage).images}
-          caption={(message as ImageRowMessage).caption}
         />
       )}
       {kind === "slide-grid" && (
