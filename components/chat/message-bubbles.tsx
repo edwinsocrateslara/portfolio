@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { DOCS, type DocKey } from "@/lib/constants"
-import { CONTENT_WIDTH } from "@/lib/layout"
+import { CONTENT_WIDTH, CARD_WIDTH, CALLOUT_WIDTH } from "@/lib/layout"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
 import { SlideGrid } from "@/components/case-study/slide-grid"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
@@ -157,7 +157,7 @@ export function ProjectHeaderBubble({
         background: "rgb(var(--bureau-surface))",
         border: "1px solid rgb(var(--bureau-border))",
         padding: "var(--space-between)",
-        maxWidth: 480,
+        maxWidth: CARD_WIDTH,
         borderRadius: "var(--bureau-radius-card)",
       }}
     >
@@ -357,7 +357,7 @@ export function ImpactBubble({
         border: "1px solid rgb(var(--bureau-border))",
         borderLeft: "2px solid rgb(var(--bureau-accent))",
         padding: "var(--space-20) var(--space-24)",
-        maxWidth: 520,
+        maxWidth: CALLOUT_WIDTH,
         borderRadius: "var(--bureau-radius-card)",
       }}
     >
@@ -427,7 +427,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
         borderRadius: "var(--bureau-radius-card)",
         background: "rgb(var(--bureau-surface))",
         padding: "var(--space-between)",
-        maxWidth: 480,
+        maxWidth: CARD_WIDTH,
         textDecoration: "none",
       }}
     >
@@ -463,8 +463,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
           style={{
             display: "block",
             color: "rgb(var(--bureau-text-muted))",
-            // Optical title-to-meta gap. Documented exception.
-            marginTop: 5,
+            marginTop: "var(--space-optical-meta)",
           }}
         >
           PDF

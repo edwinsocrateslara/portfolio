@@ -209,7 +209,7 @@ export function SideOfDesk() {
               gap: "var(--space-within)",
             }}
           >
-            <span style={{ display: "inline-block", width: 8, height: 8, background: "rgb(var(--bureau-text-secondary))", flexShrink: 0 }} /> AI Practice
+            <span style={{ display: "inline-block", width: "var(--space-8)", height: "var(--space-8)", background: "rgb(var(--bureau-text-secondary))", flexShrink: 0 }} /> AI Practice
           </div>
           <h2 className="type-h2" style={{ margin: 0, color: "rgb(var(--bureau-text-primary))" }}>
             Vibe Coded Prototypes & Tools

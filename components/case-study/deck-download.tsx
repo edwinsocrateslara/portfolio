@@ -1,6 +1,7 @@
 "use client"
 
 import type { CaseStudyDeck } from "@/lib/case-study-deck"
+import { CARD_WIDTH } from "@/lib/layout"
 
 // PDF download, styled as the doc-link card in the chat is: square glyph,
 // title, mono meta line, download arrow.
@@ -17,7 +18,7 @@ export function DeckDownload({ deck }: { deck: CaseStudyDeck }) {
         borderRadius: "var(--bureau-radius-card)",
         background: "rgb(var(--bureau-surface))",
         padding: "var(--space-between)",
-        maxWidth: 480,
+        maxWidth: CARD_WIDTH,
         textDecoration: "none",
       }}
     >
@@ -49,8 +50,7 @@ export function DeckDownload({ deck }: { deck: CaseStudyDeck }) {
           style={{
             display: "block",
             color: "rgb(var(--bureau-text-muted))",
-            // Optical title-to-meta gap. Documented exception.
-            marginTop: 5,
+            marginTop: "var(--space-optical-meta)",
           }}
         >
           {deck.slides.length} slides

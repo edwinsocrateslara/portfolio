@@ -78,6 +78,13 @@
   /* Mirrors CONTENT_WIDTH in lib/layout.ts, for rules that need it in CSS. */
   --content-width: 720px;
 
+  /* Optical title-to-meta gap. Off the 4px grid at 5px, and deliberately so:
+     the meta line's own leading already separates the two, so `within` (8px)
+     reads as a break rather than a pairing. It was written out three times as
+     three separate "documented exceptions" before becoming a token — which is
+     how a missing token hides. One name, one value, one place to change it. */
+  --space-optical-meta: 5px;
+
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
