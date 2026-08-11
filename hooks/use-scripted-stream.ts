@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import type { StructuredMessage } from "@/components/chat/message-bubbles"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
@@ -11,6 +11,9 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
 // A block "template" — everything a caller needs to describe one message,
 // minus the id/role the stream assigns as it reveals it.
 export type MessageBlock = DistributiveOmit<StructuredMessage, "id" | "role">
+
+/** The front-door conversation. Project threads are keyed by project slug. */
+export const HOME_THREAD = "home"
 
 const TYPING_DELAY = { min: 400, max: 900 }
 
@@ -23,10 +26,24 @@ export function generateMessageId() {
   return `msg-${++messageIdCounter}-${Date.now()}`
 }
 
+// Stable identity for "this thread has nothing in it", so a component reading
+// an untouched thread doesn't get a fresh [] every render.
+const EMPTY: StructuredMessage[] = []
+
 // Reveals a queue of assistant blocks one at a time, each after a random
 // 400-900ms "typing" pause — the mechanism traditional case studies already
 // use in the live chat. Shared by the chat page and the case-study review
 // route so both stream identically.
+//
+// Messages are keyed BY THREAD. Every project owns an independent transcript,
+// the way a conversation list does; `HOME_THREAD` is the front door. Callers
+// that never pass a thread get HOME_THREAD and behave exactly as they did
+// when this hook held a single flat list.
+//
+// The pending queue carries its own thread id rather than reading whichever
+// thread happens to be open. That matters: a reveal takes several seconds, and
+// the visitor can switch rails mid-stream. Tagging the queue means the blocks
+// land in the thread that asked for them, never in the one now on screen.
 //
 // Under prefers-reduced-motion, delays and entrance animations (the latter
 // handled by AssistantBubble/UserBubble themselves) are skipped entirely —
@@ -34,66 +51,95 @@ export function generateMessageId() {
 // input stays enabled immediately.
 export function useScriptedStream() {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const [messages, setMessages] = useState<StructuredMessage[]>([])
-  const [isTyping, setIsTyping] = useState(false)
-  const [pending, setPending] = useState<MessageBlock[]>([])
+  const [threads, setThreads] = useState<Record<string, StructuredMessage[]>>({})
+  const [typingThread, setTypingThread] = useState<string | null>(null)
+  const [pending, setPending] = useState<{ thread: string; blocks: MessageBlock[] } | null>(null)
 
   useEffect(() => {
-    if (pending.length === 0 || isTyping) return
+    if (!pending || pending.blocks.length === 0 || typingThread) return
+    const { thread, blocks } = pending
+
+    const materialise = (block: MessageBlock): StructuredMessage =>
+      ({ id: generateMessageId(), role: "assistant", ...block }) as StructuredMessage
 
     if (prefersReducedMotion) {
-      setMessages((prev) => {
-        const updated = [...prev]
-        for (const next of pending) {
-          const newMessage: StructuredMessage = {
-            id: generateMessageId(),
-            role: "assistant",
-            ...next,
-          } as StructuredMessage
-          updated.push(newMessage)
-        }
-        return updated
-      })
-      setPending([])
+      setThreads((prev) => ({
+        ...prev,
+        [thread]: [...(prev[thread] ?? []), ...blocks.map(materialise)],
+      }))
+      setPending(null)
       return
     }
 
     const processNext = async () => {
-      setIsTyping(true)
+      setTypingThread(thread)
       await new Promise((r) => setTimeout(r, getTypingDelay()))
 
-      const [next, ...rest] = pending
-      const newMessage: StructuredMessage = {
-        id: generateMessageId(),
-        role: "assistant",
-        ...next,
-      } as StructuredMessage
-
-      setMessages((prev) => [...prev, newMessage])
-      setPending(rest)
-      setIsTyping(false)
+      const [next, ...rest] = blocks
+      setThreads((prev) => ({
+        ...prev,
+        [thread]: [...(prev[thread] ?? []), materialise(next)],
+      }))
+      setPending(rest.length ? { thread, blocks: rest } : null)
+      setTypingThread(null)
     }
 
     processNext()
-  }, [pending, isTyping, messages, prefersReducedMotion])
+  }, [pending, typingThread, prefersReducedMotion])
 
   // Replace the pending queue — matches the traditional flow's existing
   // "replace, don't append" semantics (a new turn always sets a fresh queue).
-  const enqueue = useCallback((blocks: MessageBlock[]) => {
-    setPending(blocks)
+  const enqueue = useCallback((blocks: MessageBlock[], thread: string = HOME_THREAD) => {
+    setPending({ thread, blocks })
   }, [])
 
   // Append a message immediately, bypassing the queue — for user messages,
   // which appear the instant they're sent rather than after a typing delay.
-  const appendImmediate = useCallback((message: StructuredMessage) => {
-    setMessages((prev) => [...prev, message])
+  const appendImmediate = useCallback(
+    (message: StructuredMessage, thread: string = HOME_THREAD) => {
+      setThreads((prev) => ({ ...prev, [thread]: [...(prev[thread] ?? []), message] }))
+    },
+    []
+  )
+
+  /** Clear one thread, or every thread when called with no argument. */
+  const reset = useCallback((thread?: string) => {
+    if (thread === undefined) {
+      setThreads({})
+    } else {
+      setThreads((prev) => ({ ...prev, [thread]: [] }))
+    }
+    setPending(null)
+    setTypingThread(null)
   }, [])
 
-  const reset = useCallback(() => {
-    setMessages([])
-    setPending([])
-    setIsTyping(false)
-  }, [])
+  const messagesOf = useCallback(
+    (thread: string) => threads[thread] ?? EMPTY,
+    [threads]
+  )
+  const isTypingIn = useCallback(
+    (thread: string) => typingThread === thread,
+    [typingThread]
+  )
 
-  return { messages, isTyping, enqueue, appendImmediate, reset }
+  /** True once a thread has any message — used to decide "already revealed". */
+  const hasMessages = useCallback(
+    (thread: string) => (threads[thread]?.length ?? 0) > 0,
+    [threads]
+  )
+
+  const messages = useMemo(() => threads[HOME_THREAD] ?? EMPTY, [threads])
+
+  return {
+    // Single-thread API, unchanged for callers that never named a thread.
+    messages,
+    isTyping: typingThread === HOME_THREAD,
+    enqueue,
+    appendImmediate,
+    reset,
+    // Thread-aware API.
+    messagesOf,
+    isTypingIn,
+    hasMessages,
+  }
 }

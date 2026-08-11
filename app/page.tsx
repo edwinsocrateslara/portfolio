@@ -1,16 +1,12 @@
 "use client"
 
-import React, { useState, useRef, useEffect, useCallback } from "react"
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
-import { ArrowLeft } from "lucide-react"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
-import { ProjectGrid } from "@/components/chat/project-grid"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
-import { CaseStudySection } from "@/components/chat/case-study-section"
-import { NowPlaying } from "@/components/chat/now-playing"
-import { DOCS } from "@/lib/constants"
+import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { CONTENT_WIDTH, HERO_MEASURE, HERO_SUB_MEASURE } from "@/lib/layout"
 import {
   buildResponse,
@@ -22,7 +18,7 @@ import {
   TypingIndicator,
   type StructuredMessage,
 } from "@/components/chat/message-bubbles"
-import { useScriptedStream, generateMessageId } from "@/hooks/use-scripted-stream"
+import { useScriptedStream, generateMessageId, HOME_THREAD } from "@/hooks/use-scripted-stream"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
@@ -34,32 +30,51 @@ const PROMPT_CHIPS = [
   "Show me your résumé",
 ] as const
 
-type Mode = "landing" | "chat"
-
 function createTransport() {
   return new DefaultChatTransport({ api: "/api/chat" })
 }
 
 export default function HomePage() {
-  const [mode, setMode] = useState<Mode>("landing")
   const [input, setInput] = useState("")
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = usePrefersReducedMotion()
+  // Which destination the pane is showing. "chat" is home; VIBE CODING is the
+  // one rail row that swaps the pane instead of opening a conversation or a
+  // document.
+  const [pane, setPane] = useState<Pane>("chat")
+  const [sheetOpen, setSheetOpen] = useState(false)
 
-  // Structured messages for scripted flow — reveal queue and timing
-  // logic lives in useScriptedStream, shared with the case-study review route.
+  // ── Threads ─────────────────────────────────────────────────────
+  // Every project owns an independent transcript, keyed by slug; HOME_THREAD
+  // is the front door. Switching rails swaps which one the pane renders — it
+  // never appends one conversation onto another.
+  //
+  // In-memory only, by design: a refresh starts over. There is no persistence
+  // layer and nothing here is written to storage.
+  const [activeThread, setActiveThread] = useState<string>(HOME_THREAD)
+  // Read inside callbacks so they don't have to re-create on every switch.
+  const activeThreadRef = useRef(activeThread)
+  activeThreadRef.current = activeThread
+
+  // Threads whose scripted reveal has already run. A revisit must show
+  // history, not stream the reveal a second time.
+  const revealedRef = useRef<Set<string>>(new Set())
+
   const {
-    messages: structuredMessages,
-    isTyping,
     enqueue: queueScriptedMessages,
     appendImmediate,
-    reset: resetStream,
+    messagesOf,
+    isTypingIn,
   } = useScriptedStream()
+
+  const activeMessages = messagesOf(activeThread)
 
   // Track if we've exhausted scripted responses and should use API
   const [useApiMode, setUseApiMode] = useState(false)
   // Track how many messages in apiMessages are history (shouldn't be rendered)
   const [apiHistoryCount, setApiHistoryCount] = useState(0)
+  // Which thread the in-flight API turn belongs to. The live partial renders
+  // only in that thread, and the finished answer is committed there.
+  const [apiThread, setApiThread] = useState<string>(HOME_THREAD)
   // Track current project being discussed (to avoid repeating scripted reveals)
   const [currentProjectSlug, setCurrentProjectSlug] = useState<string | null>(null)
 
@@ -69,134 +84,198 @@ export default function HomePage() {
   })
 
   const isApiLoading = status === "streaming" || status === "submitted"
+  // Only the thread that asked is busy. Another thread stays interactive.
+  const activeBusy = isTypingIn(activeThread) || (isApiLoading && apiThread === activeThread)
 
-  // Scroll to bottom on new messages
+  // ── Scroll ──────────────────────────────────────────────────────
+  // Each thread remembers where it was left. Restoring is a scrollTop write
+  // against one always-mounted element, so it is cheap enough to ship — the
+  // alternative was jumping to the bottom on every switch.
+  const paneScrollRef = useRef<HTMLDivElement>(null)
+  const scrollPosRef = useRef<Record<string, number>>({})
+  const seenCountRef = useRef<Record<string, number>>({})
+
+  useLayoutEffect(() => {
+    const el = paneScrollRef.current
+    if (!el) return
+    const saved = scrollPosRef.current[activeThread]
+    el.scrollTop = saved ?? el.scrollHeight
+  }, [activeThread])
+
+  // Follow new messages down, but only ones that arrive in the thread already
+  // on screen — otherwise restoring a scroll position immediately loses to
+  // this effect.
   useEffect(() => {
-    if (mode === "chat") {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    const el = paneScrollRef.current
+    if (!el) return
+    const n = activeMessages.length
+    const prev = seenCountRef.current[activeThread]
+    seenCountRef.current[activeThread] = n
+    if (prev !== undefined && n > prev) {
+      el.scrollTo({ top: el.scrollHeight, behavior: prefersReducedMotion ? "auto" : "smooth" })
     }
-  }, [structuredMessages, apiMessages, isTyping, mode])
+  }, [activeMessages.length, activeThread, prefersReducedMotion])
 
-  // Build conversation history from structured messages for API context
+  const switchThread = useCallback((next: string) => {
+    const el = paneScrollRef.current
+    if (el) scrollPosRef.current[activeThreadRef.current] = el.scrollTop
+    setActiveThread(next)
+  }, [])
+
+  // Build conversation history from ONE thread's messages for API context.
   // Convert all message types to text so API understands the project context
-  const buildApiHistory = useCallback(() => {
-    const history: { id: string; role: "user" | "assistant"; parts: { type: "text"; text: string }[] }[] = []
+  const buildApiHistory = useCallback(
+    (thread: string) => {
+      const history: { id: string; role: "user" | "assistant"; parts: { type: "text"; text: string }[] }[] = []
 
-    for (const m of structuredMessages) {
-      let content = ""
+      for (const m of messagesOf(thread)) {
+        let content = ""
 
-      switch (m.kind) {
-        case "text":
-          content = (m as { text: string }).text
-          break
-        case "project-header": {
-          const p = (m as { project: { client: string; projectTitle: string; role: string } }).project
-          content = `[Currently discussing: ${p.client} — ${p.projectTitle}. Edwin's role: ${p.role}]`
-          break
+        switch (m.kind) {
+          case "text":
+            content = (m as { text: string }).text
+            break
+          case "project-header": {
+            const p = (m as { project: { client: string; projectTitle: string; role: string } }).project
+            content = `[Currently discussing: ${p.client} — ${p.projectTitle}. Edwin's role: ${p.role}]`
+            break
+          }
+          case "impact": {
+            const items = (m as { items: string[] }).items
+            content = `Impact: ${items.join("; ")}`
+            break
+          }
+          case "followups": {
+            const text = (m as { text?: string }).text
+            if (text) content = text
+            break
+          }
+          // Skip image, image-row, and doc-link as they don't add conversational context
+          default:
+            continue
         }
-        case "impact": {
-          const items = (m as { items: string[] }).items
-          content = `Impact: ${items.join("; ")}`
-          break
+
+        if (content) {
+          history.push({
+            id: m.id,
+            role: m.role as "user" | "assistant",
+            parts: [{ type: "text", text: content }],
+          })
         }
-        case "followups": {
-          const text = (m as { text?: string }).text
-          if (text) content = text
-          break
-        }
-        // Skip image, image-row, and doc-link as they don't add conversational context
-        default:
-          continue
       }
 
-      if (content) {
-        history.push({
-          id: m.id,
-          role: m.role as "user" | "assistant",
-          parts: [{ type: "text", text: content }],
-        })
+      return history
+    },
+    [messagesOf]
+  )
+
+  // Open a project's thread. Streams its reveal on FIRST open only; a revisit
+  // just swaps the pane back to the transcript that is already there.
+  //
+  // The reveal content comes from buildResponse(preloadedSlug), which returns
+  // projectStream — the same single definition the typed and chip paths use.
+  // Nothing about a project's reveal is described twice.
+  const openProjectThread = useCallback(
+    (slug: string) => {
+      setPane("chat")
+      setCurrentProjectSlug(slug)
+      switchThread(slug)
+      if (revealedRef.current.has(slug)) return
+      revealedRef.current.add(slug)
+      const { response } = buildResponse("", { preloadedSlug: slug })
+      if (response) queueScriptedMessages(response, slug)
+    },
+    [switchThread, queueScriptedMessages]
+  )
+
+  // Every entry point routes through here: typed input, landing chips,
+  // follow-up chips, and the rail. One decision about which thread a turn
+  // belongs to, made once.
+  const dispatch = useCallback(
+    (text: string, opts?: { slug?: string }) => {
+      const from = activeThreadRef.current
+      const { response, projectSlug } = buildResponse(text, {
+        preloadedSlug: opts?.slug,
+        currentProjectSlug: from === HOME_THREAD ? null : from,
+      })
+
+      // A reveal for a DIFFERENT project belongs in that project's thread, so
+      // switch instead of appending here. No user bubble is echoed: the target
+      // thread should read as that project's own conversation, not as a reply
+      // to something typed somewhere else.
+      if (response && projectSlug && projectSlug !== from) {
+        openProjectThread(projectSlug)
+        return
       }
-    }
 
-    return history
-  }, [structuredMessages])
+      const userMessage: StructuredMessage = {
+        id: generateMessageId(),
+        role: "user",
+        kind: "text",
+        text,
+      } as StructuredMessage & { kind: "text"; text: string }
+      appendImmediate(userMessage, from)
 
-  // Handle user input
-  const handleSend = useCallback(() => {
-    if (!input.trim() || isTyping || isApiLoading) return
+      if (response) {
+        queueScriptedMessages(response, from)
+        if (projectSlug) setCurrentProjectSlug(projectSlug)
+        return
+      }
 
-    const userText = input.trim()
-    setInput("")
-    setMode("chat")
-
-    // Add user message
-    const userMessage: StructuredMessage = {
-      id: generateMessageId(),
-      role: "user",
-      kind: "text",
-      text: userText,
-    } as StructuredMessage & { kind: "text"; text: string }
-
-    appendImmediate(userMessage)
-
-    // Try to get a scripted response
-    const { response, projectSlug } = buildResponse(userText, { currentProjectSlug })
-
-    if (response) {
-      queueScriptedMessages(response)
-      if (projectSlug) setCurrentProjectSlug(projectSlug)
-    } else {
-      // Fall back to Claude API - sync conversation history first
+      // Fall through to the API (which refuses anything not in its reference
+      // document) rather than leaving the turn silently unanswered.
+      setApiThread(from)
       setUseApiMode(true)
-      const history = buildApiHistory()
-      // Track history count so we don't render these (already shown in structuredMessages)
+      const history = buildApiHistory(from)
       // +1 for the user message we're about to send
       setApiHistoryCount(history.length + 1)
-      // Set history then send new message
       setApiMessages(history)
       // Small delay to ensure state is updated before sending
       setTimeout(() => {
-        sendMessage({ text: userText })
+        sendMessage({ text })
       }, 0)
+    },
+    [openProjectThread, appendImmediate, queueScriptedMessages, buildApiHistory, setApiMessages, sendMessage]
+  )
+
+  // Commit a finished API answer into its thread, then clear the live channel.
+  // Without this the answer would live only in useChat's list, which is a
+  // single shared list and would leak across threads.
+  useEffect(() => {
+    if (isApiLoading || !useApiMode) return
+    const fresh = apiMessages.slice(apiHistoryCount)
+    const answers = fresh.filter((m) => m.role === "assistant")
+    if (answers.length === 0) return
+    for (const m of answers) {
+      const text = m.parts
+        .filter((p): p is { type: "text"; text: string } => p.type === "text")
+        .map((p) => p.text)
+        .join("")
+      if (!text) continue
+      appendImmediate(
+        { id: m.id, role: "assistant", kind: "text", text } as StructuredMessage,
+        apiThread
+      )
     }
-  }, [input, isTyping, isApiLoading, appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
+    setUseApiMode(false)
+    setApiHistoryCount(0)
+    setApiMessages([])
+  }, [isApiLoading, useApiMode, apiMessages, apiHistoryCount, apiThread, appendImmediate, setApiMessages])
+
+  // Handle user input
+  const handleSend = useCallback(() => {
+    if (!input.trim() || activeBusy) return
+    const userText = input.trim()
+    setInput("")
+    dispatch(userText)
+  }, [input, activeBusy, dispatch])
 
   // Handle chip selection. `slug` is set when the chip names a specific
   // project (follow-up chips carry one; the landing prompt chips don't).
-  const handleChipSelect = useCallback((text: string, slug?: string) => {
-    setMode("chat")
-
-    // Add user message
-    const userMessage: StructuredMessage = {
-      id: generateMessageId(),
-      role: "user",
-      kind: "text",
-      text: text,
-    } as StructuredMessage & { kind: "text"; text: string }
-
-    appendImmediate(userMessage)
-
-    // Get scripted response
-    const { response, projectSlug } = buildResponse(text, {
-      preloadedSlug: slug,
-      currentProjectSlug,
-    })
-    if (response) {
-      queueScriptedMessages(response)
-      if (projectSlug) setCurrentProjectSlug(projectSlug)
-    } else {
-      // Fall through to the API (which refuses anything not in its reference
-      // document) rather than leaving the chip silently unanswered — not
-      // every chip still has a scripted response behind it.
-      setUseApiMode(true)
-      const history = buildApiHistory()
-      setApiHistoryCount(history.length + 1)
-      setApiMessages(history)
-      setTimeout(() => {
-        sendMessage({ text })
-      }, 0)
-    }
-  }, [appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
+  const handleChipSelect = useCallback(
+    (text: string, slug?: string) => dispatch(text, { slug }),
+    [dispatch]
+  )
 
   // Follow-up chips on the case-study route hand off to this page via
   // /?ask=<text>&slug=<slug>, since the chat state lives here. Read it once on
@@ -215,64 +294,34 @@ export default function HomePage() {
     handleChipSelect(ask, slug)
   }, [handleChipSelect])
 
-  // Handle followup chip clicks
-  const handleFollowupChip = useCallback((chip: { text: string; slug?: string }) => {
-    // Add user message
-    const userMessage: StructuredMessage = {
-      id: generateMessageId(),
-      role: "user",
-      kind: "text",
-      text: chip.text,
-    } as StructuredMessage & { kind: "text"; text: string }
+  // Follow-up chips inside a reveal. A chip naming another project switches to
+  // that project's thread (dispatch decides); a general question answers here.
+  const handleFollowupChip = useCallback(
+    (chip: { text: string; slug?: string }) => dispatch(chip.text, { slug: chip.slug }),
+    [dispatch]
+  )
 
-    appendImmediate(userMessage)
+  const handleSidebarProject = useCallback(
+    (slug: string) => openProjectThread(slug),
+    [openProjectThread]
+  )
 
-    // Get scripted response (with optional slug for project-specific)
-    const { response, projectSlug } = buildResponse(chip.text, {
-      preloadedSlug: chip.slug,
-      currentProjectSlug,
-    })
-    if (response) {
-      queueScriptedMessages(response)
-      if (projectSlug) setCurrentProjectSlug(projectSlug)
-    } else {
-      // Fall back to API - sync conversation history first
-      setUseApiMode(true)
-      const history = buildApiHistory()
-      // Track history count so we don't render these (+1 for user message)
-      setApiHistoryCount(history.length + 1)
-      setApiMessages(history)
-      setTimeout(() => {
-        sendMessage({ text: chip.text })
-      }, 0)
-    }
-  }, [appendImmediate, queueScriptedMessages, sendMessage, buildApiHistory, setApiMessages, currentProjectSlug])
+  const handleVibeCoding = useCallback(() => {
+    setPane("vibe-coding")
+    setSheetOpen(false)
+  }, [])
 
-  // Handle project click from grid
-  const handleProjectClick = useCallback((slug: string) => {
-    setMode("chat")
-
-    // Get project-specific response
-    const { response, projectSlug } = buildResponse("", { preloadedSlug: slug })
-    if (response) {
-      queueScriptedMessages(response)
-      if (projectSlug) setCurrentProjectSlug(projectSlug)
-    }
-  }, [queueScriptedMessages])
-
-  // Handle back button
-  const handleBack = useCallback(() => {
-    setMode("landing")
-    setInput("")
-    resetStream()
-    setApiMessages([])
-    setUseApiMode(false)
-    setApiHistoryCount(0)
+  // Brand mark returns to the front-door thread. It does NOT clear it: home is
+  // a thread like any other, so anything asked there is still waiting.
+  const handleHome = useCallback(() => {
+    setPane("chat")
     setCurrentProjectSlug(null)
-  }, [resetStream, setApiMessages])
+    switchThread(HOME_THREAD)
+    setSheetOpen(false)
+  }, [switchThread])
 
   // Find last assistant message index for followup chip activation
-  const lastAssistantIdx = structuredMessages.reduce(
+  const lastAssistantIdx = activeMessages.reduce(
     (acc, m, i) => (m.role === "assistant" ? i : acc),
     -1
   )
@@ -285,354 +334,222 @@ export default function HomePage() {
   const fadeIn = prefersReducedMotion ? "" : "animate-fade-in"
   const delay = (ms: number) => (prefersReducedMotion ? undefined : `${ms}ms`)
 
-  /* ── LANDING ──────────────────────────────────────────────── */
-  if (mode === "landing") {
-    return (
-      <div className="min-h-dvh overflow-y-auto" style={{ background: "rgb(var(--bureau-bg))" }}>
-        {/* Top bar — constrained to the page column */}
-        <div className="mx-auto max-w-7xl px-6 pt-16">
-          {/* `flex-wrap` + a gap so the nav drops to its own line rather than
-              being clipped on narrow screens; at 380px the four links do not
-              fit beside EDWINOS / AVAILABLE. */}
-          <div
-            className={`flex flex-wrap items-center justify-between gap-between ${fadeIn}`}
-            style={{ animationDelay: delay(0) }}
-          >
-            <div className="flex items-center gap-within">
-              <span
-                className="type-title"
-                style={{ color: "rgb(var(--bureau-text-primary))" }}
-              >
-                EdwinOS
-              </span>
-              <span
-                style={{
-                  width: "var(--space-8)",
-                  height: "var(--space-8)",
-                  borderRadius: 9999,
-                  background: "rgb(var(--bureau-text-primary))",
-                  display: "inline-block",
-                }}
-              />
-              <span
-                className="type-label"
-                style={{ color: "rgb(var(--bureau-text-muted))" }}
-              >
-                Available
-              </span>
-            </div>
+  /* ── SHELL ────────────────────────────────────────────────────
+     One persistent layout for every state. The rail is the site's index and
+     the pane is the conversation; there is no longer a scrolling marketing
+     page underneath. See the note on REMOVED_SECTIONS below. */
+  // Derived, not stored: the front door IS the home thread when it is empty.
+  // A stored mode flag would be a second source of truth for the same fact.
+  const isFrontDoor =
+    pane === "chat" && activeThread === HOME_THREAD && activeMessages.length === 0
 
-            <nav className="flex flex-wrap items-center gap-between md:gap-group">
-              {[
-                { label: "WORK", href: "#work" },
-                { label: "AI", href: "#ai" },
-                { label: "CASE STUDY", href: "/case-study/meridian-deck" },
-                { label: "RESUME", href: DOCS["resume"].url },
-                // `#work` and `#ai` are anchors, CASE STUDY is now an internal
-                // route, RESUME is still off-site. Only the last of those wants
-                // a new tab, so the test is "is it off-site", not "is it a
-                // hash" — which is what it was when CASE STUDY pointed at a
-                // third-party PDF viewer.
-              ].map(({ label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="type-nav transition-colors"
-                  style={{ color: "rgb(var(--bureau-text-secondary))" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
-                    e.currentTarget.style.textDecoration = "underline"
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
-                    e.currentTarget.style.textDecoration = "none"
-                  }}
-                >
-                  {label}
-                </a>
-              ))}
-            </nav>
+  return (
+    <div className="shell" data-sheet={sheetOpen}>
+      {/* Mobile only — the rail collapses behind this. */}
+      <div className="shell-topbar">
+        <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
+          <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
+            EdwinOS
+          </span>
+          <span className="rail-dot" />
+        </button>
+        <button
+          type="button"
+          className="type-label rail-sheet-close"
+          aria-expanded={sheetOpen}
+          aria-label={sheetOpen ? "Close menu" : "Open menu"}
+          onClick={() => setSheetOpen((v) => !v)}
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
+        >
+          {sheetOpen ? "Close" : "Menu"}
+        </button>
+      </div>
+
+      <Sidebar
+        activeSlug={currentProjectSlug}
+        activePane={pane}
+        onProjectSelect={handleSidebarProject}
+        onSelectVibeCoding={handleVibeCoding}
+        onHome={handleHome}
+        onNavigate={() => setSheetOpen(false)}
+        open={sheetOpen}
+      />
+
+      <main className="pane">
+        {pane === "vibe-coding" ? (
+          <div className="pane-scroll">
+            <SideOfDesk />
           </div>
-
-        </div>
-
-        {/* ── Hero — input-first, centred stack ────────────────────
-              Headline, subtitle, input and chips read as ONE unit, with the
-              chips sitting directly under the input. Spacing is the four
-              relatedness levels rather than raw steps, so the grouping is
-              carried by the tokens themselves: within (chips to input) <
-              between (headline to subtitle) < group (copy block to input).
-
-              The input and chip columns are given the SAME width so their
-              left and right edges coincide — the chips previously ran to the
-              page max-width while the input stopped at CONTENT_WIDTH. */}
-          <section className="hero-stack">
-            {/* Achromatic centre-pull. Two stacked radials off --bureau-accent,
-                which is pure white — so this is greyscale by construction and
-                cannot drift to a hue. It reads as light rather than as a
-                shape: no visible edge, nothing to mistake for a element. */}
-            <div aria-hidden className="hero-glow" />
-
+        ) : isFrontDoor ? (
+          <div className="pane-front">
             <div
-              className="mx-auto max-w-7xl px-6"
+              data-hero-col="stack"
               style={{
                 position: "relative",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                width: "100%",
               }}
             >
-              <h1
-                className={`type-hero ${fadeIn}`}
-                style={{
-                  margin: 0,
-                  maxWidth: HERO_MEASURE,
-                  textAlign: "center",
-                  textWrap: "balance",
-                  color: "rgb(var(--bureau-text-primary))",
-                  animationDelay: delay(60),
-                }}
-              >
-                I&apos;m Edwin, a product designer interested in AI products
-                and workflows.
-              </h1>
+                  <h1
+                    className={`type-hero ${fadeIn}`}
+                    style={{
+                      margin: 0,
+                      maxWidth: HERO_MEASURE,
+                      textAlign: "center",
+                      textWrap: "balance",
+                      color: "rgb(var(--bureau-text-primary))",
+                      animationDelay: delay(60),
+                    }}
+                  >
+                    I&apos;m Edwin, a designer &amp; AI builder focused on
+                    creating useful products and workflows.
+                  </h1>
 
-              <p
-                className={`type-body ${fadeIn}`}
-                style={{
-                  margin: "var(--space-between) 0 0",
-                  maxWidth: HERO_SUB_MEASURE,
-                  textAlign: "center",
-                  textWrap: "pretty",
-                  color: "rgb(var(--bureau-text-secondary))",
-                  animationDelay: delay(90),
-                }}
-              >
-                I combine AI and design to create user-centric products and
-                systems that solve complex business problems.
-              </p>
+                  <p
+                    className={`type-body ${fadeIn}`}
+                    style={{
+                      margin: "var(--space-between) 0 0",
+                      maxWidth: HERO_SUB_MEASURE,
+                      textAlign: "center",
+                      textWrap: "pretty",
+                      color: "rgb(var(--bureau-text-secondary))",
+                      animationDelay: delay(90),
+                    }}
+                  >
+                    I combine AI and design to create user-centric products and
+                    systems that solve complex business problems.
+                  </p>
 
-              <div
-                className={fadeIn}
-                data-hero-col="input"
-                style={{
-                  width: "100%",
-                  maxWidth: CONTENT_WIDTH,
-                  marginTop: "var(--space-group)",
-                  animationDelay: delay(120),
-                }}
-              >
+                  <div
+                    className={fadeIn}
+                    data-hero-col="input"
+                    style={{
+                      width: "100%",
+                      maxWidth: CONTENT_WIDTH,
+                      marginTop: "var(--space-group)",
+                      animationDelay: delay(120),
+                    }}
+                  >
+                    <ChatInput
+                      value={input}
+                      onChange={setInput}
+                      onSubmit={handleSend}
+                      isLoading={activeBusy}
+                      placeholder="Ask anything..."
+                    />
+                  </div>
+
+                  {/* Prompt chips — one relatedness level tighter than the gap
+                      above the input, so they read as belonging to it. */}
+                  <div
+                    className={fadeIn}
+                    data-hero-col="chips"
+                    style={{
+                      width: "100%",
+                      maxWidth: CONTENT_WIDTH,
+                      marginTop: "var(--space-within)",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "center",
+                      gap: "var(--space-within)",
+                      animationDelay: delay(150),
+                    }}
+                  >
+                    {PROMPT_CHIPS.map((chip) => (
+                      <PromptChip
+                        key={chip}
+                        label={chip}
+                        onClick={() => handleChipSelect(chip)}
+                        disabled={activeBusy}
+                      />
+                    ))}
+                  </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="pane-scroll" ref={paneScrollRef}>
+              <div style={{ ...CHAT_COLUMN, paddingBottom: "var(--space-8)" }} className="flex flex-col gap-4">
+              {/* Structured messages (scripted) */}
+              {activeMessages.map((message, i) => {
+                if (message.role === "user") {
+                  return (
+                    <UserBubble
+                      key={message.id}
+                      content={(message as StructuredMessage & { text: string }).text}
+                    />
+                  )
+                }
+                return (
+                  <AssistantBubble
+                    key={message.id}
+                    message={message}
+                    onChipPick={handleFollowupChip}
+                    isLastAssistant={i === lastAssistantIdx}
+                  />
+                )
+              })}
+
+              {/* The in-flight API turn, streaming live. Rendered only in the
+                  thread that asked for it — useChat keeps one shared list, so
+                  without this gate a partial answer would appear in whatever
+                  thread happened to be open. Once complete it is committed
+                  into that thread above and this clears. */}
+              {useApiMode && apiThread === activeThread &&
+                apiMessages.slice(apiHistoryCount).map((message, idx) => {
+                  if (message.role === "user") {
+                    return null // Already shown in structured messages
+                  }
+                  // Convert API message parts to a flat text bubble
+                  const textContent = message.parts
+                    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+                    .map((p) => p.text)
+                    .join("")
+
+                  // Don't render empty messages
+                  if (!textContent) return null
+
+                  const isLast = idx === apiMessages.slice(apiHistoryCount).length - 1
+
+                  return (
+                    <AssistantBubble
+                      key={message.id}
+                      message={{
+                        id: message.id,
+                        role: "assistant",
+                        kind: "text",
+                        text: textContent,
+                      }}
+                      isLastAssistant={isLast}
+                    />
+                  )
+                })}
+
+              {/* Typing indicator — shown only while a message is streaming in */}
+              {activeBusy && <TypingIndicator />}
+
+
+              </div>
+            </div>
+
+            {/* Docked composer — the same component, moved to the pane's
+                bottom edge the moment a conversation exists. */}
+            <div className="pane-dock">
+              <div style={CHAT_COLUMN} data-hero-col="input">
                 <ChatInput
                   value={input}
                   onChange={setInput}
                   onSubmit={handleSend}
-                  isLoading={isTyping}
-                  placeholder="Ask anything..."
+                  isLoading={activeBusy}
+                  placeholder="Ask a follow-up..."
                 />
-              </div>
-
-              {/* Prompt chips — one relatedness level tighter than the gap
-                  above the input, so they read as belonging to it. */}
-              <div
-                className={fadeIn}
-                data-hero-col="chips"
-                style={{
-                  width: "100%",
-                  maxWidth: CONTENT_WIDTH,
-                  marginTop: "var(--space-within)",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                  gap: "var(--space-within)",
-                  animationDelay: delay(150),
-                }}
-              >
-                {PROMPT_CHIPS.map((chip) => (
-                  <PromptChip
-                    key={chip}
-                    label={chip}
-                    onClick={() => handleChipSelect(chip)}
-                    disabled={isTyping}
-                  />
-                ))}
               </div>
             </div>
-          </section>
-
-        {/* Section divider */}
-        <div
-          className="mx-auto max-w-7xl px-6"
-          style={{ borderTop: "1px solid rgb(var(--bureau-border))" }}
-        />
-
-        {/* Side of Desk section */}
-        <SideOfDesk />
-
-        {/* Section divider */}
-        <div
-          className="mx-auto max-w-7xl px-6"
-          style={{ borderTop: "1px solid rgb(var(--bureau-border))" }}
-        />
-
-        {/* Case Study deck */}
-        <CaseStudySection />
-
-        {/* Section divider */}
-        <div
-          className="mx-auto max-w-7xl px-6"
-          style={{ borderTop: "1px solid rgb(var(--bureau-border))" }}
-        />
-
-        {/* Project grid */}
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <ProjectGrid onProjectClick={handleProjectClick} />
-        </div>
-
-        {/* Footer */}
-        <NowPlaying />
-      </div>
-    )
-  }
-
-  /* ── CHAT ─────────────────────────────────────────────────── */
-  return (
-    <div className="flex h-dvh flex-col" style={{ background: "rgb(var(--bureau-bg))" }}>
-      {/* Header */}
-      <header
-        className="flex h-14 shrink-0 items-center justify-between px-5"
-        style={{ borderBottom: "1px solid rgb(var(--bureau-border))" }}
-      >
-        <button
-          type="button"
-          onClick={handleBack}
-          className="type-label flex items-center gap-2 transition-colors"
-          style={{ color: "rgb(var(--bureau-text-secondary))" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
-          }}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </button>
-
-        <div className="flex items-center gap-2">
-          <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-            EdwinOS
-          </span>
-        </div>
-
-        <a
-          href="https://www.edwinsocrates.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="type-label transition-colors"
-          style={{ color: "rgb(var(--bureau-text-secondary))" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "rgb(var(--bureau-text-primary))"
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "rgb(var(--bureau-text-secondary))"
-          }}
-        >
-          Portfolio
-        </a>
-      </header>
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarGutter: "stable" }}>
-        <div
-          style={{ ...CHAT_COLUMN, paddingTop: 32, paddingBottom: 8 }}
-          className="flex flex-col gap-4"
-        >
-          {/* Structured messages (scripted) */}
-          {structuredMessages.map((message, i) => {
-            if (message.role === "user") {
-              return (
-                <UserBubble
-                  key={message.id}
-                  content={(message as StructuredMessage & { text: string }).text}
-                />
-              )
-            }
-            return (
-              <AssistantBubble
-                key={message.id}
-                message={message}
-                onChipPick={handleFollowupChip}
-                isLastAssistant={i === lastAssistantIdx}
-              />
-            )
-          })}
-
-          {/* API messages (when scripted doesn't match) - only show NEW messages, not history */}
-          {useApiMode &&
-            apiMessages.slice(apiHistoryCount).map((message, idx) => {
-              if (message.role === "user") {
-                return null // Already shown in structured messages
-              }
-              // Convert API message parts to a flat text bubble
-              const textContent = message.parts
-                .filter((p): p is { type: "text"; text: string } => p.type === "text")
-                .map((p) => p.text)
-                .join("")
-
-              // Don't render empty messages
-              if (!textContent) return null
-
-              const isLast = idx === apiMessages.slice(apiHistoryCount).length - 1
-
-              return (
-                <AssistantBubble
-                  key={message.id}
-                  message={{
-                    id: message.id,
-                    role: "assistant",
-                    kind: "text",
-                    text: textContent,
-                  }}
-                  isLastAssistant={isLast}
-                />
-              )
-            })}
-
-          {/* Typing indicator — shown only while a message is streaming in */}
-          {(isTyping || (useApiMode && isApiLoading)) && <TypingIndicator />}
-
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Bottom input */}
-      <div
-        className="px-5 pb-6 pt-1"
-        style={{
-          // Reserve the same scrollbar gutter the messages pane above
-          // reserves, so both columns centre in the same available width.
-          // `overflow: hidden` makes this a scroll container so the gutter
-          // applies, without ever showing a scrollbar. Deliberately NOT a
-          // fixed padding of --chat-scrollbar: that value is only correct
-          // in WebKit, and Firefox's `thin` is a different, unsettable
-          // width. Reserving a gutter matches whatever the browser uses.
-          overflow: "hidden",
-          scrollbarGutter: "stable",
-          background: "linear-gradient(to bottom, transparent 0%, rgb(var(--bureau-bg)) 40%)",
-        }}
-      >
-        <div style={CHAT_COLUMN}>
-          <ChatInput
-            value={input}
-            onChange={setInput}
-            onSubmit={handleSend}
-            isLoading={isTyping || isApiLoading}
-            placeholder="Ask a follow-up..."
-          />
-        </div>
-      </div>
+          </>
+        )}
+      </main>
     </div>
   )
 }

@@ -170,6 +170,13 @@ function SideProjectCard({ project }: { project: SideProject }) {
   )
 }
 
+// Whether there is anything to show. The sidebar reads this to decide if the
+// VIBE CODING rail row should exist at all: in production PROJECTS is empty
+// (see the note on the array), and a rail row leading to a blank pane is the
+// same "bare heading over an empty list" problem this component already
+// refuses to render. One flag, so the two cannot disagree.
+export const hasSideProjects = PROJECTS.length > 0
+
 export function SideOfDesk() {
   // With the placeholders gone in production there is nothing to show, and a
   // bare heading over an empty list reads as broken. Drop the whole section

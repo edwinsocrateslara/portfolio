@@ -25,7 +25,7 @@ not permitted.
 
 ## Intro
 
-I'm Edwin, a product designer interested in AI products and workflows.
+I'm Edwin, a designer & AI builder focused on creating useful products and workflows.
 
 ---
 

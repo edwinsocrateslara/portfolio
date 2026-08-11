@@ -73,6 +73,9 @@
      the pane is currently overflowing. */
   --chat-scrollbar: 4px;
 
+  /* App-shell rail. A measure, not spacing — like CONTENT_WIDTH. */
+  --rail-width: 264px;
+
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
@@ -373,4 +376,259 @@ body {
     background: radial-gradient(320px 280px at 50% 40%,
       rgb(var(--bureau-accent) / 0.07), rgb(var(--bureau-accent) / 0) 72%);
   }
+}
+
+/* ── App shell — persistent left rail + content pane ───────────────
+   Spacing here is the --space-* scale throughout. Where the Claude Design
+   mock used an off-scale value it is snapped to the nearest step; the
+   snaps are listed in the branch report rather than repeated per rule. */
+.shell {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+  background: rgb(var(--bureau-bg));
+}
+
+.rail {
+  width: var(--rail-width);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid rgb(var(--bureau-border));
+}
+
+.rail-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-24);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.rail-dot {
+  width: var(--space-4);
+  height: var(--space-4);
+  border-radius: 9999px;
+  background: rgb(var(--bureau-text-primary));
+  flex: none;
+}
+
+/* The nav scrolls; the footer below it stays pinned. At 12px minimum type
+   (the scale's floor — see the type block) seven two-line rows plus three
+   document rows are taller than a short viewport, so this cannot be a
+   static column the way the mock's 960px-tall frame could. */
+.rail-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--space-16);
+}
+
+.rail-section {
+  margin: 0;
+  padding: var(--space-8) var(--space-24);
+}
+
+.rail-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--space-8);
+}
+
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-within);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-8) var(--space-12);
+  background: none;
+  border: 0;
+  /* Reserved on every row, transparent when inactive, so the active bar
+     does not shift the label sideways when it appears. */
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.rail-thumb {
+  flex: none;
+  width: var(--space-32);
+  height: var(--space-32);
+  object-fit: cover;
+  border: 1px solid rgb(var(--bureau-border));
+  box-sizing: border-box;
+  background: rgb(var(--bureau-elevated));
+  transition: border-color 0.15s;
+}
+/* min-width:0 is what lets the title actually truncate — without it the
+   flex item refuses to shrink below its content and the row overflows
+   the rail instead of ellipsing. */
+.rail-item-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.rail-item-title {
+  display: block;
+  color: rgb(var(--bureau-text-secondary));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rail-item-client {
+  display: block;
+  text-transform: uppercase;
+  color: rgb(var(--bureau-text-muted));
+}
+
+/* Hover is fill only; active adds the bar and steps the label to primary,
+   so selected always outranks hover and the two never read the same. */
+.rail-item:hover,
+.rail-doc:hover {
+  background: rgb(var(--bureau-surface));
+}
+.rail-item[data-active="true"] {
+  background: rgb(var(--bureau-surface));
+  border-left-color: rgb(var(--bureau-accent));
+}
+.rail-item[data-active="true"] .rail-item-title {
+  color: rgb(var(--bureau-text-primary));
+}
+.rail-item[data-active="true"] .rail-item-client {
+  color: rgb(var(--bureau-text-secondary));
+}
+.rail-item[data-active="true"] .rail-thumb {
+  border-color: rgb(var(--bureau-border-strong));
+}
+
+.rail-docs {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-16) var(--space-8) 0;
+}
+.rail-doc {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-8);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-12);
+  background: none;
+  border: 0;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  color: rgb(var(--bureau-text-secondary));
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.rail-doc[data-active="true"] {
+  background: rgb(var(--bureau-surface));
+  border-left-color: rgb(var(--bureau-accent));
+  color: rgb(var(--bureau-text-primary));
+}
+.rail-doc-meta {
+  flex: none;
+  text-transform: uppercase;
+  color: rgb(var(--bureau-text-muted));
+}
+
+.rail-footer {
+  flex: none;
+  padding: var(--space-20) var(--space-24);
+  border-top: 1px solid rgb(var(--bureau-border));
+}
+.rail-footer-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-8);
+}
+.rail-square {
+  width: var(--space-8);
+  height: var(--space-8);
+  background: rgb(var(--bureau-text-secondary));
+  display: inline-block;
+  flex: none;
+}
+.rail-footer-now { margin: 0 0 var(--space-4); }
+.rail-email {
+  display: inline-block;
+  margin-top: var(--space-12);
+  text-decoration: none;
+}
+.rail-email:hover { color: rgb(var(--bureau-text-primary)); text-decoration: underline; }
+
+/* ── Content pane ─────────────────────────────────────────────── */
+.pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+/* Front door: the input is the centrepiece. The moment a conversation
+   exists the same component docks to the pane's bottom edge instead. */
+.pane-front {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-64) var(--space-40);
+}
+.pane-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-32) var(--space-40) 0;
+  scrollbar-gutter: stable;
+}
+.pane-dock {
+  flex: none;
+  border-top: 1px solid rgb(var(--bureau-border));
+  padding: var(--space-20) var(--space-40);
+}
+
+/* ── Mobile: rail collapses to a slim header + full-screen sheet ── */
+.shell-topbar { display: none; }
+.rail-sheet-close { background: none; border: 0; cursor: pointer; padding: var(--space-8); }
+
+@media (max-width: 900px) {
+  .shell { flex-direction: column; }
+  .shell-topbar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-16) var(--space-20);
+    border-bottom: 1px solid rgb(var(--bureau-border));
+  }
+  /* The rail becomes a sheet that REPLACES the pane rather than overlaying
+     it — it stays an ordinary flex child under the top bar. No fixed
+     positioning, so there is no z-index race and nothing to go wrong if an
+     ancestor ever picks up a transform (the trap at @keyframes slide-up).
+     It also keeps the top bar's Close control reachable, which an
+     inset:0 overlay covered. */
+  .rail { display: none; }
+  .rail[data-open="true"] {
+    display: flex;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border-right: 0;
+  }
+  .shell[data-sheet="true"] .pane { display: none; }
+  /* The top bar already shows the brand, so the rail's own brand row would
+     just repeat it directly underneath. */
+  .rail[data-open="true"] .rail-brand { display: none; }
+  .rail[data-open="true"] .rail-scroll { padding-top: var(--space-16); }
+  .pane-front { padding: var(--space-40) var(--space-20); }
+  .pane-scroll { padding: var(--space-20) var(--space-20) 0; }
+  .pane-dock { padding: var(--space-16) var(--space-20); }
 }
