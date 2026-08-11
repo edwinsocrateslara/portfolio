@@ -319,3 +319,58 @@ body {
     }
   }
 }
+
+/* ── Landing hero — input-first centred stack ──────────────────────
+   Vertical air above and below the whole group. --space-80 is the top of
+   the raw step scale; the Claude Design mock asked for 120/128, which has
+   no token, so this snaps to the largest one that exists rather than
+   introducing an off-scale value. */
+.hero-stack {
+  position: relative;
+  padding-top: var(--space-80);
+  padding-bottom: var(--space-80);
+  /* Full-bleed band. The glow is inset:0 against THIS element, so if the band
+     were the constrained page column the radials would be clipped mid-falloff
+     and the section would read as a lit rectangle with hard edges — which is
+     exactly what it did before this was split out of .max-w-7xl. Full width
+     puts the falloff off-screen. `clip` (not `hidden`) because it must not
+     create a scroll container. */
+  overflow-x: clip;
+}
+
+/* The centre-pull behind the headline. Built from --bureau-accent (255 255
+   255), so it is achromatic by construction — there is no hue available to
+   drift to. Two stacked radials: a tighter bright one and a wide faint one,
+   both fading to fully transparent well inside the section, so no edge is
+   ever visible. It sits under the content on its own layer and takes no
+   pointer events. */
+.hero-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Extended past the band top and bottom so the vertical falloff finishes
+     OFF the band. Inset to the band exactly, the radials were still at ~50%
+     strength when they hit the top edge, which drew a hard horizontal seam
+     under the nav. */
+  top: calc(-1 * var(--space-80));
+  bottom: calc(-1 * var(--space-80));
+  pointer-events: none;
+  background:
+    radial-gradient(760px 340px at 50% 40%,
+      rgb(var(--bureau-accent) / 0.075), rgb(var(--bureau-accent) / 0) 70%),
+    radial-gradient(1200px 560px at 50% 38%,
+      rgb(var(--bureau-accent) / 0.03), rgb(var(--bureau-accent) / 0) 72%);
+}
+
+/* Mobile: less air, and a glow scaled to the viewport — the desktop radials
+   are wider than a 380px screen, so they would render as a flat wash. */
+@media (max-width: 640px) {
+  .hero-stack {
+    padding-top: var(--space-48);
+    padding-bottom: var(--space-56);
+  }
+  .hero-glow {
+    background: radial-gradient(320px 280px at 50% 40%,
+      rgb(var(--bureau-accent) / 0.07), rgb(var(--bureau-accent) / 0) 72%);
+  }
+}

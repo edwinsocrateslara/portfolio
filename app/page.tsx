@@ -11,7 +11,7 @@ import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { CaseStudySection } from "@/components/chat/case-study-section"
 import { NowPlaying } from "@/components/chat/now-playing"
 import { DOCS } from "@/lib/constants"
-import { CONTENT_WIDTH } from "@/lib/layout"
+import { CONTENT_WIDTH, HERO_MEASURE, HERO_SUB_MEASURE } from "@/lib/layout"
 import {
   buildResponse,
   INTRO_SEQUENCE,
@@ -23,6 +23,7 @@ import {
   type StructuredMessage,
 } from "@/components/chat/message-bubbles"
 import { useScriptedStream, generateMessageId } from "@/hooks/use-scripted-stream"
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 
@@ -43,6 +44,7 @@ export default function HomePage() {
   const [mode, setMode] = useState<Mode>("landing")
   const [input, setInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
 
   // Structured messages for scripted flow — reveal queue and timing
   // logic lives in useScriptedStream, shared with the case-study review route.
@@ -275,16 +277,26 @@ export default function HomePage() {
     -1
   )
 
+  // Entrance animation, gated the same way the chat bubbles gate theirs
+  // (hooks/use-prefers-reduced-motion). fade-in animates OPACITY ONLY — it
+  // never sets a transform — so unlike .animate-slide-up it does not turn its
+  // element into a containing block for position:fixed descendants. See the
+  // warning at @keyframes slide-up in globals.css.
+  const fadeIn = prefersReducedMotion ? "" : "animate-fade-in"
+  const delay = (ms: number) => (prefersReducedMotion ? undefined : `${ms}ms`)
+
   /* ── LANDING ──────────────────────────────────────────────── */
   if (mode === "landing") {
     return (
       <div className="min-h-dvh overflow-y-auto" style={{ background: "rgb(var(--bureau-bg))" }}>
-        {/* Hero section — Dark canvas */}
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-16">
-          {/* Top bar */}
+        {/* Top bar — constrained to the page column */}
+        <div className="mx-auto max-w-7xl px-6 pt-16">
+          {/* `flex-wrap` + a gap so the nav drops to its own line rather than
+              being clipped on narrow screens; at 380px the four links do not
+              fit beside EDWINOS / AVAILABLE. */}
           <div
-            className="mb-20 flex items-center justify-between animate-fade-in"
-            style={{ animationDelay: "0ms" }}
+            className={`flex flex-wrap items-center justify-between gap-between ${fadeIn}`}
+            style={{ animationDelay: delay(0) }}
           >
             <div className="flex items-center gap-within">
               <span
@@ -310,7 +322,7 @@ export default function HomePage() {
               </span>
             </div>
 
-            <nav className="flex items-center gap-group">
+            <nav className="flex flex-wrap items-center gap-between md:gap-group">
               {[
                 { label: "WORK", href: "#work" },
                 { label: "AI", href: "#ai" },
@@ -344,71 +356,110 @@ export default function HomePage() {
             </nav>
           </div>
 
-          {/* Hero — Massive display typography */}
-          <div
-            className="mb-8 animate-fade-in"
-            style={{ animationDelay: "60ms" }}
-          >
-            <h1
-              className="type-hero mb-2"
+        </div>
+
+        {/* ── Hero — input-first, centred stack ────────────────────
+              Headline, subtitle, input and chips read as ONE unit, with the
+              chips sitting directly under the input. Spacing is the four
+              relatedness levels rather than raw steps, so the grouping is
+              carried by the tokens themselves: within (chips to input) <
+              between (headline to subtitle) < group (copy block to input).
+
+              The input and chip columns are given the SAME width so their
+              left and right edges coincide — the chips previously ran to the
+              page max-width while the input stopped at CONTENT_WIDTH. */}
+          <section className="hero-stack">
+            {/* Achromatic centre-pull. Two stacked radials off --bureau-accent,
+                which is pure white — so this is greyscale by construction and
+                cannot drift to a hue. It reads as light rather than as a
+                shape: no visible edge, nothing to mistake for a element. */}
+            <div aria-hidden className="hero-glow" />
+
+            <div
+              className="mx-auto max-w-7xl px-6"
               style={{
-                maxWidth: 900,
-                color: "rgb(var(--bureau-text-primary))",
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              I&apos;m Edwin, a product designer interested in{" "}
-              <span
+              <h1
+                className={`type-hero ${fadeIn}`}
                 style={{
-                  textDecoration: "underline",
-                  textDecorationThickness: "2px",
-                  textUnderlineOffset: "5px",
-                  textDecorationColor: "rgb(var(--bureau-border-strong))",
+                  margin: 0,
+                  maxWidth: HERO_MEASURE,
+                  textAlign: "center",
+                  textWrap: "balance",
+                  color: "rgb(var(--bureau-text-primary))",
+                  animationDelay: delay(60),
                 }}
               >
-                AI products and workflows
-              </span>
-              .
-            </h1>
-            <p
-              className="type-body"
-              style={{
-                color: "rgb(var(--bureau-text-secondary))",
-                maxWidth: 520,
-              }}
-            >
-              I combine AI and design to create user-centric products and
-              systems that solve complex business problems.
-            </p>
-          </div>
+                I&apos;m Edwin, a product designer interested in AI products
+                and workflows.
+              </h1>
 
-          <div
-            className="mb-4 animate-fade-in"
-            style={{ animationDelay: "100ms", maxWidth: CONTENT_WIDTH }}
-          >
-            <ChatInput
-              value={input}
-              onChange={setInput}
-              onSubmit={handleSend}
-              isLoading={isTyping}
-              placeholder="Ask anything..."
-            />
-          </div>
+              <p
+                className={`type-body ${fadeIn}`}
+                style={{
+                  margin: "var(--space-between) 0 0",
+                  maxWidth: HERO_SUB_MEASURE,
+                  textAlign: "center",
+                  textWrap: "pretty",
+                  color: "rgb(var(--bureau-text-secondary))",
+                  animationDelay: delay(90),
+                }}
+              >
+                I combine AI and design to create user-centric products and
+                systems that solve complex business problems.
+              </p>
 
-          {/* Prompt chips — Dark surface, sharp corners */}
-          <div
-            className="flex flex-wrap gap-2 animate-fade-in"
-            style={{ animationDelay: "150ms" }}
-          >
-            {PROMPT_CHIPS.map((chip) => (
-              <PromptChip
-                key={chip}
-                label={chip}
-                onClick={() => handleChipSelect(chip)}
-                disabled={isTyping}
-              />
-            ))}
-          </div>
-        </div>
+              <div
+                className={fadeIn}
+                data-hero-col="input"
+                style={{
+                  width: "100%",
+                  maxWidth: CONTENT_WIDTH,
+                  marginTop: "var(--space-group)",
+                  animationDelay: delay(120),
+                }}
+              >
+                <ChatInput
+                  value={input}
+                  onChange={setInput}
+                  onSubmit={handleSend}
+                  isLoading={isTyping}
+                  placeholder="Ask anything..."
+                />
+              </div>
+
+              {/* Prompt chips — one relatedness level tighter than the gap
+                  above the input, so they read as belonging to it. */}
+              <div
+                className={fadeIn}
+                data-hero-col="chips"
+                style={{
+                  width: "100%",
+                  maxWidth: CONTENT_WIDTH,
+                  marginTop: "var(--space-within)",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  gap: "var(--space-within)",
+                  animationDelay: delay(150),
+                }}
+              >
+                {PROMPT_CHIPS.map((chip) => (
+                  <PromptChip
+                    key={chip}
+                    label={chip}
+                    onClick={() => handleChipSelect(chip)}
+                    disabled={isTyping}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
 
         {/* Section divider */}
         <div
