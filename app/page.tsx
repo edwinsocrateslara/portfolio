@@ -7,7 +7,7 @@ import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
-import { CONTENT_WIDTH, HERO_MEASURE, HERO_SUB_MEASURE } from "@/lib/layout"
+import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
 import {
   buildResponse,
   INTRO_SEQUENCE,
@@ -351,7 +351,6 @@ export default function HomePage() {
           <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
             EdwinOS
           </span>
-          <span className="rail-dot" />
         </button>
         <button
           type="button"
@@ -406,21 +405,6 @@ export default function HomePage() {
                     I&apos;m Edwin, a designer &amp; AI builder focused on
                     creating useful products and workflows.
                   </h1>
-
-                  <p
-                    className={`type-body ${fadeIn}`}
-                    style={{
-                      margin: "var(--space-between) 0 0",
-                      maxWidth: HERO_SUB_MEASURE,
-                      textAlign: "center",
-                      textWrap: "pretty",
-                      color: "rgb(var(--bureau-text-secondary))",
-                      animationDelay: delay(90),
-                    }}
-                  >
-                    I combine AI and design to create user-centric products and
-                    systems that solve complex business problems.
-                  </p>
 
                   <div
                     className={fadeIn}

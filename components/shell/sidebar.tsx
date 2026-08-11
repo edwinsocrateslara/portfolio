@@ -10,17 +10,18 @@ import { hasSideProjects } from "@/components/chat/side-of-desk"
 // and clicking one streams that project's reveal into the chat. It replaces
 // the old scrolling project grid entirely — see the note in app/page.tsx.
 //
-// Two classes of row, and the distinction is load-bearing:
-//   - rows WITHOUT a right-hand meta talk back (they open a conversation)
-//   - rows WITH a meta open a document (the deck viewer, the résumé PDF)
-// That is the mock's rule and the only signal separating them, so the meta
-// is not decoration.
+// Project rows open a conversation; CASE STUDY and RESUME open documents.
+// The handoff distinguished the two with a right-aligned mono meta ("DECK ·
+// 21 SLIDES", "PDF"); those have been removed, so the only remaining cue is
+// that document rows carry no thumbnail and sit below a gap. See the note in
+// the branch report — this is a deliberate reduction, not an oversight.
 //
-// Labels are `projectTitle`, not `client`: three projects share the client
-// "Complex NTWRK" and would otherwise render as three identical rows. The
-// client sits UNDER the title as a secondary line rather than above it as an
-// eyebrow — stacked eyebrows re-create the same collision at eye-entry
-// height.
+// A row is `client` over `railSubtitle`, mirroring the chat's project-header
+// card. Three projects share the client "Complex NTWRK", so the top line
+// repeats on three rows; `railSubtitle` is what tells them apart (Live
+// Selling / E-commerce / Product Management). `projectTitle` is deliberately
+// NOT shown here — it stays the project's name in the chat card and in
+// edwin-context.md, and is too long for a 198px column.
 
 export type Pane = "chat" | "vibe-coding"
 
@@ -55,10 +56,6 @@ export function Sidebar({
       <button type="button" className="rail-brand" onClick={pick(onHome)}>
         <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
           EdwinOS
-        </span>
-        <span className="rail-dot" />
-        <span className="type-label" style={{ color: "rgb(var(--bureau-text-muted))" }}>
-          Available
         </span>
       </button>
 
@@ -95,10 +92,14 @@ export function Sidebar({
                   sizes="32px"
                 />
                 <span className="rail-item-text">
-                  {/* Truncation is CSS-only, so the full title stays in the
-                      DOM for screen readers and for the accessible name. */}
-                  <span className="type-caption rail-item-title">{p.projectTitle}</span>
-                  <span className="type-meta rail-item-client">{p.client}</span>
+                  {/* Client above subtitle, mono above Archivo — the same
+                      order and the same two type classes the chat's
+                      project-header card uses, so the row reads as a
+                      miniature of the card the click produces. Truncation is
+                      CSS-only: the full strings stay in the DOM and in the
+                      row's accessible name. */}
+                  <span className="type-label rail-item-client">{p.client}</span>
+                  <span className="type-caption rail-item-subtitle">{p.railSubtitle}</span>
                 </span>
               </button>
             )
@@ -125,9 +126,6 @@ export function Sidebar({
             onClick={() => onNavigate?.()}
           >
             <span className="type-label">Case Study</span>
-            <span className="type-meta rail-doc-meta">
-              Deck · {meridianDeck.slides.length} slides
-            </span>
           </a>
 
           <a
@@ -138,7 +136,6 @@ export function Sidebar({
             onClick={() => onNavigate?.()}
           >
             <span className="type-label">Resume</span>
-            <span className="type-meta rail-doc-meta">PDF</span>
           </a>
         </div>
       </nav>

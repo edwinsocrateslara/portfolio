@@ -408,13 +408,6 @@ body {
   cursor: pointer;
   text-align: left;
 }
-.rail-dot {
-  width: var(--space-4);
-  height: var(--space-4);
-  border-radius: 9999px;
-  background: rgb(var(--bureau-text-primary));
-  flex: none;
-}
 
 /* The nav scrolls; the footer below it stays pinned. At 12px minimum type
    (the scale's floor — see the type block) seven two-line rows plus three
@@ -472,18 +465,17 @@ body {
   flex-direction: column;
   gap: var(--space-4);
 }
-.rail-item-title {
+/* Both lines ellipse rather than wrap, so every row stays exactly two lines
+   and the list keeps a single rhythm. */
+.rail-item-client,
+.rail-item-subtitle {
   display: block;
-  color: rgb(var(--bureau-text-secondary));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.rail-item-client {
-  display: block;
-  text-transform: uppercase;
-  color: rgb(var(--bureau-text-muted));
-}
+.rail-item-client { color: rgb(var(--bureau-text-muted)); }
+.rail-item-subtitle { color: rgb(var(--bureau-text-secondary)); }
 
 /* Hover is fill only; active adds the bar and steps the label to primary,
    so selected always outranks hover and the two never read the same. */
@@ -495,7 +487,9 @@ body {
   background: rgb(var(--bureau-surface));
   border-left-color: rgb(var(--bureau-accent));
 }
-.rail-item[data-active="true"] .rail-item-title {
+/* The Archivo line carries the active step, matching the project-header
+   card where the client stays secondary and the title goes primary. */
+.rail-item[data-active="true"] .rail-item-subtitle {
   color: rgb(var(--bureau-text-primary));
 }
 .rail-item[data-active="true"] .rail-item-client {
@@ -512,9 +506,7 @@ body {
 }
 .rail-doc {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-8);
+  align-items: center;
   width: 100%;
   text-align: left;
   padding: var(--space-12);
@@ -529,11 +521,6 @@ body {
   background: rgb(var(--bureau-surface));
   border-left-color: rgb(var(--bureau-accent));
   color: rgb(var(--bureau-text-primary));
-}
-.rail-doc-meta {
-  flex: none;
-  text-transform: uppercase;
-  color: rgb(var(--bureau-text-muted));
 }
 
 .rail-footer {

@@ -12,4 +12,3 @@ export const PAGE_WIDTH = 1280   // landing page max-width
 // because 1.5x is invariant. Widening the measure gets the same two-line
 // result without touching the type scale.
 export const HERO_MEASURE = 1120
-export const HERO_SUB_MEASURE = 560
