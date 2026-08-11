@@ -28,7 +28,7 @@ He is based in Toronto, Ontario, Canada.
 - **Super.com** — Senior Product Designer, Nov 2021–Apr 2022
 - **Backbase** — Senior Product Designer, Nov 2020–Nov 2021
 - **Meridian Credit Union** — Senior Product Designer, May 2019–Nov 2020
-- **Contracting** — Senior Product Designer, Dec 2015–May 2019 *(BMO, TD Bank, Viafoura, Volkswagen)*
+- **Contracting** — Product Designer, Dec 2015–May 2019 *(BMO, TD Bank, Viafoura, Volkswagen)*
 
 ---
 
@@ -52,7 +52,7 @@ Backbase is a digital banking platform used by financial institutions across Nor
 
 ---
 
-### Contracting — Senior Product Designer (Dec 2015–May 2019)
+### Contracting — Product Designer (Dec 2015–May 2019)
 
 **Bank of Montreal (BMO):** Led the end-to-end redesign of the bank's entire public website and core navigation to better direct users to the bank's products.
 
@@ -114,7 +114,7 @@ I led the end-to-end redesign of Meridian Credit Union apps which now serves ove
 - Within the first month of launch, the redesigned app received overwhelming positive user reviews in the app store.
 - Meridian Credit Union adopted the new design across its entire ecosystem.
 
-**My role:** Lead product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.
+**My role:** Senior product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.
 
 **What was at stake:** Stakeholders wanted to keep the conservative look and feel of the old app, but we ran the risk of losing users due to a poor app experience.
 
@@ -167,14 +167,14 @@ I led the end-to-end design of a live-selling and auction experience.
 ### Volkswagen — Cross-Brand Car Comparison Tool
 - **Slug:** car-comparison
 - **Status:** Live
-- **Role:** Senior Product Designer
+- **Role:** Product Designer
 
 I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.
 
 **Key impacts:**
 - Since it's launch, the tool serves over 112,000 customers across Canada on a monthly basis.
 
-**My role:** Lead product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.
+**My role:** Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.
 
 **What was at stake:** VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.
 

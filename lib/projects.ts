@@ -168,8 +168,13 @@ export const projects: Project[] = [
       "Within the first month of launch, the redesigned app received overwhelming positive user reviews in the app store.",
       "Meridian Credit Union adopted the new design across its entire ecosystem.",
     ],
+    // Opening title OVERRIDDEN from the Framer export's "Lead product
+    // designer" to match `role` above, which is sourced from resume.txt and
+    // agrees with LinkedIn. The export says "Lead" on every row; leaving it
+    // here contradicted the role field a few blocks up the same conversation.
+    // Do not revert to the export in a future audit — see lib/sources/README.md.
     roleDescription:
-      "Lead product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
+      "Senior product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
     atStake:
       "Stakeholders wanted to keep the conservative look and feel of the old app, but we ran the risk of losing users due to a poor app experience.",
     decision:
@@ -282,7 +287,7 @@ export const projects: Project[] = [
     railSubtitle: "Car Comparison",
     tagline:
       "I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.",
-    role: "Senior Product Designer",
+    role: "Product Designer",
     status: "live",
     tags: ["automotive", "web", "e-commerce", "conversion"],
     previewImage: {
@@ -317,8 +322,11 @@ export const projects: Project[] = [
     impacts: [
       "Since it's launch, the tool serves over 112,000 customers across Canada on a monthly basis.",
     ],
+    // Same override as Meridian, to "Product designer" — the Dec 2015–May 2019
+    // contracting period that covers this work is Product Designer on both the
+    // résumé and LinkedIn, not Senior and not the export's "Lead".
     roleDescription:
-      "Lead product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.",
+      "Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.",
     atStake:
       "VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.",
     decision:

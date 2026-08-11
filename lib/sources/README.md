@@ -51,13 +51,32 @@ merged Coinley's decision text into its challenge, and reintroduced an
 "App Store" specificity that had already been removed from
 `lib/projects.ts` once. Generating it removes the possibility.
 
-## `role` is the one deliberate override
+## Titles: the résumé and LinkedIn are the authority, not the export
 
-`lib/projects.ts` sources `role` from `resume.txt`, not from the export.
-The export says "Lead product designer" on every row, including Meridian
-and Volkswagen, where the résumé says Senior. The résumé wins. That
-exception is commented at the field itself so it doesn't get "corrected"
-back.
+`framer-export.json` says **"Lead product designer" on every row**. It is
+wrong for two of the seven, and it is wrong in two different directions,
+so this is not a single find-and-replace.
+
+`lib/projects.ts` sources `role` from `resume.txt`, which is kept in
+agreement with LinkedIn. Where the two disagree with the export, they win:
+
+| Project | Export says | Actual | Why |
+|---|---|---|---|
+| Meridian (`retail-banking`) | Lead product designer | **Senior Product Designer** | Résumé and LinkedIn agree |
+| Volkswagen (`car-comparison`) | Lead product designer | **Product Designer** | Falls in the Dec 2015–May 2019 contracting period, which LinkedIn lists as Product Designer |
+
+The Volkswagen case is the subtle one: the work sits inside the
+contracting block, so its title follows that period rather than the
+seniority of the surrounding permanent roles. `resume.txt` lists that
+block as Product Designer for the same reason.
+
+**Two fields carry a title, and both had to be corrected.** `role` is the
+structured field; `roleDescription` is export prose that *opens* with a
+title ("Lead product designer. I created…"). Fixing only `role` left the
+two contradicting each other a few blocks apart in the same conversation —
+the card said Senior, the body said Lead. Both are now overridden, and
+both carry a comment at the field so an audit does not revert them to the
+export.
 
 `projectTitle` is the other declared gap: the seven values are
 repo-authored and trace to nothing in this directory. They are listed in
