@@ -24,6 +24,17 @@ export interface Project {
   // so an audit finds them already accounted for instead of flagging them as
   // invented. Same pattern as the `role` override.
   projectTitle: string
+  // `railSubtitle` has NO SOURCE in framer-export.json either — that export is
+  // the CMS collection only, and these are the short labels from the project
+  // CARDS on the Framer site's static pages, which no CMS export reaches (see
+  // "What framer-export.json does not cover" in lib/sources/README.md).
+  // Transcribed from the live site rather than invented, but still
+  // repo-authored, so declared in REPO_AUTHORED_FIELDS below.
+  //
+  // Used by the sidebar rail ONLY. `projectTitle` remains the project's name
+  // everywhere else — the chat project-header card and the generated Projects
+  // section of edwin-context.md. Do not substitute one for the other.
+  railSubtitle: string
   tagline: string
   // `role` is sourced from lib/sources/resume.txt, NOT framer-export.json —
   // a deliberate exception to the otherwise-strict 1:1 mapping. The Framer
@@ -72,13 +83,14 @@ export interface Project {
 // Fields on Project that are not traceable to anything in lib/sources/.
 // scripts/build-context.mjs reads this to annotate the generated section, so
 // the provenance gap travels with the output instead of living only here.
-export const REPO_AUTHORED_FIELDS = ["projectTitle", "alt"] as const
+export const REPO_AUTHORED_FIELDS = ["projectTitle", "railSubtitle", "alt"] as const
 
 export const projects: Project[] = [
   {
     slug: "ai-workforce-development",
     client: "FutureFit AI",
     projectTitle: "AI Workforce Development Platform",
+    railSubtitle: "AI Workforce Development",
     tagline:
       "I'm building a business-to-business and business-to-government AI-powered workforce development platform, featuring an AI coach that will assist users navigate the job search process and provide career coaching.",
     role: "Lead Product Designer",
@@ -112,6 +124,7 @@ export const projects: Project[] = [
     slug: "retail-banking",
     client: "Meridian",
     projectTitle: "Mobile Banking Redesign",
+    railSubtitle: "Retail Banking",
     tagline:
       "I led the end-to-end redesign of Meridian Credit Union apps which now serves over 370,000 customers and supports over $26 billion in managed assets.",
     role: "Senior Product Designer",
@@ -166,6 +179,7 @@ export const projects: Project[] = [
     slug: "ai-investing",
     client: "Coinley AI",
     projectTitle: "AI Crypto Investing App",
+    railSubtitle: "AI Investing",
     tagline:
       "I helped build and release the MVP for a crypto investing platform on the App Store.",
     role: "Lead Product Designer",
@@ -214,6 +228,7 @@ export const projects: Project[] = [
     slug: "live-selling",
     client: "Complex NTWRK",
     projectTitle: "Live Selling & Auction Experience",
+    railSubtitle: "Live Selling",
     tagline: "I led the end-to-end design of a live-selling and auction experience.",
     role: "Lead Product Designer",
     status: "live",
@@ -264,6 +279,7 @@ export const projects: Project[] = [
     slug: "car-comparison",
     client: "Volkswagen",
     projectTitle: "Cross-Brand Car Comparison Tool",
+    railSubtitle: "Car Comparison",
     tagline:
       "I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.",
     role: "Senior Product Designer",
@@ -312,6 +328,7 @@ export const projects: Project[] = [
     slug: "ecommerce",
     client: "Complex NTWRK",
     projectTitle: "E-commerce Platform Integration",
+    railSubtitle: "E-commerce",
     tagline:
       "I designed an e-commerce experience that integrated NTWRK into Complex.com's brand post-acquisition.",
     role: "Lead Product Designer",
@@ -355,6 +372,7 @@ export const projects: Project[] = [
     slug: "product-management",
     client: "Complex NTWRK",
     projectTitle: "Seller Dashboard",
+    railSubtitle: "Product Management",
     tagline: "I created the primary tool for sellers to manage products on Complex NTWRK.",
     role: "Lead Product Designer",
     status: "live",

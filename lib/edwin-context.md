@@ -80,7 +80,7 @@ Generated from lib/projects.ts by scripts/build-context.mjs. Do not edit
 by hand: run the script. Every string below is the project data verbatim,
 so it cannot drift from what the site renders.
 
-Not traceable to lib/sources/: projectTitle, alt. See the
+Not traceable to lib/sources/: projectTitle, railSubtitle, alt. See the
 comment on that field in lib/projects.ts.
 
 ### FutureFit AI — AI Workforce Development Platform
