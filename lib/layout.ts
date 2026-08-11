@@ -1,5 +1,4 @@
 export const CONTENT_WIDTH = 720 // chat column, inputs, welcome screen
-export const PAGE_WIDTH = 1280   // landing page max-width
 
 // Landing hero measures. Not spacing — these are line-length limits, so they
 // are not on the 4px scale any more than CONTENT_WIDTH is.

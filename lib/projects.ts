@@ -429,20 +429,6 @@ export const projects: Project[] = [
   },
 ]
 
-export function getProjectBySlug(slug: string): Project | undefined {
-  return projects.find((p) => p.slug === slug)
-}
-
-export function getLiveProjects(): Project[] {
-  return projects.filter((p) => p.status === "live")
-}
-
-export function getProjectsByTag(tag: string): Project[] {
-  return projects.filter((p) =>
-    p.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
-  )
-}
-
 // The "vibe-coded" case-study variant is still supported by the Project type
 // and rendered by case-study-view.tsx, but no project currently uses it. The
 // placeholder that exercised it was removed before merge rather than shipped.
