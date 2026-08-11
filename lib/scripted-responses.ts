@@ -4,21 +4,17 @@ import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
 import { meridianDeck } from "./case-study-deck"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
-// The chat reveal: header, the shared body, then follow-up chips. The order
-// of the body lives in lib/project-flow.ts and is shared with the standalone
+// The chat reveal: the shared body, then follow-up chips. The order of the
+// body lives in lib/project-flow.ts and is shared with the standalone
 // /case-study route so the two cannot drift.
+//
+// No project-header card. The rail names the open project permanently, and on
+// mobile the top bar does — a card repeating it at the top of the transcript
+// was a third copy that scrolled away the moment the reveal got going.
+// ProjectHeaderBubble itself stays: /case-study/[slug] has no rail and still
+// renders it directly (components/case-study/case-study-view.tsx).
 function projectStream(p: (typeof projects)[0]): MessageBlock[] {
   return [
-    {
-      kind: "project-header",
-      project: {
-        slug: p.slug,
-        client: p.client,
-        projectTitle: p.projectTitle,
-        role: p.role,
-        previewImage: p.previewImage.url,
-      },
-    },
     ...buildProjectBodyBlocks(p),
     {
       kind: "followups",

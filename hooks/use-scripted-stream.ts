@@ -106,11 +106,16 @@ export function useScriptedStream() {
   const reset = useCallback((thread?: string) => {
     if (thread === undefined) {
       setThreads({})
-    } else {
-      setThreads((prev) => ({ ...prev, [thread]: [] }))
+      setPending(null)
+      setTypingThread(null)
+      return
     }
-    setPending(null)
-    setTypingThread(null)
+    setThreads((prev) => ({ ...prev, [thread]: [] }))
+    // Only cancel an in-flight reveal if it belongs to the thread being
+    // cleared. Killing the queue outright would strand a project mid-stream
+    // while still counting it as revealed.
+    setPending((prev) => (prev && prev.thread === thread ? null : prev))
+    setTypingThread((prev) => (prev === thread ? null : prev))
   }, [])
 
   const messagesOf = useCallback(

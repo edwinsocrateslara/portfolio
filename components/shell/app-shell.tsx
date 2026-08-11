@@ -5,6 +5,8 @@ import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
+import { ProjectSampler } from "@/components/chat/project-sampler"
+import { projects } from "@/lib/projects"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
@@ -65,6 +67,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
   const {
     enqueue: queueScriptedMessages,
     appendImmediate,
+    reset: resetStream,
     messagesOf,
     isTypingIn,
   } = useScriptedStream()
@@ -131,6 +134,23 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
     (thread: string) => {
       const history: { id: string; role: "user" | "assistant"; parts: { type: "text"; text: string }[] }[] = []
 
+      // The project-header card used to carry this line into the API context.
+      // With the card gone the identity has to come from the thread itself,
+      // or the model loses track of which project is being discussed.
+      const subject = thread === HOME_THREAD ? null : projects.find((x) => x.slug === thread)
+      if (subject) {
+        history.push({
+          id: `ctx-${subject.slug}`,
+          role: "assistant",
+          parts: [
+            {
+              type: "text",
+              text: `[Currently discussing: ${subject.client} — ${subject.projectTitle}. Edwin's role: ${subject.role}]`,
+            },
+          ],
+        })
+      }
+
       for (const m of messagesOf(thread)) {
         let content = ""
 
@@ -138,11 +158,6 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
           case "text":
             content = (m as { text: string }).text
             break
-          case "project-header": {
-            const p = (m as { project: { client: string; projectTitle: string; role: string } }).project
-            content = `[Currently discussing: ${p.client} — ${p.projectTitle}. Edwin's role: ${p.role}]`
-            break
-          }
           case "impact": {
             const items = (m as { items: string[] }).items
             content = `Impact: ${items.join("; ")}`
@@ -323,14 +338,22 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
     setSheetOpen(false)
   }, [])
 
-  // Brand mark returns to the front-door thread. It does NOT clear it: home is
-  // a thread like any other, so anything asked there is still waiting.
+  // Brand mark returns to the front door, and CLEARS the home thread to do it.
+  //
+  // The front door is the home thread when empty, so a populated home thread
+  // would sit on top of it permanently — and unlike a project thread, home has
+  // no rail row, so that conversation is unreachable from anywhere else the
+  // moment you navigate away. Keeping it would preserve something the visitor
+  // cannot get back to at the cost of the landing state they can see the way
+  // back to. Home is scratch space; the rail's seven threads are the ones
+  // worth keeping, and this does not touch them.
   const handleHome = useCallback(() => {
     setPane("chat")
     setCurrentProjectSlug(null)
     switchThread(HOME_THREAD)
+    resetStream(HOME_THREAD)
     setSheetOpen(false)
-  }, [switchThread])
+  }, [switchThread, resetStream])
 
   // Find last assistant message index for followup chip activation
   const lastAssistantIdx = activeMessages.reduce(
@@ -352,6 +375,19 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
      page underneath. See the note on REMOVED_SECTIONS below. */
   // Derived, not stored: the front door IS the home thread when it is empty.
   // A stored mode flag would be a second source of truth for the same fact.
+  //
+  // Everything on the front door — headline, input position, chips, sampler —
+  // is replaced the moment a conversation exists, and comes back when the home
+  // thread is empty again (the brand mark returns to it). The sampler is not
+  // special-cased: it appears and disappears with the state it belongs to.
+  // What the mobile top bar names. Only a project thread has an identity worth
+  // repeating — the deck pane leads with its own h1, and the front door is
+  // self-evident.
+  const activeProject =
+    pane === "chat" && currentProjectSlug
+      ? projects.find((p) => p.slug === currentProjectSlug)
+      : undefined
+
   const isFrontDoor =
     pane === "chat" && activeThread === HOME_THREAD && activeMessages.length === 0
 
@@ -364,6 +400,15 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
             EdwinOS
           </span>
         </button>
+        {/* On mobile the rail is behind the sheet, so with the header card
+            gone this is the only thing naming the open project. railSubtitle
+            rather than projectTitle: it is unique across the seven and short
+            enough to sit between the brand and the menu without truncating. */}
+        {activeProject && (
+          <span className="type-caption shell-topbar-subject">
+            {activeProject.railSubtitle}
+          </span>
+        )}
         <button
           type="button"
           className="type-label rail-sheet-close"
@@ -467,6 +512,15 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
                       />
                     ))}
                   </div>
+
+                  {/* Three of the seven. Part of the landing state, so it goes
+                      when the conversation starts — same as the headline and
+                      the chips above it. See the note on isFrontDoor. */}
+                  <ProjectSampler
+                    className={fadeIn}
+                    animationDelay={delay(180)}
+                    onSelect={handleSidebarProject}
+                  />
             </div>
           </div>
         ) : (

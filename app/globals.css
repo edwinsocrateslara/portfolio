@@ -75,6 +75,8 @@
 
   /* App-shell rail. A measure, not spacing — like CONTENT_WIDTH. */
   --rail-width: 264px;
+  /* Mirrors CONTENT_WIDTH in lib/layout.ts, for rules that need it in CSS. */
+  --content-width: 720px;
 
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
@@ -618,4 +620,115 @@ body {
   .pane-front { padding: var(--space-40) var(--space-20); }
   .pane-scroll { padding: var(--space-20) var(--space-20) 0; }
   .pane-dock { padding: var(--space-16) var(--space-20); }
+}
+
+/* ── Landing sampler — three of the seven, below the prompt chips ───
+   Snapped from the Claude Design handoff: grid gap 16 is --space-between
+   exactly; the 36px gap above snaps to --space-group (32) and the footer's
+   2px line gap to --space-4, since neither 36 nor 2 exists on the scale. */
+.sampler {
+  width: 100%;
+  max-width: var(--content-width);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-between);
+  margin-top: var(--space-group);
+}
+
+.sampler-card {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  background: rgb(var(--bureau-surface));
+  border: 1px solid rgb(var(--bureau-border));
+  border-radius: var(--bureau-radius-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+/* Square, so each preview gets the same frame regardless of its source
+   crop. These screenshots are the only colour on the page. */
+.sampler-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-bottom: 1px solid rgb(var(--bureau-border));
+  background: rgb(var(--bureau-elevated));
+}
+
+.sampler-foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-12);
+}
+.sampler-client {
+  display: block;
+  color: rgb(var(--bureau-text-primary));
+  /* The card is wider than the rail row but "Complex NTWRK" still has to
+     survive a narrow column without wrapping to two lines. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sampler-sub {
+  display: block;
+  color: rgb(var(--bureau-text-secondary));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Achromatic hover: the fill lifts one surface step and the border
+   strengthens. No colour is available and none is wanted. */
+.sampler-card:hover {
+  background: rgb(var(--bureau-elevated));
+  border-color: rgb(var(--bureau-border-strong));
+}
+.sampler-card:hover .sampler-media { border-bottom-color: rgb(var(--bureau-border-strong)); }
+.sampler-card:active { background: rgb(var(--bureau-surface)); }
+
+/* Mobile: image-above would give each card a ~340px square and make the
+   sampler three screens tall, so the card turns into an image-left row.
+   Same DOM, same three cards — the handoff's rule, and it keeps the
+   sampler's promise of three named clients rather than dropping one. */
+@media (max-width: 640px) {
+  .sampler {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  .sampler-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    padding: var(--space-12);
+  }
+  .sampler-media {
+    flex: none;
+    width: var(--space-56);
+    height: var(--space-56);
+    aspect-ratio: auto;
+    border: 1px solid rgb(var(--bureau-border));
+  }
+  .sampler-foot {
+    min-width: 0;
+    padding: 0;
+  }
+}
+
+/* Mobile top bar: the open project's name, between the brand and the menu.
+   Ellipses rather than wraps so the bar stays one line at any width. */
+.shell-topbar-subject {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  padding: 0 var(--space-8);
+  color: rgb(var(--bureau-text-secondary));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
