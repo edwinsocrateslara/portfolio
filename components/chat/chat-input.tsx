@@ -61,7 +61,7 @@ export function ChatInput({
           background: "rgb(var(--bureau-surface))",
           color: "rgb(var(--bureau-text-primary))",
           border: "1px solid rgb(var(--bureau-border))",
-          borderRadius: "var(--bureau-radius-btn)",
+          borderRadius: "var(--bureau-radius-card)",
           caretColor: "rgb(var(--bureau-accent))",
         }}
         onFocus={(e) => {
@@ -95,7 +95,7 @@ export function ChatInput({
           height: 42,
           background: canSubmit ? "rgb(var(--bureau-accent))" : "transparent",
           border: `1px solid rgb(var(--bureau-${canSubmit ? "accent" : "border"}))`,
-          borderRadius: "var(--bureau-radius-btn)",
+          borderRadius: "var(--bureau-radius-chip)",
           color: canSubmit ? "rgb(var(--bureau-on-accent))" : "rgb(var(--bureau-text-muted))",
           cursor: isLoading ? "not-allowed" : canSubmit ? "pointer" : "default",
         }}

@@ -61,6 +61,13 @@ the surface has to work harder to say what is a thing.
 different questions; a future change to one should not silently move the
 other.
 
+**Icon-only controls are circles, not rounded squares.** Anything whose whole
+job is one glyph — the lightbox's close and arrows, the chat's SEND — takes
+`chip` and equal width and height. A rounded square reads as a small panel
+that happens to contain an icon; a circle reads as a control. The rule is the
+label: if it has one, it is a button and takes `btn`; if it has only a glyph,
+it is a control and takes `chip`.
+
 Every value is a multiple of 4 except the pill, which is the documented
 `9999px` exception already named under The 4px rule.
 

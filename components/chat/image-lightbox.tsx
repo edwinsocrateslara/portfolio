@@ -26,7 +26,7 @@ const CONTROL_BUTTON_STYLE: CSSProperties = {
   padding: 0,
   border: "1px solid rgb(var(--bureau-border))",
   background: "rgb(var(--bureau-surface))",
-  borderRadius: "var(--bureau-radius-btn)",
+  borderRadius: "var(--bureau-radius-chip)",
   color: "rgb(var(--bureau-text-primary))",
   cursor: "pointer",
 }
