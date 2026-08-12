@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { projects } from "@/lib/projects"
+import { CONTENT_WIDTH } from "@/lib/layout"
 
 // Three of the seven, below the prompt chips on the front door. Proof, not
 // navigation — the rail is the index and already lists all seven, so this
@@ -26,7 +27,7 @@ export function ProjectSampler({
   )
 
   return (
-    <div className={`sampler ${className ?? ""}`} style={{ animationDelay }}>
+    <div className={`sampler ${className ?? ""}`} style={{ maxWidth: CONTENT_WIDTH, animationDelay }}>
       {sample.map((p) => (
         <button
           key={p.slug}

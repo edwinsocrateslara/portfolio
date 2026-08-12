@@ -75,8 +75,6 @@
 
   /* App-shell rail. A measure, not spacing — like CONTENT_WIDTH. */
   --rail-width: 264px;
-  /* Mirrors CONTENT_WIDTH in lib/layout.ts, for rules that need it in CSS. */
-  --content-width: 720px;
 
   /* Optical title-to-meta gap. Off the 4px grid at 5px, and deliberately so:
      the meta line's own leading already separates the two, so `within` (8px)
@@ -633,9 +631,12 @@ body {
    Snapped from the Claude Design handoff: grid gap 16 is --space-between
    exactly; the 36px gap above snaps to --space-group (32) and the footer's
    2px line gap to --space-4, since neither 36 nor 2 exists on the scale. */
+/* Width comes from the component as maxWidth: CONTENT_WIDTH, the same way the
+   input and chip columns beside it get theirs. There is no --content-width
+   CSS var: it existed only for this rule and mirrored lib/layout.ts, so the
+   720 had two homes and nothing keeping them equal. */
 .sampler {
   width: 100%;
-  max-width: var(--content-width);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-between);
