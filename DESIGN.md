@@ -108,7 +108,28 @@ level fits:
 `--space-4` `8` `12` `16` `20` `24` `32` `40` `48` `56` `64` `80`
 
 `--space-4` (4px) doubles as the documented tight half-step inside
-`within`, for optical cases where 8px is visibly too loose.
+`within`, for optical cases where 8px is visibly too loose. `--space-44`
+exists for one reason — the touch-target floor below.
+
+### Touch targets
+
+Controls in this system are **42px tall**, not 44. That is deliberate and it
+is not an oversight to be "fixed" by a later audit.
+
+42 comes from the chat input's own arithmetic: 2×20px padding + 24px
+line-height + 2×1px border = 66px, so a 42px button leaves an equal 12px above,
+right and below. The rail rows and prompt chips inherit that rhythm, because a
+control that matches the field it sits beside reads as one system.
+
+WCAG **2.5.8 (AA)** requires 24×24 and every control clears it. **2.5.5 (AAA)**
+asks for 44×44, and this system takes the AA floor plus the density in exchange
+— a portfolio read on a laptop is not a phone keypad.
+
+**Two exceptions, both at `--space-44`, both on mobile and both navigation:**
+the menu toggle and the brand mark. On a phone the rail is hidden behind the
+sheet, so these are the only way *out* of a view and the only way *home*. A
+control that is the sole route somewhere does not get to be 18px because the
+rest of the system likes 42. Nothing else takes the AAA target.
 
 Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 

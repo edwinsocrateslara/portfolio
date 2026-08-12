@@ -48,6 +48,7 @@
   --space-24: 24px;
   --space-32: 32px;
   --space-40: 40px;
+  --space-44: 44px;  /* touch-target floor; see .rail-sheet-close */
   --space-48: 48px;
   --space-56: 56px;
   --space-64: 64px;
@@ -594,7 +595,22 @@ body {
 
 /* ── Mobile: rail collapses to a slim header + full-screen sheet ── */
 .shell-topbar { display: none; }
-.rail-sheet-close { background: none; border: 0; cursor: pointer; padding: var(--space-8); }
+/* The mobile menu toggle. 44x44 minimum because on a phone this is the ONLY
+   way out of a view — the rail is behind it and the pane fills the screen.
+   That makes it the one control where the 2.5.5 AAA target size is worth the
+   density cost; the label is centred so the extra area is symmetric around it
+   rather than hanging off one edge. */
+.rail-sheet-close {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: var(--space-8) var(--space-12);
+  min-width: var(--space-44);
+  min-height: var(--space-44);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 @media (max-width: 900px) {
   .shell { flex-direction: column; }
@@ -605,6 +621,13 @@ body {
     justify-content: space-between;
     padding: var(--space-16) var(--space-20);
     border-bottom: 1px solid rgb(var(--bureau-border));
+  }
+  /* The brand mark is the way home on a phone, so it takes the same 44px
+     floor as the menu beside it. Its own padding is zeroed in the component
+     to keep the label flush with the bar's edge, which left it 18px tall. */
+  .shell-topbar .rail-brand {
+    min-height: var(--space-44);
+    align-items: center;
   }
   /* The rail becomes a sheet that REPLACES the pane rather than overlaying
      it — it stays an ordinary flex child under the top bar. No fixed
