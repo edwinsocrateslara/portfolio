@@ -114,7 +114,7 @@ export function CaseStudyView({ project }: { project: Project }) {
       {/* Header — mirrors the chat header chrome for direct visual comparison */}
       <header
         className="review-header"
-        style={{ borderBottom: "1px solid rgb(var(--bureau-border))" }}
+        style={{ borderBottom: "1px solid var(--hairline)" }}
       >
         <Link
           href="/"

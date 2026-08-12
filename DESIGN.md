@@ -10,24 +10,55 @@ this is an identity layer only.
 
 ## Color tokens
 
-All colors are CSS custom properties on `:root` in `app/globals.css`, stored
-as space-separated RGB triplets so `rgb(var(--x) / <alpha>)` works with
-Tailwind's opacity modifiers. Tailwind's `theme.colors` in
-`tailwind.config.ts` references these variables directly — it never
-duplicates a literal value.
+All colors are CSS custom properties on `:root` in `app/globals.css`.
+**Ground and ink are fixed values; surfaces and hairlines are not.**
 
-| Token | Value | Tailwind class prefix |
+**Ground and ink** — RGB triplets, so `rgb(var(--x) / <alpha>)` works:
+
+| Token | Value |
+|---|---|
+| `--bureau-bg` | `#131313` |
+| `--bureau-text-primary` | `#e8e8e8` |
+| `--bureau-text-secondary` | `#a0a0a0` |
+| `--bureau-text-muted` | `#8f8f8f` |
+| `--bureau-accent` | `#ffffff` |
+| `--bureau-on-accent` | `#131313` |
+
+**Layers** — white at an alpha, composited over whatever is behind:
+
+| Token | Value | Over `#131313` |
 |---|---|---|
-| `--bureau-bg` | `#131313` | `bg`, `text-bg` |
-| `--bureau-surface` | `#1c1c1c` | `surface` |
-| `--bureau-elevated` | `#242424` | `elevated` |
-| `--bureau-border` | `#343434` | `border` |
-| `--bureau-border-strong` | `#4a4a4a` | `border-strong` |
-| `--bureau-text-primary` | `#e8e8e8` | `text-primary` |
-| `--bureau-text-secondary` | `#a0a0a0` | `text-secondary` |
-| `--bureau-text-muted` | `#8f8f8f` | `text-muted` |
-| `--bureau-accent` | `#ffffff` | `accent` |
-| `--bureau-on-accent` | `#131313` | `on-accent` |
+| `--layer-1` | `white / 4%` | `#1c1c1c` |
+| `--layer-2` | `white / 7%` | `#242424` |
+| `--hairline` | `white / 14%` | `#343434` |
+| `--hairline-strong` | `white / 23%` | `#4a4a4a` |
+
+The alphas are solved so they composite to the exact greys this system used
+to hard-code. On flat ground nothing moves — verified by sampling the
+rendered pixel, not by arithmetic: a chip interior reads `28` before and
+after.
+
+The point is what happens when the ground is **not** flat. Over the hero
+glow, or over a project screenshot, a fixed grey stays stubbornly grey and
+announces itself as a panel bolted on top; an alpha layer takes the light
+behind it. Elevation becomes compositional — a layer inside a layer is
+automatically lighter, with no second token and no decision to make.
+
+`--layer-blur` (`20px`) is applied **deliberately, never as a default**:
+`backdrop-filter` forces a new compositing layer, and on a surface with
+nothing behind it that is pure cost. Today it is on the sampler cards only,
+which are the one place on the front door with anything behind them.
+
+Write the prefixed `-webkit-backdrop-filter` **first** and the standard
+property **last**. Next 16's CSS minifier dedupes the pair and keeps whichever
+comes last; with the standard one written first it was dropped from the
+bundle entirely, leaving Firefox — which honours only the unprefixed form —
+with no blur. Confirmed by reading the served CSS.
+
+Tailwind's `theme.colors` no longer carries `surface` / `elevated` / `border`
+/ `border-strong`. They are not RGB triplets any more so they cannot take
+Tailwind's `<alpha-value>` slot, and all four had **zero** usages as
+utilities.
 
 **`--bureau-text-muted` deviates from the locked palette.** The direction's
 literal value is `#767676`, which only reaches 3.4–4.1:1 contrast on these
@@ -35,7 +66,8 @@ surfaces — below the WCAG AA floor of 4.5:1 — and it carries real small text
 (tags, captions, meta lines). Raised to `#8f8f8f` (4.8–6.1:1, passes AA).
 Confirmed with the project owner.
 
-There is no hue anywhere in this palette. The old blue accent (`#1e96fc`)
+There is no hue anywhere in this palette **yet** — see the note at the end of
+this section. The old blue accent (`#1e96fc`)
 and its dependents (a "Sunshine" amber scale, a warm-accent orange, a
 blue-tinted "golden shadow" glow system) are gone, not deprecated. Emphasis
 that used to be color-coded now lives in **value and form**: mono

@@ -58,9 +58,9 @@ export function ChatInput({
         disabled={isLoading}
         className="type-body chat-input-field focus:outline-none transition-shadow"
         style={{
-          background: "rgb(var(--bureau-surface))",
+          background: "var(--layer-1)",
           color: "rgb(var(--bureau-text-primary))",
-          border: "1px solid rgb(var(--bureau-border))",
+          border: "1px solid var(--hairline)",
           borderRadius: "var(--bureau-radius-card)",
           caretColor: "rgb(var(--bureau-accent))",
         }}
@@ -69,7 +69,7 @@ export function ChatInput({
           e.currentTarget.style.boxShadow = "var(--bureau-focus-ring)"
         }}
         onBlur={(e) => {
-          e.currentTarget.style.borderColor = "rgb(var(--bureau-border))"
+          e.currentTarget.style.borderColor = "var(--hairline)"
           e.currentTarget.style.boxShadow = "none"
         }}
         aria-label="Chat input"

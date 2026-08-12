@@ -13,10 +13,11 @@ const config: Config = {
       colors: {
         // Bureau 1D — all CSS-var-backed for Tailwind opacity modifiers
         bg:              "rgb(var(--bureau-bg) / <alpha-value>)",
-        surface:         "rgb(var(--bureau-surface) / <alpha-value>)",
-        elevated:        "rgb(var(--bureau-elevated) / <alpha-value>)",
-        border:          "rgb(var(--bureau-border) / <alpha-value>)",
-        "border-strong": "rgb(var(--bureau-border-strong) / <alpha-value>)",
+        // surface / elevated / border / border-strong are gone from here.
+        // They are no longer RGB triplets — they are white at an alpha, so
+        // they cannot take Tailwind's <alpha-value> slot, and every one of
+        // them had zero usages as a utility. Use var(--layer-1),
+        // var(--layer-2), var(--hairline), var(--hairline-strong).
         "text-primary":  "rgb(var(--bureau-text-primary) / <alpha-value>)",
         "text-secondary":"rgb(var(--bureau-text-secondary) / <alpha-value>)",
         "text-muted":    "rgb(var(--bureau-text-muted) / <alpha-value>)",

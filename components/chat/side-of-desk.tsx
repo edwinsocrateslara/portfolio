@@ -49,7 +49,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
       rel={isInternal ? undefined : "noopener noreferrer"}
       style={{
         display: "block",
-        background: "rgb(var(--bureau-surface))",
+        background: "var(--layer-1)",
         border: `1px solid rgb(var(--bureau-${hovered ? "border-strong" : "border"}))`,
         borderRadius: "var(--bureau-radius-card)",
         padding: "clamp(var(--space-24), 3vw, var(--space-32))",
@@ -108,7 +108,7 @@ function SideProjectCard({ project }: { project: SideProject }) {
             className="type-label"
             style={{
               color: "rgb(var(--bureau-text-primary))",
-              borderBottom: "1px solid rgb(var(--bureau-border-strong))",
+              borderBottom: "1px solid var(--hairline-strong)",
               // Optical: cap-height-to-underline gap on uppercase mono.
               // 4px visibly loosens it. Documented exception.
               paddingBottom: 3,

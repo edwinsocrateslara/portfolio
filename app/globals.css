@@ -10,10 +10,32 @@
    surfaces for small text; #8f8f8f clears AA (4.8-6.1:1). */
 :root {
   --bureau-bg:              19 19 19;      /* #131313 */
-  --bureau-surface:         28 28 28;      /* #1c1c1c */
-  --bureau-elevated:        36 36 36;      /* #242424 */
-  --bureau-border:          52 52 52;      /* #343434 */
-  --bureau-border-strong:   74 74 74;      /* #4a4a4a */
+  /* ── Layers ────────────────────────────────────────────────────
+     Surfaces and hairlines are WHITE AT AN ALPHA, not fixed greys.
+     The alphas are solved so they composite to the exact greys this
+     system used to hard-code, over the #131313 ground:
+
+       4%  over 19 -> 28  (#1c1c1c, the old --bureau-surface)
+       7%  over 19 -> 36  (#242424, the old --bureau-elevated)
+       14% over 19 -> 52  (#343434, the old --bureau-border)
+       23% over 19 -> 73  (#4a4a4a, the old --bureau-border-strong)
+
+     So on flat ground nothing moves. The point is what happens when
+     the ground is NOT flat: over the hero glow, or over a project
+     screenshot, a fixed grey stays stubbornly grey and announces
+     itself as a panel bolted on top, while an alpha layer takes the
+     light behind it. Elevation becomes compositional — a layer inside
+     a layer is automatically lighter, with no second token. */
+  --layer-1:         rgb(255 255 255 / 0.04);
+  --layer-2:         rgb(255 255 255 / 0.07);
+  --hairline:        rgb(255 255 255 / 0.14);
+  --hairline-strong: rgb(255 255 255 / 0.23);
+
+  /* Blur for layers that sit over real content rather than flat ground.
+     Applied deliberately, never as a default: backdrop-filter forces a
+     new compositing layer, and on a surface with nothing behind it that
+     is pure cost. */
+  --layer-blur: 20px;
   --bureau-text-primary:    232 232 232;   /* #e8e8e8 */
   --bureau-text-secondary:  160 160 160;   /* #a0a0a0 */
   --bureau-text-muted:      143 143 143;   /* #8f8f8f, AA-adjusted (was #767676) */
@@ -137,7 +159,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--bureau-border-strong));
+  background: var(--hairline-strong);
   border-radius: 0;
 }
 
@@ -156,7 +178,7 @@ body {
 @supports not selector(::-webkit-scrollbar) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(var(--bureau-border-strong)) transparent;
+    scrollbar-color: var(--hairline-strong) transparent;
   }
 }
 
@@ -416,7 +438,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border-right: 1px solid rgb(var(--bureau-border));
+  border-right: 1px solid var(--hairline);
 }
 
 .rail-brand {
@@ -472,9 +494,9 @@ body {
   width: var(--space-32);
   height: var(--space-32);
   object-fit: cover;
-  border: 1px solid rgb(var(--bureau-border));
+  border: 1px solid var(--hairline);
   box-sizing: border-box;
-  background: rgb(var(--bureau-elevated));
+  background: var(--layer-2);
   transition: border-color 0.15s;
 }
 /* min-width:0 is what lets the title actually truncate — without it the
@@ -502,10 +524,10 @@ body {
    so selected always outranks hover and the two never read the same. */
 .rail-item:hover,
 .rail-doc:hover {
-  background: rgb(var(--bureau-surface));
+  background: var(--layer-1);
 }
 .rail-item[data-active="true"] {
-  background: rgb(var(--bureau-surface));
+  background: var(--layer-1);
   border-left-color: rgb(var(--bureau-accent));
 }
 /* The Archivo line carries the active step, matching the project-header
@@ -517,7 +539,7 @@ body {
   color: rgb(var(--bureau-text-secondary));
 }
 .rail-item[data-active="true"] .rail-thumb {
-  border-color: rgb(var(--bureau-border-strong));
+  border-color: var(--hairline-strong);
 }
 
 .rail-docs {
@@ -539,7 +561,7 @@ body {
   transition: background-color 0.15s, border-color 0.15s;
 }
 .rail-doc[data-active="true"] {
-  background: rgb(var(--bureau-surface));
+  background: var(--layer-1);
   border-left-color: rgb(var(--bureau-accent));
   color: rgb(var(--bureau-text-primary));
 }
@@ -547,7 +569,7 @@ body {
 .rail-footer {
   flex: none;
   padding: var(--space-20) var(--space-24);
-  border-top: 1px solid rgb(var(--bureau-border));
+  border-top: 1px solid var(--hairline);
 }
 .rail-footer-label {
   display: flex;
@@ -599,7 +621,7 @@ body {
 }
 .pane-dock {
   flex: none;
-  border-top: 1px solid rgb(var(--bureau-border));
+  border-top: 1px solid var(--hairline);
   padding: var(--space-20) var(--space-40);
 }
 
@@ -630,7 +652,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: var(--space-16) var(--space-20);
-    border-bottom: 1px solid rgb(var(--bureau-border));
+    border-bottom: 1px solid var(--hairline);
   }
   /* The brand mark is the way home on a phone, so it takes the same 44px
      floor as the menu beside it. Its own padding is zeroed in the component
@@ -685,8 +707,16 @@ body {
   min-width: 0;
   padding: 0;
   text-align: left;
-  background: rgb(var(--bureau-surface));
-  border: 1px solid rgb(var(--bureau-border));
+  /* Blurred here and almost nowhere else: these are the only cards on the
+     front door with anything behind them (the hero glow). */
+  background: var(--layer-1);
+  /* Prefixed FIRST, standard LAST. Next 16's CSS minifier dedupes these two
+     and keeps whichever comes last; with the standard property written first
+     it was dropped entirely, leaving -webkit- only — which Firefox does not
+     honour. Verified in the served bundle, not assumed. */
+  -webkit-backdrop-filter: blur(var(--layer-blur));
+  backdrop-filter: blur(var(--layer-blur));
+  border: 1px solid var(--hairline);
   border-radius: var(--bureau-radius-card);
   overflow: hidden;
   cursor: pointer;
@@ -703,8 +733,8 @@ body {
   /* Top corners only: the image meets the footer block flush, so rounding
      all four would leave two crescents of card showing under the image. */
   border-radius: calc(var(--bureau-radius-card) - 1px) calc(var(--bureau-radius-card) - 1px) 0 0;
-  border-bottom: 1px solid rgb(var(--bureau-border));
-  background: rgb(var(--bureau-elevated));
+  border-bottom: 1px solid var(--hairline);
+  background: var(--layer-2);
 }
 
 .sampler-foot {
@@ -733,11 +763,11 @@ body {
 /* Achromatic hover: the fill lifts one surface step and the border
    strengthens. No colour is available and none is wanted. */
 .sampler-card:hover {
-  background: rgb(var(--bureau-elevated));
-  border-color: rgb(var(--bureau-border-strong));
+  background: var(--layer-2);
+  border-color: var(--hairline-strong);
 }
-.sampler-card:hover .sampler-media { border-bottom-color: rgb(var(--bureau-border-strong)); }
-.sampler-card:active { background: rgb(var(--bureau-surface)); }
+.sampler-card:hover .sampler-media { border-bottom-color: var(--hairline-strong); }
+.sampler-card:active { background: var(--layer-1); }
 
 /* Mobile: image-above would give each card a ~340px square and make the
    sampler three screens tall, so the card turns into an image-left row.
@@ -759,7 +789,7 @@ body {
     width: var(--space-56);
     height: var(--space-56);
     aspect-ratio: auto;
-    border: 1px solid rgb(var(--bureau-border));
+    border: 1px solid var(--hairline);
   }
   .sampler-foot {
     min-width: 0;
@@ -843,8 +873,8 @@ body {
   gap: var(--space-within);
   padding: var(--space-8) var(--space-16);
   border-radius: var(--bureau-radius-chip);
-  border: 1px solid rgb(var(--bureau-border));
-  background: rgb(var(--bureau-surface));
+  border: 1px solid var(--hairline);
+  background: var(--layer-1);
   color: rgb(var(--bureau-text-secondary));
   cursor: pointer;
   text-align: left;
@@ -856,8 +886,8 @@ body {
   cursor: default;
 }
 .chip:hover:not(:disabled) {
-  background: rgb(var(--bureau-elevated));
-  border-color: rgb(var(--bureau-border-strong));
+  background: var(--layer-2);
+  border-color: var(--hairline-strong);
   color: rgb(var(--bureau-text-primary));
 }
 .chip:disabled { opacity: 0.4; cursor: default; }

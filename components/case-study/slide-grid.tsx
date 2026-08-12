@@ -49,8 +49,8 @@ export function SlideGrid({
               position: "relative",
               overflow: "hidden",
               aspectRatio: "16 / 9",
-              border: "1px solid rgb(var(--bureau-border))",
-              background: "rgb(var(--bureau-elevated))",
+              border: "1px solid var(--hairline)",
+              background: "var(--layer-2)",
               borderRadius: "var(--bureau-radius-media)",
               cursor: "pointer",
             }}
