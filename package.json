@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "npm run check:sources && npm run check:design && next build",
+    "build": "npm run check:sources && npm run check:frozen && npm run check:slop && next build",
     "start": "next start",
     "lint": "next lint",
     "check:voice": "node scripts/check-voice.mjs",
     "build:context": "node --experimental-strip-types scripts/build-context.mjs",
     "check:context": "node --experimental-strip-types scripts/build-context.mjs --check",
     "check:sources": "npm run check:voice && npm run check:context",
-    "check:design": "node scripts/check-design.mjs"
+    "check:design": "node scripts/check-design.mjs",
+    "check:frozen": "node scripts/check-content-frozen.mjs",
+    "check:slop": "npx impeccable detect app components"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
