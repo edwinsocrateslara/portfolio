@@ -94,7 +94,14 @@ export function ChatInput({
           bottom: "var(--space-12)",
           height: 42,
           background: canSubmit ? "rgb(var(--bureau-accent))" : "transparent",
-          border: `1px solid rgb(var(--bureau-${canSubmit ? "accent" : "border"}))`,
+          // Both token names written out in full. This was
+          // `--bureau-${canSubmit ? "accent" : "border"}`, and building the
+          // name by interpolation is what let it break silently: --bureau-border
+          // was deleted when surfaces became alpha layers, grep for the token
+          // could not see a name that does not appear in the source, and an
+          // invalid var() makes the browser drop the whole border shorthand.
+          // The resting button rendered `0px none`. Never interpolate a token name.
+          border: `1px solid ${canSubmit ? "rgb(var(--bureau-accent))" : "var(--hairline)"}`,
           borderRadius: "var(--bureau-radius-chip)",
           color: canSubmit ? "rgb(var(--bureau-on-accent))" : "rgb(var(--bureau-text-muted))",
           cursor: isLoading ? "not-allowed" : canSubmit ? "pointer" : "default",
