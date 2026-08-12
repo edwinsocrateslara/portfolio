@@ -394,10 +394,16 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
   return (
     <div className="shell" data-sheet={sheetOpen}>
       {/* Mobile only — the rail collapses behind this. */}
+      {/* First name only here, full name in the rail. The top bar is mobile-only
+          and holds three things in 340px; at 19 characters the brand took 161 of
+          them and forced the project subtitle — which exists precisely because
+          the header card was removed — to truncate. "Edwin" is the first word of
+          the same name, not a second name form, and still reads as a name to a
+          first-time visitor. */}
       <div className="shell-topbar">
         <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
           <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-            Edwin Socrates Lara
+            Edwin
           </span>
         </button>
         {/* On mobile the rail is behind the sheet, so with the header card
