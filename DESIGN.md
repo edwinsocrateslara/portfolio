@@ -23,7 +23,6 @@ All colors are CSS custom properties on `:root` in `app/globals.css`.
 | `--bureau-text-muted` | `#8f8f8f` |
 | `--bureau-accent` | `#7fdd3c` |
 | `--bureau-on-accent` | `#131313` |
-| `--bureau-glow` | `#ffffff` |
 
 **Layers** — white at an alpha, composited over whatever is behind:
 
@@ -39,16 +38,19 @@ to hard-code. On flat ground nothing moves — verified by sampling the
 rendered pixel, not by arithmetic: a chip interior reads `28` before and
 after.
 
-The point is what happens when the ground is **not** flat. Over the hero
-glow, or over a project screenshot, a fixed grey stays stubbornly grey and
-announces itself as a panel bolted on top; an alpha layer takes the light
-behind it. Elevation becomes compositional — a layer inside a layer is
+The point is what happens when the ground is **not** flat. Over a project
+screenshot, a fixed grey stays stubbornly grey and announces itself as a
+panel bolted on top; an alpha layer takes the light behind it. Elevation becomes compositional — a layer inside a layer is
 automatically lighter, with no second token and no decision to make.
 
 `--layer-blur` (`20px`) is applied **deliberately, never as a default**:
 `backdrop-filter` forces a new compositing layer, and on a surface with
-nothing behind it that is pure cost. Today it is on the sampler cards only,
-which are the one place on the front door with anything behind them.
+nothing behind it that is pure cost. Today it is on the sampler cards only.
+
+*Outstanding:* those cards were blurred because the hero glow sat behind
+them, and that glow has since been deleted as dead code. Nothing is behind
+them now, so the blur is currently unpaid-for by this rule's own terms.
+Flagged in the code, awaiting a decision rather than removed in passing.
 
 Write the prefixed `-webkit-backdrop-filter` **first** and the standard
 property **last**. Next 16's CSS minifier dedupes the pair and keeps whichever
@@ -134,15 +136,19 @@ for AI-native craft cannot wear it.
 - the IMPACT left rule and its square marker
 - the `Live` chip (`.chip-solid`)
 
-**Where it is forbidden.** It is never a surface, never a large painted area,
-never a gradient. `--bureau-glow` exists for exactly this reason: the hero
-wash was built from `--bureau-accent` back when the accent was white, and was
-split onto its own white token the moment the accent gained hue. A green hero
-wash is the failure mode this restriction exists to prevent.
+**Where it is forbidden.** It is never a surface, never a large painted
+area, never a gradient. The accent marks an edge or a state; the moment it
+paints a region it stops being a signal and becomes a theme.
 
-*Note: the `.hero-*` rules including `.hero-glow` are currently not rendered
-by any component — the app shell replaced that landing surface. The token
-split is kept so the rule is correct if the hero returns.*
+This is enforced, not just documented — **`check:design` rule 6** fails the
+build on `--bureau-accent` inside a `background`, `background-color` or
+`fill`, with `.chip-solid` allowlisted as the system's one deliberate
+inversion. Prose alone would not have held: the rule exists because the hero
+wash *was* built from `--bureau-accent` back when the accent was white, and
+would have silently turned into a green wash the moment the accent gained
+hue. (That block has since been deleted as dead code — no component rendered
+it once the app shell replaced that landing surface — but the failure mode it
+demonstrated is exactly what rule 6 catches.)
 
 ## Radius
 

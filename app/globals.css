@@ -21,8 +21,8 @@
        23% over 19 -> 73  (#4a4a4a, the old --bureau-border-strong)
 
      So on flat ground nothing moves. The point is what happens when
-     the ground is NOT flat: over the hero glow, or over a project
-     screenshot, a fixed grey stays stubbornly grey and announces
+     the ground is NOT flat: over a project screenshot, a fixed grey
+     stays stubbornly grey and announces
      itself as a panel bolted on top, while an alpha layer takes the
      light behind it. Elevation becomes compositional — a layer inside
      a layer is automatically lighter, with no second token. */
@@ -55,14 +55,10 @@
 
      RESTRICTED TO STRUCTURAL USE — active rail bar, focus ring, caret,
      send fill, the IMPACT rule and marker, the Live chip. It is never a
-     surface, never a large area, never a gradient. See --bureau-glow. */
+     surface, never a large area, never a gradient; check-design rule 6
+     enforces that. */
   --bureau-accent:          127 221 60;    /* #7fdd3c */
   --bureau-on-accent:       19 19 19;      /* #131313, 10.9:1 on the accent */
-
-  /* The hero wash. Was --bureau-accent back when the accent was white;
-     split out the moment the accent gained hue, because a 1200x560px
-     radial IS a surface and tinting it would break the rule above. */
-  --bureau-glow:            255 255 255;   /* #ffffff */
 
   /* ── Radius ────────────────────────────────────────────────────
      Four steps, not one. The flat 2px that this system opened with
@@ -388,64 +384,6 @@ body {
   }
 }
 
-/* ── Landing hero — input-first centred stack ──────────────────────
-   Vertical air above and below the whole group. --space-80 is the top of
-   the raw step scale; the Claude Design mock asked for 120/128, which has
-   no token, so this snaps to the largest one that exists rather than
-   introducing an off-scale value. */
-.hero-stack {
-  position: relative;
-  padding-top: var(--space-80);
-  padding-bottom: var(--space-80);
-  /* Full-bleed band. The glow is inset:0 against THIS element, so if the band
-     were the constrained page column the radials would be clipped mid-falloff
-     and the section would read as a lit rectangle with hard edges — which is
-     exactly what it did before this was split out of .max-w-7xl. Full width
-     puts the falloff off-screen. `clip` (not `hidden`) because it must not
-     create a scroll container. */
-  overflow-x: clip;
-}
-
-/* The centre-pull behind the headline. Built from --bureau-glow, which is
-   white — deliberately NOT --bureau-accent, which now carries hue. This is
-   the largest single painted area on the page; running the accent through it
-   would turn a structural mark into a surface, and a green hero wash is the
-   exact "because Suno did it" move this pass is meant to avoid.
-   Two stacked radials: a tighter bright one and a wide faint one,
-   both fading to fully transparent well inside the section, so no edge is
-   ever visible. It sits under the content on its own layer and takes no
-   pointer events. */
-.hero-glow {
-  position: absolute;
-  left: 0;
-  right: 0;
-  /* Extended past the band top and bottom so the vertical falloff finishes
-     OFF the band. Inset to the band exactly, the radials were still at ~50%
-     strength when they hit the top edge, which drew a hard horizontal seam
-     under the nav. */
-  top: calc(-1 * var(--space-80));
-  bottom: calc(-1 * var(--space-80));
-  pointer-events: none;
-  background:
-    radial-gradient(760px 340px at 50% 40%,
-      rgb(var(--bureau-glow) / 0.075), rgb(var(--bureau-glow) / 0) 70%),
-    radial-gradient(1200px 560px at 50% 38%,
-      rgb(var(--bureau-glow) / 0.03), rgb(var(--bureau-glow) / 0) 72%);
-}
-
-/* Mobile: less air, and a glow scaled to the viewport — the desktop radials
-   are wider than a 380px screen, so they would render as a flat wash. */
-@media (max-width: 640px) {
-  .hero-stack {
-    padding-top: var(--space-48);
-    padding-bottom: var(--space-56);
-  }
-  .hero-glow {
-    background: radial-gradient(320px 280px at 50% 40%,
-      rgb(var(--bureau-glow) / 0.07), rgb(var(--bureau-glow) / 0) 72%);
-  }
-}
-
 /* ── App shell — persistent left rail + content pane ───────────────
    Spacing here is the --space-* scale throughout. Where the Claude Design
    mock used an off-scale value it is snapped to the nearest step; the
@@ -732,8 +670,11 @@ body {
   min-width: 0;
   padding: 0;
   text-align: left;
-  /* Blurred here and almost nowhere else: these are the only cards on the
-     front door with anything behind them (the hero glow). */
+  /* NOTE: this blur's original justification was the hero glow, which has
+     been deleted. Nothing is behind these cards today, so by the rule in
+     DESIGN.md ("never as a default; on a surface with nothing behind it that
+     is pure cost") the backdrop-filter below is now unpaid-for. Left in place
+     rather than removed as drive-by cleanup — flagged for a decision. */
   background: var(--layer-1);
   /* Prefixed FIRST, standard LAST. Next 16's CSS minifier dedupes these two
      and keeps whichever comes last; with the standard property written first
