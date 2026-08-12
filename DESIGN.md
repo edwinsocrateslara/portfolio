@@ -141,14 +141,27 @@ area, never a gradient. The accent marks an edge or a state; the moment it
 paints a region it stops being a signal and becomes a theme.
 
 This is enforced, not just documented — **`check:design` rule 6** fails the
-build on `--bureau-accent` inside a `background`, `background-color` or
-`fill`, with `.chip-solid` allowlisted as the system's one deliberate
-inversion. Prose alone would not have held: the rule exists because the hero
-wash *was* built from `--bureau-accent` back when the accent was white, and
-would have silently turned into a green wash the moment the accent gained
-hue. (That block has since been deleted as dead code — no component rendered
-it once the app shell replaced that landing surface — but the failure mode it
-demonstrated is exactly what rule 6 catches.)
+build on `--bureau-accent` inside a `background`, `background-color`,
+`background-image` or `fill`. `border-color`, `outline`, `caret-color` and
+`color` are deliberately out of scope: those mark an edge or a glyph, which
+is what the accent is *for*.
+
+Rule 6 is the only rule that reads `app/globals.css` as well as the
+components. The token layer is where an accent surface would actually get
+written — the hero wash lived there — so a checker walking only `.tsx` would
+have been blind to the case it exists to catch.
+
+A grep cannot measure rendered size, so **"larger than a control" is not
+decided by the rule**. Every accent fill is flagged, and the judgment is
+recorded in the checker's `ALLOW` map where somebody has to write down why
+that element is a control. Three entries today: `.chip-solid`, the SEND fill,
+and the 8px IMPACT marker — the same three listed above.
+
+**A gradient is the exception and cannot be allowlisted at all.** A gradient
+is never a control, and an accent gradient is precisely how the hero wash
+would have turned green the moment the accent gained hue. Verified by writing
+that gradient back in: the build exits 1 naming the rule, and adding an
+`ALLOW` entry for it does not silence it.
 
 ## Radius
 

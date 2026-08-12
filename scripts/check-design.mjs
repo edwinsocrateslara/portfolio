@@ -9,14 +9,16 @@
 //
 //   node scripts/check-design.mjs            report and exit non-zero on any
 //   node scripts/check-design.mjs --list     machine-readable, one per line
+//   node scripts/check-design.mjs --bare     rule 5, report-only
 //
-// NOT wired into `npm run build` yet — the allowlist below is deliberately
-// empty so the first run defines the real violation list rather than
-// confirming an estimate.
+// Five enforced rules plus one report-only. Rules 1-5 read .tsx under app/
+// and components/; rule 6 also reads app/globals.css, because the token layer
+// is where an accent surface would actually be written.
 import { readFileSync, readdirSync, statSync } from "fs"
 import { join, relative } from "path"
 
 const ROOTS = ["app", "components"]
+const CSS_FILES = ["app/globals.css"]
 const ROOT_DIR = process.cwd()
 
 // ── Allowlist ────────────────────────────────────────────────────────────
@@ -31,6 +33,17 @@ const ALLOW = {
     "Optical cap-height-to-underline gap on uppercase mono; 4px visibly loosens it.",
   "app/layout.tsx::no-raw-color::hex #131313":
     "PWA themeColor — read by browser chrome before CSS loads, so it cannot be a CSS var.",
+
+  // Rule 6. Each of these is a CONTROL or a MARK, which is what the accent is
+  // for; the rule cannot measure rendered size, so the judgment is recorded
+  // here instead of guessed. DESIGN.md lists the same three under "Where the
+  // accent is allowed".
+  "app/globals.css::no-accent-surface::.chip-solid background":
+    "The system's one inversion — a chip-sized badge meaning 'this is live'. 20px tall.",
+  "components/chat/chat-input.tsx::no-accent-surface::background":
+    "The SEND button fill, 42px tall, and only once there is something to send.",
+  "components/chat/message-bubbles.tsx::no-accent-surface::background":
+    "The 8px square IMPACT marker. A glyph, not a surface.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────
@@ -68,6 +81,65 @@ const TW_SPACING = /(?:^|[\s"'`])(-?(?:gap|gap-x|gap-y|p|px|py|pt|pb|pl|pr|ps|pe
 
 const HEX = /#[0-9a-fA-F]{3,8}\b/g
 const RGBA = /\brgba?\(\s*\d/g
+
+// ── Rule 6 config ────────────────────────────────────────────────────────
+// Properties that PAINT AN AREA. `border-color`, `outline`, `caret-color` and
+// `color` are deliberately absent: those mark an edge or a glyph, which is
+// exactly what the accent is for.
+const FILL_PROPS_CSS = ["background", "background-color", "background-image", "fill"]
+const FILL_PROPS_JS = ["background", "backgroundColor", "backgroundImage", "fill"]
+const ACCENT = "--bureau-accent"
+
+/** CSS comments only. The JS stripper treats `//` as a comment, which would
+ *  eat everything after a `url(https://…)`. */
+function stripCssComments(src) {
+  return src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "))
+}
+
+/** Nearest selector text preceding an offset — the `{` that opens the block
+ *  the match sits in. Gives ALLOW keys a name a human recognises. */
+function selectorAt(src, idx) {
+  const open = src.lastIndexOf("{", idx)
+  if (open === -1) return "?"
+  const prev = Math.max(src.lastIndexOf("}", open), src.lastIndexOf(";", open), src.lastIndexOf("{", open - 1))
+  return src.slice(prev + 1, open).trim().replace(/\s+/g, " ").slice(0, 60) || "?"
+}
+
+/**
+ * Rule 6 — the accent may not become a surface.
+ *
+ * DESIGN.md: "It is never a surface, never a large painted area, never a
+ * gradient." Rules 1-5 could not see this: the accent IS a token, so rule 4
+ * is right to pass it, and no number is involved so rule 2 never looks.
+ *
+ * A grep cannot measure rendered size, so "larger than a control" is not
+ * decided here — every accent fill is flagged and the judgment is recorded in
+ * ALLOW, where somebody has to write down why that element is a control. A
+ * gradient is the one case decided outright: a gradient is never a control,
+ * and an accent gradient is precisely how the hero wash would have turned
+ * green when the accent gained hue.
+ */
+function checkAccentFills(file, raw, { css }) {
+  const src = css ? stripCssComments(raw) : stripComments(raw)
+  const props = css ? FILL_PROPS_CSS : FILL_PROPS_JS
+  const stop = css ? "[^;}]*" : "[^,}\\n]*"
+  const out = []
+  for (const prop of props) {
+    const re = new RegExp(`(?:^|[\\s{;,])${prop}\\s*:\\s*(${stop})`, "g")
+    let m
+    while ((m = re.exec(src))) {
+      if (!m[1].includes(ACCENT)) continue
+      const gradient = /\b(?:linear|radial|conic)-gradient\s*\(/.test(m[1])
+      const where = css ? `${selectorAt(src, m.index)} ${prop}` : prop
+      out.push({
+        file, rule: "no-accent-surface",
+        detail: gradient ? `${where} (GRADIENT — not allowlistable)` : where,
+        line: lineAt(raw, m.index), gradient,
+      })
+    }
+  }
+  return out
+}
 
 // ── Comment stripping ────────────────────────────────────────────────────
 // Naive regex stripping breaks on `https://` inside a string and on `/*`
@@ -148,7 +220,7 @@ function styleBlocks(src) {
   return blocks
 }
 
-// ── The four rules ───────────────────────────────────────────────────────
+// ── The rules ───────────────────────────────────────────────────────────
 function checkFile(file, raw) {
   const src = stripComments(raw)
   const found = []
@@ -218,6 +290,9 @@ function checkFile(file, raw) {
     while ((m = re.exec(src))) add("no-raw-color", `${label} ${m[0]}`, m.index)
   }
 
+  // 6 — the accent may not become a surface
+  found.push(...checkAccentFills(file, raw, { css: false }))
+
   return found
 }
 
@@ -229,7 +304,7 @@ const FIXTURE_BAD = `
 export function Bad() {
   return (
     <div className="gap-4 px-5" style={{ fontSize: 13, marginTop: 5, color: "#ff0000", background: "rgba(0,0,0,.5)" }}>
-      <span style={{ height: 42 }} />
+      <span style={{ height: 42, backgroundColor: "rgb(var(--bureau-accent))" }} />
     </div>
   )
 }
@@ -239,16 +314,38 @@ const FIXTURE_GOOD = `
 export function Good() {
   const label = "not a class: px-5 lives in prose"
   return (
-    <div className="flex items-center gap-within h-14 max-w-7xl" style={{ margin: 0, gap: "var(--space-between)", maxWidth: 480, zIndex: 60, flex: 1, opacity: 0.55 }}>
+    <div className="flex items-center gap-within h-14 max-w-7xl" style={{ margin: 0, gap: "var(--space-between)", maxWidth: 480, zIndex: 60, flex: 1, opacity: 0.55, borderColor: "rgb(var(--bureau-accent))", caretColor: "rgb(var(--bureau-accent))", color: "rgb(var(--bureau-accent))" }}>
       <span className="type-label" style={{ borderRadius: 9999, minWidth: 0 }} />
     </div>
   )
 }
 `
+const FIXTURE_CSS_BAD = `
+.some-band { background: radial-gradient(50% 50%, rgb(var(--bureau-accent) / .07), transparent); }
+.some-panel { background-color: rgb(var(--bureau-accent)); }
+`
+const FIXTURE_CSS_GOOD = `
+/* background: rgb(var(--bureau-accent)) inside a comment must not trip. */
+.some-mark { border-left-color: rgb(var(--bureau-accent)); caret-color: rgb(var(--bureau-accent)); }
+.some-panel { background: var(--layer-1); outline: 2px solid rgb(var(--bureau-accent)); }
+`
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
+  const cssBad = checkAccentFills("<fixture-css-bad>", FIXTURE_CSS_BAD, { css: true })
+  const cssGood = checkAccentFills("<fixture-css-good>", FIXTURE_CSS_GOOD, { css: true })
   const problems = []
+
+  // Rule 6 in both dialects. It is the only rule that reads CSS, so a CSS
+  // control matters as much as the JSX one.
+  if (!bad.some((f) => f.rule === "no-accent-surface"))
+    problems.push('control: rule "no-accent-surface" did NOT fire on an accent backgroundColor in JSX')
+  if (cssBad.length !== 2)
+    problems.push(`control: rule "no-accent-surface" found ${cssBad.length}/2 accent fills in the bad CSS fixture`)
+  if (!cssBad.some((f) => f.gradient))
+    problems.push('control: rule "no-accent-surface" did not mark the accent GRADIENT as non-allowlistable')
+  for (const f of cssGood)
+    problems.push(`control: rule "no-accent-surface" false positive on good CSS — ${f.detail}`)
 
   for (const rule of ["no-inline-type", "no-off-grid", "no-raw-tw-spacing", "no-raw-color"]) {
     if (!bad.some((f) => f.rule === rule))
@@ -293,14 +390,25 @@ if (controlProblems.length) {
 const files = ROOTS.flatMap((r) => walk(join(ROOT_DIR, r))).sort()
 const violations = []
 const reportOnly = []
+const record = (v) => {
+  // A gradient is never a control, so rule 6's gradient case is not
+  // allowlistable — otherwise the one failure mode this rule was written for
+  // could be waved through with a one-line ALLOW entry.
+  if (!v.gradient && `${v.file}::${v.rule}::${v.detail}` in ALLOW) return
+  if (v.reportOnly) reportOnly.push(v)
+  else violations.push(v)
+}
 for (const abs of files) {
   const rel = relative(ROOT_DIR, abs)
-  for (const v of checkFile(rel, readFileSync(abs, "utf8"))) {
-    const key = `${v.file}::${v.rule}::${v.detail}`
-    if (key in ALLOW) continue
-    if (v.reportOnly) { reportOnly.push(v); continue }
-    violations.push(v)
-  }
+  for (const v of checkFile(rel, readFileSync(abs, "utf8"))) record(v)
+}
+
+// Rule 6 is the only rule that reads CSS. The token layer is where an accent
+// surface is most likely to be written — the hero wash lived here — so a
+// checker that only walked .tsx would have been blind to exactly the case it
+// exists to catch.
+for (const rel of CSS_FILES) {
+  for (const v of checkAccentFills(rel, readFileSync(join(ROOT_DIR, rel), "utf8"), { css: true })) record(v)
 }
 
 if (process.argv.includes("--bare")) {
@@ -323,9 +431,10 @@ if (process.argv.includes("--list")) {
     "no-off-grid": "Raw numeric length not a multiple of 4",
     "no-raw-tw-spacing": "Raw Tailwind numeric spacing (use a --space-* token)",
     "no-raw-color": "Raw colour literal (use rgb(var(--bureau-*)))",
+    "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
   }
-  console.log(`self-test PASS — all 4 matchers fire on the bad fixture, none on the good one`)
-  console.log(`scanned ${files.length} files under ${ROOTS.join(", ")}\n`)
+  console.log(`self-test PASS — all 5 matchers fire on the bad fixtures, none on the good ones`)
+  console.log(`scanned ${files.length} files under ${ROOTS.join(", ")}, plus ${CSS_FILES.join(", ")}\n`)
   for (const [rule, label] of Object.entries(RULES)) {
     const hits = violations.filter((v) => v.rule === rule)
     console.log(`── ${rule} — ${label}: ${hits.length}`)
