@@ -173,9 +173,9 @@ the surface has to work harder to say what is a thing.
 | Token | Value | Use for |
 |---|---|---|
 | `--bureau-radius-media` | `8px` | image tiles, thumbnails, previews |
-| `--bureau-radius-card` | `12px` | panels, cards, bubbles, the input field |
+| `--bureau-radius-card` | `12px` | panels, cards, bubbles, the chat input once it grows |
 | `--bureau-radius-btn` | `8px` | buttons that are not pills |
-| `--bureau-radius-chip` | `9999px` | chips, badges, circular icon controls |
+| `--bureau-radius-chip` | `9999px` | chips, badges, circular icon controls, the chat input at rest |
 
 `media` and `btn` share a value and are kept apart because they answer
 different questions; a future change to one should not silently move the
@@ -196,6 +196,42 @@ sampler's preview sits flush against its footer block, so it rounds its top
 two corners at `calc(card - 1px)` — the border's width — and leaves the
 bottom square. Rounding all four would leave two crescents of card visible
 under the image.
+
+### The chat input is the one radius that moves
+
+It is fully round (`radius-chip`) at rest and steps to `radius-card` once it
+grows past one line. No new value — both tokens already exist, and the scale
+is unchanged.
+
+This is geometry, not taste. The SEND button is bottom-anchored 12px in from
+the right edge, and a fully round container's corner radius is half its
+height — so as the field auto-grows toward its 180px ceiling, the curve eats
+that 12px inset. Measured clearance between the two painted edges:
+
+| Height | Fully round | `radius-card` |
+|---|---|---|
+| 1 line, 66px | 12.0px clear | 12.0px clear |
+| 2 lines, 90px | 7.0px clear | 12.0px clear |
+| 3 lines, 114px | 2.1px clear | 12.0px clear |
+| 4 lines, 138px | **2.9px outside** | 12.0px clear |
+| 6 lines, 180px | **11.6px outside** | 12.0px clear |
+
+So it is not a tall-field edge case: clearance decays from the second line on
+and crosses zero between three and four, degrading exactly when the visitor is
+composing their longest message. At the 180px ceiling the field also scrolls,
+and a 4px scrollbar thumb inside a 90px corner is clipped at both ends. Card
+radius is flat because its geometry does not depend on height.
+
+The step also carries meaning rather than only avoiding a collision: round
+reads as "one line, ready", squared as "you are drafting".
+
+**The threshold is derived, never written down** — `lineHeight + paddingTop +
+paddingBottom + border`, read from computed style. A literal `66` would be a
+fourth place that number lives and would go silently wrong the next time the
+type step or the padding moves.
+
+The focus ring needs no handling: it is a `box-shadow`, so it follows
+`border-radius` in both states on its own.
 
 ## The 4px rule
 
@@ -386,9 +422,11 @@ edges. The impact card is narrower on the right by design
 - **Badge** — default = 1px `border-strong` + mono `text-secondary`.
   **Live/active = filled `accent` on `on-accent`** — the one deliberate
   inversion in the system, reserved for "this is on."
-- **Input** — rest: `layer-1`/`hairline`, muted SEND. Focus: border →
-  `text-secondary` + a 3px `accent`-at-11% ring (`--bureau-focus-ring`),
-  SEND fills `accent` with `on-accent` ink. Sending: opacity `.55`, mono
+- **Input** — rest: `layer-1`/`hairline`, `radius-chip`, muted SEND. Focus:
+  border → `text-secondary` + a 3px `accent`-at-11% ring
+  (`--bureau-focus-ring`), SEND fills `accent` with `on-accent` ink. Steps to
+  `radius-card` once it grows past one line — see **The chat input is the one
+  radius that moves** below. Sending: opacity `.55`, mono
   "SENDING" + pulse (`.animate-bureau-pulse`).
 - **Callout / doc link** — `surface`, 1px `border`, 2px `accent` left rule
   for emphasis blocks (e.g. IMPACT). Doc link = square "PDF" glyph + UI

@@ -67,9 +67,10 @@
      the pill, which is the documented 9999 exception.
 
        media  8   image tiles, thumbnails, previews
-       card  12   panels, cards, bubbles, the input field
+       card  12   panels, cards, bubbles, the chat input once it grows
        btn    8   buttons that are not pills
-       chip  pill chips, badges, and circular icon controls */
+       chip  pill chips, badges, circular icon controls, and the chat
+                  input at rest */
   --bureau-radius-media: 8px;
   --bureau-radius-card: 12px;
   --bureau-radius-btn:  8px;

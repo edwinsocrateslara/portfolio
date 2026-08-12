@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useState } from "react"
 import { ArrowUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -22,6 +22,7 @@ export function ChatInput({
   className,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [grown, setGrown] = useState(false)
 
   useEffect(() => {
     const el = textareaRef.current
@@ -31,7 +32,20 @@ export function ChatInput({
     // box-sizing is border-box — so assigning it raw made the field 2px
     // short of its own content and left the resting height indeterminate.
     const borderY = el.offsetHeight - el.clientHeight
-    el.style.height = `${Math.min(el.scrollHeight + borderY, 180)}px`
+    const next = Math.min(el.scrollHeight + borderY, 180)
+    el.style.height = `${next}px`
+
+    // The resting height is DERIVED, not written down: padding + one line of
+    // leading + border. A literal 66 here would be a fourth place that number
+    // lives and would silently go wrong the next time the type step or the
+    // padding moves.
+    const cs = getComputedStyle(el)
+    const oneLine =
+      parseFloat(cs.lineHeight) +
+      parseFloat(cs.paddingTop) +
+      parseFloat(cs.paddingBottom) +
+      borderY
+    setGrown(next > oneLine + 1)
   }, [value])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -61,7 +75,29 @@ export function ChatInput({
           background: "var(--layer-1)",
           color: "rgb(var(--bureau-text-primary))",
           border: "1px solid var(--hairline)",
-          borderRadius: "var(--bureau-radius-card)",
+          // Fully round at rest, card radius once it grows past one line.
+          //
+          // Not a taste call — a stadium collides with its own SEND button.
+          // The button is bottom-anchored 12px in from the right, and a fully
+          // round container's corner radius is half its height, so the curve
+          // eats that inset as the field grows. Measured clearance between the
+          // two painted edges:
+          //
+          //     1 line   66px   12.0px clear
+          //     2 lines  90px    7.0px clear
+          //     3 lines 114px    2.1px clear
+          //     4 lines 138px    2.9px OUTSIDE
+          //     6 lines 180px   11.6px OUTSIDE   (max height, and it scrolls —
+          //                                       a 4px thumb inside a 90px
+          //                                       corner gets clipped too)
+          //
+          // Card radius is flat 12px clear at every height; the geometry stops
+          // depending on how much the visitor has typed. The step also says
+          // something true: round is "one line, ready", squared is "drafting".
+          //
+          // Both names in full, never `--bureau-radius-${...}` — see the note
+          // on the SEND border below for what interpolating a token name cost.
+          borderRadius: grown ? "var(--bureau-radius-card)" : "var(--bureau-radius-chip)",
           caretColor: "rgb(var(--bureau-accent))",
         }}
         onFocus={(e) => {
