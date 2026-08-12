@@ -127,7 +127,7 @@ export function CaseStudyView({ project }: { project: Project }) {
           className="type-badge"
           style={{ color: "rgb(var(--bureau-text-primary))" }}
         >
-          EdwinOS
+          Edwin Socrates Lara
         </span>
         <a
           href="https://www.edwinsocrates.com"

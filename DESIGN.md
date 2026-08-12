@@ -1,4 +1,4 @@
-# EdwinOS Visual Identity — Direction 1D "Bureau"
+# Edwin Socrates Lara — Visual Identity, Direction 1D "Bureau"
 
 Source of truth for this repo's visual system. Supersedes all prior design
 documentation. Origin: Claude Design handoff bundle (`EdwinOS 1D.dc.html`),

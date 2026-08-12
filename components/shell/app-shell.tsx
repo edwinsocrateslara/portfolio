@@ -397,7 +397,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
       <div className="shell-topbar">
         <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
           <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-            EdwinOS
+            Edwin Socrates Lara
           </span>
         </button>
         {/* On mobile the rail is behind the sheet, so with the header card

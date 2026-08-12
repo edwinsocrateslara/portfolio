@@ -56,7 +56,7 @@ export function Sidebar({
     <aside className="rail" data-open={open} aria-label="Site index">
       <button type="button" className="rail-brand" onClick={pick(onHome)}>
         <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-          EdwinOS
+          Edwin Socrates Lara
         </span>
       </button>
 

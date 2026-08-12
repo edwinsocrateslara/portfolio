@@ -78,9 +78,10 @@ context but has no way to ask for one. So it is supplied, not discovered.
 
 ## Brand Commitments
 
-- **Name: "Edwin Socrates Lara".** Decided during init, replacing "EdwinOS"
-  everywhere including the main branch. Not yet executed — see the note at the
-  end of this file.
+- **Name: "Edwin Socrates Lara".** Decided during init, replacing "EdwinOS".
+  Executed on main. The Claude Design handoff bundle is still cited by its
+  real filename, `EdwinOS 1D.dc.html`, because renaming a citation would
+  falsify the provenance record.
 - **Chat-first interaction is binding.** A direction that turns this into a
   scrolling page violates the product, not the aesthetic.
 - **Voice is the designer's own**, recorded verbatim in
@@ -170,13 +171,3 @@ polish on the discarded look," and the canon action still replaces `DESIGN.md`.
 
 **If revisited:** check whether the detector has learned to read style objects.
 That single gap is what made it inapplicable, not its taste.
-
----
-
-<!-- Recorded during init and not yet executed: the rename from "EdwinOS" to
-"Edwin Socrates Lara" was decided for ALL branches including main. It touches
-app/layout.tsx, components/shell/sidebar.tsx, components/shell/app-shell.tsx,
-components/case-study/case-study-view.tsx, app/globals.css and DESIGN.md. No
-frozen content file carries the name. It is deliberately NOT done on the
-experiment branch, because a rename on main would move the baseline that
-check:frozen compares against mid-experiment. -->

@@ -15,7 +15,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "EdwinOS — Product Design Portfolio",
+  title: "Edwin Socrates Lara — Product Design Portfolio",
   description:
     "Ask me about Edwin Socrates Lara's product design work — case studies, process, and background.",
 }
