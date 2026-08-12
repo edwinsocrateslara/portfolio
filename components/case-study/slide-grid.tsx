@@ -51,7 +51,7 @@ export function SlideGrid({
               aspectRatio: "16 / 9",
               border: "1px solid rgb(var(--bureau-border))",
               background: "rgb(var(--bureau-elevated))",
-              borderRadius: "var(--bureau-radius-card)",
+              borderRadius: "var(--bureau-radius-media)",
               cursor: "pointer",
             }}
           >

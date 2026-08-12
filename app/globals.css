@@ -20,10 +20,20 @@
   --bureau-accent:          255 255 255;   /* #ffffff */
   --bureau-on-accent:       19 19 19;      /* #131313 */
 
-  /* Radius — flat 2px everywhere; kept as distinct named tokens per spec */
-  --bureau-radius-card: 2px;
-  --bureau-radius-btn:  2px;
-  --bureau-radius-chip: 2px;
+  /* ── Radius ────────────────────────────────────────────────────
+     Four steps, not one. The flat 2px that this system opened with
+     read as "unstyled" more than as "precise": at 2px a card and a
+     bare div are the same object. Each step is a multiple of 4 except
+     the pill, which is the documented 9999 exception.
+
+       media  8   image tiles, thumbnails, previews
+       card  12   panels, cards, bubbles, the input field
+       btn    8   buttons that are not pills
+       chip  pill chips, badges, and circular icon controls */
+  --bureau-radius-media: 8px;
+  --bureau-radius-card: 12px;
+  --bureau-radius-btn:  8px;
+  --bureau-radius-chip: 9999px;
 
   /* ── Spacing: relatedness levels ───────────────────────────────
      Spacing encodes how related two things are. Reach for one of
@@ -690,6 +700,9 @@ body {
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1;
+  /* Top corners only: the image meets the footer block flush, so rounding
+     all four would leave two crescents of card showing under the image. */
+  border-radius: calc(var(--bureau-radius-card) - 1px) calc(var(--bureau-radius-card) - 1px) 0 0;
   border-bottom: 1px solid rgb(var(--bureau-border));
   background: rgb(var(--bureau-elevated));
 }

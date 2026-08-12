@@ -45,10 +45,30 @@ vs. filled for badge states (see Components below).
 
 ## Radius
 
-Flat **2px** everywhere — cards, buttons, chips. Kept as three distinct
-named tokens (`--bureau-radius-card`, `--bureau-radius-btn`,
-`--bureau-radius-chip`) since the source spec names them separately, even
-though all three currently resolve to the same value.
+**Four steps, not one.** The system opened at a flat 2px everywhere, on the
+theory that near-square edges read as precise. In practice 2px reads as
+*unstyled*: at that radius a card and a bare `div` are the same object, and
+the surface has to work harder to say what is a thing.
+
+| Token | Value | Use for |
+|---|---|---|
+| `--bureau-radius-media` | `8px` | image tiles, thumbnails, previews |
+| `--bureau-radius-card` | `12px` | panels, cards, bubbles, the input field |
+| `--bureau-radius-btn` | `8px` | buttons that are not pills |
+| `--bureau-radius-chip` | `9999px` | chips, badges, circular icon controls |
+
+`media` and `btn` share a value and are kept apart because they answer
+different questions; a future change to one should not silently move the
+other.
+
+Every value is a multiple of 4 except the pill, which is the documented
+`9999px` exception already named under The 4px rule.
+
+**Where an image meets a card edge, round the outer corners only.** The
+sampler's preview sits flush against its footer block, so it rounds its top
+two corners at `calc(card - 1px)` — the border's width — and leaves the
+bottom square. Rounding all four would leave two crescents of card visible
+under the image.
 
 ## The 4px rule
 
