@@ -274,6 +274,38 @@ edges. The impact card is narrower on the right by design
   for emphasis blocks (e.g. IMPACT). Doc link = square "PDF" glyph + UI
   title + mono meta line + `↓`.
 
+## Chips
+
+One primitive, two sizes, three fills. Before this there were three separate
+inline-styled implementations — the prompt chips, `In Progress`, and `Live` —
+each re-deriving its own padding and hover.
+
+**Size is chosen by role, not by taste.**
+
+| Class | Type step | Padding | For |
+|---|---|---|---|
+| `.chip` | body | `8 / 16` | an action the visitor can take |
+| `.chip-sm` | label | `4 / 8` | metadata about something else |
+
+An action needs room to hit and reads at body size; a tag describing a card
+does not get to be the same weight as the thing it describes.
+
+**Fill:**
+
+- **default** — `surface` + hairline. The resting state of everything.
+- **`.chip-solid`** — inverted. The system's one inversion, reserved for a
+  state that is true right now (`Live`).
+- **`.chip-quiet`** — no fill, no border, for a tag that must not compete.
+
+Hover lives in CSS, not React state. Three components each held a `useState`
+for it, which is both more code and worse: a hover that waits on a re-render
+is a hover that can miss.
+
+The `5px 9px` optical padding the status badges carried is gone. It
+compensated for uppercase mono tracking against a 2px corner; at pill radius
+that asymmetry is not visible, so the exception retires rather than being
+inherited.
+
 ## Photography
 
 **The work is the colour.** Project screenshots render at full saturation,

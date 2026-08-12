@@ -821,3 +821,55 @@ body {
   padding-left: var(--space-12);
   padding-right: var(--space-12);
 }
+
+/* ── Chips ─────────────────────────────────────────────────────────
+   One primitive, two sizes, three fills. Chips were three separate
+   inline-styled implementations before this: the prompt chips, the
+   In Progress badge, and the Live badge, each re-deriving its own
+   padding and hover.
+
+   Size is chosen by ROLE, not by taste:
+     .chip      an action the visitor can take — body type, room to hit
+     .chip-sm   metadata about something else — label type, tight
+
+   Fill:
+     (default)  surface + hairline. The resting state of everything.
+     .chip-solid   inverted; the system's one inversion, for a state
+                   that is true right now (Live)
+     .chip-quiet   no fill, no border; a tag that must not compete */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-within);
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--bureau-radius-chip);
+  border: 1px solid rgb(var(--bureau-border));
+  background: rgb(var(--bureau-surface));
+  color: rgb(var(--bureau-text-secondary));
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.chip-sm {
+  padding: var(--space-4) var(--space-8);
+  gap: var(--space-4);
+  cursor: default;
+}
+.chip:hover:not(:disabled) {
+  background: rgb(var(--bureau-elevated));
+  border-color: rgb(var(--bureau-border-strong));
+  color: rgb(var(--bureau-text-primary));
+}
+.chip:disabled { opacity: 0.4; cursor: default; }
+
+.chip-solid {
+  background: rgb(var(--bureau-accent));
+  border-color: rgb(var(--bureau-accent));
+  color: rgb(var(--bureau-on-accent));
+}
+.chip-quiet {
+  background: none;
+  border-color: transparent;
+}
+/* The arrow prefix on a follow-up chip. Muted so the label leads. */
+.chip-prefix { color: rgb(var(--bureau-text-muted)); flex-shrink: 0; }

@@ -133,35 +133,13 @@ function SideProjectCard({ project }: { project: SideProject }) {
         {/* Status badge */}
         {project.status && (
           <div style={{ flexShrink: 0, paddingTop: "var(--space-4)" }}>
+            {/* Metadata about the card, not an action, so both take chip-sm.
+                The 5px/9px optical padding these carried is gone: at pill
+                radius the asymmetry it compensated for is not visible. */}
             {project.status === "in-progress" ? (
-              <span
-                className="type-label"
-                style={{
-                  display: "inline-block",
-                  // Asymmetric: optical compensation for uppercase mono
-                  // tracking. Documented exception.
-                  padding: "5px 9px",
-                  border: "1px solid rgb(var(--bureau-border-strong))",
-                  borderRadius: "var(--bureau-radius-chip)",
-                  color: "rgb(var(--bureau-text-secondary))",
-                }}
-              >
-                In Progress
-              </span>
+              <span className="chip chip-sm type-label">In Progress</span>
             ) : (
-              <span
-                className="type-badge"
-                style={{
-                  display: "inline-block",
-                  // Asymmetric: see above. Documented exception.
-                  padding: "5px 9px",
-                  borderRadius: "var(--bureau-radius-chip)",
-                  background: "rgb(var(--bureau-accent))",
-                  color: "rgb(var(--bureau-on-accent))",
-                }}
-              >
-                Live
-              </span>
+              <span className="chip chip-sm chip-solid type-badge">Live</span>
             )}
           </div>
         )}
