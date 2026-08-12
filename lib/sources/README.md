@@ -53,6 +53,11 @@ merged Coinley's decision text into its challenge, and reintroduced an
 
 ## Titles: the résumé and LinkedIn are the authority, not the export
 
+`lib/projects.ts` deviates from `framer-export.json` in exactly two ways, both
+documented: **role titles** (below) and **source typos** (the section after).
+Nothing else differs — verified by checking every string in `projects.ts` for
+verbatim containment in the export.
+
 `framer-export.json` says **"Lead product designer" on every row**. It is
 wrong for two of the seven, and it is wrong in two different directions,
 so this is not a single find-and-replace.
@@ -77,6 +82,27 @@ two contradicting each other a few blocks apart in the same conversation —
 the card said Senior, the body said Lead. Both are now overridden, and
 both carry a comment at the field so an audit does not revert them to the
 export.
+
+## Typo corrections against the export
+
+`framer-export.json` remains the source for case-study copy. It is also the
+CMS's raw output, defects included, and `lib/projects.ts` now carries
+documented corrections for six of them. Each is commented at the field, the
+same way the title overrides are, so an audit finds them accounted for rather
+than flagging them as invented — and so nobody "restores" them from the
+export.
+
+| Project | Export says | Corrected to |
+|---|---|---|
+| Meridian | "**Users** reviews for the Meridian app" | "**User** reviews" |
+| Meridian | "poor user experience, **and** UI, and lack of key features" | "poor user experience, UI, and lack of key features" |
+| Volkswagen | "Since **it's** launch" | "Since **its** launch" |
+| Volkswagen | "these design **decision**" | "these design **decisions**" |
+| Complex NTWRK (seller dashboard) | "and **S**ellers were expected" | "and **s**ellers were expected" (mid-sentence) |
+| Complex NTWRK (e-commerce) | "not **on on** Complex.com's homepage", and the "When users clicked through from Instagram or TikTok," clause repeated twice | both fixed |
+
+These are spelling, grammar and duplication only. No claim, number or
+emphasis is changed by any of them.
 
 `projectTitle` is the other declared gap: the seven values are
 repo-authored and trace to nothing in this directory. They are listed in

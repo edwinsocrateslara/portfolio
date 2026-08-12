@@ -138,8 +138,11 @@ export const projects: Project[] = [
           "Cheque deposit with camera capture, and the price-matching feature: receipt scanning onboarding with partner retailers, and a receipts list tracking submitted purchases.",
       },
     ],
+    // Typo corrections against framer-export.json, same pattern as the `role`
+    // override: "Users reviews" -> "User reviews", and a stray "and" removed
+    // from "poor user experience, and UI, and lack of key features".
     challenge:
-      "Users reviews for the Meridian app cited poor user experience, and UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.",
+      "User reviews for the Meridian app cited poor user experience, UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.",
     impacts: [
       "Within the first month of launch, the redesigned app received overwhelming positive user reviews in the app store.",
       "Meridian Credit Union adopted the new design across its entire ecosystem.",
@@ -296,7 +299,9 @@ export const projects: Project[] = [
     challenge:
       "VW didn't have a comparison tool and recognized that a comparison tool is a big part of the purchase process. VW wanted to meet the needs of potential buyers, but also wanted to create a tool that would help potential buyers move down the sales funnel (e.g. either visiting a dealership or building a vehicle online).",
     impacts: [
-      "Since it's launch, the tool serves over 112,000 customers across Canada on a monthly basis.",
+      // Typo correction against the export: "Since it's launch" -> "Since its
+      // launch" (possessive, not a contraction).
+      "Since its launch, the tool serves over 112,000 customers across Canada on a monthly basis.",
     ],
     // Same override as Meridian, to "Product designer" — the Dec 2015–May 2019
     // contracting period that covers this work is Product Designer on both the
@@ -305,8 +310,10 @@ export const projects: Project[] = [
       "Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.",
     atStake:
       "VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.",
+    // Typo correction against the export: "these design decision" ->
+    // "these design decisions".
     decision:
-      "I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decision to create an experience that would give users the utility they expected while upselling VW at every touchpoint.",
+      "I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decisions to create an experience that would give users the utility they expected while upselling VW at every touchpoint.",
   },
   {
     slug: "ecommerce",
@@ -346,11 +353,12 @@ export const projects: Project[] = [
       "Lead Product Designer. I designed a mobile-first shopping experience that leveraged Complex.com's social media presence to introduce users to NTWRK's e-commerce platform.",
     atStake:
       "Complex users came for media content, not shopping. If we pushed them through a traditional homepage-to-shop flow, they'd ignore it. We risked launching a shop that existing Complex users would never discover or use.",
-    // Source defect carried verbatim: "not on on Complex.com's homepage" and
-    // the repeated "When users clicked through from Instagram or TikTok,"
+    // Typo corrections against the export, which had "not on on Complex.com's
+    // homepage" and repeated the "When users clicked through from Instagram or
+    // TikTok," clause twice. Both fixed here rather than carried verbatim.
     // clause are duplicated in Framer's own text — see migration report.
     decision:
-      "I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.",
+      "I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.",
   },
   {
     slug: "product-management",
@@ -388,8 +396,11 @@ export const projects: Project[] = [
           "Shipping label creation with package template, weight, dimensions and carrier rate options.",
       },
     ],
+    // Typo correction against the export: the mid-sentence "and Sellers were
+    // expected" is lowercased. The two sentence-initial "Sellers" are correct
+    // and left alone.
     challenge:
-      "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and Sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
+      "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
     impacts: [
       "Within the first year of launch: nearly 400 sellers use Seller Dashboard;",
       "Seller Dashboard manages 210K+ products;",

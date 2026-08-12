@@ -120,7 +120,7 @@ I led the end-to-end redesign of Meridian Credit Union apps which now serves ove
 
 **Why I made those decisions:** Price-matching gave younger, price-conscious users a desirable money-saving tool and reason to engage with the app beyond basic transactions. Animations created an engaging experience tailored for our target demographic.
 
-**The challenge:** Users reviews for the Meridian app cited poor user experience, and UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.
+**The challenge:** User reviews for the Meridian app cited poor user experience, UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.
 
 ---
 
@@ -172,13 +172,13 @@ I led the end-to-end design of a live-selling and auction experience.
 I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.
 
 **Key impacts:**
-- Since it's launch, the tool serves over 112,000 customers across Canada on a monthly basis.
+- Since its launch, the tool serves over 112,000 customers across Canada on a monthly basis.
 
 **My role:** Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.
 
 **What was at stake:** VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.
 
-**Why I made those decisions:** I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decision to create an experience that would give users the utility they expected while upselling VW at every touchpoint.
+**Why I made those decisions:** I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decisions to create an experience that would give users the utility they expected while upselling VW at every touchpoint.
 
 **The challenge:** VW didn't have a comparison tool and recognized that a comparison tool is a big part of the purchase process. VW wanted to meet the needs of potential buyers, but also wanted to create a tool that would help potential buyers move down the sales funnel (e.g. either visiting a dealership or building a vehicle online).
 
@@ -200,7 +200,7 @@ I designed an e-commerce experience that integrated NTWRK into Complex.com's bra
 
 **What was at stake:** Complex users came for media content, not shopping. If we pushed them through a traditional homepage-to-shop flow, they'd ignore it. We risked launching a shop that existing Complex users would never discover or use.
 
-**Why I made those decisions:** I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.
+**Why I made those decisions:** I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.
 
 **The challenge:** After acquiring Complex, NTWRK needed to merge two platforms: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops. The goal was to create a unified media and shopping experience where music fans could browse Complex content and purchase both exclusive drops and evergreen merch.
 
@@ -225,7 +225,7 @@ I created the primary tool for sellers to manage products on Complex NTWRK.
 
 **Why I made those decisions:** I could've designed a completely custom dashboard for Complex NTWRK, but unfamiliar workflows would've scared off new sellers. Instead, I made it feel familiar to Shopify users while integrating features for Complex NTWRK's unique sales channels (live-selling, auctions, buy-now). Familiarity reduced onboarding friction and kept sellers confident in the system.
 
-**The challenge:** Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and Sellers were expected to be familiar with Shopify, which was often not the case.
+**The challenge:** Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and sellers were expected to be familiar with Shopify, which was often not the case.
 
 We needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.
 
