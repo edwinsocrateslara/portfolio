@@ -67,6 +67,13 @@ front door has to work without instruction.
 - The site is statically prerendered at `/`; work that forces it dynamic is a
   regression, not a tradeoff.
 
+**The craft bar is an input, not something a tool elicits.** When a refinement
+pass needs a quality benchmark, the project owner names two or three reference
+products and their craft level becomes the bar. Impeccable only offers this
+mechanic behind the canon action inside its replacement flow (`new-work.md`),
+which is not a route this project takes; `polish.md` wants a quality bar as
+context but has no way to ask for one. So it is supplied, not discovered.
+
 **Explicitly undecided:** nothing outstanding from this interview.
 
 ## Brand Commitments
@@ -122,6 +129,47 @@ already raised a locked palette value (`#767676` → `#8f8f8f`) because it faile
 the 4.5:1 floor on real small text. Any direction inherits that bar. Motion
 respects `prefers-reduced-motion`; this is implemented and verified, not
 intended.
+
+---
+
+## Appendix: the impeccable experiment, August 2026
+
+Not part of the impeccable product schema. Recorded so this is not
+re-litigated later.
+
+**What was tried.** An isolated branch (`experiment/impeccable`) evaluated
+[impeccable](https://impeccable.style) v3.5.0 as an alternative to the
+hand-built Bureau 1D system, with the content layer sealed by
+`scripts/check-content-frozen.mjs` and its detector swapped in for
+`check-design.mjs` as the build gate.
+
+**What it concluded.** *The tool's mechanical half does not apply to this
+codebase.* Its detector matches CSS syntax (`font-family:`) and not React
+style-object syntax (`fontFamily:`). Reduced to one variable:
+
+    const a = { fontFamily: "Inter" }   ->  0 findings
+    const a = `font-family: Inter;`     ->  1 finding
+
+This repo carries ~102 `style={{ }}` blocks and ~154 camelCase declarations,
+so the detector is blind to most of its styling. Run against the whole of
+`app/` and `components/` it returned **zero findings and exit 0** — and it
+returned zero against a control file containing an AI-default purple gradient,
+`Inter`, a clickable `div`, an `<img>` with no alt, a 20x20 button, and
+`#999` on `#aaa`. `check-design.mjs`, sixty lines of grep, catches strictly
+more here.
+
+**What was kept.** `PRODUCT.md` itself, which the tool's `init` produced and
+which is genuinely useful; `check-content-frozen.mjs`; and
+`capture-compare.mjs`. The judgment half of the tool — its playbooks — read as
+real design thinking and were not the problem.
+
+**What was rejected.** Replacing Bureau 1D. The goal was refinement, and
+impeccable's world-selection flow has no refinement path: `SKILL.md` states
+"Refinement preserves; redesign replaces... Never split the difference into
+polish on the discarded look," and the canon action still replaces `DESIGN.md`.
+
+**If revisited:** check whether the detector has learned to read style objects.
+That single gap is what made it inapplicable, not its taste.
 
 ---
 
