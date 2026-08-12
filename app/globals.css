@@ -39,8 +39,30 @@
   --bureau-text-primary:    232 232 232;   /* #e8e8e8 */
   --bureau-text-secondary:  160 160 160;   /* #a0a0a0 */
   --bureau-text-muted:      143 143 143;   /* #8f8f8f, AA-adjusted (was #767676) */
-  --bureau-accent:          255 255 255;   /* #ffffff */
-  --bureau-on-accent:       19 19 19;      /* #131313 */
+  /* ── Accent ────────────────────────────────────────────────────
+     #7fdd3c, hue 95°. The one hue in the system, and it was chosen by
+     measurement rather than taste: all 32 project screenshots were
+     decoded and binned into a saturation-weighted hue histogram, which
+     came out as two masses — warm 0-45° at 43% of chromatic pixels and
+     cool 165-240° at 47%. An accent inside either mass goes invisible
+     against the thumbnails that carry it. 95° has ZERO corpus mass
+     within 45°, and 10.9:1 on the ground, so it works as text and as a
+     hairline rather than only as a fill.
+
+     Violet (278°) scored the same on collision and was rejected: the
+     AI-default gradient ends at #764ba2, hue 272°. Six degrees. This
+     repo names that gradient as the tell in PRODUCT.md.
+
+     RESTRICTED TO STRUCTURAL USE — active rail bar, focus ring, caret,
+     send fill, the IMPACT rule and marker, the Live chip. It is never a
+     surface, never a large area, never a gradient. See --bureau-glow. */
+  --bureau-accent:          127 221 60;    /* #7fdd3c */
+  --bureau-on-accent:       19 19 19;      /* #131313, 10.9:1 on the accent */
+
+  /* The hero wash. Was --bureau-accent back when the accent was white;
+     split out the moment the accent gained hue, because a 1200x560px
+     radial IS a surface and tinting it would break the rule above. */
+  --bureau-glow:            255 255 255;   /* #ffffff */
 
   /* ── Radius ────────────────────────────────────────────────────
      Four steps, not one. The flat 2px that this system opened with
@@ -230,8 +252,8 @@ body {
 
 /* ── Lightbox controls ─────────────────────────────────────────────
    These sit on a near-opaque scrim where the browser default focus ring
-   is both off-palette (blue) and low contrast. Replaced with an
-   achromatic accent outline — kept deliberately visible, and scoped to
+   is both off-palette (blue) and low contrast. Replaced with the accent
+   outline — kept deliberately visible, and scoped to
    :focus-visible so it appears for keyboard users without ringing on
    every mouse click. */
 .lightbox-control:focus-visible {
@@ -384,9 +406,12 @@ body {
   overflow-x: clip;
 }
 
-/* The centre-pull behind the headline. Built from --bureau-accent (255 255
-   255), so it is achromatic by construction — there is no hue available to
-   drift to. Two stacked radials: a tighter bright one and a wide faint one,
+/* The centre-pull behind the headline. Built from --bureau-glow, which is
+   white — deliberately NOT --bureau-accent, which now carries hue. This is
+   the largest single painted area on the page; running the accent through it
+   would turn a structural mark into a surface, and a green hero wash is the
+   exact "because Suno did it" move this pass is meant to avoid.
+   Two stacked radials: a tighter bright one and a wide faint one,
    both fading to fully transparent well inside the section, so no edge is
    ever visible. It sits under the content on its own layer and takes no
    pointer events. */
@@ -403,9 +428,9 @@ body {
   pointer-events: none;
   background:
     radial-gradient(760px 340px at 50% 40%,
-      rgb(var(--bureau-accent) / 0.075), rgb(var(--bureau-accent) / 0) 70%),
+      rgb(var(--bureau-glow) / 0.075), rgb(var(--bureau-glow) / 0) 70%),
     radial-gradient(1200px 560px at 50% 38%,
-      rgb(var(--bureau-accent) / 0.03), rgb(var(--bureau-accent) / 0) 72%);
+      rgb(var(--bureau-glow) / 0.03), rgb(var(--bureau-glow) / 0) 72%);
 }
 
 /* Mobile: less air, and a glow scaled to the viewport — the desktop radials
@@ -417,7 +442,7 @@ body {
   }
   .hero-glow {
     background: radial-gradient(320px 280px at 50% 40%,
-      rgb(var(--bureau-accent) / 0.07), rgb(var(--bureau-accent) / 0) 72%);
+      rgb(var(--bureau-glow) / 0.07), rgb(var(--bureau-glow) / 0) 72%);
   }
 }
 

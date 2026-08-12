@@ -4,9 +4,9 @@ Source of truth for this repo's visual system. Supersedes all prior design
 documentation. Origin: Claude Design handoff bundle (`EdwinOS 1D.dc.html`),
 direction "1D — Bureau."
 
-Achromatic dark, near-square edges, one type family (Archivo) with a mono
-label voice (IBM Plex Mono). Same content, IA, and component set as before —
-this is an identity layer only.
+Near-neutral dark with a single accent hue, four radius steps, one type
+family (Archivo) with a mono label voice (IBM Plex Mono). Same content, IA,
+and component set as before — this is an identity layer only.
 
 ## Color tokens
 
@@ -21,8 +21,9 @@ All colors are CSS custom properties on `:root` in `app/globals.css`.
 | `--bureau-text-primary` | `#e8e8e8` |
 | `--bureau-text-secondary` | `#a0a0a0` |
 | `--bureau-text-muted` | `#8f8f8f` |
-| `--bureau-accent` | `#ffffff` |
+| `--bureau-accent` | `#7fdd3c` |
 | `--bureau-on-accent` | `#131313` |
+| `--bureau-glow` | `#ffffff` |
 
 **Layers** — white at an alpha, composited over whatever is behind:
 
@@ -66,14 +67,82 @@ surfaces — below the WCAG AA floor of 4.5:1 — and it carries real small text
 (tags, captions, meta lines). Raised to `#8f8f8f` (4.8–6.1:1, passes AA).
 Confirmed with the project owner.
 
-There is no hue anywhere in this palette **yet** — see the note at the end of
-this section. The old blue accent (`#1e96fc`)
-and its dependents (a "Sunshine" amber scale, a warm-accent orange, a
-blue-tinted "golden shadow" glow system) are gone, not deprecated. Emphasis
-that used to be color-coded now lives in **value and form**: mono
-`text-secondary` for eyebrows/indices, a filled white square + 2px left rule
-for the IMPACT marker, underlines for links and hero emphasis, and outline
-vs. filled for badge states (see Components below).
+**The palette carries exactly one hue: the accent.** Everything else — ground,
+ink, layers, hairlines — is neutral, and the accent is restricted to
+structural marks rather than surfaces. See **Accent** below for how the hue
+was chosen and where it is allowed to appear.
+
+The old blue accent (`#1e96fc`) and its dependents (a "Sunshine" amber scale,
+a warm-accent orange, a blue-tinted "golden shadow" glow system) are still
+gone, and were not reinstated by adding an accent back. Emphasis that used to
+be color-coded still lives mostly in **value and form**: mono
+`text-secondary` for eyebrows/indices, underlines for links and hero
+emphasis, and outline vs. filled for badge states (see Components below). The
+accent supplements that; it did not replace it.
+
+## Accent
+
+`--bureau-accent` is `#7fdd3c`, hue 95°. It is the only hue in the system.
+
+**It was chosen by measurement, not taste.** The site's chrome sits next to 32
+real project screenshots, so the accent's job is to stay legible against them.
+All 32 were decoded in-browser, downsampled to 96×96, converted to HSL and
+binned into 24 × 15° buckets weighted by `saturation × (1 − |L−0.5| × 1.4)`,
+discarding greys (`s < 0.18`), voids (`L < 0.10`) and blowouts (`L > 0.93`) so
+that UI chrome inside the screenshots would not dominate the result.
+
+Reproduce with `node scripts/sample-hues.mjs` (needs the dev server and Chrome
+on `--remote-debugging-port=9222`).
+
+The corpus came out as two masses with a void between them:
+
+| Band | Share of chromatic pixels |
+|---|---|
+| Warm `0–45°` | **43.4%** |
+| Cool `165–240°` | **47.0%** |
+| Magenta `315–345°` | 5.1% |
+| Everything else | under 5% |
+
+Per project, the dominant bin: Coinley `210°`, FutureFit `240°/150°`,
+Volkswagen `195°`, E-commerce `30°`, Complex Ntwrk `15°`, Product Management
+`225°`, Meridian `30°` with teal at `165°`.
+
+**What this ruled out.** Cyan-teal was the intuitive choice and is wrong:
+`195–210°` is the second-largest bin in the corpus and the *dominant* hue in
+three separate projects, so a cyan accent would vanish against the rail
+thumbnails that carry it and fight Meridian directly. Amber is worse — `30–45°`
+is the single biggest bin. Magenta-pink is both occupied and the reference
+product's signature.
+
+**What was rejected on judgment rather than data.** Violet `278°` scored
+just as clean on collision. The AI-default gradient ends at `#764ba2`, hue
+272° — six degrees away — and this repo names that gradient as the tell for
+generated design work (`PRODUCT.md`, impeccable appendix). A portfolio arguing
+for AI-native craft cannot wear it.
+
+`95°` carries **0.3% of corpus mass within 45°** — the lowest of any candidate
+— and reaches **10.9:1** on the ground, which is why it works as text and as a
+1px hairline and not only as a fill.
+`--bureau-on-accent` (`#131313`) sits on it at the same 10.9:1.
+
+**Where the accent is allowed** — structural marks only:
+
+- the active rail bar (2px left border)
+- the input focus ring and the `:focus-visible` outline
+- the textarea caret
+- the SEND fill, once there is something to send
+- the IMPACT left rule and its square marker
+- the `Live` chip (`.chip-solid`)
+
+**Where it is forbidden.** It is never a surface, never a large painted area,
+never a gradient. `--bureau-glow` exists for exactly this reason: the hero
+wash was built from `--bureau-accent` back when the accent was white, and was
+split onto its own white token the moment the accent gained hue. A green hero
+wash is the failure mode this restriction exists to prevent.
+
+*Note: the `.hero-*` rules including `.hero-glow` are currently not rendered
+by any component — the app shell replaced that landing surface. The token
+split is kept so the rule is correct if the hero returns.*
 
 ## Radius
 
@@ -292,15 +361,15 @@ edges. The impact card is narrower on the right by design
   **1:1** (matches the source preview images — all 7 are square), unfiltered.
   Index bottom-right, mono. Hover: border → `border-strong`, lift 1px.
 - **Grid gutter** (Selected Work) — `group` (32px).
-- **Chip / tag** — 1px `border`, `surface`, radius 2. Tag text `text-muted`
-  `.type-meta`; prompt-chip `text-secondary` `.type-body` with a mono `→`
-  prefix.
+- **Chip / tag** — see **Chips** below; one primitive, pill radius. Tag text
+  `text-muted` `.type-meta`; prompt-chip `text-secondary` `.type-body` with a
+  mono `→` prefix.
 - **Badge** — default = 1px `border-strong` + mono `text-secondary`.
   **Live/active = filled `accent` on `on-accent`** — the one deliberate
   inversion in the system, reserved for "this is on."
-- **Input** — rest: `surface`/`border`, muted SEND. Focus: border →
-  `text-secondary` + a 3px `rgba(255,255,255,.11)` ring
-  (`--bureau-focus-ring`), SEND fills `accent`. Sending: opacity `.55`, mono
+- **Input** — rest: `layer-1`/`hairline`, muted SEND. Focus: border →
+  `text-secondary` + a 3px `accent`-at-11% ring (`--bureau-focus-ring`),
+  SEND fills `accent` with `on-accent` ink. Sending: opacity `.55`, mono
   "SENDING" + pulse (`.animate-bureau-pulse`).
 - **Callout / doc link** — `surface`, 1px `border`, 2px `accent` left rule
   for emphasis blocks (e.g. IMPACT). Doc link = square "PDF" glyph + UI
@@ -374,12 +443,17 @@ layout choice — do not crop assets to a third ratio:
   anything that is system chrome (nav, tags, indices, badges, captions) and
   Archivo for anything a human reads as prose.
 - Reserve the accent-filled/inverted treatment for "this is live / on."
+- Keep the accent structural. If a new use would paint an area rather than
+  mark an edge or a state, it belongs in value and form instead.
 
 ## Don't
 
-- Don't introduce a second hue. If something needs to stand out, reach for
-  weight, size, underline, or the outline→filled badge inversion — not
-  color.
+- Don't introduce a **second** hue. The palette has one, and adding another
+   costs it its meaning. If something needs to stand out, reach for weight,
+   size, underline, or the outline→filled inversion.
+- Don't spread the accent onto a surface, a large area, or a gradient. It
+  marks structure — an edge, a caret, a state — and stops being a signal the
+  moment it becomes a background.
 - Don't set `font-family`, `font-weight`, `font-size`, `line-height`, or
   `letter-spacing` inline. Add a `.type-*` class, or a new one if no role
   fits.
@@ -387,8 +461,8 @@ layout choice — do not crop assets to a third ratio:
   line-height that isn't 1.5× its size.
 - Don't use a spacing value that isn't a multiple of 4. If a level feels
   wrong, the grouping is probably wrong.
-- Don't add a new border-radius value. Everything is 2px (or 9999px for
-  fully-round pills).
+- Don't add a new border-radius value. Pick one of the four steps —
+  `media` 8, `card` 12, `btn` 8, `chip` pill.
 - Don't duplicate a token's value directly in a component; reference the
   variable.
 - Don't regenerate a component's structure to apply this system — restyle
@@ -396,8 +470,10 @@ layout choice — do not crop assets to a third ratio:
 
 ## Known judgment calls (from the handoff bundle)
 
-1. **No achromatic equivalent for the old blue accent existed** — emphasis
-   moved to value + form (see Components above).
+1. **The old blue accent had no achromatic equivalent** — emphasis moved to
+   value + form. Partly superseded: an accent exists again at `#7fdd3c`, but
+   chosen against the screenshot corpus rather than inherited, and scoped to
+   structural marks. Value + form still carry most of the emphasis.
 2. **Hero emphasis phrase** ("AI products and workflows") — was blue, now a
    thin `border-strong` underline. Reads as emphasis, not a link.
 3. **Status badges (In Progress / Live) used to both read as blue** — now
