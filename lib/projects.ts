@@ -30,11 +30,18 @@ export interface Project {
   // section of edwin-context.md. Do not substitute one for the other.
   railSubtitle: string
   tagline: string
-  // `role` is sourced from lib/sources/resume.txt, NOT framer-export.json —
-  // a deliberate exception to the otherwise-strict 1:1 mapping. The Framer
-  // export says "Lead product designer" on every row, including Meridian and
-  // Volkswagen, where the résumé (and LinkedIn) say Senior. The résumé wins.
-  // Do not "correct" these back to the export in a future audit.
+  // `role` is sourced from lib/sources/resume.txt, kept in agreement with
+  // LinkedIn — NOT from framer-export.json. The export says "Lead product
+  // designer" on every row, and it is wrong for two of the seven in two
+  // different directions:
+  //
+  //   Meridian (retail-banking)   -> Senior Product Designer
+  //   Volkswagen (car-comparison) -> Product Designer
+  //
+  // Volkswagen is the subtle one: the work falls inside the Dec 2015-May 2019
+  // contracting block, so its title follows that period rather than the
+  // seniority of the surrounding permanent roles. See lib/sources/README.md.
+  // Do not "correct" either back to the export in a future audit.
   role: string
   status: "live" | "wip"
   tags: string[]

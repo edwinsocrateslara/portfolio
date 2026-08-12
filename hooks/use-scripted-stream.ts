@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import type { StructuredMessage } from "@/components/chat/message-bubbles"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
@@ -31,14 +31,16 @@ export function generateMessageId() {
 const EMPTY: StructuredMessage[] = []
 
 // Reveals a queue of assistant blocks one at a time, each after a random
-// 400-900ms "typing" pause — the mechanism traditional case studies already
-// use in the live chat. Shared by the chat page and the case-study review
-// route so both stream identically.
+// 400-900ms "typing" pause.
+//
+// The app shell is the only consumer. It used to be shared with the
+// /case-study/[slug] review route, but that route rendered the dormant
+// vibe-coded variant; with the variant deleted it renders in one static pass
+// and streams nothing. If a second consumer ever appears, note that the
+// thread key is the caller's to choose — nothing here assumes the shell.
 //
 // Messages are keyed BY THREAD. Every project owns an independent transcript,
-// the way a conversation list does; `HOME_THREAD` is the front door. Callers
-// that never pass a thread get HOME_THREAD and behave exactly as they did
-// when this hook held a single flat list.
+// the way a conversation list does; `HOME_THREAD` is the front door.
 //
 // The pending queue carries its own thread id rather than reading whichever
 // thread happens to be open. That matters: a reveal takes several seconds, and
@@ -127,24 +129,16 @@ export function useScriptedStream() {
     [typingThread]
   )
 
-  /** True once a thread has any message — used to decide "already revealed". */
-  const hasMessages = useCallback(
-    (thread: string) => (threads[thread]?.length ?? 0) > 0,
-    [threads]
-  )
-
-  const messages = useMemo(() => threads[HOME_THREAD] ?? EMPTY, [threads])
-
+  // `messages` / `isTyping` / `hasMessages` used to sit here as a
+  // single-thread convenience API for the review route, which read HOME_THREAD
+  // implicitly. That route no longer streams, so all three had zero consumers.
+  // Removed rather than kept "in case": an unused accessor that silently reads
+  // one hard-coded thread is a trap for the next caller.
   return {
-    // Single-thread API, unchanged for callers that never named a thread.
-    messages,
-    isTyping: typingThread === HOME_THREAD,
     enqueue,
     appendImmediate,
     reset,
-    // Thread-aware API.
     messagesOf,
     isTypingIn,
-    hasMessages,
   }
 }
