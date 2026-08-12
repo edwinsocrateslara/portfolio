@@ -65,7 +65,10 @@
   --type-title-size:   20px;  --type-title-lh:   30px;
   --type-subhead-size: 24px;  --type-subhead-lh: 36px;
   --type-h2-size:      32px;  --type-h2-lh:      48px;
-  --type-hero-size:    52px;  --type-hero-lh:    78px;
+  /* The one exception to 1.5x. See DESIGN.md — display type tightens as it
+     scales, and 78px on a three-line hero reads as three separate lines
+     rather than one headline. 60 is still a multiple of 4. */
+  --type-hero-size:    52px;  --type-hero-lh:    60px;
 
   /* Scrollbar width for the chat message area. The messages pane reserves
      this as a stable gutter and the input below it pads its right edge by

@@ -3,13 +3,18 @@ export const CONTENT_WIDTH = 720 // chat column, inputs, welcome screen
 // Landing hero measures. Not spacing — these are line-length limits, so they
 // are not on the 4px scale any more than CONTENT_WIDTH is.
 //
-// HERO_MEASURE is set so the headline breaks to TWO lines at desktop. That is
-// load-bearing: .type-hero is 52px on 78px leading (the system's 1.5x rule),
-// which the Claude Design handoff notes is "a one- or two-line setting" —
-// three centred lines at 78px stack to a 234px block that stops reading as a
-// headline. The mock solved it by dropping leading to 60px; this repo cannot,
-// because 1.5x is invariant. Widening the measure gets the same two-line
-// result without touching the type scale.
+// HERO_MEASURE keeps the headline to TWO lines at desktop.
+//
+// It was originally 1120 to compensate for leading that could not be changed:
+// .type-hero was 52/78 under the 1.5x rule, and three centred lines at 78px
+// stacked to a 234px block that stopped reading as a headline. Widening the
+// measure was the only lever available.
+//
+// The hero step is now 52/60, so that constraint is gone — three lines would
+// be 180px, which the Claude Design handoff calls acceptable. 1120 is kept
+// because two lines still reads better than three at this copy length, not
+// because it is forced. If the headline copy grows, narrowing this is now a
+// real option rather than a regression.
 export const HERO_MEASURE = 1120
 
 // Bordered blocks inside the 720px chat column, capped so they read as objects

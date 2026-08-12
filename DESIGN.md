@@ -55,13 +55,20 @@ though all three currently resolve to the same value.
 Every spacing value, every element dimension, and every font size is a
 multiple of 4.
 
-**Line-height is the one derived value, and it is exempt.** It is always
-exactly 1.5× the font size, which means it lands off the grid at most
-steps — 12px type gets 18px leading, 20px type gets 30px. That is correct
+**Line-height is the one derived value, and it is exempt.** It is 1.5× the
+font size at every step but one, which means it lands off the grid at most
+of them — 12px type gets 18px leading, 20px type gets 30px. That is correct
 and intentional. Forcing line-height onto multiples of 4 would either
-break the 1.5 ratio or constrain the type scale to sizes divisible by 8.
+break the ratio or constrain the type scale to sizes divisible by 8.
 The ratio matters more than the grid here, because leading is a
 relationship between two numbers rather than a measurement in space.
+
+**`hero` is the exception: 52 / 60, not 52 / 78.** Display type tightens as
+it scales — the larger the size, the less relative leading it needs, because
+the eye tracks a line return by its horizontal distance, not its vertical
+one. At 78px a three-line hero reads as three separate lines instead of one
+headline. 60px is 1.15×, and still a multiple of 4. The ratio holds at every
+other step, and this is the only place it is allowed not to.
 
 Other exceptions, all deliberate: **1px** borders and hairlines, the
 **2px** radii below, and **9999px** for fully-round pills. Letter-spacing
@@ -114,7 +121,8 @@ indices, badges, captions, and the SEND button. Loaded via
 `--font-plex-mono`; `tailwind.config.ts` maps `font-sans` → Archivo and
 `font-mono` → IBM Plex Mono. No serif anywhere in this system.
 
-**Six sizes, every one a multiple of 4, every line-height exactly 1.5×.**
+**Six sizes, every one a multiple of 4. Line-height is 1.5× at every step
+except `hero` — see the exception under The 4px rule above.**
 **12px is the floor** — there is no step below it, so nothing on the site
 renders below a reasonable legibility threshold. The size/line-height
 pairs are tokens (`--type-*-size` / `--type-*-lh`) so the two cannot drift
@@ -127,7 +135,7 @@ apart.
 | `title` | 20 / 30 |
 | `subhead` | 24 / 36 |
 | `h2` | 32 / 48 |
-| `hero` | 52 / 78 |
+| `hero` | 52 / 60 — the one non-1.5× step |
 
 There are more classes than sizes: several share a size and differ only in
 voice. Size is the scale; family, weight, and case are the voice.
