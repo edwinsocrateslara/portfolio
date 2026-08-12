@@ -125,9 +125,11 @@ WCAG **2.5.8 (AA)** requires 24×24 and every control clears it. **2.5.5 (AAA)**
 asks for 44×44, and this system takes the AA floor plus the density in exchange
 — a portfolio read on a laptop is not a phone keypad.
 
-**One exception, at `--space-44`:** the mobile menu toggle. On a phone the rail
-is behind it and the pane fills the screen, so it is the only way out of a
-view. That single control takes the AAA target; nothing else does.
+**Two exceptions, both at `--space-44`, both on mobile and both navigation:**
+the menu toggle and the brand mark. On a phone the rail is hidden behind the
+sheet, so these are the only way *out* of a view and the only way *home*. A
+control that is the sole route somewhere does not get to be 18px because the
+rest of the system likes 42. Nothing else takes the AAA target.
 
 Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 

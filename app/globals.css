@@ -622,6 +622,13 @@ body {
     padding: var(--space-16) var(--space-20);
     border-bottom: 1px solid rgb(var(--bureau-border));
   }
+  /* The brand mark is the way home on a phone, so it takes the same 44px
+     floor as the menu beside it. Its own padding is zeroed in the component
+     to keep the label flush with the bar's edge, which left it 18px tall. */
+  .shell-topbar .rail-brand {
+    min-height: var(--space-44);
+    align-items: center;
+  }
   /* The rail becomes a sheet that REPLACES the pane rather than overlaying
      it — it stays an ordinary flex child under the top bar. No fixed
      positioning, so there is no z-index race and nothing to go wrong if an

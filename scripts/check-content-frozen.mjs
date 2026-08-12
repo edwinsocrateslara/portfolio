@@ -1,6 +1,18 @@
 // Fails if the content layer has changed relative to a baseline ref.
 //
-// This exists for the experiment/impeccable branch. A visual experiment is
+// ⚠ NOT WIRED INTO THE BUILD ON main, DELIBERATELY. Compared against main FROM
+// main it is self-referential and passes trivially, and a gate that always
+// passes is worse than no gate: it reads as protection and is not. This is a
+// TOOL. It becomes meaningful only when pointed at a fixed baseline:
+//
+//     node scripts/check-content-frozen.mjs --base <ref>
+//
+// Use it when work runs on a branch that must not touch the content layer —
+// a visual experiment, a dependency bump, an agent-driven refactor — by
+// pointing it at the commit that branch started from, and wire it into that
+// branch's build chain rather than this one's.
+//
+// It was written for the experiment/impeccable branch. A visual experiment is
 // allowed to rewrite presentation; it is not allowed to touch the files that
 // encode where copy comes from. Those carry a sourcing contract with
 // documented overrides — role titles that disagree with framer-export.json on
