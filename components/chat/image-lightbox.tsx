@@ -167,7 +167,6 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
               alt={image.alt || ""}
               fill
               className="object-contain"
-              style={{ filter: "grayscale(.15)" }}
               sizes="92vw"
               priority
             />

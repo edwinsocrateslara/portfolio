@@ -249,10 +249,9 @@ edges. The impact card is narrower on the right by design
 
 - **Nav** — `.type-nav`, `text-secondary`; hover → `text-primary` +
   1px underline. Availability dot `text-primary`, 8px.
-- **Card** — `surface` fill or none, 1px `border`, radius 2. Image **1:1**
-  (matches the source preview images — all 7 are square), `grayscale(.15)`.
-  Index bottom-right, mono. Hover: border → `border-strong`, image
-  `grayscale(0)`, lift 1px.
+- **Card** — `surface` fill or none, 1px `border`, `radius-card`. Image
+  **1:1** (matches the source preview images — all 7 are square), unfiltered.
+  Index bottom-right, mono. Hover: border → `border-strong`, lift 1px.
 - **Grid gutter** (Selected Work) — `group` (32px).
 - **Chip / tag** — 1px `border`, `surface`, radius 2. Tag text `text-muted`
   `.type-meta`; prompt-chip `text-secondary` `.type-body` with a mono `→`
@@ -270,9 +269,20 @@ edges. The impact card is narrower on the right by design
 
 ## Photography
 
-Full-saturation photos are the only color on the page. Apply
-`grayscale(.15)` so they sit inside the achromatic system while staying
-photographic; drop to `grayscale(0)` on hover.
+**The work is the colour.** Project screenshots render at full saturation,
+unfiltered, everywhere they appear — rail thumbnails, sampler previews, chat
+images, deck slides, the lightbox.
+
+They used to carry `grayscale(.15)` so they would "sit inside the achromatic
+system". That was backwards: it spent effort suppressing the only chromatic
+material the page actually owns, in service of a rule about the chrome. The
+chrome can stay near-neutral without the content having to apologise for
+being in colour. 32 real screenshots is the strongest asset here and
+desaturating them was a self-inflicted loss.
+
+No hover-reveal either. A filter that lifts on hover implies the resting
+state is a preview of the real thing; there is no reason for the resting
+state to be worse.
 
 Two fixed aspect ratios, set by the actual asset dimensions rather than a
 layout choice — do not crop assets to a third ratio:
@@ -321,7 +331,8 @@ layout choice — do not crop assets to a third ratio:
    thin `border-strong` underline. Reads as emphasis, not a link.
 3. **Status badges (In Progress / Live) used to both read as blue** — now
    default = outline, Live = filled/inverted, the system's one inversion.
-4. **Photography under a neutral palette** — `grayscale(.15)`, adjustable.
+4. **Photography under a neutral palette** — originally `grayscale(.15)`.
+   Reversed: the screenshots now run unfiltered and are the page's colour.
 5. **Empty/welcome-state copy** — reuses the verbatim hero subtitle; no
    separate welcome copy exists in the source content.
 

@@ -275,7 +275,6 @@ export function ImageBubble({
           alt={image.alt || ""}
           fill
           className="object-cover"
-          style={{ filter: "grayscale(.15)" }}
           sizes={`${CONTENT_WIDTH}px`}
         />
       </button>
@@ -322,7 +321,6 @@ export function ImageRowBubble({
               alt={img.alt || ""}
               fill
               className="object-cover"
-              style={{ filter: "grayscale(.15)" }}
               sizes={`${CONTENT_WIDTH}px`}
             />
           </button>
