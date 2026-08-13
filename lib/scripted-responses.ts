@@ -2,7 +2,86 @@ import { projects } from "./projects"
 import { buildProjectBodyBlocks } from "./project-flow"
 import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
 import { meridianDeck } from "./case-study-deck"
+import { rotationFor } from "./chips"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
+
+// ── Scripted topics and their chip routing ─────────────────────────────
+// Every branch buildResponse can return, declared next to the code that
+// returns it. Same contract as the `chip` / `noChip` fields on
+// VOICE_ANSWERS: an entry with neither is a build failure, so a new
+// scripted answer cannot quietly end up with no way to reach it.
+//
+// `id` is the branch, not a trigger. The triggers stay inline below where
+// the matching happens — duplicating them here would create exactly the
+// second list this table exists to avoid.
+export interface ScriptedTopic {
+  id: string
+  chip?: string
+  placement?: "front-door" | "rotation"
+  chipOrder?: number
+  noChip?: string
+}
+
+// Rotation indices for the non-project surfaces. Projects take 0..6 (their
+// position in `projects`), so these continue past them — two surfaces sharing
+// an index would show identical chips.
+const SURFACE = {
+  deck: 7,
+  resume: 8,
+  stakeholder: 9,
+  voice: 10,
+  downtime: 11,
+} as const
+
+// The one place project chips earn a slot. Everywhere else they duplicate the
+// rail; here the answer has just narrated all seven and "which one?" is the
+// actual next step. Labels are matched by TEXT, not by the slug they carry —
+// "How did the live-selling work?" used to sit here with a hyphen while the
+// matcher tests "live selling" with a space, so it resolved only because the
+// slug bypassed the text match and broke the moment anyone typed it.
+const PROJECT_HANDOFF_CHIPS = [
+  { text: "Tell me about FutureFit AI", slug: "ai-workforce-development" },
+  { text: "Show me the Meridian redesign", slug: "retail-banking" },
+  { text: "How did the live selling work?", slug: "live-selling" },
+]
+
+export const SCRIPTED_TOPICS: ScriptedTopic[] = [
+  {
+    id: "walk-through",
+    chip: "Walk me through your work",
+    placement: "front-door",
+    chipOrder: 1,
+  },
+  {
+    id: "stakeholder",
+    chip: "How do you handle pushback on a design decision?",
+    placement: "rotation",
+  },
+  {
+    id: "downtime",
+    chip: "What do you do outside of work?",
+    placement: "rotation",
+  },
+  {
+    id: "project-reveal",
+    noChip:
+      "Seven rail rows and three sampler cards already point at the projects. A chip naming one duplicates the rail and spends a slot the chat could use on something only the chat answers.",
+  },
+  {
+    id: "deck",
+    noChip: "The rail's CASE STUDY row opens the deck as a pane swap.",
+  },
+  {
+    id: "resume",
+    noChip:
+      "The rail's RESUME row opens the real document. A chip would be a second path to the same PDF.",
+  },
+  {
+    id: "location",
+    noChip:
+      "One line, and it deliberately renders no follow-ups. Not worth a slot.",
+  },
+]
 
 // The chat reveal: the shared body, then follow-up chips. The order of the
 // body lives in lib/project-flow.ts and is shared with the standalone
@@ -14,40 +93,22 @@ import type { MessageBlock } from "@/hooks/use-scripted-stream"
 // ProjectHeaderBubble itself stays: /case-study/[slug] has no rail and still
 // renders it directly (components/case-study/case-study-view.tsx).
 function projectStream(p: (typeof projects)[0]): MessageBlock[] {
+  // Chips rotate per project rather than repeating one generic trio seven
+  // times. A visitor who just read a case study has seen the work and is the
+  // best candidate for the person questions, so the pool is all person
+  // questions and contains no project chips at all — they have the rail, and
+  // they just used it.
+  const index = projects.findIndex((x) => x.slug === p.slug)
   return [
     ...buildProjectBodyBlocks(p),
     {
       kind: "followups",
-      text: "Want to explore another project or ask something specific?",
-      chips: [
-        { text: "Walk me through your work" },
-        { text: "How do you design with AI?" },
-        { text: "Show me your résumé" },
-      ],
+      text: "Want to know how I work?",
+      chips: rotationFor(index).map((c) => ({ text: c.label })),
     },
   ]
 }
 
-// Initial intro sequence - a warm welcome
-export const INTRO_SEQUENCE: MessageBlock[] = [
-  {
-    kind: "text",
-    text: "Hey! I'm Edwin's AI assistant. I can walk you through his work, show you specific projects, or pull up his résumé.",
-  },
-  {
-    kind: "text",
-    text: "Edwin is a product designer focused on **AI products and workflows** — lately building AI coaches, conversational agents, and design systems that work with tools like Claude Code and v0.",
-  },
-  {
-    kind: "followups",
-    text: "Where would you like to start?",
-    chips: [
-      { text: "Walk me through your work" },
-      { text: "How do you design with AI?" },
-      { text: "Show me your résumé" },
-    ],
-  },
-]
 
 // Build response based on user input
 // Returns { response, projectSlug } where projectSlug is the new project being discussed
@@ -99,6 +160,7 @@ export function buildResponse(
                   ? "product-management"
                   : null)
 
+  // SCRIPTED_TOPICS "project-reveal"
   if (matchSlug) {
     // If asking about the SAME project already being discussed, let Claude API handle it
     if (matchSlug === currentProjectSlug && !preloadedSlug) {
@@ -114,6 +176,7 @@ export function buildResponse(
   // appear inside the project's chat reveal, and asking about the project
   // does not surface the deck. `projectSlug: null` keeps the two from
   // sharing conversation state.
+  // SCRIPTED_TOPICS "deck"
   if (wantsDeck) {
     return {
       response: [
@@ -136,17 +199,15 @@ export function buildResponse(
           // the shell — and it is redundant now that the rail's CASE STUDY row
           // opens the same deck as a pane swap.
           text: "Any slide opens full size.",
-          chips: [
-            { text: "Show me the Meridian redesign", slug: "retail-banking" },
-            { text: "Walk me through your work" },
-          ],
+          chips: rotationFor(SURFACE.deck, 2).map((c) => ({ text: c.label })),
         },
       ],
       projectSlug: null,
     }
   }
 
-  // "Walk me through your work" - overview of all projects
+  // "Walk me through your work" - overview of all projects.
+  // SCRIPTED_TOPICS "walk-through"
   if (
     t.includes("walk me through") ||
     t.includes("show me your work") ||
@@ -178,11 +239,7 @@ export function buildResponse(
         {
           kind: "followups",
           text: "Which one catches your interest?",
-          chips: [
-            { text: "Tell me about FutureFit AI", slug: "ai-workforce-development" },
-            { text: "Show me the Meridian redesign", slug: "retail-banking" },
-            { text: "How did the live-selling work?", slug: "live-selling" },
-          ],
+          chips: PROJECT_HANDOFF_CHIPS,
         },
       ],
       projectSlug: null, // Overview, not a specific project
@@ -195,7 +252,7 @@ export function buildResponse(
   // lib/sources/voice.md, these fall through to the API, whose system prompt
   // refuses anything not in the reference document.
 
-  // Resume
+  // Resume. SCRIPTED_TOPICS "resume"
   if (t.includes("resume") || t.includes("résumé") || t.includes("cv")) {
     return {
       response: [
@@ -207,10 +264,7 @@ export function buildResponse(
         {
           kind: "followups",
           text: "It's here: [Edwin Socrates Lara — Résumé](https://dochub.com/edwinsocrateslara/orO7lgeVLk9z02JKjMP2p5/edwin-socrates-lara-2026-docx)\n\nHappy to walk through any section in more detail.",
-          chips: [
-            { text: "Walk me through your work" },
-            { text: "How do you design with AI?" },
-          ],
+          chips: rotationFor(SURFACE.resume, 2).map((c) => ({ text: c.label })),
         },
       ],
       projectSlug: null,
@@ -221,6 +275,7 @@ export function buildResponse(
   // that used to wrap them ("a risk the stakeholder hasn't articulated yet",
   // the closing pattern statement) was invented and has been removed; any
   // generalised philosophy belongs in lib/sources/voice.md first.
+  // SCRIPTED_TOPICS "stakeholder"
   if (t.includes("stakeholder") || t.includes("pushback")) {
     return {
       response: [
@@ -234,10 +289,9 @@ export function buildResponse(
         },
         {
           kind: "followups",
-          chips: [
-            { text: "Show me the Meridian redesign", slug: "retail-banking" },
-            { text: "Show me the VW comparison tool", slug: "car-comparison" },
-          ],
+          chips: rotationFor(SURFACE.stakeholder, 2, ["stakeholder"]).map((c) => ({
+            text: c.label,
+          })),
         },
       ],
       projectSlug: null,
@@ -262,17 +316,17 @@ export function buildResponse(
         ...voice.paragraphs.map((text) => ({ kind: "text" as const, text })),
         {
           kind: "followups",
-          chips: [
-            { text: "Walk me through your work" },
-            { text: "Show me your résumé" },
-          ],
+          chips: rotationFor(SURFACE.voice, 2, [voice.id]).map((c) => ({
+            text: c.label,
+          })),
         },
       ],
       projectSlug: null,
     }
   }
 
-  // Outside work — verbatim from lib/sources/voice.md. Do not paraphrase:
+  // Outside work. SCRIPTED_TOPICS "downtime"
+  // Verbatim from lib/sources/voice.md. Do not paraphrase:
   // this is the only place the site says anything about Edwin personally,
   // and the wording is his.
   if (
@@ -294,17 +348,16 @@ export function buildResponse(
         },
         {
           kind: "followups",
-          chips: [
-            { text: "Walk me through your work" },
-            { text: "Show me your résumé" },
-          ],
+          chips: rotationFor(SURFACE.downtime, 2, ["downtime"]).map((c) => ({
+            text: c.label,
+          })),
         },
       ],
       projectSlug: null,
     }
   }
 
-  // Location
+  // Location. SCRIPTED_TOPICS "location"
   if (t.includes("based") || t.includes("where") || t.includes("location")) {
     return {
       response: [

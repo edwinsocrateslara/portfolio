@@ -5,16 +5,14 @@ import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
+import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { projects } from "@/lib/projects"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
 import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
-import {
-  buildResponse,
-  INTRO_SEQUENCE,
-} from "@/lib/scripted-responses"
+import { buildResponse } from "@/lib/scripted-responses"
 import {
   AssistantBubble,
   UserBubble,
@@ -26,12 +24,9 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 
-const PROMPT_CHIPS = [
-  "Walk me through your work",
-  "How do you design with AI?",
-  "See the Meridian case study",
-  "Show me your résumé",
-] as const
+// Derived from the answers, never listed here. See lib/chips.ts — adding an
+// answer with placement "front-door" changes this with no edit to this file.
+const PROMPT_CHIPS = frontDoorChips()
 
 function createTransport() {
   return new DefaultChatTransport({ api: "/api/chat" })
@@ -511,9 +506,9 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
                   >
                     {PROMPT_CHIPS.map((chip) => (
                       <PromptChip
-                        key={chip}
-                        label={chip}
-                        onClick={() => handleChipSelect(chip)}
+                        key={chip.id}
+                        label={chip.label}
+                        onClick={() => handleChipSelect(chip.label)}
                         disabled={activeBusy}
                       />
                     ))}

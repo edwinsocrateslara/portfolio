@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { frontDoorChips } from "@/lib/chips"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { Project } from "@/lib/projects"
@@ -15,11 +16,9 @@ import { buildProjectBodyBlocks } from "@/lib/project-flow"
 
 const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
 
-const FOLLOWUP_CHIPS = [
-  { text: "Walk me through your work" },
-  { text: "How do you design with AI?" },
-  { text: "Show me your résumé" },
-]
+// This route has no rail, so unlike the in-shell reveal it is not competing
+// with one — it gets the front-door set, which is the broadest entry point.
+const FOLLOWUP_CHIPS = frontDoorChips().map((c) => ({ text: c.label }))
 
 // The chat state lives on the landing page, so a chip picked here hands off
 // to it via a query param rather than trying to answer in place.
