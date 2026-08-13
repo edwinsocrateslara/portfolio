@@ -125,7 +125,7 @@ export function TextBubble({ text }: { text: string }) {
                 // two parts: an aria-hidden glyph and visually-hidden text. The
                 // literal "sr-only" here is enough for Tailwind's scanner to keep
                 // the utility in the bundle, and it is used in JSX elsewhere too.
-                '<a href="$2" target="_blank" rel="noopener" style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">$1' +
+                '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">$1' +
                   '<span aria-hidden="true" class="link-ext"> \u2197</span>' +
                   '<span class="sr-only"> (opens in a new tab)</span></a>'
               ),

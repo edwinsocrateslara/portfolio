@@ -9,7 +9,19 @@ const anthropic = createAnthropic({
 
 export const maxDuration = 30
 
-// Read Edwin's context from the markdown file
+// Read Edwin's context from the markdown file.
+//
+// ⚠ THIS RUNS ONCE, AT MODULE SCOPE. Editing lib/edwin-context.md has NO
+// effect on the running dev server until it is restarted — the file is not a
+// module, so nothing invalidates it and Fast Refresh will not pick it up.
+//
+//     pkill -f 'next dev' && npx next dev -p 3200
+//
+// This is not a bug worth fixing: reading the file per request would re-read
+// ~550 lines on every message to catch an edit that happens a few times a
+// year. It is just invisible. Adding LinkedIn to § Contact and then asking the
+// chat about it returned the old answer twice, which reads exactly like the
+// edit not having landed rather than like a stale cache.
 const edwinContext = readFileSync(
   join(process.cwd(), "lib", "edwin-context.md"),
   "utf-8"
