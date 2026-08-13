@@ -609,7 +609,19 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 /* ── Content pane ─────────────────────────────────────────────── */
 .pane {
   flex: 1;
+  /* BOTH axes, and the second one is load-bearing.
+     A flex item's default `min-*: auto` in the MAIN axis refuses to shrink
+     below its content, which silently defeats `flex: 1`. `.shell` is a row at
+     desktop, so only min-width mattered and this looked complete. Below 900px
+     the shell turns column, .pane's main axis becomes vertical, and without
+     min-height it grew to its full content height — 2388px inside an 820px
+     `overflow: hidden` shell. The dock and everything past the first screen
+     were clipped away with nothing able to scroll to them: not the document,
+     not .pane-scroll, which had been handed a height taller than its own
+     content and so had nothing to scroll.
+     Set them together so a future direction change cannot reopen it. */
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   position: relative;
