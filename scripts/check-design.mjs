@@ -42,8 +42,8 @@ const ALLOW = {
     "The SEND button fill, 42px tall, and only once there is something to send.",
   "components/chat/message-bubbles.tsx::no-accent-surface::background":
     "The 8px square IMPACT marker. A glyph, not a surface.",
-  "app/globals.css::no-accent-surface::.hero-band background (GRADIENT)":
-    "THE ONE EXCEPTION, taken deliberately. The front-door hero wash: an ellipse from top centre at 13% alpha fading out by 64%. This is the accent as a surface, which is exactly what this rule exists to stop, and it is the largest painted area on the site. It is allowed because the front door has one job, and because the cost is understood: it uses --hero-glow, its own token, so tuning or removing the wash cannot move the accent that marks controls. Nowhere else may do this. If a second site ever needs an entry here, the rule has stopped meaning anything and the exception should be reconsidered rather than extended.",
+  "app/globals.css::no-accent-surface::.hero-band::before background (GRADIENT)":
+    "THE ONE EXCEPTION, taken deliberately. The front-door hero wash: an ellipse from top centre at 13% alpha fading out by 64%, on its own pseudo-element at --hero-glow-height so its size is not a remainder of the hero content. This is the accent as a surface, which is exactly what this rule exists to stop, and it is the largest painted area on the site. It is allowed because the front door has one job, and because the cost is understood: it uses --hero-glow, its own token, so tuning or removing the wash cannot move the accent that marks controls. Nowhere else may do this. If a second site ever needs an entry here, the rule has stopped meaning anything and the exception should be reconsidered rather than extended.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────

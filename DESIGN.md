@@ -685,28 +685,77 @@ input and chips within itself, and the three sampler cards follow **after** it
 — so they start below the fold and are cut by the viewport edge rather than
 tucked inside it. There is something to scroll toward.
 
-**The band owns the top inset, not the scroller.** `.pane-front` has no top
-padding; `.hero-band` carries it as `--hero-inset`. That is not tidying: the
-band paints the glow, so while the inset lived on the scroller the glow started
-64px late and left a strip of flat background across the top of the pane. It
-read as a dark band above the wash, and it was visible in screenshots for a
-while before anyone named it. Measured before the fix: `rgb(19,19,19)` down to
-y=56, `rgb(25,30,21)` from y=64. After: `rgb(25,30,21)` from y=0.
+**The hero is ANCHORED, not centred, and that is the whole point.** While it
+centred inside the band, the band's height and the headline's position were the
+same number — so shrinking the band to raise the sampler raised the headline
+with it, and the two could not be tuned separately. Worse, the space below the
+chips was then a *remainder*: whatever the band had left over, 161px at
+1440×900. That is why it was never on the relatedness ladder. Nobody set it.
 
-Moving it is height-neutral. The band grew by the inset and the scroller's
-content box shrank by the same amount, so the band's bottom edge — and
-therefore the peek — did not move: sampler top is 708 before and after.
+`--hero-anchor` (`25dvh`) is where the headline sits, measured from the top of
+the viewport. It resolves to 225px at 1440×900, exactly where centring put it,
+so the hero did not move when the gap below it changed — verified element by
+element: headline 225, input 353, chips 419, before and after.
 
-The band is `calc(100% - var(--hero-peek))`, and **`--hero-peek` (160px) is
-the design intent stated as a number**: how much of the sampler sits above the
-fold. At 1440×900 that puts the cards at y=708 with **192px of a 293px card
-visible** and the rest cut by the viewport edge — enough to read as the page
-continuing rather than as a second screen waiting behind a fold.
+It scales rather than pinning to a fixed 225 because a fixed anchor pushes the
+hero off a short viewport: at 500px tall it would start a 290px hero at 225.
+**Below 900px it is overridden to `--space-80`**, because the anchor is
+measured from the viewport and the pane no longer starts there — the 77px top
+bar is above it, so `25dvh` landed the headline 116px lower than it used to.
 
-The band was `100%` before, which left the cards 32px visible. That is
-technically below the fold and reads as nothing there. Sizing the reveal
-directly, rather than deriving it from whatever the band happened to leave
-over, means the intent is tunable in one place and legible in the token name.
+**The band also owns the top inset rather than the scroller.** `.pane-front`
+has no top padding. The band paints the glow, so while that inset lived on the
+scroller the glow started 64px late and left a strip of flat background across
+the top of the pane — it read as a dark band above the wash. Measured before
+the fix: `rgb(19,19,19)` down to y=56, `rgb(25,30,21)` from y=64. After:
+`rgb(25,30,21)` from y=0.
+
+**Chips to sampler is `section` (64)** — the last gap on the front door that
+used to be emergent. The ladder now runs the whole height of the page:
+chip to chip 8, chips to input 16, headline to input 32, chips to sampler 64.
+
+`--hero-peek` is gone. It sized the band to leave a fixed reveal of the sampler
+below the fold, which only worked while the band's bottom edge decided where
+the cards sat. With the gap explicit, the cards follow the chips and the band's
+height decides nothing — the token had stopped doing its job before it was
+removed.
+
+**The fold behaviour is viewport-dependent, and that is the decision — not a
+bug to fix later.** At 1440×900 the cards sit fully visible at y=579 and the
+page scrolls 36px; they do not bleed past the viewport edge. At 1440×500 they
+are cut by the edge with 336px of scroll.
+
+The two cannot both hold. The hero content is 290px tall, so in a 900px
+viewport a ladder-scale gap beneath it cannot also push a 293px card
+off-screen. An earlier version got the bleed by making the gap a remainder —
+193px of leftover from centring — which is precisely the emergent value this
+section exists to eliminate. **The ladder won, deliberately.** Do not
+reintroduce a computed gap to recover the bleed on tall screens: that trades a
+chosen value for an accident, and the accident is what made the hero move
+whenever anything below it changed.
+
+### The glow has its own height
+
+`--hero-glow-height` is **512px**, on `.hero-band::before` rather than as a
+background on the band.
+
+It was a band background, which meant the ellipse was sized from the band's
+box — so the wash grew and shrank with whatever the hero content happened to
+be. Adding a chip row would have resized it silently. Same fault as the gap,
+and it was already visible: the glow faded out at y=445, 359 and 423 at
+1440×900, 1440×500 and 380×820, purely because the band was a different height
+at each. Nobody chose any of those.
+
+512px reproduces the 1440×900 appearance it had when the band was 515 tall.
+Measured after decoupling, the wash now fades at **450 / 443 / 443** — the same
+at every viewport, which is the point.
+
+`isolation: isolate` on the band is load-bearing. The pseudo-element needs
+`z-index: -1`, because an absolutely positioned pseudo paints *above* static
+siblings and would otherwise sit over the headline. But without a stacking
+context, `-1` puts it behind `.shell`'s opaque background and the glow
+disappears entirely — which it did on the first attempt, silently: no error,
+just a flat page.
 
 `min-height`, not `height`: on a short viewport the content is taller than the
 band and the band grows rather than clipping. `.pane-front` scrolls either way,
@@ -716,8 +765,8 @@ so the cards are always reachable — verified down to 1440×500.
 and at 1440×500 it travels from y=192 to y=−51, fully leaving the viewport. At
 taller viewports it moves the full scroll range and simply runs out of page.
 
-**The glow does not reach the sampler.** The band ends at y=676, the cards
-start at 708, and the glow has faded out by 433 — 64% of a 676px band. The
+**The glow does not reach the sampler.** It fades out by y=480 — 64% of a
+515px band — and the cards start at 579. The
 brightest pixel behind a card is `rgb(19,19,19)`, flat ground. So the cards'
 `backdrop-filter` stays inert, exactly as it is on a flat background
 elsewhere: it is not doing visible work there and the cards look unchanged.
@@ -752,9 +801,9 @@ differs:
 | | background there | ratio |
 |---|---|---|
 | band's brightest point | `rgb(34,46,25)` | — |
-| headline `#e8e8e8` | `rgb(29,38,23)` | **12.77:1** |
-| placeholder `#8f8f8f` | `rgb(25,31,22)` | **5.20:1** (5.04 at 380) |
-| chip text `#a0a0a0` | `rgb(24,27,21)` | **6.66:1** |
+| headline `#e8e8e8` | `rgb(27,33,22)` | **13.43:1** |
+| placeholder `#8f8f8f` | `rgb(23,25,21)` | **5.47:1** (5.09 at 380) |
+| chip text `#a0a0a0` | `rgb(21,22,20)` | **6.94:1** |
 
 All clear AA. **The placeholder is the binding constraint on
 `--hero-glow-alpha`**, and it is tighter than it looks: `#8f8f8f` against the

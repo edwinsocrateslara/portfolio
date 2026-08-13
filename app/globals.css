@@ -148,19 +148,29 @@
   --hero-glow: var(--bureau-accent);
   --hero-glow-alpha: 0.13;
   --hero-glow-extent: 64%;
+  /* The glow's own height, so its size stops being a remainder.
+     It used to be painted on .hero-band, which meant the wash was sized by
+     however tall the hero content happened to be — adding a chip row would
+     have silently resized it, the same fault as the gap below the chips being
+     whatever the band had left over. 512px reproduces the appearance it had
+     when the band was 515 tall at 1440x900: fully faded by y=445. */
+  --hero-glow-height: 512px;
 
-  /* How much of the sampler sits above the fold. The band is the viewport
-     minus this, so the cards start inside the viewport and are cut by its
-     edge — visible enough to read as the page continuing, not as a second
-     screen waiting behind a fold. */
-  --hero-peek: 160px;
+  /* Where the headline sits, measured from the top of the viewport.
+     ANCHORED, not centred. While the hero centred inside the band, the band's
+     height and the hero's position were the same number — so shrinking the
+     band to raise the sampler raised the headline with it, and the two could
+     not be tuned separately. Anchoring breaks that coupling: the gap below the
+     chips can change without anything above it moving.
 
-  /* Vertical inset at the top of the front door. It lives on .hero-band, not
-     on .pane-front, because the band paints the glow — as padding on the
-     scroller it left a 64px strip of unglowed background across the top of
-     the pane, which read as a dark band above the wash. Measured before the
-     fix: rgb(19,19,19) down to y=56, rgb(25,30,21) from y=64. */
-  --hero-inset: var(--space-64);
+     25dvh resolves to 225px at 1440x900, which is exactly where centring put
+     it, so the front door is unchanged at that size. It scales rather than
+     pinning to 225 because a fixed anchor pushes the hero off a short
+     viewport — at 500px tall it would start the headline at 225 with 290px of
+     content to fit in the remaining 275. */
+  --hero-anchor: 25dvh;
+
+
 
   /* ── Chat input geometry ───────────────────────────────────────
      The resting height is DERIVED and appears as a literal nowhere:
@@ -695,7 +705,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      and centring the whole column would pull the sampler back up into the
      viewport, which is the opposite of the point. */
   justify-content: flex-start;
-  /* No TOP padding — the band owns that as --hero-inset so the glow reaches
+  /* No TOP padding — the band owns that as --hero-anchor so the glow reaches
      the top edge of the pane. Bottom padding stays: nothing paints there. */
   padding: 0 var(--space-40) var(--space-64);
 }
@@ -715,18 +725,40 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    toward rather than an apparently empty page. */
 .hero-band {
   position: relative;
-  padding-top: var(--hero-inset);
-  /* The band grew by --hero-inset when it took that padding on, and
-     .pane-front's content box grew by the same amount when it gave it up, so
-     the band's BOTTOM edge — and therefore the peek — is exactly where it was.
-     Verified: sampler top 708 before and after at 1440x900. */
-  min-height: calc(100% - var(--hero-peek));
+  /* Creates a stacking context so the glow's z-index: -1 stays INSIDE the
+     band. Without it, -1 puts the pseudo behind .shell's opaque background
+     and the wash disappears entirely — which it did, silently, on the first
+     attempt: no error, just a flat page. */
+  isolation: isolate;
+  /* The anchor IS the top padding, so the band still starts at the pane's top
+     edge and the glow still covers it, which was the other reason that inset
+     had to live here rather than on the scroller. */
+  padding-top: var(--hero-anchor);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* flex-start. Centring is what made the space below the chips a REMAINDER —
+     whatever the band had left over — which is why that gap was never on the
+     relatedness ladder: nobody set it. */
+  justify-content: flex-start;
   flex: none;
+}
+
+/* The glow, on its own layer at its own height rather than as a background on
+   the band. Decoupled deliberately: as a band background its ellipse was sized
+   from the band's box, so the wash grew and shrank with the hero's content.
+   Here it is --hero-glow-height and nothing else changes it.
+
+   z-index: -1 because an absolutely positioned pseudo-element paints ABOVE
+   static siblings, which would have put the wash over the headline. */
+.hero-band::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--hero-glow-height);
+  z-index: -1;
+  pointer-events: none;
   background: radial-gradient(
     ellipse at top center,
     rgb(var(--hero-glow) / var(--hero-glow-alpha)),
@@ -832,7 +864,11 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .rail[data-open="true"] .rail-brand { display: none; }
   .rail[data-open="true"] .rail-scroll { padding-top: var(--space-16); }
   .pane-front { padding: 0 var(--space-20) var(--space-40); }
-  .hero-band { --hero-inset: var(--space-40); }
+  /* The anchor is measured from the VIEWPORT, and below 900px the pane no
+     longer starts there — the 77px top bar is above it, so 25dvh landed the
+     headline 116px lower than it used to sit. A flat value here keeps the
+     hero near the top of a screen that has much less of it to spare. */
+  .hero-band { --hero-anchor: var(--space-80); }
   /* Tighter gutters, but the bottom reserve is still the dock's own height —
      writing 0 here silently undid --dock-h and put the last message back
      underneath the dock at mobile only, while desktop looked correct. */
@@ -855,7 +891,10 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-between);
-  margin-top: var(--space-group);
+  /* The one gap on the front door that used to be emergent. section (64):
+     looser than chips to input (16) and headline to input (32), so the ladder
+     runs the whole height of the page rather than stopping at the chips. */
+  margin-top: var(--space-section);
 }
 
 .sampler-card {
