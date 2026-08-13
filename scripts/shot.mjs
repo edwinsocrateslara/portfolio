@@ -34,6 +34,73 @@
 //
 // Chrome must be running with --remote-debugging-port=9222. No dependencies:
 // Node's built-in WebSocket does the whole job.
+import { existsSync } from "fs"
+import { execSync } from "child_process"
+
+/**
+ * Refuse to probe a dev server that is not actually serving.
+ *
+ * This exists because of a specific mistake, made twice: `rm -rf .next` while
+ * `next dev` was running. The server does not die — it keeps its port and
+ * answers nothing, so CDP still attaches, the page evaluates, and every
+ * selector returns an empty array. That output is indistinguishable from a
+ * real regression. Both times it was read as one, and the second time it sent
+ * me re-verifying a chip rotation that was never broken.
+ *
+ * The failure is silent by construction, so memory is the wrong guard. One
+ * fetch before the first navigation turns a plausible-looking empty result
+ * into a named cause. `npm run clean` is the safe way to clear .next.
+ */
+const preflighted = new Set()
+async function preflight(url) {
+  const origin = new URL(url).origin
+  if (preflighted.has(origin)) return
+  let ok = false
+  try {
+    const res = await fetch(origin, { signal: AbortSignal.timeout(8000) })
+    ok = res.ok
+  } catch {}
+  if (ok) {
+    preflighted.add(origin)
+    return
+  }
+
+  const devRunning = (() => {
+    try {
+      return execSync("pgrep -f 'next dev' || true", { encoding: "utf8" }).trim().length > 0
+    } catch {
+      return false
+    }
+  })()
+  // Resolved from this file, not cwd — these scripts get run from anywhere.
+  const hasBuild = existsSync(new URL("../.next", import.meta.url))
+
+  // NOTE: do not try to detect the wedge by "is .next missing" — a live dev
+  // server recreates the directory within moments of it being deleted, so
+  // that test almost never holds by the time this runs. Verified by
+  // reproducing the mistake: .next was back before the first probe. What is
+  // reliably true is the pair "process alive, port silent", so the message
+  // leads with the cause that has actually happened rather than pretending
+  // to tell the two apart.
+  const port = new URL(url).port || "3000"
+  const why = !devRunning
+    ? "No `next dev` process is running. Start one:\n" +
+      "      npx next dev -p " + port
+    : "A `next dev` process is running but " + origin + " did not answer.\n\n" +
+      "  Most likely: .next was cleared while the server was live. It keeps the\n" +
+      "  port and serves nothing, and " + (hasBuild ? "the directory you see now was regenerated\n  after the fact" : "the directory is gone") + ". Use `npm run clean` next time.\n" +
+      "  Otherwise it may still be compiling, or be on another port — `npm run dev`\n" +
+      "  takes no port flag and defaults to 3000.\n\n" +
+      "  Fix:  npm run clean && npx next dev -p " + port
+
+  throw new Error(
+    "shot.mjs preflight FAILED — refusing to probe.\n\n  " +
+      why +
+      "\n\n  Probing anyway would return empty selectors that look exactly like a\n" +
+      "  regression in the page under test. That has happened twice.\n"
+  )
+}
+
 const arg = (name, fallback) => {
   const i = process.argv.indexOf(`--${name}`)
   return i === -1 ? fallback : process.argv[i + 1]
@@ -75,7 +142,11 @@ export async function connect(port = CDP_PORT) {
     return r.result.result.value
   }
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
-  const goto = async (url, settle = WAIT) => { await send("Page.navigate", { url }); await sleep(settle) }
+  const goto = async (url, settle = WAIT) => {
+    await preflight(url)
+    await send("Page.navigate", { url })
+    await sleep(settle)
+  }
 
   /**
    * Wait for the scripted stream to finish rather than guessing a duration.

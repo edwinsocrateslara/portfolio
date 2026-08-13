@@ -12,7 +12,8 @@
     "check:context": "node --experimental-strip-types scripts/build-context.mjs --check",
     "check:sources": "npm run check:voice && npm run check:context",
     "check:design": "node scripts/check-design.mjs",
-    "check:chips": "node --experimental-strip-types scripts/check-chips.mjs"
+    "check:chips": "node --experimental-strip-types scripts/check-chips.mjs",
+    "clean": "node scripts/clean.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
