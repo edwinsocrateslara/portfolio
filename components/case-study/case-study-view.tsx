@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useState } from "react"
 import { frontDoorChips } from "@/lib/chips"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
