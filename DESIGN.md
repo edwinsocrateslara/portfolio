@@ -170,9 +170,36 @@ the SVG trace is safer than the JSON, independent of the 45 KB.
 If a future change puts colour in JSON, YAML, or an `.svg` file on disk, rule
 6 must be extended to scan it or it is not covering that colour.
 
-**Where it is forbidden.** It is never a surface, never a large painted
-area, never a gradient. The accent marks an edge or a state; the moment it
-paints a region it stops being a signal and becomes a theme.
+**Where it is forbidden.** It marks an edge or a state; the moment it paints a
+region it stops being a signal and becomes a theme. So: not a surface, not a
+large painted area, not a gradient — **with exactly one documented exception.**
+
+### The one exception: the front-door glow
+
+`.hero-band` carries a lime radial — an ellipse from top centre at 13% alpha
+fading out by 64%. That is the accent as a surface, and it is the largest
+painted area on the site. It was taken deliberately, with the tradeoff
+understood, because the front door has one job.
+
+Three things keep it from becoming a precedent:
+
+1. **It uses `--hero-glow`, its own token**, defaulting to the accent's value
+   but separately tunable. The wash can be re-hued or removed without moving
+   the accent that marks controls.
+2. **Rule 6 watches `--hero-glow` too.** Renaming a colour is not a way past
+   the check — that would make the rule trivially defeatable.
+3. **The site is allowlisted by name, with its reason in the entry.** The rule
+   is unchanged everywhere else; a second accent surface anywhere still fails
+   the build.
+
+Gradients were previously **not** allowlistable at all, on the reasoning that a
+gradient is never a control. That absolutism is relaxed to accommodate this
+one decision — but the finding still reads `(GRADIENT)` in the detail string,
+so an entry waiving one is visibly waiving a painted area and cannot be
+mistaken for waiving a control. The default is still failure.
+
+**If a second site ever needs an entry, the rule has stopped meaning anything**
+and the exception should be reconsidered rather than extended.
 
 This is enforced, not just documented — **`check:design` rule 6** fails the
 build on `--bureau-accent` inside a `background`, `background-color`,
@@ -238,21 +265,59 @@ pane. It is gone. The input is a fully-round, hairlined, filled object with its
 own edge on all four sides, and a rule a few pixels above its curve read as a
 seam rather than as structure — two horizontal lines saying the same thing.
 
-**What marks the boundary now is the input itself, plus the dock's `--space-20`
-padding, and nothing else.** There is no line. That is a real change and worth
-knowing before it is "fixed" back:
+**What marks the boundary is the dock itself: a translucent fill over a blur,
+with the transcript scrolling underneath it.** No line, and no hard clip.
 
-- Content does **not** scroll under the input. `.pane-scroll` clips at its own
-  box, and its bottom edge is exactly the dock's top edge — measured, both at
-  y=810 in a 900px viewport. So text never touches or overlaps the field.
-- `.pane-scroll` has `padding-bottom: 0`, so a line **can** be cut mid-glyph at
-  that clip. With the rule, the cut read as content passing under an edge;
-  without it, the cut has no explanation.
+This is the scrim the earlier version of this section predicted would be
+needed. It said the fix, if the bare cut read badly, was "a short scrim at the
+bottom of `.pane-scroll`". It was built as a dock treatment instead, which does
+the same job from the other side and does one thing the gradient could not:
+it gives the input a surface to sit on, which it had lacked since the rule came
+off.
 
-The gap is 20px, so the cut happens well clear of the field rather than against
-it, and the pill's own border still says "a different kind of thing starts
-here". If the bare cut ever reads badly, the fix is a short scrim at the bottom
-of `.pane-scroll` — not the rule back, which is what was wrong.
+**The fill does the work; the blur softens what the fill does not fully hide.**
+Verified with real text parked underneath — blur alone leaves a legible grey
+smear competing with the placeholder, and shows a seam where blurring starts.
+`rgb(var(--bureau-bg) / 0.72)` plus `blur(var(--layer-blur))` together suppress
+it. Unlike the sampler's blur, **this one has something behind it** and is
+doing visible work by the rule at the top of this document.
+
+### The dock is out of flow, and why not sticky
+
+`.pane-dock` is `position: absolute` against `.pane`, and `.pane-scroll` fills
+the whole pane so content passes beneath it.
+
+Sticky inside the scroller is the tidier-looking option and it is wrong here.
+`.pane-scroll` reserves a 4px scrollbar gutter, so a sticky child is laid out
+in the content box — 4px narrower than the pane — and its fill stops short of
+the right edge. Measured at 1440: a 1172px dock in a 1176px pane. It also
+needs a negative margin matched to the scroller's horizontal padding, which
+differs by breakpoint; at 380 the desktop value overshot by 36px. Positioning
+against `.pane` sidesteps the gutter entirely and leaves the column-alignment
+fix above untouched.
+
+**The scroller reserves the dock's height as `--dock-h`,** published by a
+`ResizeObserver` in `app-shell`. Without it the last message sits permanently
+underneath the dock. It cannot be a constant: the dock is 90px at rest and
+220px with the input grown to its 180px ceiling, so a fixed value would either
+strand the last message early or leave it half-covered. A `ResizeObserver`
+rather than an effect keyed to the input's value, because the dock also
+changes height on viewport rewraps and font load, which a value-keyed effect
+cannot see.
+
+Verified at both widths, scrolled fully to the bottom: the last message clears
+the dock by 8px, and with the input at its ceiling the reserve tracks it —
+1440: dock 90 → 220, reserve follows; 380: dock 82 → 212, reserve follows.
+
+Two ways this reserve goes wrong, both found by measuring rather than reading:
+
+- The mobile breakpoint overrides `.pane-scroll`'s padding, and **must keep the
+  bottom reserve**. Writing `0` there silently undid `--dock-h` at mobile only,
+  while desktop still looked correct.
+- The deck and vibe-coding panes share `.pane-scroll` and have **no composer**,
+  so they must reserve nothing. Left to the fallback they carried 80px of dead
+  space at the bottom — invisible on a scrolling pane until you reach the end
+  of it. `--dock-h` is set to `0px` explicitly when no dock is mounted.
 
 ### The chat input is the one radius that moves
 
@@ -307,14 +372,16 @@ break the ratio or constrain the type scale to sizes divisible by 8.
 The ratio matters more than the grid here, because leading is a
 relationship between two numbers rather than a measurement in space.
 
-**`hero` is the exception: 52 / 60, not 52 / 78.** Display type tightens as
-it scales — the larger the size, the less relative leading it needs, because
-the eye tracks a line return by its horizontal distance, not its vertical
-one. At 78px a three-line hero reads as three separate lines instead of one
-headline. 60px is 1.15×, and still a multiple of 4. The ratio holds at every
-other step, and this is the only place it is allowed not to.
+**There is no exception. The ratio holds at every step.**
 
-Other exceptions, all deliberate: **1px** borders and hairlines, the
+There used to be one: a `hero` step at 52 / 60 rather than 52 / 78, on the
+argument that display type tightens as it scales. That step existed to carry
+the front-door headline and nothing else, and when the headline moved to `h2`
+at weight 400 it had zero users. Both the step and its exception were deleted
+rather than left in the scale — an exception that exists to justify one value
+stops being a rule about type and becomes a note about history.
+
+Other exceptions to the 4px grid, all deliberate: **1px** borders and hairlines, the
 **2px** radii below, and **9999px** for fully-round pills. Letter-spacing
 is optical tracking rather than layout, is sub-pixel by nature, and is
 also exempt.
@@ -376,6 +443,9 @@ so these are the only way *out* of a view and the only way *home*. A control
 that is the sole route somewhere does not get to be 18px because the rest of
 the system likes 42.
 
+**Prompt chips are 44px** — `--space-12` above and below a 12px caption. They
+were 42 at body type; the text shrank and the target grew.
+
 **The rail's contact links are 26px** — `--space-4` above and below a 12px
 label on 18px leading. That clears 2.5.8's 24×24 AA floor and does not reach
 2.5.5's 44. They were 18px before the CONTACT block was built, which failed AA
@@ -401,7 +471,7 @@ indices, badges, captions, and the SEND button. Loaded via
 `font-mono` → IBM Plex Mono. No serif anywhere in this system.
 
 **Six sizes, every one a multiple of 4. Line-height is 1.5× at every step
-except `hero` — see the exception under The 4px rule above.**
+with no exceptions.**
 **12px is the floor** — there is no step below it, so nothing on the site
 renders below a reasonable legibility threshold. The size/line-height
 pairs are tokens (`--type-*-size` / `--type-*-lh`) so the two cannot drift
@@ -414,14 +484,12 @@ apart.
 | `title` | 20 / 30 |
 | `subhead` | 24 / 36 |
 | `h2` | 32 / 48 |
-| `hero` | 52 / 60 — the one non-1.5× step |
 
 There are more classes than sizes: several share a size and differ only in
 voice. Size is the scale; family, weight, and case are the voice.
 
 | Class | Family | Weight | Step |
 |---|---|---|---|
-| `.type-hero` | Archivo | 800 | hero |
 | `.type-h2` | Archivo | 700 | h2 |
 | `.type-subhead` | Archivo | 700 | subhead |
 | `.type-title` | Archivo | 700 | title |
@@ -528,13 +596,29 @@ each re-deriving its own padding and hover.
 
 **Size is chosen by role, not by taste.**
 
-| Class | Type step | Padding | For |
-|---|---|---|---|
-| `.chip` | body | `8 / 16` | an action the visitor can take |
-| `.chip-sm` | label | `4 / 8` | metadata about something else |
+| Class | Type step | Padding | Target | For |
+|---|---|---|---|---|
+| `.chip` | caption | `12 / 16` | **44px** | an action the visitor can take |
+| `.chip-sm` | label | `4 / 8` | — | metadata about something else |
 
-An action needs room to hit and reads at body size; a tag describing a card
-does not get to be the same weight as the thing it describes.
+A tag describing a card does not get to be the same weight as the thing it
+describes.
+
+**`.chip` used to take body type**, on the reasoning that shrinking a tap
+target's label works against it. That was reversed deliberately: the label
+dropped to 12 and the padding rose to `--space-12`, so the text reads small
+while the target is **44px** — `12 + 18 + 12 + 2`. Measured, not assumed. The
+argument was right about targets and wrong about the link between them: label
+size and hit size are independent, and treating them as one cost the chips
+more weight than an action of that scale earns.
+
+**`caption`, not `label`, and the difference matters.** Both are 12 / 18. But
+`label` is mono, uppercase and tracked — the system-chrome voice, for nav,
+badges, indices and meta. Chips carry things a person would actually say, so
+they take Archivo in sentence case. Setting them in `label` made the front door
+shout its own prompts in uppercase mono, and made them ~40% wider: the four
+front-door chips measured 1312px on one row at `label` against **885px** at
+`caption`.
 
 **Fill:**
 
@@ -592,6 +676,92 @@ It was traced from a Lottie file rather than played from one. `lottie-web` is
 source has no gradients, no image assets and every bezier handle at zero — so
 the trace is exact, not an approximation. The file and the full derivation are
 kept in `docs/provenance/typing-indicator/`, which does not ship.
+
+## The front door
+
+The hero is a **band sized to the viewport**, not a centred block. `.hero-band`
+takes `min-height: 100%` of `.pane-front`'s content box, centres the headline,
+input and chips within itself, and the three sampler cards follow **after** it
+— so they start below the fold and are cut by the viewport edge rather than
+tucked inside it. There is something to scroll toward.
+
+**The band owns the top inset, not the scroller.** `.pane-front` has no top
+padding; `.hero-band` carries it as `--hero-inset`. That is not tidying: the
+band paints the glow, so while the inset lived on the scroller the glow started
+64px late and left a strip of flat background across the top of the pane. It
+read as a dark band above the wash, and it was visible in screenshots for a
+while before anyone named it. Measured before the fix: `rgb(19,19,19)` down to
+y=56, `rgb(25,30,21)` from y=64. After: `rgb(25,30,21)` from y=0.
+
+Moving it is height-neutral. The band grew by the inset and the scroller's
+content box shrank by the same amount, so the band's bottom edge — and
+therefore the peek — did not move: sampler top is 708 before and after.
+
+The band is `calc(100% - var(--hero-peek))`, and **`--hero-peek` (160px) is
+the design intent stated as a number**: how much of the sampler sits above the
+fold. At 1440×900 that puts the cards at y=708 with **192px of a 293px card
+visible** and the rest cut by the viewport edge — enough to read as the page
+continuing rather than as a second screen waiting behind a fold.
+
+The band was `100%` before, which left the cards 32px visible. That is
+technically below the fold and reads as nothing there. Sizing the reveal
+directly, rather than deriving it from whatever the band happened to leave
+over, means the intent is tunable in one place and legible in the token name.
+
+`min-height`, not `height`: on a short viewport the content is taller than the
+band and the band grows rather than clipping. `.pane-front` scrolls either way,
+so the cards are always reachable — verified down to 1440×500.
+
+**The hero input scrolls with the hero; it is not pinned.** `position: static`,
+and at 1440×500 it travels from y=192 to y=−51, fully leaving the viewport. At
+taller viewports it moves the full scroll range and simply runs out of page.
+
+**The glow does not reach the sampler.** The band ends at y=676, the cards
+start at 708, and the glow has faded out by 433 — 64% of a 676px band. The
+brightest pixel behind a card is `rgb(19,19,19)`, flat ground. So the cards'
+`backdrop-filter` stays inert, exactly as it is on a flat background
+elsewhere: it is not doing visible work there and the cards look unchanged.
+
+**The sampler must stay outside the band.** Inside it, it was centred along
+with the headline and sat in the middle of the viewport — which is the opposite
+of the intent, and looked correct enough to miss.
+
+**Type:** headline at the `h2` step, `32 / 48` at weight **400** — a Tailwind
+`font-normal` utility stepping the class's weight, which is what
+`@layer components` is for. It was `52 / 60` at weight 800.
+
+**Spacing — the ladder has to be legible**, tightest to loosest:
+
+| | | |
+|---|---|---|
+| chip to chip | `within` | 8 |
+| chips to input | `between` | 16 |
+| headline to input | `group` | 32 |
+
+Each step doubles, so a visitor can see that the chips belong to each other
+more than they belong to the input, and to the input more than the headline
+does. Two earlier arrangements broke this: chips at `within` from the input —
+the same distance as from each other — flattened the top two rungs into one;
+and headline at `section` (64) pushed the headline out of the group entirely.
+A ladder only reads as a ladder when the rungs differ.
+
+**Contrast over the glow**, measured on rendered pixels rather than computed
+from the token — the glow is a gradient, so the value under each element
+differs:
+
+| | background there | ratio |
+|---|---|---|
+| band's brightest point | `rgb(34,46,25)` | — |
+| headline `#e8e8e8` | `rgb(29,38,23)` | **12.77:1** |
+| placeholder `#8f8f8f` | `rgb(25,31,22)` | **5.20:1** (5.04 at 380) |
+| chip text `#a0a0a0` | `rgb(24,27,21)` | **6.66:1** |
+
+All clear AA. **The placeholder is the binding constraint on
+`--hero-glow-alpha`**, and it is tighter than it looks: `#8f8f8f` against the
+band's *brightest* point is **4.41:1**, a fail. It passes only because the
+input sits below the brightest region — and tightening `headline to input`
+from 64 to 32 moved it further up the gradient, taking 380 from 5.04 to 4.99.
+Re-measure this after any spacing change, not just after an alpha change.
 
 ## Photography
 

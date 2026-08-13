@@ -42,6 +42,8 @@ const ALLOW = {
     "The SEND button fill, 42px tall, and only once there is something to send.",
   "components/chat/message-bubbles.tsx::no-accent-surface::background":
     "The 8px square IMPACT marker. A glyph, not a surface.",
+  "app/globals.css::no-accent-surface::.hero-band background (GRADIENT)":
+    "THE ONE EXCEPTION, taken deliberately. The front-door hero wash: an ellipse from top centre at 13% alpha fading out by 64%. This is the accent as a surface, which is exactly what this rule exists to stop, and it is the largest painted area on the site. It is allowed because the front door has one job, and because the cost is understood: it uses --hero-glow, its own token, so tuning or removing the wash cannot move the accent that marks controls. Nowhere else may do this. If a second site ever needs an entry here, the rule has stopped meaning anything and the exception should be reconsidered rather than extended.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────
@@ -86,7 +88,11 @@ const RGBA = /\brgba?\(\s*\d/g
 // exactly what the accent is for.
 const FILL_PROPS_CSS = ["background", "background-color", "background-image", "fill"]
 const FILL_PROPS_JS = ["background", "backgroundColor", "backgroundImage", "fill"]
-const ACCENT = "--bureau-accent"
+// Both accent-bearing tokens. --hero-glow is its own name so the hero wash can
+// be tuned without moving the accent, but it defaults to the accent's value and
+// paints the same colour — so the rule has to watch it too, or giving a colour
+// a second name would be all it took to walk past this check.
+const ACCENT_TOKENS = ["--bureau-accent", "--hero-glow"]
 
 /** CSS comments only. The JS stripper treats `//` as a comment, which would
  *  eat everything after a `url(https://…)`. */
@@ -126,13 +132,14 @@ function checkAccentFills(file, raw, { css }) {
     const re = new RegExp(`(?:^|[\\s{;,])${prop}\\s*:\\s*(${stop})`, "g")
     let m
     while ((m = re.exec(src))) {
-      if (!m[1].includes(ACCENT)) continue
+      const token = ACCENT_TOKENS.find((t) => m[1].includes(t))
+      if (!token) continue
       const gradient = /\b(?:linear|radial|conic)-gradient\s*\(/.test(m[1])
       const where = css ? `${selectorAt(src, m.index)} ${prop}` : prop
       out.push({
         file, rule: "no-accent-surface",
-        detail: gradient ? `${where} (GRADIENT — not allowlistable)` : where,
-        line: lineAt(raw, m.index), gradient,
+        detail: gradient ? `${where} (GRADIENT)` : where,
+        line: lineAt(raw, m.index), gradient, token,
       })
     }
   }
@@ -341,7 +348,12 @@ function selfTest() {
   if (cssBad.length !== 2)
     problems.push(`control: rule "no-accent-surface" found ${cssBad.length}/2 accent fills in the bad CSS fixture`)
   if (!cssBad.some((f) => f.gradient))
-    problems.push('control: rule "no-accent-surface" did not mark the accent GRADIENT as non-allowlistable')
+    problems.push('control: rule "no-accent-surface" did not flag the accent GRADIENT')
+  // The second token must be caught too, or giving a colour another name would
+  // be all it took to walk past this rule.
+  const glowFix = checkAccentFills("<fixture-glow>", ".x { background: rgb(var(--hero-glow) / .13); }", { css: true })
+  if (glowFix.length !== 1 || glowFix[0].token !== "--hero-glow")
+    problems.push('control: rule "no-accent-surface" did not catch --hero-glow used as a fill')
   for (const f of cssGood)
     problems.push(`control: rule "no-accent-surface" false positive on good CSS — ${f.detail}`)
 
@@ -389,10 +401,13 @@ const files = ROOTS.flatMap((r) => walk(join(ROOT_DIR, r))).sort()
 const violations = []
 const reportOnly = []
 const record = (v) => {
-  // A gradient is never a control, so rule 6's gradient case is not
-  // allowlistable — otherwise the one failure mode this rule was written for
-  // could be waved through with a one-line ALLOW entry.
-  if (!v.gradient && `${v.file}::${v.rule}::${v.detail}` in ALLOW) return
+  // Gradients WERE non-allowlistable, on the reasoning that a gradient is never
+  // a control. The hero glow is a deliberate exception, so they are
+  // allowlistable again — but the detail string still carries "(GRADIENT)", so
+  // an entry waiving one is obviously waiving a painted area and cannot be
+  // mistaken for waiving a control. The default is still failure, and waiving
+  // still costs a written reason in a file somebody reviews.
+  if (`${v.file}::${v.rule}::${v.detail}` in ALLOW) return
   if (v.reportOnly) reportOnly.push(v)
   else violations.push(v)
 }

@@ -290,6 +290,40 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
     [dispatch]
   )
 
+  // The dock is out of flow so content can scroll under its blur, which means
+  // the scroller has to reserve its height itself or the last message sits
+  // permanently underneath it. CSS cannot read one element's height into
+  // another's padding, and the height is not a constant — the dock is 90px at
+  // rest and 220px once the input has grown to its 180px ceiling. So it is
+  // measured and published as a custom property.
+  //
+  // ResizeObserver rather than watching `input`: the dock also changes height
+  // on viewport width changes that rewrap the field, and on font load. Those
+  // are invisible to a value-keyed effect and would leave the reserve stale.
+  const paneRef = useRef<HTMLElement>(null)
+  const dockRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const pane = paneRef.current
+    if (!pane) return
+    const dock = dockRef.current
+    if (!dock) {
+      // The deck and vibe-coding panes share .pane-scroll but have no
+      // composer, so they must not reserve room for one. Without this they
+      // fell through to the fallback and carried 80px of dead space at the
+      // bottom — invisible on a scrolling pane until you reach the end of it.
+      pane.style.setProperty("--dock-h", "0px")
+      return
+    }
+    // Border box, not contentRect: contentRect excludes the dock's own padding,
+    // which would mean re-stating --space-20 here as a number and keeping two
+    // copies in step. The rendered height already knows it.
+    const ro = new ResizeObserver(() => {
+      pane.style.setProperty("--dock-h", `${Math.ceil(dock.getBoundingClientRect().height)}px`)
+    })
+    ro.observe(dock)
+    return () => ro.disconnect()
+  })
+
   // Follow-up chips on the case-study route hand off to this page via
   // /?ask=<text>&slug=<slug>, since the chat state lives here. Read it once on
   // mount, fire the same handler the landing chips use, then strip the query so
@@ -451,7 +485,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         {activeBusy ? "Generating response" : ""}
       </div>
 
-      <main className="pane">
+      <main className="pane" ref={paneRef}>
         {pane === "vibe-coding" ? (
           <div className="pane-scroll">
             <SideOfDesk />
@@ -462,18 +496,12 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
           </div>
         ) : isFrontDoor ? (
           <div className="pane-front">
-            <div
-              data-hero-col="stack"
-              style={{
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
+            <div className="hero-band" data-hero-col="stack">
+                  {/* h2 step at weight 400. font-normal is a Tailwind utility
+                      stepping the class's weight, not an inline type
+                      declaration — @layer components exists for exactly this. */}
                   <h1
-                    className={`type-hero ${fadeIn}`}
+                    className={`type-h2 font-normal ${fadeIn}`}
                     style={{
                       margin: 0,
                       maxWidth: HERO_MEASURE,
@@ -506,15 +534,21 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
                     />
                   </div>
 
-                  {/* Prompt chips — one relatedness level tighter than the gap
-                      above the input, so they read as belonging to it. */}
+                  {/* The relatedness ladder, and it has to be VISIBLE: chip to
+                      chip is `within` (8), chips to input is `between` (16),
+                      headline to input is `group` (32). Each step is double the
+                      last, so a visitor can see that the chips belong to each
+                      other more than they belong to the input, and to the input
+                      more than the headline does. Previously the chips sat at
+                      `within` from the input — the same distance as from each
+                      other — which flattened the top two rungs into one. */}
                   <div
                     className={fadeIn}
                     data-hero-col="chips"
                     style={{
                       width: "100%",
                       maxWidth: CONTENT_WIDTH,
-                      marginTop: "var(--space-within)",
+                      marginTop: "var(--space-between)",
                       display: "flex",
                       flexWrap: "wrap",
                       justifyContent: "center",
@@ -532,15 +566,20 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
                     ))}
                   </div>
 
-                  {/* Three of the seven. Part of the landing state, so it goes
-                      when the conversation starts — same as the headline and
-                      the chips above it. See the note on isFrontDoor. */}
-                  <ProjectSampler
-                    className={fadeIn}
-                    animationDelay={delay(180)}
-                    onSelect={handleSidebarProject}
-                  />
             </div>
+
+            {/* OUTSIDE the band, deliberately. Inside it, the sampler was
+                centred along with the headline and sat in the middle of the
+                viewport — the band is viewport-height precisely so these
+                start below the fold and get cut by the viewport edge, which
+                only works if they follow it rather than share it.
+                Still part of the landing state: goes when the conversation
+                starts, same as the headline. See the note on isFrontDoor. */}
+            <ProjectSampler
+              className={fadeIn}
+              animationDelay={delay(180)}
+              onSelect={handleSidebarProject}
+            />
           </div>
         ) : (
           <>
@@ -612,7 +651,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
 
             {/* Docked composer — the same component, moved to the pane's
                 bottom edge the moment a conversation exists. */}
-            <div className="pane-dock">
+            <div className="pane-dock" ref={dockRef}>
               <div style={CHAT_COLUMN} data-hero-col="input">
                 <ChatInput
                   value={input}
