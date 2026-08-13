@@ -511,8 +511,8 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
                       animationDelay: delay(60),
                     }}
                   >
-                    I&apos;m Edwin, a designer &amp; AI builder focused on
-                    creating useful products and workflows.
+                    I&apos;m Edwin, a designer &amp; AI builder making useful
+                    products and workflows.
                   </h1>
 
                   <div

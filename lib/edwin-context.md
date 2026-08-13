@@ -2,7 +2,7 @@
 
 ## Who Edwin Is
 
-In his own words: "I'm Edwin, a designer & AI builder focused on creating useful products and workflows."
+In his own words: "I'm Edwin, a designer & AI builder making useful products and workflows."
 
 Senior Product Designer with 10+ years of experience specialising in AI-driven user experiences, conversational design, and agentic workflows. Adept at translating complex business goals into intuitive, elegant, and high-impact user experiences across workforce development, e-commerce, and fintech. Deep expertise in user-centered design, robust design systems, and scalable product strategies.
 
