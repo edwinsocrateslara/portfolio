@@ -13,6 +13,7 @@ He is based in Toronto, Ontario, Canada.
 ## Contact
 
 - **Email:** edwinsocrateslara@gmail.com
+- **LinkedIn:** linkedin.com/in/edwinsocrateslara
 - **Portfolio:** edwinsocrates.com
 
 ## Tools & Methodologies

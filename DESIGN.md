@@ -342,7 +342,13 @@ so these are the only way *out* of a view and the only way *home*. A control
 that is the sole route somewhere does not get to be 18px because the rest of
 the system likes 42.
 
-The third is **SEND**, which is 34×34 painted and 44×44 to the pointer. It is
+**The rail's contact links are 26px** — `--space-4` above and below a 12px
+label on 18px leading. That clears 2.5.8's 24×24 AA floor and does not reach
+2.5.5's 44. They were 18px before the CONTACT block was built, which failed AA
+outright, on the one row a recruiter on a phone is actually trying to hit.
+
+The third `--space-44` exception is **SEND**, which is 34×34 painted and 44×44
+to the pointer. It is
 icon-only, so the visible circle is sized to the glyph rather than to the hand,
 and the target is restored with a centred `::after` rather than by inflating
 the button. 2.5.5 is about the target, not the paint. Centred rather than
@@ -466,6 +472,16 @@ edges. The impact card is narrower on the right by design
   are all `calc()`d from `--input-rest-h`, so none of them is a number anyone
   has to keep in step. Sending: opacity `.55`, mono
   "SENDING" + pulse (`.animate-bureau-pulse`).
+- **External link** — `<NewTabMark />`: trailing `↗` in `text-muted`, plus
+  visually-hidden "(opens in a new tab)" text so the warning is announced
+  rather than only drawn. The glyph is `aria-hidden`, or a screen reader
+  would say it twice. **On every `target="_blank"` in the app** — the rail's
+  RESUME and LINKEDIN rows, the doc-link card, the case-study header's
+  Portfolio link, and inline markdown links in chat prose. Before this, four
+  external links carried no signal at all, visible or announced.
+  `glyph={false}` is for links that already have their own mark: the doc-link
+  card has a download `↓`, and two arrows on one control read as two
+  different actions, so it takes the announcement without a second glyph.
 - **Callout / doc link** — `surface`, 1px `border`, 2px `accent` left rule
   for emphasis blocks (e.g. IMPACT). Doc link = square "PDF" glyph + UI
   title + mono meta line + `↓`.

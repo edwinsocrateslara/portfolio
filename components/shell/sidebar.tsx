@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { NewTabMark } from "@/components/ui/new-tab-mark"
 import { projects } from "@/lib/projects"
 import { DOCS } from "@/lib/constants"
 import { hasSideProjects } from "@/components/chat/side-of-desk"
@@ -142,6 +143,7 @@ export function Sidebar({
             onClick={() => onNavigate?.()}
           >
             <span className="type-label">Resume</span>
+            <NewTabMark />
           </a>
         </div>
       </nav>
@@ -152,27 +154,32 @@ export function Sidebar({
           style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
           <span className="rail-square" />
-          Currently
+          Contact
         </p>
-        {/* font-semibold is a Tailwind utility, not an inline type
-            declaration — @layer components exists so utilities can step a
-            .type-* class's weight without one. */}
-        <p
-          className="type-caption rail-footer-now font-semibold"
-          style={{ color: "rgb(var(--bureau-text-primary))" }}
-        >
-          Designing the AI coach experience at FutureFit AI
-        </p>
-        <p className="type-caption" style={{ color: "rgb(var(--bureau-text-muted))", margin: 0 }}>
+        {/* Above the links, not stranded under them: where someone is is part
+            of how you reach them, not a footnote. */}
+        <p className="type-caption rail-footer-place" style={{ color: "rgb(var(--bureau-text-muted))" }}>
           Toronto, Canada
         </p>
-        <a
-          className="type-label rail-email"
-          href={`mailto:${CONTACT_EMAIL}`}
-          style={{ color: "rgb(var(--bureau-text-secondary))" }}
-        >
-          Email
-        </a>
+        <div className="rail-contact">
+          <a
+            className="type-label rail-contact-link"
+            href={`mailto:${CONTACT_EMAIL}`}
+            style={{ color: "rgb(var(--bureau-text-secondary))" }}
+          >
+            Email
+          </a>
+          <a
+            className="type-label rail-contact-link"
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "rgb(var(--bureau-text-secondary))" }}
+          >
+            LinkedIn
+            <NewTabMark />
+          </a>
+        </div>
       </div>
     </aside>
   )
@@ -180,3 +187,11 @@ export function Sidebar({
 
 // Sourced from lib/edwin-context.md § Contact, which takes it from resume.txt.
 const CONTACT_EMAIL = "edwinsocrateslara@gmail.com"
+
+// Sourced from lib/sources/resume.txt line 4, which carries it WITHOUT a
+// scheme — `linkedin.com/in/edwinsocrateslara`. The https:// is added here
+// rather than edited into the source: resume.txt is a frozen content file and
+// the bare form is what the résumé itself prints. Note this one does NOT come
+// via edwin-context.md — its § Contact lists only email and portfolio, so the
+// chat cannot currently answer "what is his LinkedIn".
+const LINKEDIN_URL = "https://linkedin.com/in/edwinsocrateslara"

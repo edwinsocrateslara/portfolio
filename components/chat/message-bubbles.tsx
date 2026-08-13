@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { NewTabMark } from "@/components/ui/new-tab-mark"
 import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { DOCS, type DocKey } from "@/lib/constants"
@@ -119,7 +120,14 @@ export function TextBubble({ text }: { text: string }) {
               )
               .replace(
                 /\[([^\]]+)\]\(([^)]+)\)/g,
-                '<a href="$2" target="_blank" rel="noopener" style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">$1</a>'
+                // Inline prose links, so the mark is appended as markup rather than by
+                // rendering <NewTabMark/> — this branch builds an HTML string. Same
+                // two parts: an aria-hidden glyph and visually-hidden text. The
+                // literal "sr-only" here is enough for Tailwind's scanner to keep
+                // the utility in the bundle, and it is used in JSX elsewhere too.
+                '<a href="$2" target="_blank" rel="noopener" style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">$1' +
+                  '<span aria-hidden="true" class="link-ext"> \u2197</span>' +
+                  '<span class="sr-only"> (opens in a new tab)</span></a>'
               ),
           }}
         />
@@ -418,6 +426,8 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       href={doc.url}
       target="_blank"
       rel="noopener noreferrer"
+      // The ↓ below is this card's own visual mark, so NewTabMark runs
+      // glyph-less: two arrows on one control would read as two actions.
       style={{
         display: "flex",
         alignItems: "center",
@@ -470,6 +480,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       </span>
       <span className="type-label" style={{ color: "rgb(var(--bureau-text-primary))" }}>
         ↓
+        <NewTabMark glyph={false} />
       </span>
     </a>
   )

@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
+import { NewTabMark } from "@/components/ui/new-tab-mark"
 import { frontDoorChips } from "@/lib/chips"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -136,6 +137,7 @@ export function CaseStudyView({ project }: { project: Project }) {
           style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
           Portfolio
+          <NewTabMark />
         </a>
       </header>
 

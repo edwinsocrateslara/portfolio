@@ -570,13 +570,41 @@ body {
   display: inline-block;
   flex: none;
 }
-.rail-footer-now { margin: 0 0 var(--space-4); }
-.rail-email {
-  display: inline-block;
-  margin-top: var(--space-12);
-  text-decoration: none;
+.rail-footer-place { margin: 0; }
+
+/* The two contact links, stacked. `within` between them because they are
+   parts of one thing — how to reach him — and `between` above, separating
+   that group from the place line. */
+.rail-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-within);
+  margin-top: var(--space-between);
 }
-.rail-email:hover { color: rgb(var(--bureau-text-primary)); text-decoration: underline; }
+.rail-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  text-decoration: none;
+  /* 12px label on an 18px leading is an 18px target, under the 24x24 that
+     WCAG 2.5.8 AA requires — and this is the contact row, which is the one
+     thing a recruiter on a phone is trying to hit. --space-4 top and bottom
+     takes it to 26. It does not reach the 44 of 2.5.5 AAA; see DESIGN.md. */
+  padding: var(--space-4) 0;
+}
+.rail-contact-link:hover {
+  color: rgb(var(--bureau-text-primary));
+  text-decoration: underline;
+}
+/* Muted relative to the label so it reads as a mark on the link rather than
+   as a character in it. Not rail-scoped — every external link in the app
+   uses it, so it is named for the job and not for the place. */
+.link-ext {
+  color: rgb(var(--bureau-text-muted));
+  flex: none;
+}
+a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
 /* ── Content pane ─────────────────────────────────────────────── */
 .pane {

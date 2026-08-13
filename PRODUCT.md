@@ -89,8 +89,12 @@ context but has no way to ask for one. So it is supplied, not discovered.
   starts with data", not "I leverage data-driven insights". Copy may be
   re-presented; it may not be rewritten.
 - **No status or availability indicator.** An AVAILABLE badge was removed
-  deliberately and is not to be reintroduced; the résumé and the CURRENTLY
-  block carry what is needed.
+  deliberately and is not to be reintroduced. The CURRENTLY block that
+  followed it — "Designing the AI coach experience at FutureFit AI" — is
+  also gone, replaced by a CONTACT block. **Nothing on the site now shows
+  current work at a glance**; FutureFit is still the first rail row and the
+  chat still answers it. That is intended, and is a stronger version of the
+  same commitment: no recency signalling, no intent, no availability.
 
 ## Evidence on Hand
 
