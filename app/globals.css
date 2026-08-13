@@ -160,6 +160,15 @@
   --send-inset: var(--space-8);
   --send-size:  calc(var(--input-rest-h) - var(--send-inset) * 2);
 
+  /* ── Typing indicator ──────────────────────────────────────────
+     24px, on the grid. The wrapper reserves this height whether or
+     not the indicator is animating, so mount and unmount cost the
+     stream nothing. */
+  --indicator-size: var(--space-24);
+  /* 83 frames at 50fps in the source file. Not a round number and not
+     meant to be: it is the source animation's own duration. */
+  --indicator-cycle: 1.6667s;
+
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
@@ -605,6 +614,39 @@ body {
   flex: none;
 }
 a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
+
+/* ── Typing indicator ─────────────────────────────────────────────
+   A rotating arc and a leading dot chasing each other around a
+   four-pointed sparkle. Traced from the source Lottie — see
+   docs/provenance/ for the file and the derivation.
+
+   dasharray and dashoffset are PERCENTAGES, not pixels: the paths
+   carry pathLength="100", which normalises the geometry so the trim
+   values out of the source file ("40% of the path", "3% of the path",
+   "35 degrees ahead") survive as themselves instead of being converted
+   into lengths nobody could check against the original. */
+@keyframes indicator-arc {
+  from { stroke-dashoffset: -9.72; }
+  to   { stroke-dashoffset: -109.72; }
+}
+@keyframes indicator-dot {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -100; }
+}
+.indicator-arc { animation: indicator-arc var(--indicator-cycle) linear infinite; }
+.indicator-dot { animation: indicator-dot var(--indicator-cycle) linear infinite; }
+
+/* Belt and braces. usePrefersReducedMotion already withholds these
+   classes, but that hook reads the preference once on the client and a
+   media query cannot be out of date. Either alone would do; the cost of
+   both is two lines, and the failure they prevent is a spinner running
+   for someone who asked for no motion. The static frame stays — the
+   paths still render, just without movement, so the stream reserves the
+   same space and nothing shifts. */
+@media (prefers-reduced-motion: reduce) {
+  .indicator-arc,
+  .indicator-dot { animation: none; }
+}
 
 /* ── Content pane ─────────────────────────────────────────────── */
 .pane {

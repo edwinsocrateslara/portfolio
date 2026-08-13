@@ -433,6 +433,24 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         open={sheetOpen}
       />
 
+      {/* The response announcement, and the ONLY place it happens.
+          Permanently mounted and permanently empty until it is needed:
+          a live region that appears with its content already inside is
+          announced inconsistently across NVDA, JAWS and VoiceOver, while
+          one that is already in the tree and whose text CHANGES is
+          announced reliably. So this element never unmounts and only its
+          content toggles.
+
+          This is new behaviour, not a port of the old label. The previous
+          indicator rendered the word "Generating" in a plain div with no
+          role and no aria-live, which announces nothing on its own — a
+          screen reader user got the visible text only if they happened to
+          be browsing that subtree. Dropping the visible label is what
+          prompted adding the announcement that was never there. */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {activeBusy ? "Generating response" : ""}
+      </div>
+
       <main className="pane">
         {pane === "vibe-coding" ? (
           <div className="pane-scroll">
@@ -583,7 +601,9 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
                   )
                 })}
 
-              {/* Typing indicator — shown only while a message is streaming in */}
+              {/* Typing indicator — shown only while a message is streaming
+                  in. Decorative and aria-hidden; the live region above does
+                  the announcing. */}
               {activeBusy && <TypingIndicator />}
 
 

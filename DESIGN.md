@@ -136,6 +136,40 @@ for AI-native craft cannot wear it.
 - the IMPACT left rule and its square marker
 - the `Live` chip (`.chip-solid`)
 
+### Why a stroke passes rule 6
+
+The typing indicator draws the accent as an SVG `stroke`, and rule 6 does not
+flag it. That is correct by the rule's own logic, not an oversight.
+
+Rule 6 covers `background`, `background-color`, `background-image` and `fill`
+— the properties that paint an area. It deliberately excludes `border-color`,
+`outline`, `caret-color` and `color`, because those mark an edge or a glyph,
+which is what the accent is *for*. **A stroke is that same category**: it is a
+line with a width, not a region. A 24px indicator drawn in 8.33-unit strokes
+paints less area than the 2px rail bar the rule already permits.
+
+The indicator does not name the accent at all. It draws with
+`stroke="currentColor"` and its wrapper sets `color: rgb(var(--bureau-accent))`,
+so the token is the only source and there is no hex to drift.
+
+### What rule 6 cannot see
+
+**Rule 6 walks `.tsx` under `app/` and `components/`, plus `app/globals.css`.
+Nothing else.** A colour written into any other file type is invisible to it.
+
+This was proven, not assumed: a JSON file placed in `lib/` containing both an
+accent-coloured Lottie fill layer and the literal string
+`background: rgb(var(--bureau-accent))` produced **zero findings**.
+
+It matters here because the indicator was traced from a Lottie file. Had we
+shipped the animation as JSON and recoloured it by pasting the accent hex in,
+the gate could not have caught the duplication — the one place the accent was
+hardcoded would have been the one place the rule cannot look. That is a reason
+the SVG trace is safer than the JSON, independent of the 45 KB.
+
+If a future change puts colour in JSON, YAML, or an `.svg` file on disk, rule
+6 must be extended to scan it or it is not covering that colour.
+
 **Where it is forbidden.** It is never a surface, never a large painted
 area, never a gradient. The accent marks an edge or a state; the moment it
 paints a region it stops being a signal and becomes a theme.
@@ -517,6 +551,47 @@ The `5px 9px` optical padding the status badges carried is gone. It
 compensated for uppercase mono tracking against a 2px corner; at pill radius
 that asymmetry is not visible, so the exception retires rather than being
 inherited.
+
+## Loading
+
+**The typing indicator is a four-pointed sparkle**: a 15%-opacity track, a 40%
+arc, and a 3% leading dot, the last two rotating one full turn every 1.6667s.
+`--indicator-size` is 24px and the wrapper reserves it, so mount and unmount
+cost the stream nothing — measured at **CLS 0** across a full reveal, with the
+box sampled 101 times and never anything but 24×24.
+
+It carries **no visible text**. It is `aria-hidden` and purely decorative.
+
+**The announcement lives in a persistent live region in the shell**, not on the
+indicator. `role="status" aria-live="polite"`, `sr-only`, permanently mounted
+and empty until needed. A live region that appears with its content already
+inside is announced inconsistently across screen readers; one already in the
+tree whose text changes is announced reliably.
+
+This is new behaviour rather than a port. The previous indicator rendered the
+word "Generating" in a plain `div` with no `role` and no `aria-live`, which
+announces nothing on its own — a screen reader user got that word only if they
+happened to be browsing that subtree. Removing the visible label is what
+prompted adding the announcement that had never been there.
+
+**Under `prefers-reduced-motion: reduce` it renders a static frame, not
+nothing.** Removing it would leave a silent gap where the response will appear
+and reintroduce the shift the size token exists to prevent. Withheld in two
+places — the `usePrefersReducedMotion` hook does not apply the animation
+classes, and a media query zeroes the animation anyway.
+
+**This path is live and easy to miss.** `activeBusy` is
+`isTypingIn(...) || isApiLoading`, and while the scripted stream skips the
+indicator entirely under reduce, `isApiLoading` does not consult the motion
+preference — a real network call still takes seconds. Verified by driving the
+app with reduce emulated: the scripted path shows nothing, the API path renders
+at 24×24 with the animation classes absent and zero animations running.
+
+It was traced from a Lottie file rather than played from one. `lottie-web` is
+45 KB gzipped at its lightest build against ~0.4 KB of inline SVG, and the
+source has no gradients, no image assets and every bezier handle at zero — so
+the trace is exact, not an approximation. The file and the full derivation are
+kept in `docs/provenance/typing-indicator/`, which does not ship.
 
 ## Photography
 
