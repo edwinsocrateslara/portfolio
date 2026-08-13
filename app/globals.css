@@ -138,6 +138,28 @@
      how a missing token hides. One name, one value, one place to change it. */
   --space-optical-meta: 5px;
 
+  /* ── Chat input geometry ───────────────────────────────────────
+     The resting height is DERIVED and appears as a literal nowhere:
+     padding + one line of leading + the two borders. Everything that
+     used to be measured off it by hand — the SEND button's size, its
+     inset, the field's right padding — is now computed from the same
+     expression, so changing --input-pad-y moves all of them together
+     and cannot leave one behind.
+
+     It was 20px padding, giving a 66px field, and the SEND button was
+     a hand-derived 42px with a hand-derived 12px clearance. Both of
+     those numbers were correct only for a 66px field. */
+  --input-border: 1px;
+  --input-pad-y:  var(--space-12);
+  --input-rest-h: calc(
+    var(--input-pad-y) * 2 + var(--type-body-lh) + var(--input-border) * 2
+  );
+
+  /* SEND sits inset by this on every side at rest, so its clearance is
+     the token rather than a number that happened to fit. */
+  --send-inset: var(--space-8);
+  --send-size:  calc(var(--input-rest-h) - var(--send-inset) * 2);
+
   /* Focus ring — input focus state */
   --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
 
@@ -583,9 +605,13 @@ body {
   padding: var(--space-32) var(--space-40) 0;
   scrollbar-gutter: stable;
 }
+/* No top border. The input is a fully-round, hairlined, filled object with
+   its own edge on all four sides; a rule above it drew a second horizontal
+   line a few pixels from the field's own curve and read as a seam. What
+   marks the boundary now is the field itself plus this padding — see
+   DESIGN.md, "The dock has no rule". */
 .pane-dock {
   flex: none;
-  border-top: 1px solid var(--hairline);
   padding: var(--space-20) var(--space-40);
 }
 
@@ -808,15 +834,51 @@ body {
   display: block;
   width: 100%;
   resize: none;
-  padding: var(--space-20) var(--space-56) var(--space-20) var(--space-20);
+  /* Right gutter is derived from the button it has to clear, not guessed:
+     the button's own width plus its inset on both sides. */
+  padding:
+    var(--input-pad-y)
+    calc(var(--send-size) + var(--send-inset) * 2)
+    var(--input-pad-y)
+    var(--space-20);
 }
+/* Icon-only, so it is a circle: DESIGN.md's rule is that a control carrying
+   only a glyph takes `chip` radius and equal width and height, while a
+   control carrying a label takes `btn`. Losing the word "SEND" moves it from
+   one side of that rule to the other. */
 .chat-input-send {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-within);
-  padding-left: var(--space-12);
-  padding-right: var(--space-12);
+  width: var(--send-size);
+  height: var(--send-size);
+  right: var(--send-inset);
+  bottom: var(--send-inset);
+  padding: 0;
+}
+
+/* Disabled, the 44px target would be a dead zone: it still sits on top of the
+   field, so a click landing there does nothing instead of focusing the input
+   to type. A disabled control is not a target — 2.5.5 applies to targets the
+   user can actually hit — so it gets out of the way and the click falls
+   through to the textarea underneath. */
+.chat-input-send:disabled {
+  pointer-events: none;
+}
+
+/* The visible circle is smaller than the 44px floor, so the HIT AREA is
+   restored here rather than by inflating the button. WCAG 2.5.5 is about
+   the target, not the paint; a centred pseudo-element gives the full 44
+   symmetrically around the glyph without changing the layout by a pixel.
+   Centred, not anchored, so the extra area does not hang off one edge. */
+.chat-input-send::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--space-44);
+  height: var(--space-44);
+  transform: translate(-50%, -50%);
 }
 
 /* ── Chips ─────────────────────────────────────────────────────────

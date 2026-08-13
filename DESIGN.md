@@ -197,6 +197,29 @@ two corners at `calc(card - 1px)` — the border's width — and leaves the
 bottom square. Rounding all four would leave two crescents of card visible
 under the image.
 
+### The dock has no rule
+
+The input dock had a `border-top` hairline separating it from the scrolling
+pane. It is gone. The input is a fully-round, hairlined, filled object with its
+own edge on all four sides, and a rule a few pixels above its curve read as a
+seam rather than as structure — two horizontal lines saying the same thing.
+
+**What marks the boundary now is the input itself, plus the dock's `--space-20`
+padding, and nothing else.** There is no line. That is a real change and worth
+knowing before it is "fixed" back:
+
+- Content does **not** scroll under the input. `.pane-scroll` clips at its own
+  box, and its bottom edge is exactly the dock's top edge — measured, both at
+  y=810 in a 900px viewport. So text never touches or overlaps the field.
+- `.pane-scroll` has `padding-bottom: 0`, so a line **can** be cut mid-glyph at
+  that clip. With the rule, the cut read as content passing under an edge;
+  without it, the cut has no explanation.
+
+The gap is 20px, so the cut happens well clear of the field rather than against
+it, and the pill's own border still says "a different kind of thing starts
+here". If the bare cut ever reads badly, the fix is a short scrim at the bottom
+of `.pane-scroll` — not the rule back, which is what was wrong.
+
 ### The chat input is the one radius that moves
 
 It is fully round (`radius-chip`) at rest and steps to `radius-card` once it
@@ -210,15 +233,19 @@ that 12px inset. Measured clearance between the two painted edges:
 
 | Height | Fully round | `radius-card` |
 |---|---|---|
-| 1 line, 66px | 12.0px clear | 12.0px clear |
-| 2 lines, 90px | 7.0px clear | 12.0px clear |
-| 3 lines, 114px | 2.1px clear | 12.0px clear |
-| 4 lines, 138px | **2.9px outside** | 12.0px clear |
-| 6 lines, 180px | **11.6px outside** | 12.0px clear |
+| 1 line, 50px | 8.0px clear | 8.0px clear |
+| 2 lines, 74px | 3.0px clear | 8.0px clear |
+| 3 lines, 98px | **1.9px outside** | 8.0px clear |
+| 4 lines, 122px | **6.9px outside** | 8.0px clear |
+| 6 lines, 180px | **18.9px outside** | 8.0px clear |
 
 So it is not a tall-field edge case: clearance decays from the second line on
-and crosses zero between three and four, degrading exactly when the visitor is
-composing their longest message. At the 180px ceiling the field also scrolls,
+and crosses zero between two and three, degrading exactly when the visitor is
+composing their longest message. That crossing used to sit between three and
+four, at the older 66px field with a 12px inset — a smaller inset has less
+margin before the curve reaches it, which is the kind of thing that moves
+silently when padding changes and is why none of these numbers are written
+into the code. At the 180px ceiling the field also scrolls,
 and a 4px scrollbar thumb inside a 90px corner is clipped at both ends. Card
 radius is flat because its geometry does not depend on height.
 
@@ -296,23 +323,31 @@ exists for one reason — the touch-target floor below.
 
 ### Touch targets
 
-Controls in this system are **42px tall**, not 44. That is deliberate and it
-is not an oversight to be "fixed" by a later audit.
+Most controls in this system are **42px tall**, not 44. That is deliberate and
+it is not an oversight to be "fixed" by a later audit.
 
-42 comes from the chat input's own arithmetic: 2×20px padding + 24px
-line-height + 2×1px border = 66px, so a 42px button leaves an equal 12px above,
-right and below. The rail rows and prompt chips inherit that rhythm, because a
-control that matches the field it sits beside reads as one system.
+42 is the chip's own arithmetic: 8px padding + 24px line-height + 8px padding
++ 2×1px border. Prompt chips and the rail's document rows are 42; rail project
+rows are 56 because they carry a thumbnail. **This used to be derived from the
+chat input's 66px height, and no longer is** — the field is 50px now, and a
+claim that one number explains both would be false.
 
 WCAG **2.5.8 (AA)** requires 24×24 and every control clears it. **2.5.5 (AAA)**
 asks for 44×44, and this system takes the AA floor plus the density in exchange
 — a portfolio read on a laptop is not a phone keypad.
 
-**Two exceptions, both at `--space-44`, both on mobile and both navigation:**
-the menu toggle and the brand mark. On a phone the rail is hidden behind the
-sheet, so these are the only way *out* of a view and the only way *home*. A
-control that is the sole route somewhere does not get to be 18px because the
-rest of the system likes 42. Nothing else takes the AAA target.
+**Three exceptions at `--space-44`.** Two are on mobile and are navigation: the
+menu toggle and the brand mark. On a phone the rail is hidden behind the sheet,
+so these are the only way *out* of a view and the only way *home*. A control
+that is the sole route somewhere does not get to be 18px because the rest of
+the system likes 42.
+
+The third is **SEND**, which is 34×34 painted and 44×44 to the pointer. It is
+icon-only, so the visible circle is sized to the glyph rather than to the hand,
+and the target is restored with a centred `::after` rather than by inflating
+the button. 2.5.5 is about the target, not the paint. Centred rather than
+anchored, so the extra area is symmetric around the glyph instead of hanging
+off one edge and swallowing clicks meant for the field.
 
 Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 
@@ -422,11 +457,14 @@ edges. The impact card is narrower on the right by design
 - **Badge** — default = 1px `border-strong` + mono `text-secondary`.
   **Live/active = filled `accent` on `on-accent`** — the one deliberate
   inversion in the system, reserved for "this is on."
-- **Input** — rest: `layer-1`/`hairline`, `radius-chip`, muted SEND. Focus:
-  border → `text-secondary` + a 3px `accent`-at-11% ring
-  (`--bureau-focus-ring`), SEND fills `accent` with `on-accent` ink. Steps to
-  `radius-card` once it grows past one line — see **The chat input is the one
-  radius that moves** below. Sending: opacity `.55`, mono
+- **Input** — rest: `layer-1`/`hairline`, `radius-chip`. Focus: border →
+  `text-secondary` + a 3px `accent`-at-11% ring (`--bureau-focus-ring`). Steps
+  to `radius-card` once it grows past one line — see **The chat input is the
+  one radius that moves**. SEND is an **icon-only circle**, muted at rest and
+  filled `accent` with `on-accent` ink once there is something to send; 34×34
+  painted, 44×44 to the pointer. Its size, inset and the field's right gutter
+  are all `calc()`d from `--input-rest-h`, so none of them is a number anyone
+  has to keep in step. Sending: opacity `.55`, mono
   "SENDING" + pulse (`.animate-bureau-pulse`).
 - **Callout / doc link** — `surface`, 1px `border`, 2px `accent` left rule
   for emphasis blocks (e.g. IMPACT). Doc link = square "PDF" glyph + UI

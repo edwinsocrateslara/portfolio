@@ -78,22 +78,26 @@ export function ChatInput({
           // Fully round at rest, card radius once it grows past one line.
           //
           // Not a taste call — a stadium collides with its own SEND button.
-          // The button is bottom-anchored 12px in from the right, and a fully
+          // SEND is bottom-anchored --send-inset from the right, and a fully
           // round container's corner radius is half its height, so the curve
           // eats that inset as the field grows. Measured clearance between the
-          // two painted edges:
+          // two painted edges, at the CURRENT geometry (50px field, 34px
+          // button, 8px inset):
           //
-          //     1 line   66px   12.0px clear
-          //     2 lines  90px    7.0px clear
-          //     3 lines 114px    2.1px clear
-          //     4 lines 138px    2.9px OUTSIDE
-          //     6 lines 180px   11.6px OUTSIDE   (max height, and it scrolls —
+          //     1 line   50px    8.0px clear
+          //     2 lines  74px    3.0px clear
+          //     3 lines  98px    1.9px OUTSIDE
+          //     4 lines 122px    6.9px OUTSIDE
+          //     6 lines 180px   18.9px OUTSIDE   (max height, and it scrolls —
           //                                       a 4px thumb inside a 90px
           //                                       corner gets clipped too)
           //
-          // Card radius is flat 12px clear at every height; the geometry stops
-          // depending on how much the visitor has typed. The step also says
-          // something true: round is "one line, ready", squared is "drafting".
+          // The crossing moved from between 3 and 4 lines to between 2 and 3
+          // when the padding shrank: a smaller inset has less margin before
+          // the curve reaches it. Card radius is flat 8px clear at every
+          // height, because that geometry does not depend on the height at
+          // all. The step also says something true: round is "one line,
+          // ready", squared is "drafting".
           //
           // Both names in full, never `--bureau-radius-${...}` — see the note
           // on the SEND border below for what interpolating a token name cost.
@@ -116,19 +120,13 @@ export function ChatInput({
         onClick={onSubmit}
         disabled={!canSubmit}
         aria-label={isLoading ? "Sending" : "Send message"}
-        className={`type-label chat-input-send absolute ${
-          canSubmit ? "font-bold" : "font-semibold"
-        }`}
+        className="chat-input-send absolute"
         style={{
-          // Bottom-anchored at a fixed height so it stays a button rather
-          // than stretching when the textarea grows. At rest the field is
-          // 2*20px padding + 24px line-height + 2*1px border = 66px, so a
-          // 42px button leaves an equal 12px above, right and below.
-          // 42 and 66 are off the 4px grid for the same reason line-height
-          // is: both are derived from padding + content + border.
-          right: "var(--space-12)",
-          bottom: "var(--space-12)",
-          height: 42,
+          // Box lives in .chat-input-send: size, inset and the 44px hit area
+          // are all derived from --input-rest-h, so nothing here has to know
+          // how tall the field is. The old `height: 42` with `right`/`bottom`
+          // of 12 was correct only while the field was 66px, and would have
+          // gone quietly wrong the moment the padding changed.
           background: canSubmit ? "rgb(var(--bureau-accent))" : "transparent",
           // Both token names written out in full. This was
           // `--bureau-${canSubmit ? "accent" : "border"}`, and building the
@@ -143,24 +141,21 @@ export function ChatInput({
           cursor: isLoading ? "not-allowed" : canSubmit ? "pointer" : "default",
         }}
       >
+        {/* Icon only. The accessible name comes from aria-label above, which
+            already varies with state, so a screen reader still hears "Send
+            message" / "Sending" — the label was never what carried it. */}
         {isLoading ? (
-          <>
-            <span
-              className="animate-bureau-pulse"
-              style={{
-                width: "var(--space-4)",
-                height: "var(--space-4)",
-                borderRadius: 9999,
-                background: "rgb(var(--bureau-text-muted))",
-              }}
-            />
-            Sending
-          </>
+          <span
+            className="animate-bureau-pulse"
+            style={{
+              width: "var(--space-8)",
+              height: "var(--space-8)",
+              borderRadius: "var(--bureau-radius-chip)",
+              background: "rgb(var(--bureau-text-muted))",
+            }}
+          />
         ) : (
-          <>
-            Send
-            <ArrowUp className="h-3.5 w-3.5" />
-          </>
+          <ArrowUp className="h-4 w-4" aria-hidden="true" />
         )}
       </button>
     </div>
