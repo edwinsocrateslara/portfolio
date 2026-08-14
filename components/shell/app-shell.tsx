@@ -11,6 +11,7 @@ import { projects } from "@/lib/projects"
 import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
+import { AboutPane } from "@/components/about/about-pane"
 import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
 import { buildResponse } from "@/lib/scripted-responses"
 import {
@@ -367,6 +368,11 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
     setSheetOpen(false)
   }, [])
 
+  const handleAbout = useCallback(() => {
+    setPane("about")
+    setSheetOpen(false)
+  }, [])
+
   // Brand mark returns to the front door, and CLEARS the home thread to do it.
   //
   // The front door is the home thread when empty, so a populated home thread
@@ -461,6 +467,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         activePane={pane}
         onProjectSelect={handleSidebarProject}
         onSelectVibeCoding={handleVibeCoding}
+        onSelectAbout={handleAbout}
         onSelectDeck={handleDeck}
         onHome={handleHome}
         onNavigate={() => setSheetOpen(false)}
@@ -489,6 +496,10 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         {pane === "vibe-coding" ? (
           <div className="pane-scroll">
             <SideOfDesk />
+          </div>
+        ) : pane === "about" ? (
+          <div className="pane-scroll">
+            <AboutPane />
           </div>
         ) : pane === "deck" ? (
           <div className="pane-scroll">

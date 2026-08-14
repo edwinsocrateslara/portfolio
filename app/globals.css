@@ -170,6 +170,15 @@
      content to fit in the remaining 275. */
   --hero-anchor: 25dvh;
 
+  /* The About page's prose measure. The mock puts the words on a 328-588
+     band inside the full-width pane; 588 is the upper end, which is where
+     the sentence reads best at desktop. */
+  --about-measure: 588px;
+  /* The mosaic's portrait column. Its two square siblings are half of it
+     minus the gutter, so the stack's height matches the portrait exactly. */
+  --about-portrait: 392px;
+  --about-square: 280px;
+
 
 
   /* ── Chat input geometry ───────────────────────────────────────
@@ -672,6 +681,108 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .indicator-dot { animation: none; }
 }
 
+/* ── About ────────────────────────────────────────────────────────
+   Full pane width, not the 720 chat column. The prose keeps a narrow
+   measure INSIDE the wide pane rather than narrowing the page to the
+   words — with three photographs the width has to go to the imagery,
+   and the sentence still has to read like the chat it came from. */
+.about {
+  display: flex;
+  gap: var(--space-64);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+/* The spine takes what the mosaic does not, capped at the measure. The
+   mosaic is sized first because the photographs are the reason the page is
+   full width; the words then get the remainder, which lands inside the
+   mock's 328-588 band at every desktop size. */
+.about-spine {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: var(--about-measure);
+}
+.about-eyebrow {
+  color: rgb(var(--bureau-text-muted));
+  margin: 0 0 var(--space-group);
+}
+.about-lede {
+  color: rgb(var(--bureau-text-primary));
+  margin: 0;
+}
+.about-rule {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin: var(--space-section) 0 var(--space-group);
+}
+.about-reading-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: rgb(var(--bureau-text-secondary));
+  margin: 0 0 var(--space-between);
+}
+/* `within` inside a book, `between` between books — the title and its
+   author are one thing, the two books are two. */
+.about-book + .about-book { margin-top: var(--space-between); }
+.about-book-title {
+  color: rgb(var(--bureau-text-primary));
+  margin: 0;
+}
+.about-book-author {
+  color: rgb(var(--bureau-text-muted));
+  margin: var(--space-4) 0 0;
+}
+
+/* The mosaic. 16px everywhere so the three frames read as one object. */
+.about-mosaic {
+  display: flex;
+  gap: var(--space-between);
+  align-items: flex-start;
+  /* Basis stated explicitly rather than left to `auto`. With `auto` the
+     content-based resolution came out at 515 instead of 688, so the mosaic
+     shrank at 1440 where there was room for it and the photographs lost 25%
+     of their width for nothing. Naming the number the grid is actually made
+     of fixes it and says what the mosaic IS: portrait + gutter + square.
+     shrink: 1 so it still gives way on a narrow pane. */
+  flex: 0 1 calc(
+    var(--about-portrait) + var(--space-between) + var(--about-square)
+  );
+}
+.about-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+/* flex-basis, not width, so the two columns SHRINK PROPORTIONALLY when the
+   pane is too narrow for their natural sizes — 392:280 all the way down.
+   With a fixed width they refused to shrink and the mosaic hung 56px outside
+   the pane at a 936 viewport.
+   Basis resolves on the main axis, so this is a width here and a HEIGHT in
+   the mobile column direction — which is why mobile overrides it below rather
+   than inheriting it. */
+.about-figure:first-child { flex: 0 1 var(--about-portrait); }
+.about-figure:last-child { flex: 0 1 var(--about-square); }
+.about-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-between);
+}
+.about-slot {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--bureau-radius-media);
+  border: 1px solid var(--hairline);
+  background: var(--layer-1);
+}
+/* Captions sit at the grid's BASE edge only, never in the inner gutter —
+   the two stacked squares share one caption line. */
+.about-caption {
+  color: rgb(var(--bureau-text-muted));
+  margin: var(--space-between) 0 0;
+}
+
 /* ── Content pane ─────────────────────────────────────────────── */
 .pane {
   flex: 1;
@@ -875,6 +986,18 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .pane-scroll {
     padding: var(--space-20) var(--space-20) var(--dock-h, var(--space-80));
   }
+  /* Mobile order is SPINE order, and the mosaic linearises by hierarchy
+     rather than by position: portrait first, then the sentence, then the two
+     supports as full-width squares, then the reading ledger. The photo leads
+     because on a phone it is the fastest thing to read. */
+  .about { flex-direction: column; gap: var(--space-group); }
+  .about-spine { max-width: none; flex: none; order: 2; }
+  .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; }
+  .about-stack { flex-direction: column; }
+  /* Full-width, per the mock's mobile note. `flex: none` because the basis
+     above would otherwise size these by HEIGHT in a column. */
+  .about-figure:first-child,
+
   .pane-dock { padding: var(--space-16) var(--space-20); }
 }
 

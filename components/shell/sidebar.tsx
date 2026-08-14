@@ -23,13 +23,14 @@ import { hasSideProjects } from "@/components/chat/side-of-desk"
 // NOT shown here — it stays the project's name in the chat card and in
 // edwin-context.md, and is too long for a 198px column.
 
-export type Pane = "chat" | "vibe-coding" | "deck"
+export type Pane = "chat" | "vibe-coding" | "deck" | "about"
 
 interface SidebarProps {
   activeSlug: string | null
   activePane: Pane
   onProjectSelect: (slug: string) => void
   onSelectVibeCoding: () => void
+  onSelectAbout: () => void
   onSelectDeck: () => void
   onHome: () => void
   /** Mobile sheet only — dismisses after a selection. */
@@ -43,6 +44,7 @@ export function Sidebar({
   activePane,
   onProjectSelect,
   onSelectVibeCoding,
+  onSelectAbout,
   onSelectDeck,
   onHome,
   onNavigate,
@@ -145,6 +147,20 @@ export function Sidebar({
             <span className="type-label">Resume</span>
             <NewTabMark />
           </a>
+
+          {/* Last in the document group, and a pane swap rather than a route:
+              About is not a deep-linkable artefact the way the deck is, and a
+              real navigation remounts the shell and destroys every project
+              thread. */}
+          <button
+            type="button"
+            className="rail-doc"
+            data-active={activePane === "about"}
+            aria-current={activePane === "about" ? "true" : undefined}
+            onClick={pick(onSelectAbout)}
+          >
+            <span className="type-label">About</span>
+          </button>
         </div>
       </nav>
 

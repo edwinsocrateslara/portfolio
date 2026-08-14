@@ -13,14 +13,32 @@ const strings = blocks.flatMap((b) =>
   )
 )
 
+// The About page renders lib/currently-reading.ts, which restates the two
+// books as structured title/author pairs. That is a derivation of voice.md,
+// so every field has to be verbatim in it too — otherwise the page and the
+// chat could quietly disagree about what Edwin is reading.
+const reading = readFileSync("lib/currently-reading.ts", "utf8")
+const bookFields = [...reading.matchAll(/(?:title|author):\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+  (m) => m[1].replace(/\\"/g, '"')
+)
+
 let bad = 0
+for (const f of bookFields) {
+  if (!voice.includes(f)) {
+    bad++
+    console.error("BOOK FIELD NOT IN voice.md:\n  " + f + "\n")
+  }
+}
+
 for (const s of strings) {
   if (!voice.includes(s)) {
     bad++
     console.error("NOT VERBATIM IN voice.md:\n  " + s.slice(0, 110) + "…\n")
   }
 }
-console.log(`checked ${strings.length} scripted strings against lib/sources/voice.md`)
+console.log(
+  `checked ${strings.length} scripted strings + ${bookFields.length} book fields against lib/sources/voice.md`
+)
 if (bad) {
   console.error(`FAIL — ${bad} not found verbatim`)
   process.exit(1)

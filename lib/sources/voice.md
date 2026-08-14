@@ -38,6 +38,12 @@ and How to Win Friends and Influence People by Dale Carnegie.
 
 ---
 
+## Currently reading
+
+Right now I'm in the middle of Rock Climbing Technique: The Practical Guide to Movement Mastery by John Kettle, and Simple Numbers, Straight Talk, Big Profits! by Greg Crabtree.
+
+---
+
 ## Design process
 
 It usually starts with data. I build integrations into the places feedback already lives (Canny, Clarify) and pull from them directly rather than waiting for a research cycle. From there I move quickly into prototypes, test them remotely with tools like Useberry, and iterate. Once the feedback is in, I make a recommendation on the direction with evidence behind it.

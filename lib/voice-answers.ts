@@ -68,6 +68,29 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
     ],
   },
   {
+    // Placed BEFORE the scripted "downtime" branch can see the question:
+    // matchVoiceAnswer runs first in buildResponse, and downtime triggers on
+    // the bare word "reading". Without this entry, "what are you reading?"
+    // returned the Outside-work paragraph — which lists RECENT READS, books
+    // already finished. Both answers are true and they are not the same
+    // question, so the narrower one has to win.
+    id: "currently-reading",
+    triggers: [
+      "currently reading",
+      "reading now",
+      "reading lately",
+      "reading at the moment",
+      "what are you reading",
+      "what book",
+      "which book",
+    ],
+    paragraphs: [
+      "Right now I'm in the middle of Rock Climbing Technique: The Practical Guide to Movement Mastery by John Kettle, and Simple Numbers, Straight Talk, Big Profits! by Greg Crabtree.",
+    ],
+    chip: "What are you reading?",
+    placement: "rotation",
+  },
+  {
     id: "proudest",
     triggers: ["most proud", "proudest", "proud of"],
     chip: "What project are you most proud of?",
