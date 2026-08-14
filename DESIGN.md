@@ -642,19 +642,8 @@ inherited.
 `--indicator-size` (24), and as the brand mark beside the wordmark at
 `--brand-mark-size` (16). One component, `components/ui/sparkle.tsx`, one
 traced path — the geometry is not duplicated. Both are a 15%-opacity track, a
-40% arc and a 3% leading dot, the last two turning once every 1.6667s.
-
-**The rotation is a `transform` on an HTML-level `<svg>`, not a
-`stroke-dashoffset` on the paths.** Visually identical on a four-fold
-symmetric shape; very different in cost, and the brand mark never unmounts so
-it runs on every page for as long as anyone is on the site. Measured over 5
-seconds of idle: dashoffset 600 style recalcs and 0.257s of main-thread task
-time, rotation **21 and 0.016s**. Rotating a `<path>` inside the SVG is worse
-than either — 600 recalcs *and* 600 layouts — which is why the mark is two
-stacked SVGs with only the moving layer transformed.
-`--indicator-size` is 24px and the wrapper reserves it, so mount and unmount
-cost the stream nothing — measured at **CLS 0** across a full reveal, with the
-box sampled 101 times and never anything but 24×24.
+40% arc and a 3% leading dot, the last two rotating one full turn every
+1.6667s via `stroke-dashoffset`.
 
 It carries **no visible text**. It is `aria-hidden` and purely decorative.
 

@@ -36,22 +36,21 @@ const TRACK_OPACITY = 0.15
 export function Sparkle({ size }: { size: string }) {
   const prefersReducedMotion = usePrefersReducedMotion()
   return (
-    // TWO stacked SVGs, and the split is a performance decision rather than a
-    // drawing one. The track has to stay still while the arc turns, so the
-    // rotation cannot go on the whole mark — but rotating a <path> INSIDE an
-    // SVG is not compositor-accelerated: measured at 600 style recalcs AND 600
-    // layouts per 5 seconds of idle, which was worse than the
-    // stroke-dashoffset version it replaced (600 recalcs, 0 layouts).
-    // Rotating an HTML-level box does composite. So the moving parts get their
-    // own <svg>, absolutely positioned over the static one.
+    // ONE svg, three paths, exactly as the indicator shipped in 84631fb.
+    //
+    // A two-layer version existed briefly — static track below, rotating arc
+    // above — to make the animation compositor-friendly. That is reverted: the
+    // structure and the technique are the shipped ones.
     //
     // inline-flex, not a bare span: width and height do not apply to an inline
     // box, so in a non-flex parent the SVG fell back to width="100%" and drew
-    // itself at the full 720px chat column instead of 24px.
+    // itself at the full 720px chat column instead of 24px. It only looked
+    // right in the rail because .rail-brand is a flex container and blockified
+    // it. That fix is NOT part of the revert — it predates the rotation work
+    // and belongs to making the mark shareable at two sizes.
     <span
       aria-hidden="true"
       style={{
-        position: "relative",
         display: "inline-flex",
         width: size,
         height: size,
@@ -69,30 +68,19 @@ export function Sparkle({ size }: { size: string }) {
         strokeLinejoin="round"
       >
         <path d={SPARKLE_PATH} pathLength="100" opacity={TRACK_OPACITY} />
-      </svg>
-      <svg
-        viewBox="0 0 100 100"
-        width="100%"
-        height="100%"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={SPARKLE_STROKE}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className={prefersReducedMotion ? undefined : "sparkle-spin"}
-        style={{ position: "absolute", inset: 0 }}
-      >
         <path
           d={SPARKLE_PATH}
           pathLength="100"
           strokeDasharray={ARC_DASH}
           strokeDashoffset="-9.72"
+          className={prefersReducedMotion ? undefined : "indicator-arc"}
         />
         <path
           d={SPARKLE_PATH}
           pathLength="100"
           strokeDasharray={DOT_DASH}
           strokeDashoffset="0"
+          className={prefersReducedMotion ? undefined : "indicator-dot"}
         />
       </svg>
     </span>
