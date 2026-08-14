@@ -8,7 +8,6 @@ import { PromptChip } from "@/components/chat/prompt-chip"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { projects } from "@/lib/projects"
-import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
 import { AboutPane } from "@/components/about/about-pane"
@@ -355,10 +354,6 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
     [openProjectThread]
   )
 
-  const handleVibeCoding = useCallback(() => {
-    setPane("vibe-coding")
-    setSheetOpen(false)
-  }, [])
 
   // The deck swaps the pane rather than navigating. A route change would
   // remount this component and take every project thread with it, which is
@@ -468,7 +463,6 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         activeSlug={currentProjectSlug}
         activePane={pane}
         onProjectSelect={handleSidebarProject}
-        onSelectVibeCoding={handleVibeCoding}
         onSelectAbout={handleAbout}
         onSelectDeck={handleDeck}
         onHome={handleHome}
@@ -495,11 +489,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
       </div>
 
       <main className="pane" ref={paneRef}>
-        {pane === "vibe-coding" ? (
-          <div className="pane-scroll">
-            <SideOfDesk />
-          </div>
-        ) : pane === "about" ? (
+        {pane === "about" ? (
           <div className="pane-scroll">
             <AboutPane />
           </div>

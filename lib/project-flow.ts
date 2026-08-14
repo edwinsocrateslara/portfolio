@@ -29,7 +29,12 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
   const imageAt = (i: number): MessageBlock | null =>
     all[i] ? { kind: "image", image: all[i], group: all, groupIndex: i } : null
 
-  const blocks: MessageBlock[] = [{ kind: "text", text: p.tagline }]
+  // A placeholder project has no tagline yet, and an empty text block renders
+  // as an empty bubble. Skip it rather than assert a blank line — the seven
+  // real projects all have one, so this only ever fires for a placeholder.
+  const blocks: MessageBlock[] = p.tagline
+    ? [{ kind: "text", text: p.tagline }]
+    : []
 
   const push = (block: MessageBlock | null) => {
     if (block) blocks.push(block)

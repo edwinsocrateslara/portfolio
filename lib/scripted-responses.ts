@@ -1,4 +1,5 @@
 import { projects } from "./projects"
+import { vibeProjects } from "./vibe-projects"
 import { buildProjectBodyBlocks } from "./project-flow"
 import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
 import { meridianDeck } from "./case-study-deck"
@@ -92,13 +93,21 @@ export const SCRIPTED_TOPICS: ScriptedTopic[] = [
 // was a third copy that scrolled away the moment the reveal got going.
 // ProjectHeaderBubble itself stays: /case-study/[slug] has no rail and still
 // renders it directly (components/case-study/case-study-view.tsx).
+/** The seven, then the vibe-coded ones. Rail order, and the order slugs and
+ *  rotation indices resolve against. */
+export const allProjects = [...projects, ...vibeProjects]
+
 function projectStream(p: (typeof projects)[0]): MessageBlock[] {
   // Chips rotate per project rather than repeating one generic trio seven
   // times. A visitor who just read a case study has seen the work and is the
   // best candidate for the person questions, so the pool is all person
   // questions and contains no project chips at all — they have the rail, and
   // they just used it.
-  const index = projects.findIndex((x) => x.slug === p.slug)
+  // Against ALL projects, not just the seven. findIndex returns -1 for a vibe
+  // project, and rotationFor(-1) yields [undefined, undefined, undefined] —
+  // three blank chips rather than an error, which is the kind of thing that
+  // ships. Verified before fixing.
+  const index = allProjects.findIndex((x) => x.slug === p.slug)
   return [
     ...buildProjectBodyBlocks(p),
     {
@@ -167,7 +176,7 @@ export function buildResponse(
       return { response: null, projectSlug: currentProjectSlug }
     }
     // New project or explicit preloaded slug - show scripted reveal
-    const p = projects.find((x) => x.slug === matchSlug)
+    const p = allProjects.find((x) => x.slug === matchSlug)
     if (p) return { response: projectStream(p), projectSlug: matchSlug }
   }
 

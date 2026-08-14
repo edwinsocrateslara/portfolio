@@ -36,8 +36,6 @@ const ALLOW = {
   // for; the rule cannot measure rendered size, so the judgment is recorded
   // here instead of guessed. DESIGN.md lists the same three under "Where the
   // accent is allowed".
-  "app/globals.css::no-accent-surface::.chip-solid background":
-    "The system's one inversion — a chip-sized badge meaning 'this is live'. 20px tall.",
   "components/chat/chat-input.tsx::no-accent-surface::background":
     "The SEND button fill, 42px tall, and only once there is something to send.",
   "components/chat/message-bubbles.tsx::no-accent-surface::background":

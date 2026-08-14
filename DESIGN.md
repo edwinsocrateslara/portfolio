@@ -134,7 +134,6 @@ for AI-native craft cannot wear it.
 - the textarea caret
 - the SEND fill, once there is something to send
 - the IMPACT left rule and its square marker
-- the `Live` chip (`.chip-solid`)
 
 ### Why a stroke passes rule 6
 
@@ -215,8 +214,10 @@ have been blind to the case it exists to catch.
 A grep cannot measure rendered size, so **"larger than a control" is not
 decided by the rule**. Every accent fill is flagged, and the judgment is
 recorded in the checker's `ALLOW` map where somebody has to write down why
-that element is a control. Three entries today: `.chip-solid`, the SEND fill,
-and the 8px IMPACT marker — the same three listed above.
+that element is a control. Two entries today: the SEND fill and the 8px
+IMPACT marker — the same two listed above. There was a third, `.chip-solid`,
+which went when the Side of Desk pane was deleted and took its only callers
+with it.
 
 **A gradient is the exception and cannot be allowlisted at all.** A gradient
 is never a control, and an accent gradient is precisely how the hero wash
@@ -590,19 +591,20 @@ edges. The impact card is narrower on the right by design
 
 ## Chips
 
-One primitive, two sizes, three fills. Before this there were three separate
+**One primitive, one size, one fill.** Before this there were three separate
 inline-styled implementations — the prompt chips, `In Progress`, and `Live` —
 each re-deriving its own padding and hover.
+
+It briefly had three variants for the badges — `.chip-sm`, `.chip-solid` and
+`.chip-quiet`. All three died with the Side of Desk pane, which held their only
+callers, and were deleted rather than left as CSS with a documentation entry
+and nothing rendering them.
 
 **Size is chosen by role, not by taste.**
 
 | Class | Type step | Padding | Target | For |
 |---|---|---|---|---|
 | `.chip` | caption | `12 / 16` | **44px** | an action the visitor can take |
-| `.chip-sm` | label | `4 / 8` | — | metadata about something else |
-
-A tag describing a card does not get to be the same weight as the thing it
-describes.
 
 **`.chip` used to take body type**, on the reasoning that shrinking a tap
 target's label works against it. That was reversed deliberately: the label
@@ -623,9 +625,6 @@ front-door chips measured 1312px on one row at `label` against **885px** at
 **Fill:**
 
 - **default** — `surface` + hairline. The resting state of everything.
-- **`.chip-solid`** — inverted. The system's one inversion, reserved for a
-  state that is true right now (`Live`).
-- **`.chip-quiet`** — no fill, no border, for a tag that must not compete.
 
 Hover lives in CSS, not React state. Three components each held a `useState`
 for it, which is both more code and worse: a hover that waits on a re-render
@@ -677,6 +676,42 @@ It was traced from a Lottie file rather than played from one. `lottie-web` is
 source has no gradients, no image assets and every bezier handle at zero — so
 the trace is exact, not an approximation. The file and the full derivation are
 kept in `docs/provenance/typing-indicator/`, which does not ship.
+
+## The rail
+
+**Two project sections, WORK and VIBE CODING**, sharing one `ProjectSection`
+component. They are the same thing with different contents; a second copy of
+the markup would be a second place for the active treatment, the thumbnail
+rules and the truncation to drift.
+
+**VIBE CODING renders only when it has rows.** Its entries are dev-gated, so
+in production the section — heading included — is absent. A heading above
+nothing is worse than no section. It replaced a single nav row that swapped
+the pane to a Side of Desk grid; once the rail lists the projects, that pane
+was redundant the way the project grid would be if WORK listed everything, and
+it was deleted rather than left orphaned.
+
+**A row with no artwork draws an empty frame**, not a borrowed screenshot from
+another project. The rail is where the site asserts what a project looks like.
+
+### Known consequence: the rail now scrolls at 1440×900
+
+Measured before the second section: `.rail-scroll` was **673 / 673 — exactly
+full, zero headroom**. It already scrolled at 1440×700 (−159) and 380×820
+(−66).
+
+Adding the section and removing the nav row it replaced nets **+7px** —
+measured at 680 against a 673 viewport, so 1440×900 tips just over the line
+rather than dramatically. **Each further project costs 56px**, the row height,
+and that is the number that matters: the second vibe project puts the rail 63px
+past the fold, the third 119px, and so on.
+
+This is accepted, not an oversight. It is mechanically fine — `.rail-scroll` is
+`overflow-y: auto` and the CONTACT footer sits outside it, pinned, so contact
+stays reachable at any height. But the rail has moved from "everything visible
+at once on a common laptop" to "scrolls", and it will not move back. If that
+becomes a problem the answer is fewer sections or shorter rows, not removing
+the scroll.
 
 ## The front door
 
@@ -882,8 +917,9 @@ layout choice — do not crop assets to a third ratio:
    structural marks. Value + form still carry most of the emphasis.
 2. **Hero emphasis phrase** ("AI products and workflows") — was blue, now a
    thin `border-strong` underline. Reads as emphasis, not a link.
-3. **Status badges (In Progress / Live) used to both read as blue** — now
-   default = outline, Live = filled/inverted, the system's one inversion.
+3. **Status badges (In Progress / Live) used to both read as blue** — they
+   became outline and filled/inverted, then were deleted outright with the
+   Side of Desk pane. No status badge exists now.
 4. **Photography under a neutral palette** — originally `grayscale(.15)`.
    Reversed: the screenshots now run unfiltered and are the page's colour.
 5. **Empty/welcome-state copy** — reuses the verbatim hero subtitle; no

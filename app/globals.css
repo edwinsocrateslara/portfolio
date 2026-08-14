@@ -531,6 +531,17 @@ body {
   background: var(--layer-2);
   transition: border-color 0.15s;
 }
+/* A project with no artwork yet. The frame keeps the row aligned with the ones
+   that have art — dropping the thumbnail entirely would shift the text and
+   make the two sections read as different components — and an empty box is
+   honest about what it is. Never another project's screenshot: the rail is
+   where the site asserts what a project looks like. */
+.rail-thumb-empty {
+  display: block;
+  width: var(--space-32);
+  height: var(--space-32);
+  background: var(--layer-1);
+}
 /* min-width:0 is what lets the title actually truncate — without it the
    flex item refuses to shrink below its content and the row overflows
    the rail instead of ellipsing. */
@@ -1215,20 +1226,15 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 }
 
 /* ── Chips ─────────────────────────────────────────────────────────
-   One primitive, two sizes, three fills. Chips were three separate
-   inline-styled implementations before this: the prompt chips, the
-   In Progress badge, and the Live badge, each re-deriving its own
-   padding and hover.
+   ONE primitive, one size, one fill. It began as three separate
+   inline-styled implementations — the prompt chips, the In Progress badge
+   and the Live badge — each re-deriving its own padding and hover.
 
-   Size is chosen by ROLE, not by taste:
-     .chip      an action the visitor can take — body type, room to hit
-     .chip-sm   metadata about something else — label type, tight
-
-   Fill:
-     (default)  surface + hairline. The resting state of everything.
-     .chip-solid   inverted; the system's one inversion, for a state
-                   that is true right now (Live)
-     .chip-quiet   no fill, no border; a tag that must not compete */
+   It had grown three variants for the badges: .chip-sm, .chip-solid and
+   .chip-quiet. All three died with the Side of Desk pane, whose placeholder
+   cards were their only consumers, and they are deleted rather than left as
+   CSS with a documentation entry and no caller. .chip-solid took the accent's
+   allowlist exemption with it. */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -1247,11 +1253,6 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   text-align: left;
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
-.chip-sm {
-  padding: var(--space-4) var(--space-8);
-  gap: var(--space-4);
-  cursor: default;
-}
 .chip:hover:not(:disabled) {
   background: var(--layer-2);
   border-color: var(--hairline-strong);
@@ -1259,14 +1260,5 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 }
 .chip:disabled { opacity: 0.4; cursor: default; }
 
-.chip-solid {
-  background: rgb(var(--bureau-accent));
-  border-color: rgb(var(--bureau-accent));
-  color: rgb(var(--bureau-on-accent));
-}
-.chip-quiet {
-  background: none;
-  border-color: transparent;
-}
 /* The arrow prefix on a follow-up chip. Muted so the label leads. */
 .chip-prefix { color: rgb(var(--bureau-text-muted)); flex-shrink: 0; }
