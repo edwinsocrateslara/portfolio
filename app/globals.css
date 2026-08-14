@@ -208,6 +208,10 @@
      not the indicator is animating, so mount and unmount cost the
      stream nothing. */
   --indicator-size: var(--space-24);
+  /* The brand mark. 16 against the 12px wordmark — one step up the raw scale,
+     so the mark leads the name slightly without competing with it. 12 would
+     read as a bullet, 24 (the indicator's size) would outweigh a short name. */
+  --brand-mark-size: var(--space-16);
   /* 83 frames at 50fps in the source file. Not a round number and not
      meant to be: it is the source animation's own duration. */
   --indicator-cycle: 1.6667s;
@@ -658,16 +662,29 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    values out of the source file ("40% of the path", "3% of the path",
    "35 degrees ahead") survive as themselves instead of being converted
    into lengths nobody could check against the original. */
-@keyframes indicator-arc {
-  from { stroke-dashoffset: -9.72; }
-  to   { stroke-dashoffset: -109.72; }
+/* ROTATION, not stroke-dashoffset. Visually identical on this shape — it is
+   four-fold symmetric, so travelling 25% along the path and turning 90 degrees
+   land in the same place — but the cost is not. stroke-dashoffset animates an
+   SVG geometry property, which is not compositor-accelerated, so it forced a
+   style recalculation every frame. That matters more now than it did for the
+   indicator alone: the brand mark carries this shape on every page and never
+   unmounts. Measured over 5 seconds of idle, same page state:
+
+       stroke-dashoffset   600 style recalcs   0.257s main-thread task time
+       transform: rotate    21                 0.016s
+       no animation          0                 0.001s
+
+   The rotation goes on the <svg> ELEMENT, never on the paths inside it:
+   rotating a <path> measured worse than the dashes — 600 recalcs AND 600
+   layouts — because an SVG-internal transform is not composited either. */
+@keyframes spin-mark {
+  to { transform: rotate(360deg); }
 }
-@keyframes indicator-dot {
-  from { stroke-dashoffset: 0; }
-  to   { stroke-dashoffset: -100; }
+.sparkle-spin {
+  animation: spin-mark var(--indicator-cycle) linear infinite;
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
-.indicator-arc { animation: indicator-arc var(--indicator-cycle) linear infinite; }
-.indicator-dot { animation: indicator-dot var(--indicator-cycle) linear infinite; }
 
 /* Belt and braces. usePrefersReducedMotion already withholds these
    classes, but that hook reads the preference once on the client and a
@@ -677,8 +694,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    paths still render, just without movement, so the stream reserves the
    same space and nothing shifts. */
 @media (prefers-reduced-motion: reduce) {
-  .indicator-arc,
-  .indicator-dot { animation: none; }
+  .sparkle-spin { animation: none; }
 }
 
 /* ── About ────────────────────────────────────────────────────────

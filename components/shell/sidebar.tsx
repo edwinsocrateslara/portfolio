@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { Sparkle } from "@/components/ui/sparkle"
 import { NewTabMark } from "@/components/ui/new-tab-mark"
 import { projects } from "@/lib/projects"
 import { DOCS } from "@/lib/constants"
@@ -57,9 +58,14 @@ export function Sidebar({
 
   return (
     <aside className="rail" data-open={open} aria-label="Site index">
+      {/* "Edwin Lara" at every width — one form, replacing both the rail's
+          "Edwin Socrates Lara" and the top bar's "Edwin". The full name still
+          stands on the résumé, the case-study header and the page title: it
+          has left the app chrome, not the site. */}
       <button type="button" className="rail-brand" onClick={pick(onHome)}>
+        <Sparkle size="var(--brand-mark-size)" />
         <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-          Edwin Socrates Lara
+          Edwin Lara
         </span>
       </button>
 

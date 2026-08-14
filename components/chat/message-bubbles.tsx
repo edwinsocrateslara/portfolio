@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { NewTabMark } from "@/components/ui/new-tab-mark"
+import { Sparkle } from "@/components/ui/sparkle"
 import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { DOCS, type DocKey } from "@/lib/constants"
@@ -529,67 +530,22 @@ export function FollowupsBubble({
 // persistent avatar or reserved gutter: this appears while a message
 // streams in and is unmounted once it has rendered, leaving no space
 // behind.
-// Traced from a Lottie source file; see docs/provenance/typing-indicator/.
-// These are ARTWORK coordinates in the SVG's own normalised space, not layout
-// values — they describe a drawing, not a measurement on the page — so they
-// are deliberately not on the 4px grid and do not belong in the token layer.
-// The one real dimension, --indicator-size, does.
-//
-// The path is a four-pointed sparkle: eight vertices, every bezier handle in
-// the source is zero, so it is a plain polygon and the trace is exact rather
-// than approximate.
-const SPARKLE_PATH =
-  "M62.5 37.5 L85.37 50 L62.5 62.5 L50 85.37 L37.5 62.5 L14.64 50 L37.5 37.5 L50 14.64 Z"
-const SPARKLE_STROKE = 8.33
-// Percentages of the path, because pathLength normalises it to 100. Straight
-// out of the source's trim keyframes: a 40% arc and a 3% dot.
-const ARC_DASH = "40 60"
-const DOT_DASH = "3 97"
-const TRACK_OPACITY = 0.15
-
 // aria-hidden throughout. The announcement is not here — it lives in the
 // shell's persistent live region, because a live region that mounts with its
 // content already in place is unreliably announced, while one that already
 // exists and whose content changes is announced consistently. Putting
 // role="status" on this element would have looked right and worked
 // intermittently.
+//
+// The geometry moved to components/ui/sparkle.tsx when the brand mark needed
+// the same shape. One path, two sizes.
 export function TypingIndicator() {
-  const prefersReducedMotion = usePrefersReducedMotion()
   return (
     <div
       aria-hidden="true"
-      style={{
-        width: "var(--indicator-size)",
-        height: "var(--indicator-size)",
-        color: "rgb(var(--bureau-accent))",
-      }}
+      style={{ color: "rgb(var(--bureau-accent))" }}
     >
-      <svg
-        viewBox="0 0 100 100"
-        width="100%"
-        height="100%"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={SPARKLE_STROKE}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d={SPARKLE_PATH} pathLength="100" opacity={TRACK_OPACITY} />
-        <path
-          d={SPARKLE_PATH}
-          pathLength="100"
-          strokeDasharray={ARC_DASH}
-          strokeDashoffset="-9.72"
-          className={prefersReducedMotion ? undefined : "indicator-arc"}
-        />
-        <path
-          d={SPARKLE_PATH}
-          pathLength="100"
-          strokeDasharray={DOT_DASH}
-          strokeDashoffset="0"
-          className={prefersReducedMotion ? undefined : "indicator-dot"}
-        />
-      </svg>
+      <Sparkle size="var(--indicator-size)" />
     </div>
   )
 }

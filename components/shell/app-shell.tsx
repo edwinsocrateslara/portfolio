@@ -12,6 +12,7 @@ import { SideOfDesk } from "@/components/chat/side-of-desk"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
 import { AboutPane } from "@/components/about/about-pane"
+import { Sparkle } from "@/components/ui/sparkle"
 import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
 import { buildResponse } from "@/lib/scripted-responses"
 import {
@@ -429,16 +430,17 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
   return (
     <div className="shell" data-sheet={sheetOpen}>
       {/* Mobile only — the rail collapses behind this. */}
-      {/* First name only here, full name in the rail. The top bar is mobile-only
-          and holds three things in 340px; at 19 characters the brand took 161 of
-          them and forced the project subtitle — which exists precisely because
-          the header card was removed — to truncate. "Edwin" is the first word of
-          the same name, not a second name form, and still reads as a name to a
-          first-time visitor. */}
+      {/* Same brand as the rail — "Edwin Lara". This used to be "Edwin" while
+          the rail said "Edwin Socrates Lara", which gave one person two name
+          forms depending on viewport width. One form now, at both widths.
+          This row is TIGHT: brand + subject + MENU filled 340 of 340 at
+          "Edwin", so the surname comes out of the subject's share —
+          .shell-topbar-subject is the element that gives, by ellipsis. */}
       <div className="shell-topbar">
         <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
+          <Sparkle size="var(--brand-mark-size)" />
           <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-            Edwin
+            Edwin Lara
           </span>
         </button>
         {/* On mobile the rail is behind the sheet, so with the header card

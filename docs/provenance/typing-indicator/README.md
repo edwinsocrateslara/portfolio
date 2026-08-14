@@ -41,14 +41,39 @@ approximation: there were no curves to fit.
 | track `opacity 0.15` | layer 3 opacity `15` |
 | arc `stroke-dasharray "40 60"` | layer 2 trim `e: 40` (40% of the path) |
 | dot `stroke-dasharray "3 97"` | layer 1 trim `e: 3` |
-| arc `dashoffset -9.72 → -109.72` | layer 2 trim offset `35 → 395` degrees; 35/360 = 9.72% |
-| dot `dashoffset 0 → -100` | layer 1 trim offset `0 → 360` |
+| arc `dashoffset -9.72` (static) | layer 2 trim offset `35` degrees; 35/360 = 9.72% |
+| dot `dashoffset 0` (static) | layer 1 trim offset `0` |
+| `rotate(360deg)` over one cycle | layer 1 and 2 trim offsets sweeping a full turn |
 | `1.6667s linear` | 83 frames at 50 fps; keyframe easing sits at 0.167/0.833 on both axes, which is effectively linear |
 
 Verified against real `lottie-web` side by side, both frozen at frame 0:
 identical shape, stroke weight, joins, track opacity, arc length, and the
 same detached leading dot at the same gap. Only the starting rotation
 differs, which is invisible in a loop.
+
+## Why rotation and not the source's trim animation
+
+The source animates trim OFFSET — the dash travels along the path. The
+implementation rotates instead. On this shape the two are identical: it is
+four-fold symmetric, so moving 25% along the path and turning 90 degrees land
+in the same place, and one full dash cycle equals one full turn.
+
+They cost very differently. `stroke-dashoffset` animates an SVG geometry
+property, which is not compositor-accelerated, so it forced a style
+recalculation every frame — and the brand mark carries this shape too, on
+every page, permanently. Measured over 5 seconds of idle, same page state:
+
+| | style recalcs | main-thread task time |
+|---|---|---|
+| `stroke-dashoffset` | 600 | 0.257s |
+| `transform: rotate` | **21** | **0.016s** |
+| no animation | 0 | 0.001s |
+
+Two things had to be true to get that. The rotation is on an **HTML-level
+`<svg>` element**, not on the paths inside one — rotating a `<path>` measured
+*worse* than the dashes (600 recalcs plus 600 layouts). And the mark is split
+into **two stacked SVGs**, because the track has to stay still while the arc
+turns, so only the moving layer rotates.
 
 ## Colour
 
