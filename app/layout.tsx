@@ -32,8 +32,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${archivo.variable} ${ibmPlexMono.variable} font-sans antialiased`}>
+    // The font variables go on <html>, NOT <body>. globals.css defines
+    // --ff-archivo and --ff-plex-mono on :root in terms of these, and :root IS
+    // <html> — so with the variables one level down, both resolved to nothing
+    // and every font-family: var(--ff-plex-mono) fell through to inherit.
+    //
+    // The effect was silent and total: every .type-label, .type-badge,
+    // .type-nav and .type-meta on the site rendered in Archivo, so the mono
+    // "system voice" this design system is built around had never actually
+    // appeared. Nothing errors when a custom property is empty; the declaration
+    // is simply dropped.
+    <html lang="en" className={`${archivo.variable} ${ibmPlexMono.variable}`}>
+      <body className="font-sans antialiased">
         {children}
       </body>
     </html>
