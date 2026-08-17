@@ -74,10 +74,10 @@ export function AboutPane() {
             chat answer, which is unchanged. This page shows what is open now;
             the chat still answers what has been finished.
 
-            ⚠ NOTHING CHECKS THIS. check-voice.mjs reads voice-answers.ts and
-            currently-reading.ts; this literal is in neither, so it can drift
-            from voice.md silently. It did not on the last edit only because
-            the sweep found it. Either wire it to a source or extend the gate. */}
+            check-voice.mjs asserts this against voice.md, matching on the
+            `about-lede` class — so renaming that class means updating the
+            script in the same commit, and editing this copy without editing
+            the source fails the build. It used to be unguarded. */}
         <p className="type-title about-lede">
           In my downtime, I&apos;m usually bouldering or running races, camping
           and hiking with my ten-year-old Alaskan Malamute.
