@@ -72,15 +72,16 @@ export function AboutPane() {
         {/* Verbatim from lib/sources/voice.md § Outside work, first sentence.
             The rest of that paragraph — the recent-reads list — stays in the
             chat answer, which is unchanged. This page shows what is open now;
-            the chat still answers what has been finished. */}
-        <p className="type-title about-lede">
-          In my downtime, I like to stay active by running races, camping or
-          hiking with my ten-year-old Alaskan Malamute.
-        </p>
+            the chat still answers what has been finished.
 
-        {/* TODO(edwin): the bouldering sentence goes here once written, and
-            its chip is routed then — an unrouted answer fails check:chips, and
-            a chip with no answer fails it too. Empty until both exist. */}
+            ⚠ NOTHING CHECKS THIS. check-voice.mjs reads voice-answers.ts and
+            currently-reading.ts; this literal is in neither, so it can drift
+            from voice.md silently. It did not on the last edit only because
+            the sweep found it. Either wire it to a source or extend the gate. */}
+        <p className="type-title about-lede">
+          In my downtime, I&apos;m usually bouldering or running races, camping
+          and hiking with my ten-year-old Alaskan Malamute.
+        </p>
 
         <hr className="about-rule" />
 

@@ -535,7 +535,7 @@ The deck refers to the product as motusbank, Meridian Credit Union's digital-onl
 
 ### Outside Work
 
-In his own words: "In my downtime, I like to stay active by running races, camping or hiking with my ten-year-old Alaskan Malamute. I'm always reading; my recent reads include: Meditations by Marcus Aurelius, The Personal MBA by Josh Kaufman, and How to Win Friends and Influence People by Dale Carnegie."
+In his own words: "In my downtime, I'm usually bouldering or running races, camping and hiking with my ten-year-old Alaskan Malamute. I'm always reading; my recent reads include: Meditations by Marcus Aurelius, The Personal MBA by Josh Kaufman, and How to Win Friends and Influence People by Dale Carnegie."
 
 ### Availability
 
