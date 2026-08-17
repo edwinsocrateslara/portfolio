@@ -60,7 +60,14 @@ export function AboutPane() {
     <div className="about">
       {/* Spine. Narrow measure inside a wide pane. */}
       <div className="about-spine">
-        <p className="type-label about-eyebrow">About — Toronto, Canada</p>
+        {/* Heading + metadata line, the same object the deck pane carries.
+            It stays INSIDE the spine rather than being hoisted above the
+            .about row: the spine is the row's first column, so the heading
+            lands on the pane's left edge either way, and hoisting it would
+            push the mosaic down by the header's full height. The photographs
+            do not move. */}
+        <h1 className="type-h2 pane-title about-title">About</h1>
+        <p className="type-label pane-meta">Toronto, Canada</p>
 
         {/* Verbatim from lib/sources/voice.md § Outside work, first sentence.
             The rest of that paragraph — the recent-reads list — stays in the

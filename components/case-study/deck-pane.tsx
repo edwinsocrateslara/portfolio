@@ -1,45 +1,46 @@
 "use client"
 
+import { Download } from "lucide-react"
 import { meridianDeck } from "@/lib/case-study-deck"
 import { SlideGrid } from "@/components/case-study/slide-grid"
-import { DeckDownload } from "@/components/case-study/deck-download"
-import { CONTENT_WIDTH } from "@/lib/layout"
 
-// The deck as pane content: heading, PDF card, 21-slide grid. Deliberately
-// carries NO page chrome — no back link, no brand mark, no portfolio link.
-// The rail is all three, and inside the shell those would be a second,
-// competing set of navigation.
+// The deck as pane content: heading row, one metadata row, the 21-slide grid.
+// Deliberately carries NO page chrome — no back link, no brand mark, no
+// portfolio link. The rail is all three, and inside the shell those would be a
+// second, competing set of navigation.
+//
+// The mock put the project name in a mono eyebrow ABOVE the heading and the
+// slide count on its own line below it. Merged here into one metadata row: two
+// mono lines bracketing a heading made the heading look like a caption between
+// them, and the count and the name are the same kind of fact about the same
+// thing.
 export function DeckPane() {
   return (
     <div>
-      <div style={{ marginBottom: "var(--space-group)" }}>
-        <div
-          className="type-label"
-          style={{
-            color: "rgb(var(--bureau-text-secondary))",
-            marginBottom: "var(--space-within)",
-          }}
-        >
-          {meridianDeck.subtitle}
-        </div>
-        <h1 className="type-h2" style={{ margin: 0, color: "rgb(var(--bureau-text-primary))" }}>
-          {meridianDeck.title}
-        </h1>
-        <p
-          className="type-body"
-          style={{
-            color: "rgb(var(--bureau-text-secondary))",
-            maxWidth: CONTENT_WIDTH,
-            margin: "var(--space-within) 0 0",
-          }}
-        >
-          {meridianDeck.intro}
-        </p>
+      {/* flex-end, so the button sits on the heading's baseline rather than
+          centred against a 48px line box — centring left it visibly high. */}
+      <div className="deck-head">
+        <h1 className="type-h2 pane-title">Case study</h1>
+        {/* .chip is the system's pill and already carries this exact shape:
+            hairline border, --layer-1 fill, chip radius, secondary label that
+            steps to primary on hover. A fourth inline pill would undo the
+            consolidation that class exists for. `download` is what makes it
+            save rather than navigate; the visible text is the accessible name,
+            so there is no second string to drift. */}
+        <a className="chip type-label deck-download" href={meridianDeck.pdf} download>
+          <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
+          Download PDF
+        </a>
       </div>
 
-      <div style={{ marginBottom: "var(--space-group)" }}>
-        <DeckDownload deck={meridianDeck} />
-      </div>
+      {/* The em dash binds the two halves of the project's name; the middle dot
+          separates that name from the count. Two different weights, because
+          they are two different joins — a second em dash would flatten a name
+          and a count into three peer items. */}
+      <p className="type-label pane-meta">
+        {meridianDeck.client} — {meridianDeck.subject} ·{" "}
+        {meridianDeck.slides.length} slides
+      </p>
 
       {/* 3 columns, as on the old standalone page. The pane is narrower than
           the full page was, so the tiles are smaller — the lightbox is still

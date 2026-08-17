@@ -2,9 +2,19 @@
 
 import Image from "next/image"
 import { Sparkle } from "@/components/ui/sparkle"
-import { NewTabMark } from "@/components/ui/new-tab-mark"
+// Layers, not Layers3: Layers3 is a deprecated alias in v0.544 and resolves to
+// the same component (verified: Layers3 === Layers). Importing the live name.
+import {
+  BriefcaseBusiness,
+  CodeXml,
+  Layers,
+  FileUser,
+  UserRound,
+} from "lucide-react"
+import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
 import { projects } from "@/lib/projects"
 import type { Project } from "@/lib/projects"
+import type { LucideIcon } from "lucide-react"
 import { vibeProjects } from "@/lib/vibe-projects"
 import { DOCS } from "@/lib/constants"
 
@@ -12,11 +22,13 @@ import { DOCS } from "@/lib/constants"
 // and clicking one streams that project's reveal into the chat. It replaces
 // the old scrolling project grid entirely — see the note in app/page.tsx.
 //
-// Project rows open a conversation; CASE STUDY and RESUME open documents.
-// The handoff distinguished the two with a right-aligned mono meta ("DECK ·
-// 21 SLIDES", "PDF"); those have been removed, so the only remaining cue is
-// that document rows carry no thumbnail and sit below a gap. See the note in
-// the branch report — this is a deliberate reduction, not an oversight.
+// Project rows open a conversation; CASE STUDY, RESUME and ABOUT open
+// documents. The handoff distinguished the two with a right-aligned mono meta
+// ("DECK · 21 SLIDES", "PDF"); those have been removed. What separates them now
+// is that a document row carries a line icon where a project row carries a
+// screenshot, and that the group sits below a hairline rather than below a gap
+// — the gap alone measured 39px against a 43px section boundary, which is to
+// say it wasn't a distinction at all.
 //
 // A row is `client` over `railSubtitle`, mirroring the chat's project-header
 // card. Three projects share the client "Complex NTWRK", so the top line
@@ -26,6 +38,15 @@ import { DOCS } from "@/lib/constants"
 // edwin-context.md, and is too long for a 198px column.
 
 export type Pane = "chat" | "deck" | "about"
+
+// Document rows are 32px (--rail-doc-icon-size), section headers 16px. Lucide
+// expresses stroke-width in viewBox units, so a shared number paints twice as
+// thick on the larger glyph: at 2 the document marks carried visibly more ink
+// than the section header above them. Picked by eye against the rendered rail
+// at 1440x900 — 1 goes spindly and falls behind its own 12px label, 1.5 still
+// out-weighs the header, 1.25 sits level with it while staying a step lighter
+// in value, since these are text-secondary and the headers are text-primary.
+const DOC_ICON_STROKE = 1.25
 
 interface SidebarProps {
   activeSlug: string | null
@@ -46,6 +67,7 @@ interface SidebarProps {
  *  the thumbnail rules and the truncation to drift. */
 function ProjectSection({
   heading,
+  icon: Icon,
   items,
   activePane,
   activeSlug,
@@ -53,6 +75,7 @@ function ProjectSection({
   pick,
 }: {
   heading: string
+  icon: LucideIcon
   items: Project[]
   activePane: Pane
   activeSlug: string | null
@@ -65,6 +88,7 @@ function ProjectSection({
         className="type-label rail-section"
         style={{ color: "rgb(var(--bureau-text-primary))" }}
       >
+        <Icon className="rail-icon" aria-hidden="true" strokeWidth={2} />
         {heading}
       </p>
 
@@ -148,6 +172,7 @@ export function Sidebar({
       <nav className="rail-scroll" aria-label="Work and documents">
         <ProjectSection
           heading="Work"
+          icon={BriefcaseBusiness}
           items={projects}
           activePane={activePane}
           activeSlug={activeSlug}
@@ -168,6 +193,7 @@ export function Sidebar({
         {process.env.NODE_ENV === "development" && vibeProjects.length > 0 && (
           <ProjectSection
             heading="Vibe Coding"
+            icon={CodeXml}
             items={vibeProjects}
             activePane={activePane}
             activeSlug={activeSlug}
@@ -187,6 +213,12 @@ export function Sidebar({
             aria-current={activePane === "deck" ? "true" : undefined}
             onClick={pick(onSelectDeck)}
           >
+            {/* 1.25, not the 2 the 16px icons carry. A Lucide stroke is in
+                viewBox units, so the same number on a 32px icon paints twice
+                as thick — at 2 the document marks out-weighed the section
+                header above them, which inverts the hierarchy. See
+                DOC_ICON_STROKE. */}
+            <Layers className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
             <span className="type-label">Case Study</span>
           </button>
 
@@ -197,8 +229,15 @@ export function Sidebar({
             rel="noopener noreferrer"
             onClick={() => onNavigate?.()}
           >
+            <FileUser className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
             <span className="type-label">Resume</span>
-            <NewTabMark />
+            {/* Glyph dropped, announcement kept. The row leads with FileUser,
+                and a second mark on the right made one row carry two icons —
+                the only row in the rail that did. The behaviour is unchanged,
+                so the warning must survive the glyph: nav rows carry a LEFT
+                icon, contact links carry a RIGHT arrow, and this row is a nav
+                row. */}
+            <NewTabMark glyph={false} />
           </a>
 
           {/* Last in the document group, and a pane swap rather than a route:
@@ -212,6 +251,7 @@ export function Sidebar({
             aria-current={activePane === "about" ? "true" : undefined}
             onClick={pick(onSelectAbout)}
           >
+            <UserRound className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
             <span className="type-label">About</span>
           </button>
         </div>
@@ -237,6 +277,7 @@ export function Sidebar({
             style={{ color: "rgb(var(--bureau-text-secondary))" }}
           >
             Email
+            <MailMark />
           </a>
           <a
             className="type-label rail-contact-link"

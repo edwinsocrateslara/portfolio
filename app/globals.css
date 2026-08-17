@@ -134,6 +134,19 @@
      how a missing token hides. One name, one value, one place to change it. */
   --space-optical-meta: 5px;
 
+  /* Optical cap-top offset for a --type-label line. The half-leading is
+     derivable — (18 − 12) / 2 — but the gap from the em box's top to IBM Plex
+     Mono's cap top is a property of the typeface, not of the box, so CSS
+     cannot compute it. Measured at 1px: the label's painted cap sits 4px below
+     its border-box top, and half-leading accounts for 3 of that.
+     Used to align a bordered box beside a label to the label's INK rather than
+     to its box. The h2's equivalent is 10px (8 half-leading + 2), which is why
+     this cannot be one shared token — the inset is per type step, and reusing
+     the heading's would land the grid 6px high. */
+  --optical-label-cap: calc(
+    (var(--type-label-lh) - var(--type-label-size)) / 2 + 1px
+  );
+
   /* ── Hero glow ─────────────────────────────────────────────────
      Its OWN token, not a pointer at --bureau-accent, so the wash can be
      tuned — hue, or dropped entirely — without touching the accent that
@@ -212,6 +225,35 @@
      so the mark leads the name slightly without competing with it. 12 would
      read as a bullet, 24 (the indicator's size) would outweigh a short name. */
   --brand-mark-size: var(--space-16);
+  /* Rail nav icons. 16 against the 12px mono labels they sit beside — the
+     same value as the brand mark but its own name, because they are a
+     different thing and one may move without the other. Lucide's default is
+     24, which would out-weigh a 12px label. */
+  --rail-icon-size: var(--space-16);
+  /* Document rows take the 32px left column a project row's thumbnail takes,
+     so their icon-to-label gap is `within` by construction and their labels
+     land on the same 62 edge as the project rows — rather than buying that
+     edge with a margin, which is what forced a 24px gap on the only three
+     rows in the rail that had one. A doc icon is deliberately LARGER than a
+     section header's 16: the size difference is what keeps a row from reading
+     as a header, which matters most for these three, whose mono-caps labels
+     are otherwise identical to WORK and VIBE CODING. */
+  --rail-doc-icon-size: var(--space-32);
+  /* A leading icon inside a .chip. Same 16 as the rail's nav icons and for the
+     same reason, but its own name: a chip is not a rail row, and one may move
+     without the other. */
+  --chip-icon-size: var(--space-16);
+  /* The trailing link arrow. 12, not the nav icons' 16: a nav icon LEADS a
+     label and is structural, this TRAILS one and modifies it. At 12 it matches
+     the label's own size and reads as part of the text run rather than as a
+     second icon competing with the one on the left. */
+  --link-arrow-size: var(--space-12);
+
+  /* The left edge every rail row aligns to — the list's padding, the 2px
+     active bar, and the row's own padding. Written as the composition so a
+     change to any part keeps the section headers aligned with the rows
+     underneath them, which they were not: headers sat at 24, rows at 22. */
+  --rail-inset: calc(var(--space-8) + 2px + var(--space-12));
   /* 83 frames at 50fps in the source file. Not a round number and not
      meant to be: it is the source animation's own duration. */
   --indicator-cycle: 1.6667s;
@@ -497,7 +539,39 @@ body {
 
 .rail-section {
   margin: 0;
-  padding: var(--space-8) var(--space-24);
+  /* ASYMMETRIC, and that asymmetry is the whole point. Symmetric 8/8 made a
+     section boundary (21px optical) TIGHTER than the gap between two rows
+     inside a section (24px) — the hierarchy inverted, so nothing told the eye
+     where one section ended and the next began.
+
+     `group` above binds nothing and separates sections; `between` below binds
+     the header to the rows it labels. Each is a rung. See DESIGN.md, "The
+     rail's spacing is optical, not box gaps" — the distances these produce are
+     NOT rungs and cannot be, and that is explained there rather than fudged. */
+  padding:
+    var(--space-group) var(--space-24) var(--space-between) var(--rail-inset);
+  /* Flex so the icon sits on the label's baseline row. `within` because the
+     icon and the word are parts of one thing, not two things in a group. */
+  display: flex;
+  align-items: center;
+  gap: var(--space-within);
+}
+/* Both the section headers and the document rows carry one. currentColor, so
+   an icon steps with its label — muted at rest, primary when a row is active —
+   without either needing to know the other's colour. */
+.rail-icon {
+  width: var(--rail-icon-size);
+  height: var(--rail-icon-size);
+  flex: none;
+}
+/* A document row's icon IS the 32px left column, rather than a 16px glyph with
+   a margin pretending to be one. The margin version aligned the labels but
+   left these three rows with a 24px icon-to-label gap while every other row in
+   the rail sat at 8 — alignment bought by breaking the gap ladder. At 32 the
+   gap is `within` because the column is the icon. */
+.rail-doc .rail-icon {
+  width: var(--rail-doc-icon-size);
+  height: var(--rail-doc-icon-size);
 }
 
 .rail-list {
@@ -585,14 +659,28 @@ body {
   border-color: var(--hairline-strong);
 }
 
+/* The one group in the rail with no header. Measured, the break above it was
+   39px optical against a 43px section boundary — the same break, to the eye,
+   so the group read as a section whose label was missing, and an unlabelled
+   section attaches itself to the nearest labelled one above.
+   A rule rather than more space: widening the gap would have made it read MORE
+   like a section boundary, not less. Space can only say "further apart"; it
+   cannot say "different sort of thing". The hairline sits inside the padding
+   that was already there, so this costs 1px of rail height. */
 .rail-docs {
   display: flex;
   flex-direction: column;
-  padding: var(--space-16) var(--space-8) 0;
+  /* The 16px that was one block of padding is split either side of the rule so
+     the rule sits between the two things rather than clinging to one of them.
+     Total break is unchanged; the 1px is the rule itself. */
+  padding: var(--space-8) var(--space-8) 0;
+  border-top: 1px solid var(--hairline);
+  margin-top: var(--space-8);
 }
 .rail-doc {
   display: flex;
   align-items: center;
+  gap: var(--space-within);
   width: 100%;
   text-align: left;
   padding: var(--space-12);
@@ -660,6 +748,12 @@ body {
 .link-ext {
   color: rgb(var(--bureau-text-muted));
   flex: none;
+  width: var(--link-arrow-size);
+  height: var(--link-arrow-size);
+  /* It used to be a text character, so it inherited font-size and rendered at
+     four different sizes across four call sites. A fixed box ends that. */
+  display: inline-block;
+  vertical-align: -1px;
 }
 a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
@@ -716,10 +810,6 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   min-width: 0;
   max-width: var(--about-measure);
 }
-.about-eyebrow {
-  color: rgb(var(--bureau-text-muted));
-  margin: 0 0 var(--space-group);
-}
 .about-lede {
   color: rgb(var(--bureau-text-primary));
   margin: 0;
@@ -761,6 +851,17 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      shrink: 1 so it still gives way on a narrow pane. */
   flex: 0 1 calc(
     var(--about-portrait) + var(--space-between) + var(--about-square)
+  );
+  /* Aligns the frames' painted top edge to the METADATA line's painted cap
+     top, not the heading's — the grid starts where the page's first line of
+     supporting text starts, and the heading sits above both columns.
+     Composed, not measured as one number: the heading's line box, then the
+     rung below it, then the label's own cap inset. Every part is the same
+     token the spine spends, so moving the type step or the rung moves this
+     with it. Reset below 900px, where the mosaic is ordered FIRST and there is
+     nothing beside it to align to. */
+  margin-top: calc(
+    var(--type-h2-lh) + var(--space-group) + var(--optical-label-cap)
   );
 }
 .about-figure {
@@ -891,6 +992,85 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     rgb(var(--hero-glow) / 0) var(--hero-glow-extent)
   );
 }
+/* Heading left, the page's one action right. flex-end aligns the button to the
+   heading's BASELINE: the h2 sits in a 48px line box against the chip's 44px,
+   and centring the two left the button reading high. */
+.deck-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-between);
+  margin-bottom: var(--space-group);
+}
+/* Shared by the deck and About, because their headers are the same object: an
+   h2 with a mono metadata line under it. Defined once so the two cannot drift
+   into different colours or rungs the way the deck's eyebrow and About's did.
+   The margin BELOW the title is not here — the deck's h1 sits in a flex row
+   beside the download button, where a bottom margin would grow the row and
+   pull the button off the heading's baseline, so that rung is carried by each
+   pane's own wrapper instead. Both spend --space-group. */
+.pane-title {
+  margin: 0;
+  color: rgb(var(--bureau-text-primary));
+}
+/* MUST stay after .pane-title: same specificity, and .pane-title's `margin: 0`
+   shorthand would otherwise win on source order and silently collapse this
+   rung to zero. It did — the gap measured 8px instead of 40 until these two
+   were moved together. */
+.about-title {
+  margin-bottom: var(--space-group);
+}
+.pane-meta {
+  margin: 0 0 var(--space-between);
+  color: rgb(var(--bureau-text-muted));
+}
+/* An <a download> wearing .chip. Nothing to override but the link defaults —
+   the pill's border, fill, radius and hover all come from .chip, which is the
+   point of having it. */
+.deck-download {
+  text-decoration: none;
+}
+
+/* The same wash as the hero, on the deck pane. A SECOND pseudo-element rather
+   than a class both panes share, and that is the whole decision: rule 6
+   allowlists accent surfaces by selector, so a shared `.glow-top` would let any
+   future element opt into an accent surface by adding a class name and never
+   trip the gate — the selector would already be allowlisted. Two selectors
+   means two reviewed entries. The duplication is five lines of `background`;
+   every VALUE still lives once, in the --hero-glow-* tokens, so tuning the wash
+   still happens in one place.
+
+   Anchored on the SCROLLER, not on the deck's content wrapper. Measured: on the
+   wrapper the wash starts at y=32, below .pane-scroll's own top padding, which
+   leaves exactly the flat band above the glow that --hero-anchor exists to
+   prevent on the front door. On the scroller it reaches the pane's top edge.
+
+   It SCROLLS WITH THE CONTENT, like the hero's: an absolutely positioned child
+   of a scroll container moves with it, and at scrollTop 600 the wash is gone.
+   That is the intended effect — the glow marks the top of a view, it is not a
+   property of the view. Fixing it to the pane would instead park a permanent
+   coloured wash in the gutters between 21 screenshots. */
+.deck-glow {
+  position: relative;
+  /* Same reason as .hero-band: without a stacking context, z-index:-1 puts the
+     wash behind .shell's opaque background and it vanishes silently. The
+     lightbox is unaffected — it portals to <body>, verified with the context
+     in place. */
+  isolation: isolate;
+}
+.deck-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--hero-glow-height);
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at top center,
+    rgb(var(--hero-glow) / var(--hero-glow-alpha)),
+    rgb(var(--hero-glow) / 0) var(--hero-glow-extent)
+  );
+}
 .pane-scroll {
   flex: 1;
   min-height: 0;
@@ -1007,7 +1187,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      because on a phone it is the fastest thing to read. */
   .about { flex-direction: column; gap: var(--space-group); }
   .about-spine { max-width: none; flex: none; order: 2; }
-  .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; }
+  .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; margin-top: 0; }
   .about-stack { flex-direction: column; }
   /* Full-width, per the mock's mobile note. `flex: none` because the basis
      above would otherwise size these by HEIGHT in a column. */
@@ -1259,6 +1439,15 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   color: rgb(var(--bureau-text-primary));
 }
 .chip:disabled { opacity: 0.4; cursor: default; }
+
+/* A leading icon inside a chip. 16 against the 12px label — the same step, and
+   the same reasoning, as the rail's nav icons: Lucide's 24 default would
+   out-weigh the word beside it. */
+.chip-icon {
+  width: var(--chip-icon-size);
+  height: var(--chip-icon-size);
+  flex: none;
+}
 
 /* The arrow prefix on a follow-up chip. Muted so the label leads. */
 .chip-prefix { color: rgb(var(--bureau-text-muted)); flex-shrink: 0; }

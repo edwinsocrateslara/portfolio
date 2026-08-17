@@ -42,6 +42,13 @@ const ALLOW = {
     "The 8px square IMPACT marker. A glyph, not a surface.",
   "app/globals.css::no-accent-surface::.hero-band::before background (GRADIENT)":
     "THE ONE EXCEPTION, taken deliberately. The front-door hero wash: an ellipse from top centre at 13% alpha fading out by 64%, on its own pseudo-element at --hero-glow-height so its size is not a remainder of the hero content. This is the accent as a surface, which is exactly what this rule exists to stop, and it is the largest painted area on the site. It is allowed because the front door has one job, and because the cost is understood: it uses --hero-glow, its own token, so tuning or removing the wash cannot move the accent that marks controls. Nowhere else may do this. If a second site ever needs an entry here, the rule has stopped meaning anything and the exception should be reconsidered rather than extended.",
+  // ⚠ THE ENTRY ABOVE SAYS A SECOND SITE MEANS THE EXCEPTION SHOULD BE
+  // RECONSIDERED RATHER THAN EXTENDED. This is that second site, added
+  // knowingly. The sentence stands as written and is not being softened: it is
+  // the record that "one deliberate exception" became two, and the next
+  // request for a third should be read against it, not against this entry.
+  "app/globals.css::no-accent-surface::.deck-glow::before background (GRADIENT)":
+    "The deck pane's wash. Same tokens, same alpha, same extent, same height as the hero's — a second SELECTOR, not a second recipe, because a class shared by both panes would let any later element take an accent surface by adding a class name without ever tripping this rule. Painted area is far smaller than it looks: the 21 slide tiles are opaque object-cover images above a z-index:-1 pseudo, so the wash paints only above the first row and in the 8px gutters. Verified by A/B pixel sample — every tile pixel is byte-identical with the glow on and off. Contrast at the brightest point (32,44,24): primary 11.94, secondary 5.60, muted 4.53 against a 4.5 floor. Nothing muted currently sits there, and 0.03 of headroom is the reason to check before putting anything muted in the top 225px of this pane.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────

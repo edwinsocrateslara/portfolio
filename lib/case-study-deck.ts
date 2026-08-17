@@ -20,9 +20,13 @@ export interface DeckSlide {
 
 export interface CaseStudyDeck {
   slug: string
+  /** Prose form, for the chat's deck answer. The pane does not show it. */
   title: string
-  subtitle: string
-  intro: string
+  /** Atomic, because the metadata row joins them with punctuation the data
+      should not carry: "{client} — {subject} · {n} slides". Same split as
+      Project's client/railSubtitle. */
+  client: string
+  subject: string
   /** Served from public/, downloadable. */
   pdf: string
   slides: DeckSlide[]
@@ -31,9 +35,8 @@ export interface CaseStudyDeck {
 export const meridianDeck: CaseStudyDeck = {
   slug: "meridian-deck",
   title: "Meridian Mobile Banking",
-  subtitle: "Case study deck",
-  intro:
-    "The full deck: research, the old app, the redesign, testing, and impact.",
+  client: "Meridian",
+  subject: "Mobile Banking",
   pdf: "/meridian-case-study.pdf",
   slides: [
     {

@@ -494,7 +494,11 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
             <AboutPane />
           </div>
         ) : pane === "deck" ? (
-          <div className="pane-scroll">
+          // deck-glow is on the SCROLLER, not on DeckPane's root: the wash has
+          // to cover .pane-scroll's own top padding or it starts 32px down and
+          // leaves a flat band. Deck only — About shares .pane-scroll and does
+          // not take the wash.
+          <div className="pane-scroll deck-glow">
             <DeckPane />
           </div>
         ) : isFrontDoor ? (

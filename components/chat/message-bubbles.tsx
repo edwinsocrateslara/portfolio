@@ -127,7 +127,15 @@ export function TextBubble({ text }: { text: string }) {
                 // literal "sr-only" here is enough for Tailwind's scanner to keep
                 // the utility in the bundle, and it is used in JSX elsewhere too.
                 '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">$1' +
-                  '<span aria-hidden="true" class="link-ext"> \u2197</span>' +
+                  // The same ArrowUpRight the rail uses, inlined as markup because this
+                  // branch builds an HTML string and cannot render a component.
+                  // Keeping the typed \u2197 here would have left one of the five
+                  // arrow sites at a different weight from the other four —
+                  // which it did, until it was measured: SPAN, not svg.
+                  // Path data from lucide-react v0.544 arrow-up-right.
+                  '<svg class="link-ext" aria-hidden="true" viewBox="0 0 24 24" fill="none"' +
+                  ' stroke="currentColor" stroke-width="2" stroke-linecap="round"' +
+                  ' stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>' +
                   '<span class="sr-only"> (opens in a new tab)</span></a>'
               ),
           }}
@@ -369,7 +377,12 @@ export function ImpactBubble({
         borderRadius: "var(--bureau-radius-card)",
       }}
     >
+      {/* type-label, like MY ROLE and THE CHALLENGE. It was the only section
+          label in this surface without a type class, so it inherited Archivo
+          while its siblings took the mono system voice — invisible until the
+          font variables were fixed and the mono actually began rendering. */}
       <div
+        className="type-label"
         style={{
           display: "inline-flex",
           alignItems: "center",

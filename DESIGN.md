@@ -429,10 +429,12 @@ Most controls in this system are **42px tall**, not 44. That is deliberate and
 it is not an oversight to be "fixed" by a later audit.
 
 42 is the chip's own arithmetic: 8px padding + 24px line-height + 8px padding
-+ 2×1px border. Prompt chips and the rail's document rows are 42; rail project
-rows are 56 because they carry a thumbnail. **This used to be derived from the
-chat input's 66px height, and no longer is** — the field is 50px now, and a
-claim that one number explains both would be false.
++ 2×1px border. Prompt chips are 42. **Every row in the rail is 56** — project
+rows because they carry a 32px thumbnail, document rows because their icon is
+also 32px, which is what puts every row label on the same 62px left edge. Doc
+rows were 42 while their icon was 16. **This used to be derived from the chat
+input's 66px height, and no longer is** — the field is 50px now, and a claim
+that one number explains both would be false.
 
 WCAG **2.5.8 (AA)** requires 24×24 and every control clears it. **2.5.5 (AAA)**
 asks for 44×44, and this system takes the AA floor plus the density in exchange
@@ -694,17 +696,64 @@ it was deleted rather than left orphaned.
 **A row with no artwork draws an empty frame**, not a borrowed screenshot from
 another project. The rail is where the site asserts what a project looks like.
 
+### The rail's spacing is optical, not box gaps
+
+**An audit measuring margins in the rail will find zeros everywhere and
+conclude the relatedness ladder is not applied. It is applied — to padding.**
+
+Exactly one thing in `.rail-scroll` has a margin — `.rail-docs`, 8px on top,
+half of the split described under "The document group is divided by a rule".
+Everything else sits flush, so every visible gap is the sum of two facing
+paddings plus the slack left by centring content optically inside a taller box:
+
+- a 32px thumbnail centred in a 56px row leaves **4px** above and below
+- a 16px icon centred on an 18px label line leaves **1px**
+
+So the distance between two painted things is `paddingA + paddingB + slack`,
+and the slack is 8px between two rows, 5px between a header icon and a
+thumbnail.
+
+**That means the optical distances cannot themselves be ladder rungs, and are
+not.** Making them rungs would require the two facing paddings to sum to
+`rung − slack` — 8 for a 16px gap, 27 for a 32px gap — and 27 is not reachable
+from two rungs. The constraint is real, not a shortcut: with flush boxes and
+optically centred content, you can put the ladder on the paddings or on the
+gaps, but not both. **The paddings are the rungs**; the gaps are those plus a
+fixed, known offset.
+
+What matters is that the ORDER is right, and it was not. Symmetric `8 / 8`
+header padding produced this:
+
+| | before | after | from |
+|---|---|---|---|
+| row → row | 24 | **24** | row padding `8` + `8` |
+| header → its first row | 21 | **29** | header `between` + row `8` |
+| section → section | 21 | **45** | row `8` + header `group` |
+
+A section boundary was **tighter** than the gap between two rows inside a
+section, and identical to the gap between a header and the row it labels — so
+nothing marked where one section ended. The header's padding is now asymmetric:
+`group` above to separate sections, `between` below to bind the header to the
+rows it labels. Applied identically to both sections; the difference in how
+WORK and VIBE CODING read is the seven-rows-to-one difference, not spacing.
+
 ### Known consequence: the rail now scrolls at 1440×900
 
 Measured before the second section: `.rail-scroll` was **673 / 673 — exactly
 full, zero headroom**. It already scrolled at 1440×700 (−159) and 380×820
 (−66).
 
-Adding the section and removing the nav row it replaced nets **+7px** —
-measured at 680 against a 673 viewport, so 1440×900 tips just over the line
-rather than dramatically. **Each further project costs 56px**, the row height,
-and that is the number that matters: the second vibe project puts the rail 63px
-past the fold, the third 119px, and so on.
+Four changes pushed it past. Adding the section and removing the nav row it
+replaced netted **+7px** — 680 against a 673 viewport. Fixing the inverted
+spacing hierarchy above cost **+64px** more (32px per header × 2), taking it to
+738. Widening the document icons to 32px cost **+42** (three rows, 42 → 56
+each) and the document group's hairline **+1**, taking it to **781, or 108px
+past the fold**. At 380 it is 215px past.
+
+**Each further project costs 56px**, the row height, and each further *section*
+costs 98 — its header at 66 plus one row. Contact stays reachable at any
+height: `.rail-scroll` is `overflow-y: auto` and the CONTACT footer sits
+outside it, pinned. Verified at both widths.
 
 This is accepted, not an oversight. It is mechanically fine — `.rail-scroll` is
 `overflow-y: auto` and the CONTACT footer sits outside it, pinned, so contact
@@ -712,6 +761,61 @@ stays reachable at any height. But the rail has moved from "everything visible
 at once on a common laptop" to "scrolls", and it will not move back. If that
 becomes a problem the answer is fewer sections or shorter rows, not removing
 the scroll.
+
+### One icon-to-label gap, and two label edges
+
+Every mark in the rail sits `within` (8px) from the word it labels — headers,
+project rows, document rows, the CONTACT square. There is no second value.
+
+Labels land on **three** left edges, and each is a consequence of the mark's
+width rather than a decision:
+
+| | mark | gap | label x |
+|---|---|---|---|
+| WORK, VIBE CODING | 16px icon | 8 | **46** |
+| every project and document row | 32px | 8 | **62** |
+| CONTACT | 8px square | 8 | **40** |
+
+This replaced an arrangement where the three document rows had a 24px gap —
+a `margin-right` that padded a 16px icon out to a 32px column in order to buy
+the 62 edge. It bought alignment by breaking the gap ladder on the only three
+rows in the rail that had one, and 24 is not a rung. **Widening the icon to 32
+gets both**: the gap is `within` because the column *is* the icon.
+
+The alternative was leaving the document icons at 16 and letting their labels
+sit at 46. It was rejected for a specific reason, not on taste: document labels
+are mono caps, identical in type to WORK and VIBE CODING. At 46 with a 16px
+icon they become typographically indistinguishable from section headers, which
+would make the unheaded-group problem below strictly worse.
+
+Document icons carry `strokeWidth={1.25}`, not the 2 the 16px icons carry.
+Lucide expresses stroke width in viewBox units, so the same number paints twice
+as thick at 32px — at 2 a document mark out-weighed the section header above
+it, inverting the hierarchy. 1.25 was picked by eye against the rendered rail:
+1 goes spindly and falls behind its own 12px label, 1.5 still out-weighs the
+header. See `DOC_ICON_STROKE` in `components/shell/sidebar.tsx`.
+
+### The document group is divided by a rule
+
+CASE STUDY / RESUME / ABOUT is the one group in the rail with no header, and it
+cannot easily have one — DOCUMENTS is accurate for the first two and wrong for
+ABOUT, and MORE is filler. A header that is approximately true is worse than
+none.
+
+Measured, the break above the group was **39px optical against a 43px section
+boundary** — the same break, to the eye. So the group read as a section whose
+label was missing, and an unlabelled section attaches itself to the nearest
+labelled one above it: VIBE CODING appeared to contain four things.
+
+**A 1px hairline, not more space.** Widening the gap would have made it read
+*more* like a section boundary, not less; space can only say "further apart",
+never "different sort of thing". The 16px that was one block of `.rail-docs`
+padding is split 8 above / 8 below so the rule sits *between* the two groups
+rather than clinging to one — measured 18px above, 21px below, the 3px from the
+doc row's icon being taller than its label ink.
+
+The rule costs 1px of rail height. Widening the document icons cost 42 more
+(three rows, 42 → 56 each), which is where the numbers below come from.
 
 ## The front door
 
