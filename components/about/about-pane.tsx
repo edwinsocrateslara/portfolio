@@ -21,14 +21,31 @@ import { CURRENTLY_READING } from "@/lib/currently-reading"
 const PORTRAIT_RATIO = "392 / 576"
 const SQUARE_RATIO = "1 / 1"
 
-// TODO(edwin): supply the three photographs and their alt text. Alt text is
-// authored, never generated — same rule as the 32 project images. Until then
-// the slots hold their aspect ratios so the layout is real and reviewable, and
-// carry no <img> at all: a broken image is worse than an honest empty frame.
+// Sources are 3024x4032 originals, downscaled to 1200x1600 and encoded webp at
+// q82 — the largest either slot renders is 392x576 at 2x, so the extra pixels
+// only cost bytes. next/image resizes from here per request.
+//
+// TODO(edwin): the bouldering photograph, and alt text for all three. Alt text
+// is authored, never generated — same rule as the 32 project images.
+//
+// ⚠ `alt: ""` is not a placeholder to a screen reader: it declares an image
+// DECORATIVE and hides it. That is false for these two — they are the only
+// human presence on the site — so the empty strings below are actively wrong,
+// not merely unfinished. One sentence each and they are right.
+//
+// A slot with no src carries no <img> at all: a broken image is worse than an
+// honest empty frame, and the aspect ratio keeps the layout real meanwhile.
+// `position` is object-position, and it belongs to the PHOTOGRAPH rather than
+// to the frame: it describes where that image's subject sits, so it travels
+// with the file if the file moves to another slot. Omitted means centred.
 const PHOTOS = {
-  portrait: { src: null as string | null, alt: "" },
+  portrait: { src: "/about/malamute.webp", alt: "" },
   bouldering: { src: null as string | null, alt: "" },
-  race: { src: null as string | null, alt: "" },
+  // 3:4 source in a 1:1 frame, so cover trims 25.2% of the height. Centred it
+  // took 12.6% off each edge and cut the shoes; bottom-aligned it takes the
+  // whole 25.2% off the top, which the frame can afford — the subject's head
+  // still clears the top edge, with less headroom rather than none.
+  race: { src: "/about/race-day.webp", alt: "", position: "50% 100%" },
 }
 
 function Slot({
@@ -36,7 +53,7 @@ function Slot({
   ratio,
   sizes,
 }: {
-  photo: { src: string | null; alt: string }
+  photo: { src: string | null; alt: string; position?: string }
   ratio: string
   sizes: string
 }) {
@@ -48,7 +65,9 @@ function Slot({
           alt={photo.alt}
           fill
           sizes={sizes}
-          style={{ objectFit: "cover" }}
+          // Per-photo, NOT on .about-slot: that class is shared by all three
+          // frames, so styling it would re-frame every photograph to suit one.
+          style={{ objectFit: "cover", objectPosition: photo.position }}
         />
       )}
     </div>
@@ -131,7 +150,7 @@ export function AboutPane() {
             />
           </div>
           <figcaption className="type-label about-caption">
-            Indoor bouldering · Race day
+            Bouldering · Race day
           </figcaption>
         </figure>
       </div>

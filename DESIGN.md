@@ -523,6 +523,60 @@ Mono carries the "system voice"; Archivo carries all human-readable prose
 and headings. That split is what keeps an achromatic palette legible
 without color.
 
+### The panes already share a top rung — the difference is half-leading
+
+**Do not "fix" this.** Someone will measure the deck, About and a project
+reveal, see the first line of the reveal sitting higher, and add a few pixels
+to close it. Those pixels would be wrong.
+
+All three scrolling panes are `.pane-scroll` and share its
+`padding-top: var(--space-group)`. Measured from the pane's content top:
+
+| view | box top | ink top | first element |
+|---|---|---|---|
+| deck | **32** | 38 | `.type-h2` 32/48 |
+| About | **32** | 38 | `.type-h2` 32/48 |
+| project reveal | **32** | 36 | `.type-title` 20/30 |
+| front door | 225 | 231 | `.type-h2`, `--hero-anchor: 25dvh` |
+
+**The box tops are identical.** What differs is where the glyphs start inside
+their own line box: a 32px face in a 48px box begins 6px down, a 20px face in a
+30px box begins 4px. That is the same rule already stated for the rail — optical
+distances are paddings plus a fixed, known offset, and the offset is a property
+of the type step, not a spacing decision. Closing a 2px gap here would put a
+non-rung value into the one layer that cannot carry rungs.
+
+The reveal's ink moved 35 → 36 when its opening line went from `.type-body` to
+`.type-title`. That was a consequence of the type change, not the goal of it.
+
+The front door is the only real difference, and it is deliberate:
+`--hero-anchor` anchors the hero rather than padding it.
+
+### A project reveal opens at one step up
+
+The first line of a reveal is `.type-title` (20/700); every paragraph under it
+is `.type-body` (16/400). It earns the step because it is the opening
+statement of the case study, and the same class does the same job on the About
+page's lede — one rule, not two.
+
+It is deliberately **not** a heading. `.type-h2` is 32/700, and at 20 the line
+stays clearly subordinate to it, so a reveal still reads as a conversation
+rather than as a page with a title. Weight alone at body size was tried and
+rejected: at 16/600 it read as bold prose inside a paragraph, not as a first
+line.
+
+The flag lives on the block, set in `buildProjectBodyBlocks` — so the chat
+reveal and `/case-study/[slug]` cannot disagree about which line is the
+opening one, the same reason the block ORDER lives there. A project with no
+tagline emits no block at all, so nothing renders an empty bubble.
+
+**One consequence, on the standalone route only.** That page has its own
+project-header card, whose title is also `.type-title`, so two equal-rank lines
+now sit near the top. It reads because the header is inside a bordered card
+with a thumbnail and a mono eyebrow and the tagline is loose body text below
+it — but they are the same type step, and if that card is ever restyled this is
+the pairing to check.
+
 ## Chat column alignment
 
 The messages pane scrolls and the input does not, so the scrollbar takes

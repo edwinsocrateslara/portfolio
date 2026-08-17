@@ -11,13 +11,17 @@ export interface Book {
   author: string
 }
 
+// Array order is DISPLAY order and nothing else. voice.md's sentence names
+// Rock Climbing first; the check asserts each title and author appears in that
+// sentence, not the sequence they appear in, so the page can lead with either
+// without the prose having to change.
 export const CURRENTLY_READING: Book[] = [
-  {
-    title: "Rock Climbing Technique: The Practical Guide to Movement Mastery",
-    author: "John Kettle",
-  },
   {
     title: "Simple Numbers, Straight Talk, Big Profits!",
     author: "Greg Crabtree",
+  },
+  {
+    title: "Rock Climbing Technique: The Practical Guide to Movement Mastery",
+    author: "John Kettle",
   },
 ]

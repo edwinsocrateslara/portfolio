@@ -715,17 +715,17 @@ body {
   display: inline-block;
   flex: none;
 }
-.rail-footer-place { margin: 0; }
-
 /* The two contact links, stacked. `within` between them because they are
-   parts of one thing — how to reach him — and `between` above, separating
-   that group from the place line. */
+   parts of one thing — how to reach him. No margin above: the CONTACT label's
+   own `within` binds it to the links it labels. It used to carry `between`
+   here, separating the group from a "Toronto, Canada" line that sat above it;
+   that line is gone, and a rung left behind after the thing it spaced away
+   from is deleted is just an unexplained gap. */
 .rail-contact {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-within);
-  margin-top: var(--space-between);
 }
 .rail-contact-link {
   display: inline-flex;
@@ -1071,6 +1071,26 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     rgb(var(--hero-glow) / 0) var(--hero-glow-extent)
   );
 }
+/* The About pane's wash. Same recipe, same tokens, third selector — see the
+   note on .deck-glow for why these are not one shared class, and the note in
+   check-design.mjs for what three entries now says about the exception. */
+.about-glow {
+  position: relative;
+  isolation: isolate;
+}
+.about-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--hero-glow-height);
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at top center,
+    rgb(var(--hero-glow) / var(--hero-glow-alpha)),
+    rgb(var(--hero-glow) / 0) var(--hero-glow-extent)
+  );
+}
 .pane-scroll {
   flex: 1;
   min-height: 0;
@@ -1190,8 +1210,20 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; margin-top: 0; }
   .about-stack { flex-direction: column; }
   /* Full-width, per the mock's mobile note. `flex: none` because the basis
-     above would otherwise size these by HEIGHT in a column. */
+     above would otherwise size these by HEIGHT in a column — flex-basis
+     resolves on the MAIN axis, which is vertical here.
+
+     This rule previously ended at the comma below with no declaration block,
+     so its selector list ran on into `.pane-dock` and the declaration was
+     lost. Nothing failed: the dock kept its padding, the figures silently kept
+     their desktop basis, and the frames were empty, so a 249px "full-width"
+     photo column looked like a design choice. It only surfaced when real
+     photographs went in. */
   .about-figure:first-child,
+  .about-figure:last-child {
+    flex: none;
+    width: 100%;
+  }
 
   .pane-dock { padding: var(--space-16) var(--space-20); }
 }

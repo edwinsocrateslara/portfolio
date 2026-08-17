@@ -32,8 +32,11 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
   // A placeholder project has no tagline yet, and an empty text block renders
   // as an empty bubble. Skip it rather than assert a blank line — the seven
   // real projects all have one, so this only ever fires for a placeholder.
+  // `lede` is set HERE rather than in either renderer, so the chat reveal and
+  // /case-study/[slug] cannot disagree about which line is the opening one —
+  // the same reason the block order lives in this function.
   const blocks: MessageBlock[] = p.tagline
-    ? [{ kind: "text", text: p.tagline }]
+    ? [{ kind: "text", text: p.tagline, lede: true }]
     : []
 
   const push = (block: MessageBlock | null) => {

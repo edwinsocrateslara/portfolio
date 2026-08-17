@@ -265,11 +265,6 @@ export function Sidebar({
           <span className="rail-square" />
           Contact
         </p>
-        {/* Above the links, not stranded under them: where someone is is part
-            of how you reach them, not a footnote. */}
-        <p className="type-caption rail-footer-place" style={{ color: "rgb(var(--bureau-text-muted))" }}>
-          Toronto, Canada
-        </p>
         <div className="rail-contact">
           <a
             className="type-label rail-contact-link"

@@ -47,8 +47,19 @@ const ALLOW = {
   // knowingly. The sentence stands as written and is not being softened: it is
   // the record that "one deliberate exception" became two, and the next
   // request for a third should be read against it, not against this entry.
+  //
+  // ⚠⚠ AND HERE IS THE THIRD, BELOW. The wash is now on every pane a visitor
+  // can open. At that point it is not an exception to "the accent is never a
+  // surface" — it is the house style, and the RULE is what is stale, not the
+  // allowlist. Two honest options, neither taken here because neither is a
+  // silent edit: (a) narrow rule 6 to say the accent may not be a surface
+  // EXCEPT as the top-of-view wash, and drop these three entries; or (b) keep
+  // the rule and accept that the allowlist is now the real spec. What must not
+  // happen is a fourth entry appended without anybody deciding which.
   "app/globals.css::no-accent-surface::.deck-glow::before background (GRADIENT)":
     "The deck pane's wash. Same tokens, same alpha, same extent, same height as the hero's — a second SELECTOR, not a second recipe, because a class shared by both panes would let any later element take an accent surface by adding a class name without ever tripping this rule. Painted area is far smaller than it looks: the 21 slide tiles are opaque object-cover images above a z-index:-1 pseudo, so the wash paints only above the first row and in the 8px gutters. Verified by A/B pixel sample — every tile pixel is byte-identical with the glow on and off. Contrast at the brightest point (32,44,24): primary 11.94, secondary 5.60, muted 4.53 against a 4.5 floor. Nothing muted currently sits there, and 0.03 of headroom is the reason to check before putting anything muted in the top 225px of this pane.",
+  "app/globals.css::no-accent-surface::.about-glow::before background (GRADIENT)":
+    "The About pane's wash. Same tokens, same alpha, same extent, same height as the hero's and the deck's — a third SELECTOR, not a third recipe, so adopting the wash on a fourth element still trips this rule instead of being a class name anyone can add. The only text sitting inside it is the h2 heading and the mono metadata line, both above the 4.5 floor by a wide margin; the photographs below are opaque and unaffected, the same as the deck's slide tiles. See the note above this block: at three sites the exception is the house style, and the rule is what needs revisiting.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────

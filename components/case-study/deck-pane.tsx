@@ -33,12 +33,12 @@ export function DeckPane() {
         </a>
       </div>
 
-      {/* The em dash binds the two halves of the project's name; the middle dot
-          separates that name from the count. Two different weights, because
-          they are two different joins — a second em dash would flatten a name
-          and a count into three peer items. */}
+      {/* Three peer facts, one separator. An earlier version used an em dash
+          between client and subject to bind them as one name and a middle dot
+          before the count — two weights for two kinds of join. Edwin's call is
+          that they read as a flat list, so they are punctuated as one. */}
       <p className="type-label pane-meta">
-        {meridianDeck.client} — {meridianDeck.subject} ·{" "}
+        {meridianDeck.client} · {meridianDeck.subject} ·{" "}
         {meridianDeck.slides.length} slides
       </p>
 

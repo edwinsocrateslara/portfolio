@@ -33,6 +33,10 @@ export interface BaseMessage {
 export interface TextMessage extends BaseMessage {
   kind: "text"
   text: string
+  /** The opening line of a project reveal. Renders one type step up so it
+   *  reads as an opening statement rather than as the first of N identical
+   *  paragraphs. Set by buildProjectBodyBlocks, so both surfaces get it. */
+  lede?: boolean
 }
 
 export interface SectionHeadingMessage extends BaseMessage {
@@ -104,11 +108,19 @@ export type StructuredMessage =
   | DocLinkMessage
 
 // Text bubble with markdown-like formatting
-export function TextBubble({ text }: { text: string }) {
+export function TextBubble({ text, lede }: { text: string; lede?: boolean }) {
   if (!text) return null
 
+  // .type-title, the same class the About page's opening sentence uses — one
+  // step up in size AND weight, which separates it from the paragraphs below
+  // on two axes. Weight alone at body size read as bold prose rather than as
+  // an opening line. It stays well under .type-h2 (32/700), so the reveal
+  // still reads as a conversation rather than as a page with a heading.
   return (
-    <div className="type-body" style={{ color: "rgb(var(--bureau-text-primary))" }}>
+    <div
+      className={lede ? "type-title" : "type-body"}
+      style={{ color: "rgb(var(--bureau-text-primary))" }}
+    >
       {text.split("\n").map((p, i) => (
         <p
           key={i}
@@ -584,7 +596,12 @@ export function MessageContent({
 
   return (
     <>
-      {kind === "text" && <TextBubble text={(message as TextMessage).text} />}
+      {kind === "text" && (
+        <TextBubble
+          text={(message as TextMessage).text}
+          lede={(message as TextMessage).lede}
+        />
+      )}
       {kind === "section-heading" && (
         <SectionHeading text={(message as SectionHeadingMessage).text} />
       )}

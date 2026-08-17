@@ -490,14 +490,15 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
 
       <main className="pane" ref={paneRef}>
         {pane === "about" ? (
-          <div className="pane-scroll">
+          <div className="pane-scroll about-glow">
             <AboutPane />
           </div>
         ) : pane === "deck" ? (
-          // deck-glow is on the SCROLLER, not on DeckPane's root: the wash has
-          // to cover .pane-scroll's own top padding or it starts 32px down and
-          // leaves a flat band. Deck only — About shares .pane-scroll and does
-          // not take the wash.
+          // Both washes sit on the SCROLLER, not on the pane component's root:
+          // they have to cover .pane-scroll's own top padding or they start
+          // 32px down and leave a flat band above the heading. Separate
+          // classes rather than one shared name so each is its own entry in
+          // check-design's rule 6 — see the note there.
           <div className="pane-scroll deck-glow">
             <DeckPane />
           </div>
