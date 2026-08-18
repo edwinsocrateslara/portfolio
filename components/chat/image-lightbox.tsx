@@ -118,13 +118,18 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
   const image = images[currentIndex]
   const transitionClass = prefersReducedMotion ? undefined : "animate-fade-in"
 
-  // Portalled to <body>. Rendered in place, `position: fixed` resolved
-  // against the AssistantBubble wrapper instead of the viewport: its
-  // `animate-slide-up` animation fills a transform, and any non-none
-  // transform makes an element the containing block for fixed descendants.
-  // The overlay was therefore sized to the message bubble, leaving the
-  // header, input and left of the page uncovered. A higher z-index cannot
-  // fix that — only escaping the ancestor can.
+  // Portalled to <body>, and it stays that way.
+  //
+  // It was originally forced: `.animate-slide-up` on the AssistantBubble
+  // wrapper filled a transform, and any non-none transform makes an element
+  // the containing block for `position: fixed` descendants — so the overlay
+  // sized itself to the message bubble and left the header, input and left of
+  // the page uncovered. That class animates opacity only now, so the trap is
+  // gone and the portal is no longer load-bearing for it.
+  //
+  // Keeping it anyway: an overlay that covers the viewport should not depend
+  // on every ancestor between here and <body> staying transform-free. See the
+  // note above @keyframes cursor-blink in globals.css.
   return createPortal(
     <div
       onClick={onClose}

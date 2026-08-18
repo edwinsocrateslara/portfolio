@@ -124,6 +124,28 @@
      the pane is currently overflowing. */
   --chat-scrollbar: 4px;
 
+  /* ── Motion: a chat block arriving ────────────────────────────
+     ONLY the block entrance is tokenised here. --motion-* for the cursor
+     blink, the sparkle and the pulse is a separate pass; naming two of five
+     would be worse than naming none, so those stay literal until that pass
+     names all of them together.
+
+     The EASE is the load-bearing half, not the duration. `ease-out` —
+     cubic-bezier(0, 0, .58, 1) — front-loads: at 0.3s it reached 0.49 opacity
+     by 100ms and 0.69 by 150ms, so the fade was effectively over before a
+     saccade could land on the new block. Blocks arrive on a 400-900ms typing
+     delay, so attention is elsewhere when one appears.
+
+     This curve is slow-in/slow-out, which puts the visible part of the ramp
+     at 150-400ms — where the eye actually is. Measured: 0.29 at 150ms, 0.53
+     at 200ms, 0.83 at 300ms.
+
+     Duration does NOT gate the reveal. use-scripted-stream awaits the typing
+     delay BEFORE appending the next block, so the animation and the cadence
+     are independent — a longer fade cannot make the thread take longer. */
+  --motion-block-in: 550ms;
+  --motion-block-in-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
   /* App-shell rail. A measure, not spacing — like CONTENT_WIDTH. */
   --rail-width: 264px;
 
@@ -327,29 +349,27 @@ body {
   to   { opacity: 1; }
 }
 
-/* ⚠ This animates `transform`, and .animate-slide-up applies it with
-   `fill-mode: both`. The final keyframe therefore PERSISTS after the
-   animation ends, leaving `transform: translateY(0)` — computed as
-   matrix(1,0,0,1,0,0), which is not `none`.
+/* HAZARD RETIRED — kept as a record, because the shape of this bug recurs.
+   `slide-up` used to animate `transform: translateY(8px)` -> `translateY(0)`
+   with `fill-mode: both`, so the final keyframe PERSISTED and left
+   matrix(1,0,0,1,0,0) on the element — not `none`.
 
    A non-none transform makes an element the containing block for
-   `position: fixed` descendants. AssistantBubble carries this class, so
-   ANY fixed-position thing rendered inside a chat message — modal,
-   lightbox, tooltip, dropdown, popover — will size and position itself
-   against the message bubble instead of the viewport.
+   `position: fixed` descendants. AssistantBubble carries .animate-slide-up,
+   so ANY fixed-position thing inside a chat message — modal, lightbox,
+   tooltip, dropdown, popover — sized and positioned itself against the
+   message bubble instead of the viewport. Raising z-index does not help: the
+   element is geometrically confined, not painted underneath.
 
-   Raising z-index does not help: the element is geometrically confined,
-   not painted underneath. The fix is to portal out to document.body.
-   ImageLightbox does this; see components/chat/image-lightbox.tsx.
+   The class now animates OPACITY ONLY, so no transform is left behind and
+   the trap is gone. ImageLightbox still portals to document.body, which is
+   correct on its own merits and is NOT load-bearing for this any more.
 
-   This took real diagnostic time to find, because the symptom (page
-   chrome rendering "over" the overlay) looks exactly like a stacking
-   bug. It is not. Check the overlay's getBoundingClientRect first — if
-   it matches the bubble rather than the viewport, this is why. */
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0);   }
-}
+   If you ever put a transform back into a keyframe used with fill-mode:
+   both, this returns. The symptom (page chrome rendering "over" an overlay)
+   looks exactly like a stacking bug and is not one — check the overlay's
+   getBoundingClientRect first; if it matches its container rather than the
+   viewport, this is why. */
 
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
@@ -358,7 +378,18 @@ body {
 
 .animate-cursor-blink { animation: cursor-blink 1s steps(1) infinite; }
 .animate-fade-in      { animation: fade-in 0.35s ease-out both; }
-.animate-slide-up     { animation: slide-up 0.3s ease-out both; }
+/* Points at `fade-in` rather than carrying its own opacity-only keyframe: a
+   second block-of-two identical to that one is a duplicate, not a variant.
+   Its own timing, because a chat block settling and the hero headline
+   arriving are not the same event — see --motion-block-in for why the curve
+   matters more than the number.
+   NAME: `.animate-slide-up` no longer slides. Renaming it touches two call
+   sites and four comments, and the full timing-token pass is going to rewrite
+   this declaration anyway — so it is deliberately left for that pass rather
+   than split across two. */
+.animate-slide-up {
+  animation: fade-in var(--motion-block-in) var(--motion-block-in-ease) both;
+}
 
 /* ── Bureau 1D — pulse (typing dots, sending indicator) ────────── */
 @keyframes bureau-pulse {
@@ -1173,7 +1204,8 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   /* The rail becomes a sheet that REPLACES the pane rather than overlaying
      it — it stays an ordinary flex child under the top bar. No fixed
      positioning, so there is no z-index race and nothing to go wrong if an
-     ancestor ever picks up a transform (the trap at @keyframes slide-up).
+     ancestor ever picks up a transform (the trap recorded above
+     @keyframes cursor-blink).
      It also keeps the top bar's Close control reachable, which an
      inset:0 overlay covered. */
   .rail { display: none; }

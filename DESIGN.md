@@ -733,6 +733,53 @@ source has no gradients, no image assets and every bezier handle at zero — so
 the trace is exact, not an approximation. The file and the full derivation are
 kept in `docs/provenance/typing-indicator/`, which does not ship.
 
+### Entrance animations are opacity-only, and that is a constraint
+
+**No entrance animation in this app sets a `transform`.** Not a preference — a
+rule with a specific failure behind it.
+
+Every entrance animation runs with `animation-fill-mode: both`, so the final
+keyframe persists after the animation ends. A keyframe that ends on
+`translateY(0)` therefore leaves `matrix(1,0,0,1,0,0)` on the element, which is
+not `none` — and **a non-none transform makes that element the containing block
+for every `position: fixed` descendant.**
+
+`.animate-slide-up` used to rise 8px, and it sits on the wrapper around every
+chat message. So the image lightbox — `position: fixed; inset: 0` — sized
+itself to the message bubble instead of the viewport, leaving the header, the
+input and the left of the page uncovered. Raising `z-index` does nothing: the
+element is geometrically confined, not painted underneath. The symptom looks
+exactly like a stacking bug and is not one.
+
+The class now animates opacity only. Measured after the change: settled
+`transform: none`, so nothing downstream is a containing block. `ImageLightbox`
+still portals to `document.body`, which is correct on its own merits — an
+overlay covering the viewport should not depend on every ancestor staying
+transform-free — but it is no longer the thing holding the lightbox together.
+
+**Cost, measured rather than assumed.** A/B across a full seven-block reveal,
+identical streaming, animation disabled by CSS only so React re-renders the
+same number of times:
+
+| | style recalcs | layouts | CLS |
+|---|---|---|---|
+| with the animation | 874 | **19** | **0** |
+| `animation: none` | 802 | **19** | **0** |
+
+**Zero additional layouts** — opacity composites, so the animation never
+reaches layout. ~72 recalcs across seven blocks is ~10 each. The ~800 baseline
+is React re-rendering the thread on each append and has nothing to do with the
+animation; attributing the total to it would have been wrong.
+
+The 8px rise was dropped deliberately, not lost. Frozen at matched progress it
+travelled 8 → 5 → 2.5 → 0.7 → 0px while opacity ran 0 → 1, so the fade was
+already doing the perceptual work and the transform was carrying the hazard for
+almost nothing.
+
+**If a transform ever goes back into a `fill-mode: both` keyframe, this
+returns.** Check the overlay's `getBoundingClientRect()` first: if it matches
+its container rather than the viewport, this is why.
+
 ## The rail
 
 **Two project sections, WORK and VIBE CODING**, sharing one `ProjectSection`

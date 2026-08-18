@@ -393,10 +393,11 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
   )
 
   // Entrance animation, gated the same way the chat bubbles gate theirs
-  // (hooks/use-prefers-reduced-motion). fade-in animates OPACITY ONLY — it
-  // never sets a transform — so unlike .animate-slide-up it does not turn its
-  // element into a containing block for position:fixed descendants. See the
-  // warning at @keyframes slide-up in globals.css.
+  // (hooks/use-prefers-reduced-motion). Every entrance animation in this app
+  // now animates OPACITY ONLY and sets no transform, so none of them turns
+  // its element into a containing block for position:fixed descendants. See
+  // the note above @keyframes cursor-blink in globals.css for what that used
+  // to cost.
   const fadeIn = prefersReducedMotion ? "" : "animate-fade-in"
   const delay = (ms: number) => (prefersReducedMotion ? undefined : `${ms}ms`)
 
