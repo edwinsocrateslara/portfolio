@@ -1,5 +1,28 @@
 import type { Project } from "./projects"
+import { vibeProjects } from "./vibe-projects"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
+
+// Which flow an entry takes, DERIVED from which list it is in rather than
+// declared on the entry.
+//
+// This is the correction to the variant that was deleted in 433dd4d. That one
+// used `variant?: "traditional" | "vibe-coded"` on Project, defaulting to
+// traditional when omitted — so the vibe path was reachable only by setting a
+// field nobody had a reason to set, and nothing ever did: 0 assignments across
+// all 7 projects, 0 for each of its 8 fields. Its own comment predicted it:
+// "With zero users, nothing will catch this rotting."
+//
+// Membership cannot fall out of sync the way a discriminator can. An entry in
+// vibeProjects takes the vibe flow by existing; there is no second thing to
+// remember to set, and no state where the flow has zero users while the code
+// stays alive.
+//
+// It also adds NO fields to Project. The two flows read the same six copy
+// fields and differ only in order and in the words above each section — which
+// is the whole claim: the shape is in the content and its order.
+function isVibe(p: Project): boolean {
+  return vibeProjects.some((v) => v.slug === p.slug)
+}
 
 // The single definition of how a project case study is ordered.
 //
@@ -23,6 +46,49 @@ import type { MessageBlock } from "@/hooks/use-scripted-stream"
 // from a grouped row because images already stack full-width.
 export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
   const all = (p.images ?? []).map((img) => ({ url: img.url, alt: img.alt }))
+
+  // ── The vibe flow ──────────────────────────────────────────────────────
+  // A software tool needs a different order from a design case study, and it
+  // needs its terms defined as they appear: "four boards" lands with no
+  // referent in a shape that has no place to say what a board is.
+  //
+  // Same fields, different order and different section words. `challenge`
+  // carries the pipeline, `impacts` carries the stack and the counts as one
+  // mono block rather than an accent callout — reference material, not a
+  // claim about outcomes. `atStake` is deliberately unread here: the reason
+  // the tool exists is the opening line's job in this shape.
+  //
+  // It ends on the running artefact. That is the one thing a vibe entry can
+  // do that the seven work projects structurally cannot — their work sits
+  // behind client NDAs and app stores; this one is open in a tab.
+  if (isVibe(p)) {
+    const out: MessageBlock[] = []
+    if (p.tagline) out.push({ kind: "text", text: p.tagline, lede: true })
+    if (all[0]) out.push({ kind: "image", image: all[0], group: all, groupIndex: 0 })
+    if (p.roleDescription) {
+      out.push({ kind: "section-heading", text: "My role" })
+      out.push({ kind: "text", text: p.roleDescription })
+    }
+    if (p.challenge) {
+      out.push({ kind: "section-heading", text: "The pipeline" })
+      out.push({ kind: "text", text: p.challenge })
+    }
+    if (all[1]) out.push({ kind: "image", image: all[1], group: all, groupIndex: 1 })
+    if (p.decision) {
+      out.push({ kind: "section-heading", text: "The calls" })
+      out.push({ kind: "text", text: p.decision })
+    }
+    if (p.impacts?.length) {
+      out.push({ kind: "section-heading", text: "Stack and numbers" })
+      out.push({ kind: "text", text: p.impacts.join("\n"), mono: true })
+    }
+    out.push({ kind: "section-heading", text: "See it running" })
+    out.push({ kind: "doc-link", docKey: "ideas-showcase" })
+    for (let i = 2; i < all.length; i++) {
+      out.push({ kind: "image", image: all[i], group: all, groupIndex: i })
+    }
+    return out
+  }
 
   // Every image opens a lightbox over the whole set regardless of where it
   // sits, so splitting them across the page doesn't strand each one alone.

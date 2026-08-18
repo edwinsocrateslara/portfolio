@@ -37,6 +37,11 @@ export interface TextMessage extends BaseMessage {
    *  reads as an opening statement rather than as the first of N identical
    *  paragraphs. Set by buildProjectBodyBlocks, so both surfaces get it. */
   lede?: boolean
+  /** Reference material rather than prose — a stack list, a cadence, counts.
+   *  Renders in the mono system voice at the label step. A modifier on the
+   *  text block, deliberately not a new kind: a second renderer would be a
+   *  second place for the markdown handling and the link rules to drift. */
+  mono?: boolean
 }
 
 export interface SectionHeadingMessage extends BaseMessage {
@@ -108,7 +113,15 @@ export type StructuredMessage =
   | DocLinkMessage
 
 // Text bubble with markdown-like formatting
-export function TextBubble({ text, lede }: { text: string; lede?: boolean }) {
+export function TextBubble({
+  text,
+  lede,
+  mono,
+}: {
+  text: string
+  lede?: boolean
+  mono?: boolean
+}) {
   if (!text) return null
 
   // .type-title, the same class the About page's opening sentence uses — one
@@ -118,8 +131,12 @@ export function TextBubble({ text, lede }: { text: string; lede?: boolean }) {
   // still reads as a conversation rather than as a page with a heading.
   return (
     <div
-      className={lede ? "type-title" : "type-body"}
-      style={{ color: "rgb(var(--bureau-text-primary))" }}
+      className={mono ? "type-meta" : lede ? "type-title" : "type-body"}
+      style={{
+        color: mono
+          ? "rgb(var(--bureau-text-secondary))"
+          : "rgb(var(--bureau-text-primary))",
+      }}
     >
       {text.split("\n").map((p, i) => (
         <p
@@ -600,6 +617,7 @@ export function MessageContent({
         <TextBubble
           text={(message as TextMessage).text}
           lede={(message as TextMessage).lede}
+          mono={(message as TextMessage).mono}
         />
       )}
       {kind === "section-heading" && (

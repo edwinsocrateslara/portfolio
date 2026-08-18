@@ -35,8 +35,11 @@ export const vibeProjects: Project[] =
           client: "FutureFit AI",
           projectTitle: "Weekly Feedback Synthesis",
           railSubtitle: "Feedback Synthesis",
+          // WHAT IT IS. Two sentences, no jargon, no company-specific nouns —
+          // a visitor who has never heard of FutureFit understands it. The
+          // terms are defined later, in the pipeline, as they appear.
           tagline:
-            "I built a weekly tool that ranks a backlog of 457 customer feedback items against the company's strategy documents and returns a shortlist of ten.",
+            "I built an internal tool that reads everything customers and staff have said about the product and, once a week, puts ten things at the top of the list with a written reason attached to each. It exists because feedback was arriving faster than anyone could read it, so decisions about what to build next were being made without most of it.",
           // Sourced from lib/sources/resume.txt, same as the seven — FutureFit
           // AI, Lead Product Designer (Contract). The (Contract) suffix is
           // dropped here because no other entry carries an engagement type.
@@ -62,20 +65,46 @@ export const vibeProjects: Project[] =
           // that would otherwise want a field of its own, and a seventh
           // optional field on Project that six entries never fill is the
           // pattern that killed the vibe-coded variant.
+          // STACK AND NUMBERS. Reference material, rendered as one mono block
+          // rather than the accent impact card — these are facts about how the
+          // thing is built, not claims about what it achieved. This is also
+          // where the tools are finally named, after the pipeline has
+          // explained what each one does in plain words.
           impacts: [
-            "14 items accepted into delivery tickets and closed back on the original feedback post when they shipped.",
-            "The ranked list became the working document in a fortnightly review with the CEO, product, engineering, customer success and go-to-market.",
-            "A backlog nobody was reading became a weekly ten that leadership worked through.",
-            "Ran unattended for months: 66 synthesis runs logged in production.",
+            "**STACK** — Next.js, Supabase, Claude, and the APIs of the feedback board and the engineering tracker",
+            "**CADENCE** — collects Monday, ranks 15 minutes later, retries Tuesday if Monday failed, checks ticket status daily",
+            "**CORPUS** — 457 feedback items, ~300 sent per run",
+            "**OUTPUT** — 10 ranked per week, 66 synthesis runs logged in production",
+            "**SHIPPED** — 14 items accepted into tickets, closed back on the original post",
+            "**BUILT** — 14 weeks, sole author, 34 migrations, 25 API routes",
           ],
           roleDescription:
             "Lead product designer. I was the only person on it, and built it end to end over fourteen weeks. I later rebuilt a redacted version so the work could be shown outside the company.",
+          // Deliberately unread by the vibe flow — see lib/project-flow.ts.
+          // The reason the tool exists is the opening line's job in this
+          // shape, and saying it twice would be saying it weakly. Kept rather
+          // than deleted because it is the sharpest statement of the problem
+          // and belongs in the source if this ever moves to the work template.
           atStake:
             "457 feedback posts had accumulated across four boards and nobody was working through them. The volume made starting feel impossible, so prioritisation defaulted to whatever was loudest: the highest vote count, the most persistent internal advocate, the account that escalated most visibly. Each is a proxy for importance rather than a measure of it.",
+          // THE CALLS. Kept from the previous pass, with the override feedback
+          // loop moved in from the old challenge field — the pipeline now
+          // describes the mechanism, so this can stay about the reasoning.
+          // The technical calls that were here have moved too: denormalising
+          // and schema rejection are described in the pipeline where they
+          // happen, rather than asserted here as principles.
           decision:
-            "I ranked on strategic fit, not demand: three votes can outrank thirty if one maps to a live commitment. Model output and human judgement sit in separate columns; every model field has a manual override, and the weekly run rewrites only its own. A rationale freezes on acceptance, so a shipped ticket still explains why it was chosen. External data is denormalised so the interface never depends on a third-party API, model output that fails schema validation is rejected rather than persisted, and every run is logged against a versioned prompt.",
+            "I ranked on strategic fit, not demand: 3 votes can outrank 30 if one maps to a live commitment. Model output and human judgement sit in separate columns; every model field has a manual override, and the weekly run rewrites only its own. A rationale freezes on acceptance, so a shipped ticket still explains why it was chosen. Consistent disagreement feeds back into the next run as a weak signal, so the ranking learns from overrides rather than being re-fought every week.",
+          // THE PIPELINE. Carried by `challenge` because the vibe flow heads
+          // it "The pipeline" — see lib/project-flow.ts. Every domain term is
+          // defined at the moment it appears and none of the vendors is named:
+          // a reader who has never heard of Canny or Clarify follows all of
+          // it, and the products are named once, later, in the stack block.
+          // Newlines split into paragraphs in TextBubble.
           challenge:
-            "The hard part was not ranking the items. It was building a ranking people would trust and still be able to overrule. Consistent disagreement feeds back into the next run as a weak signal, so the ranking learns from overrides rather than being re-fought weekly. The real test was whether a room with the CEO, engineering, customer success and go-to-market would accept a machine-generated ranking as the basis for what to build.",
+            "Feedback reaches it three ways. Most comes from feedback boards — running lists where customers and staff post requests and vote on each other's, one board per product area, 4 in all. Some arrives through a bot in the company chat, so anyone can file something without leaving the conversation they had it in. The rest comes from recorded customer calls: a meeting-notes service transcribes them, the tool reads those transcripts, and what it finds is filed as an ordinary board post — so something said out loud lands in the same pile as something typed.\n" +
+            "Once a week a scheduled job collects everything new and copies it into the tool's own database, so nothing downstream depends on any of those services being reachable. It then sends the pooled items — ~300 of the 457 — to a language model along with the company's 5 current strategy documents, and asks for 10, each with a written reason tied to a specific commitment in one of them. If the model returns anything that doesn't match the expected shape, the run is rejected and logged rather than saved.\n" +
+            "People review the 10. Every field the model set can be overridden by hand, and accepting an item creates a ticket in the engineering tracker. A daily check watches that ticket, and when it ships the tool closes the original post — so the person who asked for it hears back.",
         },
       ]
     : []
