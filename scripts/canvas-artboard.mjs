@@ -72,6 +72,7 @@ const EXTRACT = `(() => {
     "gridTemplateColumns","gridTemplateRows","gridColumn","gridRow",
     "objectFit","aspectRatio","verticalAlign","listStyleType","transform",
     "isolation","pointerEvents","fill","stroke","strokeWidth","backdropFilter",
+    "resize","content","textIndent","boxShadow",
   ]
   const KEBAB = p => p.replace(/[A-Z]/g, m => "-" + m.toLowerCase())
   const SVG_NS = "http://www.w3.org/2000/svg"
@@ -122,6 +123,34 @@ const EXTRACT = `(() => {
   const ALWAYS_FULL = new Set(["button","input","select","textarea","a","label"])
   const VOID = new Set(["img","br","hr","input","source","track","use","path","circle","rect","line","polyline","polygon","ellipse"])
 
+  // A pseudo-element re-emitted as a real one. Its computed style is read the
+  // same way as any element's, but there is no probe to diff against — a
+  // pseudo has no default box — so everything visual is emitted outright and
+  // the layout properties do the rest.
+  const PSEUDO_SKIP = new Set(["content","display","position"])
+  function pseudo(el, which) {
+    const cs = getComputedStyle(el, which)
+    const content = cs.content
+    if (!content || content === "none" || content === "normal") return ""
+    const decls = []
+    for (const p of PROPS) {
+      if (PSEUDO_SKIP.has(p)) continue
+      const v = cs[p]
+      if (v == null || v === "" || v === "auto" || v === "none" || v === "normal") continue
+      if (v === "0px" || v === "rgba(0, 0, 0, 0)") continue
+      decls.push(KEBAB(p) + ":" + v)
+    }
+    decls.push("display:" + (cs.display === "none" ? "block" : cs.display))
+    decls.push("position:" + cs.position)
+    // A quoted string literal is real text; counter()/attr() are not
+    // reproducible here and become empty boxes, which is what they already are
+    // for everything this page uses them for.
+    let text = ""
+    const m = /^"([\s\S]*)"$/.exec(content)
+    if (m) text = esc(m[1])
+    return "<span" + (decls.length ? ' style="' + escAttr(decls.join(";")) + '"' : "") + ">" + text + "</span>"
+  }
+
   function walk(el) {
     const tag = el.tagName.toLowerCase()
     if (tag === "script" || tag === "style" || tag === "noscript") return ""
@@ -150,6 +179,12 @@ const EXTRACT = `(() => {
         if (a.name === "style" || a.name === "class") continue
         attrs += " " + a.name + '="' + escAttr(a.value) + '"'
       }
+    } else if (tag === "textarea" || tag === "input") {
+      for (const a of ["placeholder","value","type"]) {
+        const v = el.getAttribute(a)
+        if (v !== null) attrs += " " + a + '="' + escAttr(v) + '"'
+      }
+      if (tag === "textarea") attrs += ' rows="1"'
     } else if (tag === "img") {
       const uri = dataUri(el)
       const name = "img-" + images.length + ".jpg"
@@ -164,7 +199,7 @@ const EXTRACT = `(() => {
       return "<" + tag + attrs + style + "/>"
     }
     if (VOID.has(tag) && !el.childNodes.length) return open
-    let inner = ""
+    let inner = pseudo(el, "::before")
     for (const n of el.childNodes) {
       if (n.nodeType === 3) {
         const t = n.textContent
@@ -181,6 +216,7 @@ const EXTRACT = `(() => {
         if (inlineish(prev) && inlineish(next)) inner += " "
       } else if (n.nodeType === 1) inner += walk(n)
     }
+    inner += pseudo(el, "::after")
     return open + inner + "</" + tag + ">"
   }
 
@@ -232,6 +268,7 @@ const file = `<!doctype html>
        So: reproduce preflight's subset that affects layout. Anything the app
        sets to a NON-preflight value still differs from the probe and is
        emitted inline, which outranks everything here. */
+    *, *::before, *::after { border-width: 0; border-style: solid; }
     h1, h2, h3, h4, h5, h6, p, blockquote, figure, pre,
     dl, dd, ol, ul, menu, fieldset, legend { margin: 0; }
     ol, ul, menu { list-style: none; padding: 0; }
