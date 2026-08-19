@@ -387,6 +387,25 @@ Other exceptions to the 4px grid, all deliberate: **1px** borders and hairlines,
 is optical tracking rather than layout, is sub-pixel by nature, and is
 also exempt.
 
+Exempt from the grid is not exempt from the token layer. Tracking lives in
+`--track-*`, named by the voice or the step it corrects and never by the
+element that uses it:
+
+| Token | Value | Corrects |
+|---|---|---|
+| `--track-display-h2` | -1px | Archivo at 32 |
+| `--track-display-sub` | -0.6px | Archivo at 24 |
+| `--track-display-title` | -0.4px | Archivo at 20 |
+| `--track-caption` | 0.4px | Archivo at 12, the floor |
+| `--track-badge` | 0.8px | Plex Mono caps, 700 |
+| `--track-caps` | 1.4px | Plex Mono caps, 500/600 |
+
+The ramp runs monotonically with optical size — large sans tightens, small
+sans opens, mono caps open furthest. **A seventh value has to earn a row in
+that table.** Two values for one role is a nudge, not a step: if a label
+needs different tracking in one place than the same label gets everywhere
+else, the answer is to move the whole role or to leave it alone.
+
 ## Spacing
 
 Spacing encodes **relatedness**. Before reaching for a pixel value, decide
@@ -499,10 +518,22 @@ voice. Size is the scale; family, weight, and case are the voice.
 | `.type-card-h3` | Archivo | 600 | body |
 | `.type-body` | Archivo | 400 | body |
 | `.type-caption` | Archivo | 400 | label — supporting prose |
+| `.type-section` | Plex Mono | 600 | **body**, uppercase — region headings |
 | `.type-badge` | Plex Mono | 700 | label, uppercase |
 | `.type-label` | Plex Mono | 600 | label, uppercase |
 | `.type-nav` | Plex Mono | 500 | label, uppercase |
 | `.type-meta` | Plex Mono | 400 | label |
+
+`.type-section` is the mono voice at the **body** step, and it is worth
+being precise about what it added: **no new size.** 16/24 was already on the
+scale; what did not exist was a mono voice at it. A heading that labels a
+region — WORK, VIBE CODING, CONTACT — was previously the same size as the
+rows underneath it, which is what let a document row read as a header.
+
+It is 16/**24**, not 16/18. Line-height is derived as exactly 1.5x at every
+step, and that rule has had no exceptions since the `hero` step was deleted
+to remove the last one; a 16/18 heading would have reinstated exactly the
+thing that deletion bought.
 
 At ≤640px the two largest steps move **down the ramp rather than off it**:
 `hero` takes the `h2` step (32/48), `h2` takes `subhead` (24/36). No

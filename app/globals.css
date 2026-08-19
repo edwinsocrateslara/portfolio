@@ -116,6 +116,26 @@
   /* 12px is the floor. There is deliberately no step below it — an 8px
      step existed and only served to preserve text below a reasonable
      legibility floor. */
+  /* ── Tracking ─────────────────────────────────────────────────
+     Named by the VOICE or the STEP it corrects, never by the element
+     that happens to use it. The ramp runs monotonically with optical
+     size: large sans tightens, small sans opens, mono caps open
+     furthest. Sub-pixel and exempt from the 4px grid — see DESIGN.md.
+
+     These were six literals sitting in six .type-* rules. Nothing was
+     wrong with any of them; the problem was that a seventh could be
+     added without anyone seeing the ramp it had to fit into. */
+  --track-display-h2:    -1px;    /* 32px */
+  --track-display-sub:   -0.6px;  /* 24px */
+  --track-display-title: -0.4px;  /* 20px */
+  /* The sans face at the 12px floor. The scale already tightened the
+     display steps; this is the same correction at the other end, and
+     .type-caption is the only sans class down here, so the role and the
+     class are one-to-one. */
+  --track-caption:        0.4px;
+  --track-badge:          0.8px;  /* mono caps, 700 */
+  --track-caps:           1.4px;  /* mono caps, 500/600 */
+
   --type-label-size:   12px;  --type-label-lh:   18px;
   --type-body-size:    16px;  --type-body-lh:    24px;
   --type-title-size:   20px;  --type-title-lh:   30px;
@@ -256,20 +276,20 @@
      so the mark leads the name slightly without competing with it. 12 would
      read as a bullet, 24 (the indicator's size) would outweigh a short name. */
   --brand-mark-size: var(--space-16);
-  /* Rail nav icons. 16 against the 12px mono labels they sit beside — the
-     same value as the brand mark but its own name, because they are a
-     different thing and one may move without the other. Lucide's default is
-     24, which would out-weigh a 12px label. */
-  --rail-icon-size: var(--space-16);
-  /* Document rows take the 32px left column a project row's thumbnail takes,
-     so their icon-to-label gap is `within` by construction and their labels
-     land on the same 62 edge as the project rows — rather than buying that
-     edge with a margin, which is what forced a 24px gap on the only three
-     rows in the rail that had one. A doc icon is deliberately LARGER than a
-     section header's 16: the size difference is what keeps a row from reading
-     as a header, which matters most for these three, whose mono-caps labels
-     are otherwise identical to WORK and VIBE CODING. */
-  --rail-doc-icon-size: var(--space-32);
+  /* --rail-icon-size is GONE. Its only readers were the WORK and VIBE CODING
+     section headers, and those no longer carry a glyph; the document rows
+     below always overrode it. A token whose every reader has been deleted is
+     not a default, it is a value waiting to be picked up by mistake.
+
+     Document rows: the COLUMN and the GLYPH are two different numbers now,
+     which is the whole point of naming both. The column stays 32 — the same
+     width a project row's thumbnail takes — so every label in the rail still
+     lands on the same 62px edge (8 list padding + 2 border + 12 row padding +
+     32 column + 8 gap). The glyph inside it drops to 24 and centres, so the
+     mark got smaller without the list shifting under it. Collapsing these
+     back into one token re-breaks that alignment by exactly 8px. */
+  --rail-doc-col:   var(--space-32);
+  --rail-doc-glyph: var(--space-24);
   /* A leading icon inside a .chip. Same 16 as the rail's nav icons and for the
      same reason, but its own name: a chip is not a rail row, and one may move
      without the other. */
@@ -449,21 +469,21 @@ body {
     font-weight: 700;
     font-size: var(--type-h2-size);
     line-height: var(--type-h2-lh);
-    letter-spacing: -1px;
+    letter-spacing: var(--track-display-h2);
   }
   .type-subhead {
     font-family: var(--ff-archivo);
     font-weight: 700;
     font-size: var(--type-subhead-size);
     line-height: var(--type-subhead-lh);
-    letter-spacing: -0.6px;
+    letter-spacing: var(--track-display-sub);
   }
   .type-title {
     font-family: var(--ff-archivo);
     font-weight: 700;
     font-size: var(--type-title-size);
     line-height: var(--type-title-lh);
-    letter-spacing: -0.4px;
+    letter-spacing: var(--track-display-title);
   }
   .type-card-h3 {
     font-family: var(--ff-archivo);
@@ -486,6 +506,7 @@ body {
     font-weight: 400;
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
+    letter-spacing: var(--track-caption);
   }
 
   /* IBM Plex Mono — system voice */
@@ -496,7 +517,7 @@ body {
     font-weight: 700;
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
-    letter-spacing: 0.8px;
+    letter-spacing: var(--track-badge);
     text-transform: uppercase;
   }
   .type-label {
@@ -504,7 +525,7 @@ body {
     font-weight: 600;
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
-    letter-spacing: 1.4px;
+    letter-spacing: var(--track-caps);
     text-transform: uppercase;
   }
   .type-nav {
@@ -512,7 +533,17 @@ body {
     font-weight: 500;
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
-    letter-spacing: 1.4px;
+    letter-spacing: var(--track-caps);
+    text-transform: uppercase;
+  }
+  /* Mono caps at the body step. See DESIGN.md — the scale is unchanged;
+     this is a voice at an existing step, not a new step. */
+  .type-section {
+    font-family: var(--ff-plex-mono);
+    font-weight: 600;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+    letter-spacing: var(--track-caps);
     text-transform: uppercase;
   }
   .type-meta {
@@ -590,28 +621,28 @@ body {
      NOT rungs and cannot be, and that is explained there rather than fudged. */
   padding:
     var(--space-group) var(--space-24) var(--space-between) var(--rail-inset);
-  /* Flex so the icon sits on the label's baseline row. `within` because the
-     icon and the word are parts of one thing, not two things in a group. */
-  display: flex;
-  align-items: center;
-  gap: var(--space-within);
 }
-/* Both the section headers and the document rows carry one. currentColor, so
-   an icon steps with its label — muted at rest, primary when a row is active —
-   without either needing to know the other's colour. */
+/* Document rows only, now that the section headers carry no icon. Sized and
+   coloured on the row below rather than here; this rule is what is left that
+   is common to every rail glyph. */
 .rail-icon {
-  width: var(--rail-icon-size);
-  height: var(--rail-icon-size);
   flex: none;
 }
-/* A document row's icon IS the 32px left column, rather than a 16px glyph with
-   a margin pretending to be one. The margin version aligned the labels but
-   left these three rows with a 24px icon-to-label gap while every other row in
-   the rail sat at 8 — alignment bought by breaking the gap ladder. At 32 the
-   gap is `within` because the column is the icon. */
+/* A document row's icon IS its left column, rather than a small glyph with a
+   margin pretending to be one — the margin version aligned the labels but left
+   these three rows with a 24px icon-to-label gap while every other row in the
+   rail sat at 8, alignment bought by breaking the gap ladder.
+   PRIMARY, not currentColor: the label beside it is primary too, so the pair
+   reads as one object. The consequence is that `active` no longer steps the
+   glyph — the accent bar and the layer-1 fill carry that state alone. */
 .rail-doc .rail-icon {
-  width: var(--rail-doc-icon-size);
-  height: var(--rail-doc-icon-size);
+  width: var(--rail-doc-glyph);
+  height: var(--rail-doc-glyph);
+  /* Centres the glyph in the wider column. Composed rather than measured, so
+     changing either token keeps the 62px label edge rather than silently
+     losing it. */
+  margin-inline: calc((var(--rail-doc-col) - var(--rail-doc-glyph)) / 2);
+  color: rgb(var(--bureau-text-primary));
 }
 
 .rail-list {
@@ -747,10 +778,10 @@ body {
   padding: var(--space-20) var(--space-24);
   border-top: 1px solid var(--hairline);
 }
+/* No longer a flex row: the 8px square that sat beside the word is gone, and
+   with it the only reason for the row. .rail-square is NOT deleted — the About
+   pane's reading label still carries one. */
 .rail-footer-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
   margin: 0 0 var(--space-8);
 }
 .rail-square {

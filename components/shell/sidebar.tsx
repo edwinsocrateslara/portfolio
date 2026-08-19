@@ -4,17 +4,11 @@ import Image from "next/image"
 import { Sparkle } from "@/components/ui/sparkle"
 // Layers, not Layers3: Layers3 is a deprecated alias in v0.544 and resolves to
 // the same component (verified: Layers3 === Layers). Importing the live name.
-import {
-  BriefcaseBusiness,
-  CodeXml,
-  Layers,
-  FileUser,
-  UserRound,
-} from "lucide-react"
+// BriefcaseBusiness and CodeXml left with the section-header glyphs.
+import { Layers, FileUser, UserRound } from "lucide-react"
 import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
 import { projects } from "@/lib/projects"
 import type { Project } from "@/lib/projects"
-import type { LucideIcon } from "lucide-react"
 import { vibeProjects } from "@/lib/vibe-projects"
 
 // The persistent left rail. It is the site's index: every project is a row,
@@ -38,13 +32,16 @@ import { vibeProjects } from "@/lib/vibe-projects"
 
 export type Pane = "chat" | "deck" | "about" | "resume"
 
-// Document rows are 32px (--rail-doc-icon-size), section headers 16px. Lucide
-// expresses stroke-width in viewBox units, so a shared number paints twice as
-// thick on the larger glyph: at 2 the document marks carried visibly more ink
-// than the section header above them. Picked by eye against the rendered rail
-// at 1440x900 — 1 goes spindly and falls behind its own 12px label, 1.5 still
-// out-weighs the header, 1.25 sits level with it while staying a step lighter
-// in value, since these are text-secondary and the headers are text-primary.
+// The document glyphs' stroke. Lucide expresses stroke-width in viewBox units,
+// so the painted weight moves with the rendered size: at the old 32px this 1.25
+// landed at 1.67 device px, and at today's 24px glyph it paints 1.25.
+//
+// ITS ORIGINAL REASON IS GONE. It was picked to sit level with the 16px
+// section-header marks above it, and those marks have been deleted — there is
+// nothing left in the rail to weigh it against. It is kept at 1.25 because the
+// glyph also went primary in the same change, and a heavier stroke on top of a
+// lighter colour would have moved two variables at once. Worth re-picking by
+// eye against the rail as it now stands.
 const DOC_ICON_STROKE = 1.25
 
 interface SidebarProps {
@@ -67,7 +64,6 @@ interface SidebarProps {
  *  the thumbnail rules and the truncation to drift. */
 function ProjectSection({
   heading,
-  icon: Icon,
   items,
   activePane,
   activeSlug,
@@ -75,7 +71,6 @@ function ProjectSection({
   pick,
 }: {
   heading: string
-  icon: LucideIcon
   items: Project[]
   activePane: Pane
   activeSlug: string | null
@@ -84,11 +79,13 @@ function ProjectSection({
 }) {
   return (
     <>
+      {/* .type-section, not .type-label: mono caps at the body step. A region
+          heading and a row label were the same size, which is what made the
+          document rows read as headers in the first place. */}
       <p
-        className="type-label rail-section"
+        className="type-section rail-section"
         style={{ color: "rgb(var(--bureau-text-primary))" }}
       >
-        <Icon className="rail-icon" aria-hidden="true" strokeWidth={2} />
         {heading}
       </p>
 
@@ -173,7 +170,6 @@ export function Sidebar({
       <nav className="rail-scroll" aria-label="Work and documents">
         <ProjectSection
           heading="Work"
-          icon={BriefcaseBusiness}
           items={projects}
           activePane={activePane}
           activeSlug={activeSlug}
@@ -194,7 +190,6 @@ export function Sidebar({
         {process.env.NODE_ENV === "development" && vibeProjects.length > 0 && (
           <ProjectSection
             heading="Vibe Coding"
-            icon={CodeXml}
             items={vibeProjects}
             activePane={activePane}
             activeSlug={activeSlug}
@@ -257,11 +252,15 @@ export function Sidebar({
       </nav>
 
       <div className="rail-footer">
+        {/* Same step as WORK and VIBE CODING — it labels a region, not a row.
+            The square went with the section glyphs: it was the same idea (a
+            mark leading a heading) and keeping one of the two would have left
+            the rail with a single unexplained bullet. .rail-square survives
+            for the About pane, which still uses it. */}
         <p
-          className="type-label rail-footer-label"
+          className="type-section rail-footer-label"
           style={{ color: "rgb(var(--bureau-text-primary))" }}
         >
-          <span className="rail-square" />
           Contact
         </p>
         <div className="rail-contact">
