@@ -382,6 +382,17 @@ at weight 400 it had zero users. Both the step and its exception were deleted
 rather than left in the scale — an exception that exists to justify one value
 stops being a rule about type and becomes a note about history.
 
+A `hero` step exists again, at 28/42, and the distinction matters: the old one
+was removed when its last user left, not because one user is too few. This one
+has a user, is exactly 1.5x, and carries no exception. It replaced a 28/48
+that would have been the first leading exception since the deletion above.
+
+**One type size is off the 4px grid: `control`, at 14/21.** It is the only
+one, and it is deliberate — a chip label wants to sit between the 12px label
+voice and the 16px body voice, because 12 reads small on a 44px target and 16
+reads like prose inside a pill. The leading is still the derived 1.5x; 21 is
+off-grid too, and line-height has never been asked to be on it.
+
 Other exceptions to the 4px grid, all deliberate: **1px** borders and hairlines, the
 **2px** radii below, and **9999px** for fully-round pills. Letter-spacing
 is optical tracking rather than layout, is sub-pixel by nature, and is
@@ -393,18 +404,34 @@ element that uses it:
 
 | Token | Value | Corrects |
 |---|---|---|
+| `--track-display-hero` | -1px | Archivo at 28 |
 | `--track-display-h2` | -1px | Archivo at 32 |
 | `--track-display-sub` | -0.6px | Archivo at 24 |
 | `--track-display-title` | -0.4px | Archivo at 20 |
 | `--track-caption` | 0.4px | Archivo at 12, the floor |
 | `--track-badge` | 0.8px | Plex Mono caps, 700 |
-| `--track-caps` | 1.4px | Plex Mono caps, 500/600 |
+| `--track-caps-body` | 1.4px | Plex Mono caps at 16 |
+| `--track-caps-label` | 1.2px | Plex Mono caps at 12 |
 
-The ramp runs monotonically with optical size — large sans tightens, small
-sans opens, mono caps open furthest. **A seventh value has to earn a row in
-that table.** Two values for one role is a nudge, not a step: if a label
-needs different tracking in one place than the same label gets everywhere
-else, the answer is to move the whole role or to leave it alone.
+Eight values, and the ramp runs monotonically with optical size — large sans
+tightens, small sans opens, mono caps open furthest. Read the mono pair in
+**em**, not px, or it looks like it runs backwards: 1.4/16 is 0.088em and
+1.2/12 is 0.100em, so the smaller caps do open further. The absolute pixel
+value falling as the type shrinks is what makes that confusing written down.
+
+`--track-display-hero` deliberately repeats h2's -1px. 28 and 32 are close
+enough that a different correction would be false precision; it has its own
+name so the two can diverge if either step moves.
+
+**A ninth value has to earn a row in this table**, and `check-design`'s
+`tracking-budget` rule is what makes that true rather than aspirational — it
+fails the build at nine. Its sibling `tracking-literal` fails on any
+`letter-spacing` px value outside this block, which is how the `-0.6px` left
+behind in the mobile `@media` block was eventually found. Two values for one
+role is a nudge, not a step: if a label needs different tracking in one place
+than the same label gets everywhere else, move the whole role or leave it
+alone. Splitting mono caps into `-body` and `-label` was NOT that — it is one
+role at two steps, which is what the display rows have always been.
 
 ## Spacing
 
@@ -502,9 +529,11 @@ apart.
 | Step | Size / line-height |
 |---|---|
 | `label` | 12 / 18 |
+| `control` | 14 / 21 |
 | `body` | 16 / 24 |
 | `title` | 20 / 30 |
 | `subhead` | 24 / 36 |
+| `hero` | 28 / 42 |
 | `h2` | 32 / 48 |
 
 There are more classes than sizes: several share a size and differ only in
@@ -517,6 +546,8 @@ voice. Size is the scale; family, weight, and case are the voice.
 | `.type-title` | Archivo | 700 | title |
 | `.type-card-h3` | Archivo | 600 | body |
 | `.type-body` | Archivo | 400 | body |
+| `.type-hero` | Archivo | 400 | hero — the front door's headline |
+| `.type-control` | Archivo | 400 | control — chip and tap-target labels |
 | `.type-caption` | Archivo | 400 | label — supporting prose |
 | `.type-section` | Plex Mono | 600 | **body**, uppercase — region headings |
 | `.type-badge` | Plex Mono | 700 | label, uppercase |
@@ -536,8 +567,7 @@ to remove the last one; a 16/18 heading would have reinstated exactly the
 thing that deletion bought.
 
 At ≤640px the two largest steps move **down the ramp rather than off it**:
-`hero` takes the `h2` step (32/48), `h2` takes `subhead` (24/36). No
-mobile-only sizes exist.
+`hero` and `h2` both take `subhead` (24/36). No mobile-only sizes exist.
 
 The classes live in `@layer components`, so Tailwind utilities — which
 come later in the cascade — can override a single property without an

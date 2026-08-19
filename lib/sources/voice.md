@@ -25,7 +25,7 @@ not permitted.
 
 ## Intro
 
-I'm Edwin, designer & AI builder making useful products and workflows.
+I'm Edwin, AI designer & builder making useful products and workflows.
 
 ---
 

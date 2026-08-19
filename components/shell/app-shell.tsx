@@ -527,11 +527,12 @@ export function AppShell({
         ) : isFrontDoor ? (
           <div className="pane-front">
             <div className="hero-band" data-hero-col="stack">
-                  {/* h2 step at weight 400. font-normal is a Tailwind utility
-                      stepping the class's weight, not an inline type
-                      declaration — @layer components exists for exactly this. */}
+                  {/* .type-hero — its own step at 28/42, and its own weight.
+                      This used to be `type-h2 font-normal`, a utility stepping
+                      the class down; the headline now has a step of its own, so
+                      the weight belongs to it rather than to the call site. */}
                   <h1
-                    className={`type-h2 font-normal ${fadeIn}`}
+                    className={`type-hero ${fadeIn}`}
                     style={{
                       margin: 0,
                       maxWidth: HERO_MEASURE,
@@ -541,7 +542,7 @@ export function AppShell({
                       animationDelay: delay(60),
                     }}
                   >
-                    I&apos;m Edwin, designer &amp; AI builder making useful
+                    I&apos;m Edwin, AI designer &amp; builder making useful
                     products and workflows.
                   </h1>
 

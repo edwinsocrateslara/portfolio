@@ -317,6 +317,52 @@ function checkFile(file, raw) {
   return found
 }
 
+// ── Rule 7 — the tracking ramp ───────────────────────────────────────────
+// Reads globals.css only. Two halves, and they fail for opposite reasons:
+//
+//   a) a letter-spacing LITERAL anywhere outside the --track-* block. Every
+//      tracking value in this system is an optical correction that belongs to
+//      a voice or a step, so a raw px here is a value nobody can find later.
+//      This is not hypothetical: tokenising the six original values missed the
+//      -0.6px in the mobile @media block, and nothing noticed until a step was
+//      added beside it.
+//
+//   b) more --track-* tokens than the ramp is allowed to hold. The count is
+//      the point. Two values for one role is a nudge, not a step, and a nudge
+//      is exactly what arrives one plausible pixel at a time. Raising this
+//      number is a deliberate edit here, with a row added to the table in
+//      DESIGN.md — which is the review this rule exists to force.
+const TRACK_BUDGET = 8
+
+function checkTracking(file, raw) {
+  const found = []
+  const src = stripComments(raw)
+
+  // The token block is the one place a literal is correct.
+  const declared = [...src.matchAll(/--track-[a-z0-9-]+\s*:/g)].map((m) => m[0])
+  if (declared.length > TRACK_BUDGET) {
+    found.push({
+      file, rule: "tracking-budget",
+      detail: `${declared.length} --track-* tokens, budget is ${TRACK_BUDGET}`,
+      line: 1,
+    })
+  }
+
+  const re = /letter-spacing\s*:\s*(-?\d*\.?\d+)(px|em|rem)/g
+  let m
+  while ((m = re.exec(src))) {
+    // A declaration whose own name starts with --track- is the definition.
+    const lineStart = src.lastIndexOf("\n", m.index) + 1
+    if (/--track-/.test(src.slice(lineStart, m.index))) continue
+    found.push({
+      file, rule: "tracking-literal",
+      detail: `letter-spacing: ${m[1]}${m[2]} (use var(--track-*))`,
+      line: lineAt(raw, m.index),
+    })
+  }
+  return found
+}
+
 // ── Positive control ─────────────────────────────────────────────────────
 // A clean pass is worthless if a matcher silently broke. Each rule is run
 // against a fixture that MUST trip it, and against a fixture that must NOT.
@@ -350,6 +396,16 @@ const FIXTURE_CSS_GOOD = `
 .some-mark { border-left-color: rgb(var(--bureau-accent)); caret-color: rgb(var(--bureau-accent)); }
 .some-panel { background: var(--layer-1); outline: 2px solid rgb(var(--bureau-accent)); }
 `
+const FIXTURE_TRACK_BAD = `
+:root { --track-caps-body: 1.4px; }
+.type-thing { letter-spacing: 1.2px; }
+@media (max-width: 640px) { .type-other { letter-spacing: -0.6px; } }
+`
+const FIXTURE_TRACK_GOOD = `
+/* letter-spacing: 9px inside a comment must not trip. */
+:root { --track-caps-body: 1.4px; --track-caps-label: 1.2px; }
+.type-thing { letter-spacing: var(--track-caps-label); }
+`
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
@@ -372,6 +428,21 @@ function selfTest() {
     problems.push('control: rule "no-accent-surface" did not catch --hero-glow used as a fill')
   for (const f of cssGood)
     problems.push(`control: rule "no-accent-surface" false positive on good CSS — ${f.detail}`)
+
+  // Rule 7, both halves. The literal half must find exactly the two rule
+  // bodies and NOT the token declaration beside them — if it counted the
+  // definition it would flag the token block itself and be unusable.
+  const trackBad = checkTracking("<fixture-track-bad>", FIXTURE_TRACK_BAD)
+  const lits = trackBad.filter((f) => f.rule === "tracking-literal")
+  if (lits.length !== 2)
+    problems.push(`control: rule "tracking-literal" found ${lits.length}/2 literals — it must catch the one inside @media too`)
+  for (const f of checkTracking("<fixture-track-good>", FIXTURE_TRACK_GOOD))
+    problems.push(`control: rule "tracking-literal" false positive on good CSS — ${f.detail}`)
+  // The budget half, proven against a fixture that blows it.
+  const overBudget = ":root {" + Array.from({ length: TRACK_BUDGET + 1 },
+    (_, i) => `--track-x${i}: ${i}px;`).join("") + "}"
+  if (!checkTracking("<fixture-budget>", overBudget).some((f) => f.rule === "tracking-budget"))
+    problems.push('control: rule "tracking-budget" did NOT fire on an over-budget token block')
 
   for (const rule of ["no-inline-type", "no-off-grid", "no-raw-tw-spacing", "no-raw-color"]) {
     if (!bad.some((f) => f.rule === rule))
@@ -437,7 +508,9 @@ for (const abs of files) {
 // checker that only walked .tsx would have been blind to exactly the case it
 // exists to catch.
 for (const rel of CSS_FILES) {
-  for (const v of checkAccentFills(rel, readFileSync(join(ROOT_DIR, rel), "utf8"), { css: true })) record(v)
+  const css = readFileSync(join(ROOT_DIR, rel), "utf8")
+  for (const v of checkAccentFills(rel, css, { css: true })) record(v)
+  for (const v of checkTracking(rel, css)) record(v)
 }
 
 if (process.argv.includes("--bare")) {
@@ -461,8 +534,19 @@ if (process.argv.includes("--list")) {
     "no-raw-tw-spacing": "Raw Tailwind numeric spacing (use a --space-* token)",
     "no-raw-color": "Raw colour literal (use rgb(var(--bureau-*)))",
     "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
+    "tracking-literal": "Letter-spacing literal (use var(--track-*))",
+    "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
   }
-  console.log(`self-test PASS — all 5 matchers fire on the bad fixtures, none on the good ones`)
+  // A rule missing from this table still COUNTS toward the total and still
+  // fails the build, but prints under no heading — which reads as "1 violation
+  // of nothing". Adding a rule means adding a row here.
+  const untitled = violations.filter((v) => !(v.rule in RULES))
+  if (untitled.length) {
+    console.error(`\nBUG: ${untitled.length} violation(s) of rules missing from the RULES table:`)
+    for (const v of untitled) console.error(`  ${v.file}:${v.line}\t${v.rule}\t${v.detail}`)
+    process.exit(2)
+  }
+  console.log(`self-test PASS — all ${Object.keys(RULES).length} matchers fire on the bad fixtures, none on the good ones`)
   console.log(`scanned ${files.length} files under ${ROOTS.join(", ")}, plus ${CSS_FILES.join(", ")}\n`)
   for (const [rule, label] of Object.entries(RULES)) {
     const hits = violations.filter((v) => v.rule === rule)

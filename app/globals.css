@@ -125,6 +125,11 @@
      These were six literals sitting in six .type-* rules. Nothing was
      wrong with any of them; the problem was that a seventh could be
      added without anyone seeing the ramp it had to fit into. */
+  --track-display-hero:  -1px;    /* 28px — deliberately the same value as
+                                     h2: 28 and 32 are close enough that a
+                                     different correction would be false
+                                     precision. Its own name so the two can
+                                     diverge if either step moves. */
   --track-display-h2:    -1px;    /* 32px */
   --track-display-sub:   -0.6px;  /* 24px */
   --track-display-title: -0.4px;  /* 20px */
@@ -134,12 +139,34 @@
      class are one-to-one. */
   --track-caption:        0.4px;
   --track-badge:          0.8px;  /* mono caps, 700 */
-  --track-caps:           1.4px;  /* mono caps, 500/600 */
+  /* Mono caps, split by STEP. .type-section put caps at two sizes for the
+     first time and one value cannot serve both: in EM — which is what the eye
+     reads — 1.4/16 is 0.088em and 1.2/12 is 0.100em, so the smaller caps open
+     further, the same direction the rest of this ramp runs. The absolute px
+     going DOWN as the type gets smaller is what makes that look backwards
+     written as pixels. It is not. */
+  --track-caps-body:      1.4px;  /* mono caps at 16 — region headings */
+  --track-caps-label:     1.2px;  /* mono caps at 12 — rows, labels, links */
 
   --type-label-size:   12px;  --type-label-lh:   18px;
+  /* 14 is the ONE size on this ramp that is not a multiple of 4, and it is
+     here deliberately rather than by accident: a control label wants to sit
+     between the 12px label voice and the 16px body voice, because 12 reads
+     small on a 44px target and 16 reads like prose inside a pill. Leading is
+     still the derived 1.5x — 21 is not on the grid either, and line-height
+     has never been asked to be. Recorded in DESIGN.md beside the 1px borders
+     and the 9999 pills, which is where this system keeps its exceptions. */
+  --type-control-size: 14px;  --type-control-lh: 21px;
   --type-body-size:    16px;  --type-body-lh:    24px;
   --type-title-size:   20px;  --type-title-lh:   30px;
   --type-subhead-size: 24px;  --type-subhead-lh: 36px;
+  /* 28/42. The front door's headline and nothing else — the same shape as the
+     `hero` step that was deleted, and worth saying why this is not that: that
+     step went when its last user left, not because one user is too few.
+     42 is exactly 1.5x. It replaced 28/48, and 1.71 would have been the first
+     exception to the leading rule since the old hero step took the last one
+     with it. */
+  --type-hero-size:    28px;  --type-hero-lh:    42px;
   --type-h2-size:      32px;  --type-h2-lh:      48px;
 
   /* Scrollbar width for the chat message area. The messages pane reserves
@@ -471,6 +498,17 @@ body {
     line-height: var(--type-h2-lh);
     letter-spacing: var(--track-display-h2);
   }
+  /* The front door's headline. Weight 400 lives HERE rather than as a
+     font-normal utility at the call site: this step exists for one element,
+     and its weight is part of what the step IS rather than a variation on
+     it. */
+  .type-hero {
+    font-family: var(--ff-archivo);
+    font-weight: 400;
+    font-size: var(--type-hero-size);
+    line-height: var(--type-hero-lh);
+    letter-spacing: var(--track-display-hero);
+  }
   .type-subhead {
     font-family: var(--ff-archivo);
     font-weight: 700;
@@ -496,6 +534,15 @@ body {
     font-weight: 400;
     font-size: var(--type-body-size);
     line-height: var(--type-body-lh);
+  }
+  /* Control labels: the prompt chips, and anything else whose job is to
+     label a tap target. Archivo, because these are things a person would say
+     — the same reasoning that kept the chips off the mono voice. */
+  .type-control {
+    font-family: var(--ff-archivo);
+    font-weight: 400;
+    font-size: var(--type-control-size);
+    line-height: var(--type-control-lh);
   }
   /* Supporting prose — taglines, locations, role lines, card descriptions.
      Archivo, because it is human-readable prose rather than system chrome,
@@ -525,7 +572,7 @@ body {
     font-weight: 600;
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
-    letter-spacing: var(--track-caps);
+    letter-spacing: var(--track-caps-label);
     text-transform: uppercase;
   }
   .type-nav {
@@ -533,7 +580,7 @@ body {
     font-weight: 500;
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
-    letter-spacing: var(--track-caps);
+    letter-spacing: var(--track-caps-label);
     text-transform: uppercase;
   }
   /* Mono caps at the body step. See DESIGN.md — the scale is unchanged;
@@ -543,7 +590,7 @@ body {
     font-weight: 600;
     font-size: var(--type-body-size);
     line-height: var(--type-body-lh);
-    letter-spacing: var(--track-caps);
+    letter-spacing: var(--track-caps-body);
     text-transform: uppercase;
   }
   .type-meta {
@@ -558,10 +605,11 @@ body {
      hero step is gone: the 52/60 step existed only to carry the front-door
      headline, and that headline moved to h2. */
   @media (max-width: 640px) {
+    .type-hero,
     .type-h2 {
       font-size: var(--type-subhead-size);
       line-height: var(--type-subhead-lh);
-      letter-spacing: -0.6px;
+      letter-spacing: var(--track-display-sub);
     }
   }
 }
