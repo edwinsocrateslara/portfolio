@@ -71,9 +71,23 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     }
     if (p.challenge) {
       out.push({ kind: "section-heading", text: "The pipeline" })
-      out.push({ kind: "text", text: p.challenge })
+      // Split on the FIRST newline only, so the source screenshots sit against
+      // the paragraph that describes the sources, and everything after stays
+      // one block. Deliberately not split on every newline and indexed: that
+      // would make image placement depend on the copy having exactly three
+      // paragraphs, and adding a sentence later would silently move them.
+      // Splitting once is stable however the tail grows.
+      const nl = p.challenge.indexOf("\n")
+      const sources = nl === -1 ? p.challenge : p.challenge.slice(0, nl)
+      const rest = nl === -1 ? "" : p.challenge.slice(nl + 1)
+      out.push({ kind: "text", text: sources })
+      // Upstream then downstream, matching the sentence order above: the
+      // transcripts are a tributary, the board post is where the three sources
+      // converge — which is the clause that paragraph lands on.
+      if (all[2]) out.push({ kind: "image", image: all[2], group: all, groupIndex: 2 })
+      if (all[1]) out.push({ kind: "image", image: all[1], group: all, groupIndex: 1 })
+      if (rest) out.push({ kind: "text", text: rest })
     }
-    if (all[1]) out.push({ kind: "image", image: all[1], group: all, groupIndex: 1 })
     if (p.decision) {
       out.push({ kind: "section-heading", text: "The calls" })
       out.push({ kind: "text", text: p.decision })
@@ -92,13 +106,13 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     // removes the first 80 rows). Native size in a tab is legible; a preview
     // that cannot be read is worse than a link that can.
     out.push({ kind: "doc-link", docKey: "ideas-architecture" })
-    // ⚠ Anything past slot 1 lands HERE — after the proof links, at the very
+    // ⚠ Anything past slot 2 lands HERE — after the proof links, at the very
     // end. That is fine for the work flow, where images trail by design, and
     // wrong for this one, which ends on the running artefact deliberately. A
-    // third screenshot would be the last thing a reader sees, undercutting the
-    // link it follows. If a third image ever earns a place, give it a slot in
-    // the order above rather than letting it fall through to here.
-    for (let i = 2; i < all.length; i++) {
+    // fourth screenshot would be the last thing a reader sees, undercutting
+    // the link it follows. If one ever earns a place, give it a slot in the
+    // order above rather than letting it fall through to here.
+    for (let i = 3; i < all.length; i++) {
       out.push({ kind: "image", image: all[i], group: all, groupIndex: i })
     }
     return out

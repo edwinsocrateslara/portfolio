@@ -52,15 +52,21 @@ export const vibeProjects: Project[] =
           // No preview yet, so the rail row draws an empty frame rather than
           // borrowing a screenshot from another project — see .rail-thumb-empty.
           previewImage: { url: "", alt: "" },
-          // Slot 0 renders after the opening line; slot 1 after the pipeline
-          // prose. Two, and deliberately not three — see the note on image
-          // order in lib/project-flow.ts for why a third would land in the
-          // wrong place.
+          // Slot order here is DECLARATION order, not render order — the vibe
+          // flow places them; see lib/project-flow.ts.
           //
-          //   0  the dashboard — the weekly ten, where a reader has just been
-          //      told what the tool does and wants to see it
+          //   0  the dashboard — the weekly ten, rendered after the opening
+          //      line, where a reader has just been told what the tool does
           //   1  a single feedback post with its board, status and Slack-bot
-          //      origin — the convergence point the paragraph above describes
+          //      origin — the convergence point
+          //   2  the meeting-notes table, transcripts tagged by type — the
+          //      tributary before it converges
+          //
+          // 2 and 1 both render inside the pipeline section, against the
+          // paragraph describing the sources, and in that order: upstream
+          // (transcripts) then downstream (the board post the paragraph lands
+          // on). A fourth image would fall through to after the proof links,
+          // which is the wrong place — see the warning in project-flow.ts.
           //
           // The architecture diagram is NOT here. Measured at the exact render
           // sizes it comes out at 4px annotation ink in the chat block and 7px
@@ -72,6 +78,7 @@ export const vibeProjects: Project[] =
           images: [
             { url: "/framer/futurefit-ideas-dashboard/image-1.webp", alt: "" },
             { url: "/framer/futurefit-ideas-dashboard/image-2.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/image-3.webp", alt: "" },
           ],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven
@@ -120,7 +127,7 @@ export const vibeProjects: Project[] =
           // it, and the products are named once, later, in the stack block.
           // Newlines split into paragraphs in TextBubble.
           challenge:
-            "Feedback reaches the boards three ways. Most is posted straight to them — running lists where customers and staff file requests and vote on each other's, of which the tool reads 4, one per product area. Some arrives through a bot in the company chat, so anyone can file something without leaving the conversation they had it in. The rest comes from recorded customer calls, which a meeting-notes service transcribes; what it finds there is filed as an ordinary board post, so something said out loud lands in the same pile as something typed. Everything converges before the tool sees it, and the tool reads one place.\n" +
+            "Feedback reaches the boards three ways. Most is posted straight to them — running lists where customers and staff file requests and vote on each other's, of which the tool reads 4, one per product area. Some arrives through a bot in the company chat, so anyone can file something without leaving the conversation they had it in. The rest comes from recorded customer calls, which a meeting-notes service transcribes and tags by type — pain point, unmet need, feature request, competitive mention; what it finds there is filed as an ordinary board post, so something said out loud lands in the same pile as something typed. Everything converges before the tool sees it, and the tool reads one place.\n" +
             "Once a week a scheduled job collects everything new and copies it into the tool's own database, so nothing downstream depends on any of those services being reachable. It then sends the pooled items — ~300 of the 457 — to a language model, along with the company's 5 current strategy documents and a reference describing the platform's own architecture, and asks for 10. The strategy documents are what an item has to earn its place against; the architecture reference is what lets the model tell a contained change from one that touches everything. If the model returns anything that doesn't match the expected shape, the run is rejected and logged rather than saved.\n" +
             "People review the 10. Every field the model set can be overridden by hand, and accepting an item creates a ticket in the engineering tracker. A daily check watches that ticket, and when it ships the tool closes the original post — so the person who asked for it hears back.",
         },
