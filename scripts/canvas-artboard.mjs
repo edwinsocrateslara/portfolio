@@ -161,10 +161,36 @@ const EXTRACT = `(() => {
     const ns = el.namespaceURI === SVG_NS ? SVG_NS : "html"
     const def = defaultsFor(tag, ns)
     const full = ALWAYS_FULL.has(tag)
+
+    // ── Text boxes are described, not pinned ──────────────────────────────
+    // A used height copied onto an element that holds text is a trap: if the
+    // text rewraps for ANY reason in the destination — a font that resolves a
+    // hair wider, a different rasteriser, a scaled preview frame — the extra
+    // line has nowhere to go and paints straight over whatever sits below.
+    // That is exactly how the headline came to overlap the chat input: 42px
+    // pinned, two lines rendered.
+    //
+    // So a text-bearing element gets its type, its constraints and its
+    // padding, and sizes itself from those — which is what the app does too.
+    // And where the app put the text on ONE line with room to spare, that is
+    // locked with nowrap rather than left to be re-decided by whatever font
+    // metrics the destination happens to have.
+    const textish = el.children.length === 0 && el.textContent.trim().length > 0
+    let oneLine = false
+    if (textish && ns !== SVG_NS) {
+      const rects = el.getClientRects()
+      const parent = el.parentElement
+      const room = parent ? parent.getBoundingClientRect().width : Infinity
+      oneLine = rects.length === 1 &&
+        cs.whiteSpace === "normal" &&
+        rects[0].width < room - 1
+    }
+
     const decls = []
     for (const p of PROPS) {
       const v = cs[p]
       if (v == null || v === "") continue
+      if (textish && (p === "height" || p === "width")) continue
       if (!full && v === def[p]) continue
       // A resolved zero-width border still carries a colour; skip the noise.
       if (/^border(Top|Right|Bottom|Left)Color$/.test(p) &&
@@ -193,6 +219,7 @@ const EXTRACT = `(() => {
     }
     if (el.getAttribute && el.getAttribute("aria-hidden")) attrs += ' aria-hidden="true"'
 
+    if (oneLine) decls.push("white-space:nowrap")
     const style = decls.length ? ' style="' + escAttr(decls.join(";")) + '"' : ""
     const open = "<" + tag + attrs + style + ">"
     if (ns === SVG_NS && !el.childNodes.length) {
@@ -271,6 +298,11 @@ const file = `<!doctype html>
     *, *::before, *::after { border-width: 0; border-style: solid; }
     h1, h2, h3, h4, h5, h6, p, blockquote, figure, pre,
     dl, dd, ol, ul, menu, fieldset, legend { margin: 0; }
+    /* Preflight makes headings inherit their type, so an <h1> the app sets to
+       weight 400 MATCHES a probe that inherits 400 — the declaration is
+       dropped as unchanged and the artboard falls back to the UA's bold. That
+       is 8% wider, which is what rewrapped the headline onto a second line. */
+    h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
     ol, ul, menu { list-style: none; padding: 0; }
     img, svg, video, canvas, audio, iframe, embed, object {
       display: block; vertical-align: middle;
