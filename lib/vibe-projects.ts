@@ -53,15 +53,26 @@ export const vibeProjects: Project[] =
           // borrowing a screenshot from another project — see .rail-thumb-empty.
           previewImage: { url: "", alt: "" },
           // Slot 0 renders after the opening line; slot 1 after the pipeline
-          // prose. Slot 1 is deliberately empty — the architecture diagram
-          // measured 4px annotation ink in the chat block and 7px in the
-          // lightbox against this system's 12px type floor, so it is linked at
-          // native size instead. See "See it running" in lib/project-flow.ts.
-          // The Canny screenshot that would fill it carries live customer
-          // names and is being redacted separately.
+          // prose. Two, and deliberately not three — see the note on image
+          // order in lib/project-flow.ts for why a third would land in the
+          // wrong place.
+          //
+          //   0  the dashboard — the weekly ten, where a reader has just been
+          //      told what the tool does and wants to see it
+          //   1  a single feedback post with its board, status and Slack-bot
+          //      origin — the convergence point the paragraph above describes
+          //
+          // The architecture diagram is NOT here. Measured at the exact render
+          // sizes it comes out at 4px annotation ink in the chat block and 7px
+          // in the lightbox, against this system's 12px type floor, so it is
+          // linked at native size instead.
+          //
           // TODO(edwin): alt text. Authored, never generated — same rule as
           // the 32 project images.
-          images: [{ url: "/framer/futurefit-ideas-dashboard/image-1.webp", alt: "" }],
+          images: [
+            { url: "/framer/futurefit-ideas-dashboard/image-1.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/image-2.webp", alt: "" },
+          ],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven
           // in lib/projects.ts — roleDescription at 34 words against 28, and

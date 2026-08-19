@@ -92,6 +92,12 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     // removes the first 80 rows). Native size in a tab is legible; a preview
     // that cannot be read is worse than a link that can.
     out.push({ kind: "doc-link", docKey: "ideas-architecture" })
+    // ⚠ Anything past slot 1 lands HERE — after the proof links, at the very
+    // end. That is fine for the work flow, where images trail by design, and
+    // wrong for this one, which ends on the running artefact deliberately. A
+    // third screenshot would be the last thing a reader sees, undercutting the
+    // link it follows. If a third image ever earns a place, give it a slot in
+    // the order above rather than letting it fall through to here.
     for (let i = 2; i < all.length; i++) {
       out.push({ kind: "image", image: all[i], group: all, groupIndex: i })
     }
