@@ -70,11 +70,15 @@
        card  12   panels, cards, bubbles, the chat input once it grows
        btn    8   buttons that are not pills
        chip  pill chips, badges, circular icon controls, and the chat
-                  input at rest */
+                  input at rest
+       thumb  4   the rail's 32px project frames, and only those — at that
+                  size `media` is a quarter of the box and reads as a
+                  squircle rather than a softened corner */
   --bureau-radius-media: 8px;
   --bureau-radius-card: 12px;
   --bureau-radius-btn:  8px;
   --bureau-radius-chip: 9999px;
+  --bureau-radius-thumb: 4px;
 
   /* ── Spacing: relatedness levels ───────────────────────────────
      Spacing encodes how related two things are. Reach for one of
@@ -637,6 +641,7 @@ body {
   height: var(--space-32);
   object-fit: cover;
   border: 1px solid var(--hairline);
+  border-radius: var(--bureau-radius-thumb);
   box-sizing: border-box;
   background: var(--layer-2);
   transition: border-color 0.15s;
@@ -670,7 +675,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.rail-item-client { color: rgb(var(--bureau-text-muted)); }
+.rail-item-client { color: rgb(var(--bureau-text-primary)); }
 .rail-item-subtitle { color: rgb(var(--bureau-text-secondary)); }
 
 /* Hover is fill only; active adds the bar and steps the label to primary,
@@ -683,8 +688,11 @@ body {
   background: var(--layer-1);
   border-left-color: rgb(var(--bureau-accent));
 }
-/* The Archivo line carries the active step, matching the project-header
-   card where the client stays secondary and the title goes primary. */
+/* Active SWAPS the two lines: the Archivo subtitle steps up to primary as
+   the mono client steps down to secondary. It used to be a one-way promotion,
+   with the client resting at muted; now that the client rests at primary the
+   only way to keep the subtitle dominant when selected is to trade them. The
+   accent bar and the layer-1 fill still carry most of the state. */
 .rail-item[data-active="true"] .rail-item-subtitle {
   color: rgb(var(--bureau-text-primary));
 }
@@ -727,6 +735,7 @@ body {
   color: rgb(var(--bureau-text-secondary));
   transition: background-color 0.15s, border-color 0.15s;
 }
+.rail-doc-label { color: rgb(var(--bureau-text-primary)); }
 .rail-doc[data-active="true"] {
   background: var(--layer-1);
   border-left-color: rgb(var(--bureau-accent));

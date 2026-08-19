@@ -220,7 +220,7 @@ export function Sidebar({
                 header above them, which inverts the hierarchy. See
                 DOC_ICON_STROKE. */}
             <Layers className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
-            <span className="type-label">Case Study</span>
+            <span className="type-label rail-doc-label">Case Study</span>
           </button>
 
           {/* A button, not a link. This row opened DocHub in a new tab until
@@ -236,7 +236,7 @@ export function Sidebar({
             onClick={pick(onSelectResume)}
           >
             <FileUser className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
-            <span className="type-label">Resume</span>
+            <span className="type-label rail-doc-label">Resume</span>
           </button>
 
           {/* Last in the document group, and a pane swap rather than a route:
@@ -251,7 +251,7 @@ export function Sidebar({
             onClick={pick(onSelectAbout)}
           >
             <UserRound className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
-            <span className="type-label">About</span>
+            <span className="type-label rail-doc-label">About</span>
           </button>
         </div>
       </nav>
@@ -259,7 +259,7 @@ export function Sidebar({
       <div className="rail-footer">
         <p
           className="type-label rail-footer-label"
-          style={{ color: "rgb(var(--bureau-text-secondary))" }}
+          style={{ color: "rgb(var(--bureau-text-primary))" }}
         >
           <span className="rail-square" />
           Contact
@@ -268,7 +268,7 @@ export function Sidebar({
           <a
             className="type-label rail-contact-link"
             href={`mailto:${CONTACT_EMAIL}`}
-            style={{ color: "rgb(var(--bureau-text-secondary))" }}
+            style={{ color: "rgb(var(--bureau-text-primary))" }}
           >
             Email
             <MailMark />
@@ -278,7 +278,7 @@ export function Sidebar({
             href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "rgb(var(--bureau-text-secondary))" }}
+            style={{ color: "rgb(var(--bureau-text-primary))" }}
           >
             LinkedIn
             <NewTabMark />

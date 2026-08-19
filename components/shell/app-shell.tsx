@@ -541,7 +541,7 @@ export function AppShell({
                       animationDelay: delay(60),
                     }}
                   >
-                    I&apos;m Edwin, a designer &amp; AI builder making useful
+                    I&apos;m Edwin, designer &amp; AI builder making useful
                     products and workflows.
                   </h1>
 
