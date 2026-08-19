@@ -132,3 +132,54 @@ scripted string.
 `alt` on the 21 slides is repo-authored, like `alt` on project images: the
 PDF carries none. It was written from viewing each rendered slide, and is
 noted as a gap at the top of `lib/case-study-deck.ts`.
+
+## `check-content-frozen.mjs` is for branches that must NOT touch this
+## directory — not for branches whose purpose is touching it
+
+**Running it against a content branch is a category error.** It was written
+for `experiment/impeccable`, where an agent was allowed to rewrite
+presentation and forbidden from touching the files that encode where copy
+comes from. Pointed at that kind of branch it is exactly right. Pointed at a
+branch whose job is editing `voice.md` or `resume.txt`, every finding is a
+false positive, and the report reads like six problems when it is six
+intended edits.
+
+Two things make this easy to get wrong, and both are worth knowing before
+running it:
+
+- **It is not one of the four gates.** `npm run build` runs `check:sources`,
+  `check:design` and `check:chips`. This script is in neither the build chain
+  nor CI. Its own header says so and says why: compared against `main` from
+  `main` it is self-referential and passes trivially, and a gate that always
+  passes is worse than no gate.
+- **There is no stored baseline to update.** `--base` is a runtime argument
+  defaulting to `main`. Nothing persists, so "resolving" a failure by revising
+  a baseline is not a thing that can be done. After a content branch merges,
+  the tool passes because the comparison target moved — not because anything
+  was reconciled.
+
+So a source-layer edit is not made legitimate by a gate. It is made
+legitimate by being written down. That is what the section below is for.
+
+## Source-layer edits on `feature/about-page`
+
+Six frozen paths changed on that branch. Each was deliberate and reviewed;
+the list is here so the change is a record rather than something a merge
+absorbed silently.
+
+| Path | Commits | Why |
+|---|---|---|
+| `voice.md` | `0abd941`, `33bfb11` | Two currently-reading books added for the About page. Downtime line rewritten — Edwin's own words, replacing the previous sentence rather than adding to it. |
+| `resume.txt` | `0d01aca` | Bullets restored. The file had flattened the source document's bullets into prose and the structure did not survive: sentence counts disagreed with the document on three of six roles. Titles unchanged — the contracting period stays Product Designer, per the table above. |
+| `edwin-context.md` | `33bfb11` | The § Outside Work quote follows `voice.md`. Hand-maintained: it sits outside both generated blocks, so `build:context` does not touch it. |
+| `scripted-responses.ts` | `8104dc2`, `33bfb11` | Vibe-project slug resolution; the downtime answer follows `voice.md`. |
+| `voice-answers.ts` | `0abd941` | Currently-reading entries, so the About page and the chat cannot disagree about what Edwin is reading. |
+| `check-voice.mjs` | `0abd941`, `fa3b40d` | Book fields added, then the About page's lede. The comparison is now whitespace-normalised on both sides — `voice.md` hard-wraps and JSX wraps differently, so the raw substring test returned false for a correct sentence. |
+
+**Still unguarded, and named here so it is not mistaken for covered:**
+`lib/scripted-responses.ts` holds the downtime paragraph as an inline literal.
+`check-voice.mjs` reads `voice-answers.ts`, not that file, so the two can
+drift. The repo has the right pattern for it — the deck response uses
+`voiceAnswerById()` precisely so the gate catches it — but moving the
+downtime answer into `VOICE_ANSWERS` changes its chip routing, so it is a
+separate decision rather than a silent fix.
