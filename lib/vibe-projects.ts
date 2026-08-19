@@ -49,12 +49,19 @@ export const vibeProjects: Project[] =
           // tags — verified, zero consumers outside the data file — so filling
           // it would store data no surface displays.
           tags: [],
-          // No image exists yet. The rail row draws an empty frame rather than
+          // No preview yet, so the rail row draws an empty frame rather than
           // borrowing a screenshot from another project — see .rail-thumb-empty.
-          // TODO(edwin): screenshots, and their alt text. Alt is authored, never
-          // generated — same rule as the 32 project images.
           previewImage: { url: "", alt: "" },
-          images: [],
+          // Slot 0 renders after the opening line; slot 1 after the pipeline
+          // prose. Slot 1 is deliberately empty — the architecture diagram
+          // measured 4px annotation ink in the chat block and 7px in the
+          // lightbox against this system's 12px type floor, so it is linked at
+          // native size instead. See "See it running" in lib/project-flow.ts.
+          // The Canny screenshot that would fill it carries live customer
+          // names and is being redacted separately.
+          // TODO(edwin): alt text. Authored, never generated — same rule as
+          // the 32 project images.
+          images: [{ url: "/framer/futurefit-ideas-dashboard/image-1.webp", alt: "" }],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven
           // in lib/projects.ts — roleDescription at 34 words against 28, and
@@ -94,7 +101,7 @@ export const vibeProjects: Project[] =
           // and schema rejection are described in the pipeline where they
           // happen, rather than asserted here as principles.
           decision:
-            "I ranked on strategic fit, not demand: 3 votes can outrank 30 if one maps to a live commitment. Model output and human judgement sit in separate columns; every model field has a manual override, and the weekly run rewrites only its own. A rationale freezes on acceptance, so a shipped ticket still explains why it was chosen. Consistent disagreement feeds back into the next run as a weak signal, so the ranking learns from overrides rather than being re-fought every week.",
+            "I ranked on strategic fit, not demand: 3 votes can outrank 30 if one maps to a live commitment. Model output and human judgement sit in separate columns; every model field has a manual override, and the weekly run rewrites only its own. A rationale freezes on acceptance, so a shipped ticket still explains why it was chosen. The last four weeks of overrides feed into the next run, deliberately scoped to influence the ordering of the 10 rather than which items qualify — so consistent disagreement is learned from without letting it quietly pull selection away from the strategy documents.",
           // THE PIPELINE. Carried by `challenge` because the vibe flow heads
           // it "The pipeline" — see lib/project-flow.ts. Every domain term is
           // defined at the moment it appears and none of the vendors is named:
@@ -102,8 +109,8 @@ export const vibeProjects: Project[] =
           // it, and the products are named once, later, in the stack block.
           // Newlines split into paragraphs in TextBubble.
           challenge:
-            "Feedback reaches it three ways. Most comes from feedback boards — running lists where customers and staff post requests and vote on each other's, one board per product area, 4 in all. Some arrives through a bot in the company chat, so anyone can file something without leaving the conversation they had it in. The rest comes from recorded customer calls: a meeting-notes service transcribes them, the tool reads those transcripts, and what it finds is filed as an ordinary board post — so something said out loud lands in the same pile as something typed.\n" +
-            "Once a week a scheduled job collects everything new and copies it into the tool's own database, so nothing downstream depends on any of those services being reachable. It then sends the pooled items — ~300 of the 457 — to a language model along with the company's 5 current strategy documents, and asks for 10, each with a written reason tied to a specific commitment in one of them. If the model returns anything that doesn't match the expected shape, the run is rejected and logged rather than saved.\n" +
+            "Feedback reaches the boards three ways. Most is posted straight to them — running lists where customers and staff file requests and vote on each other's, of which the tool reads 4, one per product area. Some arrives through a bot in the company chat, so anyone can file something without leaving the conversation they had it in. The rest comes from recorded customer calls, which a meeting-notes service transcribes; what it finds there is filed as an ordinary board post, so something said out loud lands in the same pile as something typed. Everything converges before the tool sees it, and the tool reads one place.\n" +
+            "Once a week a scheduled job collects everything new and copies it into the tool's own database, so nothing downstream depends on any of those services being reachable. It then sends the pooled items — ~300 of the 457 — to a language model, along with the company's 5 current strategy documents and a reference describing the platform's own architecture, and asks for 10. The strategy documents are what an item has to earn its place against; the architecture reference is what lets the model tell a contained change from one that touches everything. If the model returns anything that doesn't match the expected shape, the run is rejected and logged rather than saved.\n" +
             "People review the 10. Every field the model set can be overridden by hand, and accepting an item creates a ticket in the engineering tracker. A daily check watches that ticket, and when it ships the tool closes the original post — so the person who asked for it hears back.",
         },
       ]

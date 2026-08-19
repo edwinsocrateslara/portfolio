@@ -84,6 +84,14 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     }
     out.push({ kind: "section-heading", text: "See it running" })
     out.push({ kind: "doc-link", docKey: "ideas-showcase" })
+    // The architecture diagram is LINKED, not embedded. Measured at the exact
+    // render sizes: 4px annotation ink in the chat block, 7px in the lightbox
+    // at 1440x900, 6px at 1280x720 — under the 12px floor this system states
+    // for type. The 16:10 source also loses 10% of its height to the block's
+    // 16:9 crop, which clips the top annotation line (first ink at y=78, crop
+    // removes the first 80 rows). Native size in a tab is legible; a preview
+    // that cannot be read is worse than a link that can.
+    out.push({ kind: "doc-link", docKey: "ideas-architecture" })
     for (let i = 2; i < all.length; i++) {
       out.push({ kind: "image", image: all[i], group: all, groupIndex: i })
     }
