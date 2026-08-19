@@ -16,7 +16,6 @@ import { projects } from "@/lib/projects"
 import type { Project } from "@/lib/projects"
 import type { LucideIcon } from "lucide-react"
 import { vibeProjects } from "@/lib/vibe-projects"
-import { DOCS } from "@/lib/constants"
 
 // The persistent left rail. It is the site's index: every project is a row,
 // and clicking one streams that project's reveal into the chat. It replaces
@@ -37,7 +36,7 @@ import { DOCS } from "@/lib/constants"
 // NOT shown here — it stays the project's name in the chat card and in
 // edwin-context.md, and is too long for a 198px column.
 
-export type Pane = "chat" | "deck" | "about"
+export type Pane = "chat" | "deck" | "about" | "resume"
 
 // Document rows are 32px (--rail-doc-icon-size), section headers 16px. Lucide
 // expresses stroke-width in viewBox units, so a shared number paints twice as
@@ -54,6 +53,7 @@ interface SidebarProps {
   onProjectSelect: (slug: string) => void
   onSelectAbout: () => void
   onSelectDeck: () => void
+  onSelectResume: () => void
   onHome: () => void
   /** Mobile sheet only — dismisses after a selection. */
   onNavigate?: () => void
@@ -147,6 +147,7 @@ export function Sidebar({
   onProjectSelect,
   onSelectAbout,
   onSelectDeck,
+  onSelectResume,
   onHome,
   onNavigate,
   open = false,
@@ -222,23 +223,21 @@ export function Sidebar({
             <span className="type-label">Case Study</span>
           </button>
 
-          <a
+          {/* A button, not a link. This row opened DocHub in a new tab until
+              the Resume pane existed; now it swaps the pane like CASE STUDY
+              and ABOUT. NewTabMark came off with the href — it announced
+              "opens in a new tab", which would now be a lie, and a stale
+              announcement survives a redesign unnoticed. */}
+          <button
+            type="button"
             className="rail-doc"
-            href={DOCS["resume"].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => onNavigate?.()}
+            data-active={activePane === "resume"}
+            aria-current={activePane === "resume" ? "true" : undefined}
+            onClick={pick(onSelectResume)}
           >
             <FileUser className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
             <span className="type-label">Resume</span>
-            {/* Glyph dropped, announcement kept. The row leads with FileUser,
-                and a second mark on the right made one row carry two icons —
-                the only row in the rail that did. The behaviour is unchanged,
-                so the warning must survive the glyph: nav rows carry a LEFT
-                icon, contact links carry a RIGHT arrow, and this row is a nav
-                row. */}
-            <NewTabMark glyph={false} />
-          </a>
+          </button>
 
           {/* Last in the document group, and a pane swap rather than a route:
               About is not a deep-linkable artefact the way the deck is, and a

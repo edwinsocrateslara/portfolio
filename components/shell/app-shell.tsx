@@ -11,6 +11,8 @@ import { projects } from "@/lib/projects"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
 import { AboutPane } from "@/components/about/about-pane"
+import { ResumePane } from "@/components/resume/resume-pane"
+import type { Resume } from "@/lib/resume"
 import { Sparkle } from "@/components/ui/sparkle"
 import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
 import { buildResponse } from "@/lib/scripted-responses"
@@ -35,7 +37,16 @@ function createTransport() {
 
 // The one layout every destination renders inside. Lifted out of app/page.tsx
 // so the deck route can render it too — see the note on `initialPane`.
-export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
+export function AppShell({
+  initialPane = "chat",
+  resume,
+}: {
+  initialPane?: Pane
+  /** Parsed from lib/sources/resume.txt by a SERVER component and passed in.
+   *  It cannot be imported here: lib/resume.ts reads the file with `fs`, and
+   *  everything below this component is a client tree. */
+  resume: Resume
+}) {
   const [input, setInput] = useState("")
   const prefersReducedMotion = usePrefersReducedMotion()
   // Which destination the pane is showing. "chat" is home; VIBE CODING is the
@@ -369,6 +380,11 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
     setSheetOpen(false)
   }, [])
 
+  const handleResume = useCallback(() => {
+    setPane("resume")
+    setSheetOpen(false)
+  }, [])
+
   // Brand mark returns to the front door, and CLEARS the home thread to do it.
   //
   // The front door is the home thread when empty, so a populated home thread
@@ -466,6 +482,7 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
         onProjectSelect={handleSidebarProject}
         onSelectAbout={handleAbout}
         onSelectDeck={handleDeck}
+        onSelectResume={handleResume}
         onHome={handleHome}
         onNavigate={() => setSheetOpen(false)}
         open={sheetOpen}
@@ -490,7 +507,11 @@ export function AppShell({ initialPane = "chat" }: { initialPane?: Pane }) {
       </div>
 
       <main className="pane" ref={paneRef}>
-        {pane === "about" ? (
+        {pane === "resume" ? (
+          <div className="pane-scroll">
+            <ResumePane resume={resume} />
+          </div>
+        ) : pane === "about" ? (
           <div className="pane-scroll about-glow">
             <AboutPane />
           </div>

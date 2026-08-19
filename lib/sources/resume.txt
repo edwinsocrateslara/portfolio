@@ -30,78 +30,86 @@ FutureFit AI — Toronto, Ontario
 Lead Product Designer (Contract)
 Oct 2025 – Present
 
-Building an AI-powered workforce development platform that helps businesses and
-governments guide unemployed and underemployed people toward meaningful
-opportunities. Building data driven user-testing and research practices to
-deeply understand B2G, B2B, and B2C users. Designing chat driven UX and agentic
-AI experiences that enhance workforce development. Creating an AI-compatible
-design system using design tokens and Shadcn, for use in AI development tools,
-such as V0, Lovable, and Claude Code.
+- Building an AI-powered workforce development platform that helps businesses
+  and governments guide unemployed and underemployed people toward meaningful
+  opportunities.
+- Building data driven user-testing and research practices to deeply
+  understand B2G, B2B, and B2C users.
+- Designing chat driven UX and agentic AI experiences that enhance workforce
+  development.
+- Creating an AI-compatible design system using design tokens and Shadcn, for
+  use in AI development tools, such as V0, Lovable, and Claude Code.
 
 
 Complex NTWRK — Toronto, Ontario
 Lead Product Designer
 Apr 2022 – Oct 2025
 
-Spearheaded the design and launch of the "Auctions" feature, directly
-contributing to 63% of company revenue and achieving 23% quarterly growth, a
-172% increase in chat messages per show, and 5-minute increase in average show
-watch time. Designed and iterated the Seller Dashboard, a critical product
-management and order fulfillment tool utilized by 400+ sellers to process
-106,000+ orders, generating over $10.5 million in total revenue. Led the
-end-to-end design integration during acquisition of Complex, merging e-commerce
-and media into a unified platform.
+- Spearheaded the design and launch of the "Auctions" feature, directly
+  contributing to 63% of company revenue and achieving 23% quarterly growth, a
+  172% increase in chat messages per show, and 5-minute increase in average
+  show watch time.
+- Designed and iterated the Seller Dashboard, a critical product management
+  and order fulfillment tool utilized by 400+ sellers to process 106,000+
+  orders, generating over $10.5 million in total revenue.
+- Led the end-to-end design integration during acquisition of Complex, merging
+  e-commerce and media into a unified platform.
 
 
 Super.com — Toronto, Ontario
 Senior Product Designer
 Nov 2021 – Apr 2022
 
-Led the UX design for SuperCash credit-building cashback card, achieving
-50,000+ cards issued within 7 months of launch. Shipped MVP of unified "super
-app," integrating hotel booking, e-commerce and financial services post-rebrand
-to Super.com.
+- Led the UX design for SuperCash credit-building cashback card, achieving
+  50,000+ cards issued within 7 months of launch.
+- Shipped MVP of unified "super app," integrating hotel booking, e-commerce
+  and financial services post-rebrand to Super.com.
 
 
 Backbase — Toronto, Ontario
 Senior Product Designer
 Nov 2020 – Nov 2021
 
-Directed the full lifecycle UX/UI and technical integration of Backbase's
-platform across NA and EU financial institutions, customizing solutions for
-regional compliance and needs. Facilitated cross-functional teams (development,
-product, compliance) to navigate complex integration challenges, ensuring the
-delivery of scalable and user-centric digital banking solutions.
+- Directed the full lifecycle UX/UI and technical integration of Backbase's
+  platform across NA and EU financial institutions, customizing solutions for
+  regional compliance and needs.
+- Facilitated cross-functional teams (development, product, compliance) to
+  navigate complex integration challenges, ensuring the delivery of scalable
+  and user-centric digital banking solutions.
 
 
 Meridian Credit Union — Toronto, Ontario
 Senior Product Designer
 May 2019 – Nov 2020
 
-Led the redesign of the Meridian Credit Union mobile app for 370,000+ users,
-significantly enhancing usability, engagement and improving retention.
-Established a comprehensive IA and design system to ensure a cohesive and
-user-friendly digital banking experience. Conducted extensive user-centric
-research, including user testing and surveys, and analyzed key data to inform
-design decisions and understand specific consumer banking behaviors.
+- Led the redesign of the Meridian Credit Union mobile app for 370,000+ users,
+  significantly enhancing usability, engagement and improving retention.
+- Established a comprehensive IA and design system to ensure a cohesive and
+  user-friendly digital banking experience.
+- Conducted extensive user-centric research, including user testing and
+  surveys, and analyzed key data to inform design decisions and understand
+  specific consumer banking behaviors.
 
 
 Contracting — Toronto, Ontario
 Product Designer
 Dec 2015 – May 2019
 
-Fintech: Bank of Montreal: Led the end-to-end redesign of the bank's entire
-public website and core navigation to better direct users to the bank's
-products. Toronto-Dominion Bank: Led redesign initiatives for MBNA credit card
-application process, enhancing user experience and optimizing the user's credit
-card application journey. Viafoura: Spearheaded the design of a commenting and
-chat tool utilized by USA Today, The Telegraph, The Globe and Mail, CBC, The
-Independent, and Dow Jones and many more to help foster community engagement on
-their websites. Developed a data segmenting and insights tool that tracks user
-behaviour and engagement to help media publishers understand user preferences.
-Volkswagen: Conceptualized and designed a car comparison tool for Volkswagen
-that serves over 112,000 customers per month to date.
-
+Fintech:
+- Bank of Montreal: Led the end-to-end redesign of the bank's entire public
+  website and core navigation to better direct users to the bank's products.
+- Toronto-Dominion Bank: Led redesign initiatives for MBNA credit card
+  application process, enhancing user experience and optimizing the user's
+  credit card application journey.
+Viafoura:
+- Spearheaded the design of a commenting and chat tool utilized by USA Today,
+  The Telegraph, The Globe and Mail, CBC, The Independent, and Dow Jones and
+  many more to help foster community engagement on their websites.
+- Developed a data segmenting and insights tool that tracks user behaviour and
+  engagement to help media publishers understand user preferences.
+Volkswagen:
+- Conceptualized and designed a car comparison tool for Volkswagen that serves
+  over 112,000 customers per month to date.
 
 EDUCATION
 

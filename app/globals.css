@@ -208,6 +208,11 @@
   /* The About page's prose measure. The mock puts the words on a 328-588
      band inside the full-width pane; 588 is the upper end, which is where
      the sentence reads best at desktop. */
+  /* The résumé's left column — employer, title, dates. A measure, not
+     spacing: it is sized to hold "Meridian Credit Union" and "Lead Product
+     Designer (Contract)" without wrapping to three lines, which is what makes
+     the column scannable. Same role as --about-portrait. */
+  --resume-meta-col: 240px;
   --about-measure: 588px;
   /* The mosaic's portrait column. Its two square siblings are half of it
      minus the gutter, so the stack's height matches the portrait exactly. */
@@ -1062,6 +1067,104 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   text-decoration: none;
 }
 
+/* ── Resume pane ──────────────────────────────────────────────────
+   Every string here is parsed from lib/sources/resume.txt; see lib/resume.ts.
+   The layout is the About pane's proportions rather than the 720px chat
+   column: a résumé is a long list of short entries, and at 720 the six roles
+   become a wall. */
+.resume-section {
+  margin-top: var(--space-section);
+}
+.resume-heading {
+  margin: 0 0 var(--space-group);
+  color: rgb(var(--bureau-text-secondary));
+}
+/* Identifying facts left, prose right. A résumé is scanned by employer and
+   date before it is read, so those take their own column instead of opening
+   the paragraph. The meta column is fixed and the prose takes the remainder,
+   capped at the measure — same pairing as the About spine and mosaic. */
+.resume-role {
+  display: flex;
+  gap: var(--space-group);
+  align-items: flex-start;
+  margin-bottom: var(--space-group);
+}
+.resume-role:last-child {
+  margin-bottom: 0;
+}
+.resume-role-meta {
+  flex: 0 0 var(--resume-meta-col);
+  min-width: 0;
+}
+.resume-description {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: var(--about-measure);
+}
+/* `between` between groups, `within` between bullets inside one — the four
+   levels doing exactly what they are for. Only the contracting block has more
+   than one group. */
+.resume-group + .resume-group {
+  margin-top: var(--space-between);
+}
+.resume-group-label {
+  margin: 0 0 var(--space-within);
+  color: rgb(var(--bureau-text-muted));
+}
+.resume-bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-within);
+}
+/* A drawn square, not `list-style: disc`. A disc renders at the browser's own
+   size and colour — the one mark on the page that would not come from the
+   token layer. The square is this system's marker vocabulary already:
+   .rail-square on CONTACT, and the 8px accent square on the impact card.
+   4px here rather than 8, because those label a section and this labels a
+   line.
+   Positioned by half-leading — (24 - 4) / 2 — so it sits on the first line's
+   optical centre and stays there however many lines the bullet runs to. */
+.resume-bullet {
+  position: relative;
+  padding-left: var(--space-16);
+  margin: 0;
+  color: rgb(var(--bureau-text-secondary));
+}
+.resume-bullet::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc((var(--type-body-lh) - var(--space-4)) / 2);
+  width: var(--space-4);
+  height: var(--space-4);
+  background: var(--hairline-strong);
+}
+.resume-employer {
+  margin: 0;
+  color: rgb(var(--bureau-text-primary));
+}
+.resume-title {
+  margin: var(--space-4) 0 0;
+  color: rgb(var(--bureau-text-secondary));
+}
+.resume-dates {
+  margin: var(--space-4) 0 0;
+  color: rgb(var(--bureau-text-muted));
+}
+.resume-education + .resume-education {
+  margin-top: var(--space-between);
+}
+/* One wrapped block, capped at the measure so the line length stays readable
+   rather than running the full pane width. */
+.resume-skills {
+  margin: 0;
+  max-width: var(--about-measure);
+  color: rgb(var(--bureau-text-muted));
+}
+
 /* The same wash as the hero, on the deck pane. A SECOND pseudo-element rather
    than a class both panes share, and that is the whole decision: rule 6
    allowlists accent surfaces by selector, so a shared `.glow-top` would let any
@@ -1241,6 +1344,11 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .about-spine { max-width: none; flex: none; order: 2; }
   .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; margin-top: 0; }
   .about-stack { flex-direction: column; }
+  /* The résumé's two columns stack, same breakpoint and same reason as the
+     mosaic: at this width a 240px meta column leaves the prose too narrow to
+     read. `within` between the facts and the paragraph they describe. */
+  .resume-role { flex-direction: column; gap: var(--space-within); }
+  .resume-role-meta { flex: none; }
   /* Full-width, per the mock's mobile note. `flex: none` because the basis
      above would otherwise size these by HEIGHT in a column — flex-basis
      resolves on the MAIN axis, which is vertical here.

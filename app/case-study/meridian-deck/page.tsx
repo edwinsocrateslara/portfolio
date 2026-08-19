@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/shell/app-shell"
+import { resume } from "@/lib/resume"
 
 // A static segment, so it takes precedence over the [slug] route alongside
 // it. It exists for deep links — sharing the deck, or landing on it from the
@@ -15,5 +16,5 @@ export const metadata = {
 }
 
 export default function MeridianDeckPage() {
-  return <AppShell initialPane="deck" />
+  return <AppShell initialPane="deck" resume={resume} />
 }
