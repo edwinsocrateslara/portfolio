@@ -642,7 +642,12 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  padding: var(--space-24);
+  /* --rail-inset on the left, not 24. That token is described one screen up as
+     "the left edge every rail row aligns to", and it was introduced because
+     headers sat at 24 while rows sat at 22 — the brand was the last thing
+     still on the wrong side of it. Vertical padding stays 24 so the row height
+     does not move. */
+  padding: var(--space-24) var(--space-24) var(--space-24) var(--rail-inset);
   background: none;
   border: 0;
   cursor: pointer;
@@ -724,10 +729,13 @@ body {
 .rail-doc .rail-icon {
   width: var(--rail-doc-glyph);
   height: var(--rail-doc-glyph);
-  /* Centres the glyph in the wider column. Composed rather than measured, so
-     changing either token keeps the 62px label edge rather than silently
-     losing it. */
-  margin-inline: calc((var(--rail-doc-col) - var(--rail-doc-glyph)) / 2);
+  /* LEFT-aligned in the column, not centred. Centring split the 8px remainder
+     either side and pushed the glyph to 26, four past the line every row above
+     it starts on. The whole remainder goes to the right instead: the glyph
+     starts at 22 and the column is still 32 wide, so the labels keep the 62px
+     edge they share with the project rows. Composed from the two tokens, so
+     changing either keeps both alignments rather than silently losing one. */
+  margin-right: calc(var(--rail-doc-col) - var(--rail-doc-glyph));
   color: rgb(var(--bureau-text-primary));
 }
 
