@@ -186,58 +186,12 @@ export function Sidebar({
           "Edwin Socrates Lara" and the top bar's "Edwin". The full name still
           stands on the résumé, the case-study header and the page title: it
           has left the app chrome, not the site. */}
-      {/* THREE TARGETS ON ONE ROW, AND THEY ARE SIBLINGS. The obvious way to
-          write this — the links inside the brand button — is invalid HTML
-          (interactive content cannot nest) and behaves exactly as badly as it
-          reads: a click on the mail icon would fire the link AND bubble to the
-          button, sending you home from a control that meant to open mail.
-          Siblings in a flex row have no such relationship. The home control's
-          hit area ends where its own box ends, the two links own theirs, and
-          nothing overlaps: each is a real 44px box rather than a small glyph
-          with an invisible area painted around it, so there is no way for two
-          targets to claim the same pixel. */}
-      <div className="rail-head">
-        <button type="button" className="rail-brand" onClick={pick(onHome)}>
-          <Sparkle size="var(--brand-mark-size)" />
-          <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-            Edwin Lara
-          </span>
-        </button>
-        {/* The visible labels are gone, so the accessible name is now the ONLY
-            name. Each link carries its own sr-only noun before the mark's
-            announcement — "Email (opens your email app)" and "LinkedIn (opens
-            in a new tab)" — because an icon with only a suffix would announce
-            as "(opens your email app)" and name nothing. */}
-        <div className="rail-contact">
-          <a
-            className="rail-contact-link"
-            href={`mailto:${CONTACT_EMAIL}`}
-            style={{ color: "rgb(var(--bureau-text-secondary))" }}
-          >
-            <Mail className="rail-contact-icon" aria-hidden="true" strokeWidth={2} />
-            <span className="sr-only">Email</span>
-            {/* No arrow: the Mail glyph is already this control's mark, and two
-                glyphs on one control read as two actions. The announcement
-                stays either way. */}
-            <MailMark glyph={false} />
-          </a>
-          <a
-            className="rail-contact-link"
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "rgb(var(--bureau-text-secondary))" }}
-          >
-            <Linkedin className="rail-contact-icon" aria-hidden="true" strokeWidth={2} />
-            <span className="sr-only">LinkedIn</span>
-            {/* This one KEEPS the arrow. It reassigns the window, and the rule
-                is that a target="_blank" carries a visible mark as well as an
-                announcement — the one case where a second glyph earns its
-                place. */}
-            <NewTabMark />
-          </a>
-        </div>
-      </div>
+      <button type="button" className="rail-brand" onClick={pick(onHome)}>
+        <Sparkle size="var(--brand-mark-size)" />
+        <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
+          Edwin Lara
+        </span>
+      </button>
 
       {/* The wrapper exists to carry the fade: a background painted on the
           scroller itself scrolls away with the list. */}
@@ -325,6 +279,41 @@ export function Sidebar({
           </button>
         </div>
       </nav>
+      </div>
+
+      {/* PINNED, not scrolled: flex: none after the scroller keeps these two on
+          screen whatever the list does, which is the whole point of a footer
+          for contact. The links are the same 44px boxes they were in the head
+          row — real boxes rather than invisible areas, so two of them side by
+          side cannot both claim the same pixel. Their 8px inset puts each
+          GLYPH's left edge on 22, the same --rail-inset every section heading,
+          thumbnail and document glyph above them sits on. */}
+      <div className="rail-footer">
+        <a
+          className="rail-contact-link"
+          href={`mailto:${CONTACT_EMAIL}`}
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
+        >
+          <Mail className="rail-contact-icon" aria-hidden="true" strokeWidth={2} />
+          <span className="sr-only">Email</span>
+          <MailMark glyph={false} />
+        </a>
+        <a
+          className="rail-contact-link"
+          href={LINKEDIN_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "rgb(var(--bureau-text-secondary))" }}
+        >
+          <Linkedin className="rail-contact-icon" aria-hidden="true" strokeWidth={2} />
+          <span className="sr-only">LinkedIn</span>
+          {/* NO VISIBLE ARROW any more — but glyph={false} rather than dropping
+              the mark altogether, because the ANNOUNCEMENT is not the part
+              being removed. This is what that switch was built for: a link
+              that carries its own mark, here the LinkedIn logo, still has to
+              tell a screen reader it reassigns the window. */}
+          <NewTabMark glyph={false} />
+        </a>
       </div>
 
     </aside>

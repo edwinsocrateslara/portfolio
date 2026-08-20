@@ -634,31 +634,19 @@ body {
   border-right: 1px solid var(--hairline);
 }
 
-/* The head row: the way home on the left, the two contact links on the right.
-   The PADDING LIVES HERE, not on the brand button, so the button can be its
-   own 44px target instead of being one only because the row's padding made it
-   tall. 12/24 against the 44px children gives a 68px row — two more than the
-   66 this was, so the rhythm below it is unchanged to the eye. */
-.rail-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  padding: var(--space-12) var(--space-24);
-}
+/* The brand owns its padding again. It briefly shared a row with the contact
+   links, which needed a wrapper so all three could be siblings; the links are
+   in the footer now, so the wrapper has nothing left to hold together. The
+   24px padding puts the row back at 66px, where it was before either move. */
 .rail-brand {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  min-height: var(--space-44);
-  padding: 0;
+  padding: var(--space-24);
   background: none;
   border: 0;
   cursor: pointer;
   text-align: left;
-  /* Shrinks before the links do. The wordmark is fixed-width text and the
-     links are fixed-width boxes, so on a narrow rail something has to give,
-     and losing a letter of the name beats losing a control. */
-  min-width: 0;
 }
 
 /* The nav scrolls; the footer below it stays pinned. At 12px minimum type
@@ -871,10 +859,22 @@ body {
   color: rgb(var(--bureau-text-primary));
 }
 
-/* .rail-footer is GONE. It held a CONTACT heading over two text links, and
-   the links moved into the head row as icons; a footer with nothing in it is
-   133px of reserved height and a hairline drawn under an empty box. The rail
-   now ends where its list ends. */
+/* The footer, back — but as two icons rather than a heading over two text
+   links. That version cost 133px; this one costs 69, because there is no
+   label to lead and the links are the glyphs themselves.
+   flex: none after the scroller is what PINS it: the list can scroll to any
+   length and these two stay where they are.
+   Padding is 12/8, not 12/24 — the 8 puts each 44px box's GLYPH on the 22px
+   --rail-inset every section heading, thumbnail and document glyph above it
+   already sits on. Aligning the boxes instead would have put the glyphs at
+   38 and lined them up with nothing. */
+.rail-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: var(--space-12) var(--space-8);
+  border-top: 1px solid var(--hairline);
+}
 /* .rail-footer-label went with the footer. .rail-square stays — the About
    pane's reading label is its only remaining caller, and always was the reason
    it survived the last pass. */
@@ -883,16 +883,6 @@ body {
   height: var(--space-8);
   background: rgb(var(--bureau-text-secondary));
   display: inline-block;
-  flex: none;
-}
-/* The two contact links, in the head row. `margin-left: auto` rather than
-   `justify-content: space-between` on the parent: the brand is the thing that
-   grows, and pushing from this side keeps the pair glued to the right edge
-   however long the name gets. */
-.rail-contact {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
   flex: none;
 }
 /* A REAL 44px box, not a 16px glyph with an invisible area drawn around it.
@@ -922,14 +912,9 @@ body {
   height: var(--brand-mark-size);
   flex: none;
 }
-/* The external arrow rides the corner of the LinkedIn glyph rather than
-   sitting beside it — beside it, two marks in a 44px box read as two
-   controls, and there is no room for a gap that says otherwise. */
-.rail-contact-link .link-ext {
-  position: absolute;
-  transform: translate(9px, -9px);
-}
-.rail-contact-link { position: relative; }
+/* The external arrow is gone from these two. .link-ext still styles every
+   other external link in the app — the chat prose, the doc-link card — so the
+   rule stays; what left is this pair's use of it. */
 .rail-contact-link:hover {
   color: rgb(var(--bureau-text-primary));
   text-decoration: underline;
@@ -1476,17 +1461,11 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     border-right: 0;
   }
   .shell[data-sheet="true"] .pane { display: none; }
-  /* The top bar already shows the brand, so the rail's own copy would repeat
-     it directly underneath. The BUTTON goes; the ROW stays, because the two
-     contact links live in it now and the footer that used to carry them on a
-     phone is gone. Without this distinction the sheet would have no way to
-     reach email or LinkedIn at all. */
+  /* The top bar already shows the brand, so the rail's own row would just
+     repeat it directly underneath. Contact is reachable in the sheet either
+     way — it is in the footer again, which the sheet keeps. */
   .rail[data-open="true"] .rail-brand { display: none; }
-  /* With the brand hidden the links would sit alone against the right edge,
-     a 68px row with one thing in it at the far side. Pull them left so the
-     row reads as the sheet's own header rather than as a fragment of the
-     desktop one. */
-  .rail[data-open="true"] .rail-contact { margin-left: 0; }
+
   .rail[data-open="true"] .rail-scroll { padding-top: var(--space-16); }
   .pane-front { padding: 0 var(--space-20) var(--space-40); }
   /* The anchor is measured from the VIEWPORT, and below 900px the pane no
