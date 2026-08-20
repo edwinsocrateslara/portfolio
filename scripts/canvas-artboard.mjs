@@ -79,6 +79,40 @@ const W = Number(arg("w", 1440))
 const H = Number(arg("h", 1000))
 const ROUTE = arg("route", "http://localhost:3200/")
 const ROOT = arg("root", ".shell")
+// A surface that is not a route. Most of this app's surfaces are pane state
+// inside one shell — About and Resume have no URL at all — so navigating is
+// not enough to reach them. --setup names a file whose contents run IN THE
+// PAGE after navigation and before anything is read.
+//
+// IT MUST RUN ON THE VERIFY PATH TOO, and that is the whole reason this is a
+// flag rather than something done by hand before calling the script. verify()
+// screenshots the app and the artboard and diffs them; if setup ran only for
+// the extraction, verify would photograph the front door, compare it to an
+// About artboard, and fail every single time. Worse, the obvious "fix" for
+// that failure is to loosen the threshold, which would silently retire the
+// only thing standing between a wrong artboard and a publish.
+const SETUP_FILE = arg("setup", null)
+const SETUP = SETUP_FILE
+  ? `(async () => { ${readFileSync(SETUP_FILE, "utf8")} })()`
+  : null
+// How long to let the app settle after setup — a pane swap re-renders, images
+// decode, and the dock re-measures. Deliberately separate from the post-load
+// settle: reaching a surface costs more than loading one.
+const SETUP_SETTLE = Number(arg("setup-settle", 1800))
+// A project reveal is a scripted stream: it arrives in blocks behind 400-900ms
+// typing pauses, so at any given instant there is no such thing as "the"
+// reveal. Under prefers-reduced-motion the hook skips every delay and the
+// whole transcript lands at once — which is the settled END STATE, the only
+// state a static board can honestly represent.
+//
+// It is also a real rendering of the app rather than a trick: this is exactly
+// what a reduced-motion visitor sees. Verified to move no layout — the app's
+// only @media (prefers-reduced-motion) block turns off two animations on the
+// typing indicator and changes nothing else.
+const REDUCED = process.argv.includes("--reduced-motion")
+const MEDIA = REDUCED
+  ? { features: [{ name: "prefers-reduced-motion", value: "reduce" }] }
+  : null
 const VERIFY = !process.argv.includes("--no-verify")
 const SELFTEST = process.argv.includes("--selftest")
 // Proof harness only: reintroduces one historical fault by suppressing the
@@ -172,8 +206,14 @@ const { send, evalJS, sleep, goto, close } = await connect()
 await send("Emulation.setDeviceMetricsOverride", {
   width: W, height: H, deviceScaleFactor: 1, mobile: false,
 })
+if (MEDIA) await send("Emulation.setEmulatedMedia", MEDIA)
 await goto(ROUTE)
 await sleep(2500)
+if (SETUP) {
+  await evalJS(SETUP)
+  await sleep(SETUP_SETTLE)
+  console.log(`setup: ${SETUP_FILE} (+${SETUP_SETTLE}ms)`)
+}
 
 // Everything below runs IN THE PAGE. It returns a JSON string, so it has to
 // build the markup itself rather than hand back live nodes.
@@ -349,7 +389,17 @@ const EXTRACT = `(() => {
     const textish = el.children.length === 0 && el.textContent.trim().length > 0
     let oneLine = false
     if (textish && ns !== SVG_NS) {
-      const rects = el.getClientRects()
+      // A RANGE over the contents, not el.getClientRects(). On a BLOCK element
+      // getClientRects() returns one rect for the whole border box however many
+      // lines are inside it — per-line rects come back only for inline
+      // elements. So the old test read "one line" for every paragraph in the
+      // app, and pinned nowrap onto a four-line block: the resume's skills
+      // list, 30 comma-separated terms under a 588px max-width, came out of the
+      // extractor as a single unwrapped line. --verify caught it on the first
+      // surface that had one. A range gives real line boxes for both cases.
+      const range = el.ownerDocument.createRange()
+      range.selectNodeContents(el)
+      const rects = range.getClientRects()
       const parent = el.parentElement
       const room = parent ? parent.getBoundingClientRect().width : Infinity
       oneLine = rects.length === 1 &&
@@ -357,11 +407,46 @@ const EXTRACT = `(() => {
         rects[0].width < room - 1
     }
 
+    // ── Auto margins ──────────────────────────────────────────────────────
+    // Chrome's getComputedStyle reports margin-left and margin-right as "0px"
+    // when the specified value is auto. So a block centred the ordinary way,
+    // with margin 0 auto, serialises as flush-left and the whole column jumps by
+    // half the leftover width: the transcript's 720px chat column landed at
+    // x=305 instead of x=491 — 186px, carrying every image and every line of
+    // the reveal with it.
+    //
+    // There is nothing to read, so it is MEASURED: the gap between the
+    // parent's content edge and the element's own left edge is the used
+    // margin, whatever produced it. Block-level children of a block-level
+    // parent only — under flex or grid that gap is the work of justify-content
+    // or align-self, which are copied directly and would then apply twice.
+    if (ns !== SVG_NS && el.parentElement && parentCS &&
+        !/flex|grid/.test(parentCS.display) &&
+        cs.marginLeft === "0px" && !cs.display.startsWith("inline")) {
+      const pr = el.parentElement.getBoundingClientRect()
+      const edge = pr.left + (parseFloat(parentCS.borderLeftWidth) || 0) +
+                             (parseFloat(parentCS.paddingLeft) || 0)
+      const used = el.getBoundingClientRect().left - edge
+      if (used > 0.5) forceDecls.push("margin-left:" + Math.round(used * 100) / 100 + "px")
+    }
+
     const decls = []
     for (const p of PROPS) {
       const v = cs[p]
       if (v == null || v === "") continue
-      if (textish && (p === "height" || p === "width")) continue
+      // HEIGHT only. Dropping width as well was overcautious and lost real
+      // constraints: the impact card's "01" marker is a 20px flex item in the
+      // app and 16.81px of natural text width without it, which pushed the
+      // sentence beside it 3px left and 3px wider — every line of every impact
+      // list, on every reveal.
+      //
+      // The trap was only ever height. A pinned height has nowhere to put a
+      // line that rewraps, so the overflow paints over whatever sits below —
+      // that is how the headline came to sit on the chat input. A pinned WIDTH
+      // fails the other way: the text wraps exactly as the app wrapped it, and
+      // if the destination font is a hair wider the element simply grows
+      // downward, which is visible and harmless rather than silent and wrong.
+      if (textish && p === "height") continue
       // Proof harness: drop the properties whose loss caused a known fault.
       if (FAULT && FAULT.props.includes(p) && (!FAULT.tags || FAULT.tags.includes(tag))) continue
       // Inherited: the artboard root carries the app's baseline, so a value
@@ -573,13 +658,21 @@ const IMG_PROBE = `JSON.stringify([...document.querySelectorAll("img")].map((i) 
   return { x: b.x, y: b.y, w: b.width, h: b.height, loaded: i.complete && i.naturalWidth > 0 };
 }))`
 
-async function shoot(cdp, url) {
+async function shoot(cdp, url, setup) {
   // Page.navigate rather than shot.mjs's goto: goto preflights that the origin
   // is a live `next dev`, which is right for the app and wrong for the static
   // server holding the artboard. The app's own liveness is already proven —
   // the extraction just read it.
   await cdp.send("Page.navigate", { url })
   await cdp.sleep(1600)
+  // The app side only. The artboard is a static reproduction that already has
+  // the surface baked into its markup — running a pane-swap click against it
+  // would find no handler and, if it somehow found one, would change the very
+  // thing being compared.
+  if (setup?.script) {
+    await cdp.evalJS(setup.script)
+    await cdp.sleep(setup.settle)
+  }
   // Settle rather than tolerate: wait for the fonts, then stop every animation
   // and hide the caret, so nothing time-dependent is in either frame.
   await cdp.evalJS(`document.fonts.ready.then(() => 1)`)
@@ -590,13 +683,17 @@ async function shoot(cdp, url) {
   return { png: Buffer.from(r.result.data, "base64"), imgs }
 }
 
-export async function verify({ dir, route, w, h, masks: masksIn = [], label = "" }) {
+export async function verify({ dir, route, w, h, masks: masksIn = [], label = "", setup = null }) {
   let masks = masksIn
   const { srv, port } = await serve(dir)
   writeFileSync(join(dir, "__preview.html"), previewHTML(readFileSync(join(dir, "Main.dc.html"), "utf8")))
   const cdp = await connect()
   await cdp.send("Emulation.setDeviceMetricsOverride", { width: w, height: h, deviceScaleFactor: 1, mobile: false })
-  const app = await shoot(cdp, route)
+  // Same media as the extraction, for the same reason --setup runs here: a
+  // board captured under reduced motion has to be diffed against an app under
+  // reduced motion, or the stream is still mid-flight on one side only.
+  if (setup?.media) await cdp.send("Emulation.setEmulatedMedia", setup.media)
+  const app = await shoot(cdp, route, setup)
   const art = await shoot(cdp, `http://127.0.0.1:${port}/__preview.html`)
   await cdp.close()
   // close() stops accepting; Chrome's keep-alive sockets would hold the handle
@@ -671,7 +768,10 @@ export async function verify({ dir, route, w, h, masks: masksIn = [], label = ""
 await close()
 
 if (VERIFY && !SELFTEST) {
-  const { ok } = await verify({ dir: OUT, route: ROUTE, w: W, h: H })
+  const { ok } = await verify({
+    dir: OUT, route: ROUTE, w: W, h: H,
+    setup: (SETUP || MEDIA) ? { script: SETUP, settle: SETUP_SETTLE, media: MEDIA } : null,
+  })
   if (!ok) {
     console.error(`\nthe artboard does NOT match the app — not handing it over.`)
     process.exit(1)

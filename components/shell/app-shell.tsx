@@ -338,23 +338,6 @@ export function AppShell({
     return () => ro.disconnect()
   })
 
-  // Follow-up chips on the case-study route hand off to this page via
-  // /?ask=<text>&slug=<slug>, since the chat state lives here. Read it once on
-  // mount, fire the same handler the landing chips use, then strip the query so
-  // a refresh doesn't replay it. Uses window.location rather than
-  // useSearchParams to avoid forcing this page out of static prerendering.
-  const handoffFiredRef = useRef(false)
-  useEffect(() => {
-    if (handoffFiredRef.current) return
-    const params = new URLSearchParams(window.location.search)
-    const ask = params.get("ask")
-    if (!ask) return
-    handoffFiredRef.current = true
-    const slug = params.get("slug") || undefined
-    window.history.replaceState(null, "", window.location.pathname)
-    handleChipSelect(ask, slug)
-  }, [handleChipSelect])
-
   // Follow-up chips inside a reveal. A chip naming another project switches to
   // that project's thread (dispatch decides); a general question answers here.
   const handleFollowupChip = useCallback(
