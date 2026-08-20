@@ -582,14 +582,7 @@ export function AppShell({
                       marginTop: "var(--space-between)",
                       display: "flex",
                       flexWrap: "wrap",
-                      // Left, not centred. The chips and the input share the
-                      // 720 column, so this puts every chip's leading edge on
-                      // the input's — and the second row starts under the
-                      // first rather than floating at its own centre. The
-                      // headline stays centred on the wider band above; that
-                      // asymmetry is the point, since the headline is a
-                      // statement and these are a list.
-                      justifyContent: "flex-start",
+                      justifyContent: "center",
                       gap: "var(--space-within)",
                       animationDelay: delay(150),
                     }}
