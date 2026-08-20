@@ -5,6 +5,13 @@ import "./globals.css"
 const archivo = Archivo({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  // BOTH STYLES. next/font defaults to normal only, and a `font-style: italic`
+  // with no italic face loaded does not fail — the browser synthesises one by
+  // shearing the upright, which is a slanted roman rather than the redrawn
+  // letterforms of a real italic. The reveal's opening line is the only italic
+  // on the site (.lede-em), and it is worth one more face rather than shipping
+  // the counterfeit.
+  style: ["normal", "italic"],
   variable: "--font-archivo",
 })
 

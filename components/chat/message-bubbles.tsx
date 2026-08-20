@@ -132,7 +132,7 @@ export function TextBubble({
   // still reads as a conversation rather than as a page with a heading.
   return (
     <div
-      className={mono ? "type-meta" : lede ? "type-title" : "type-body"}
+      className={mono ? "type-meta" : lede ? "type-title lede-em" : "type-body"}
       style={{
         color: mono
           ? "rgb(var(--bureau-text-secondary))"
@@ -560,7 +560,6 @@ export function FollowupsBubble({
               label={c.text}
               onClick={() => onPick?.(c)}
               disabled={disabled}
-              prefix="→"
             />
           ))}
         </div>

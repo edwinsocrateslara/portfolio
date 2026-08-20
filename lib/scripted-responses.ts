@@ -112,7 +112,9 @@ function projectStream(p: (typeof projects)[0]): MessageBlock[] {
     ...buildProjectBodyBlocks(p),
     {
       kind: "followups",
-      text: "Want to know how I work?",
+      // NO HEADING. The chips are self-evidently questions and were being
+      // introduced by a line that asked one; FollowupsBubble already drops the
+      // gap above them when there is no text, so nothing is left hanging.
       chips: rotationFor(index).map((c) => ({ text: c.label })),
     },
   ]

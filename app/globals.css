@@ -1779,4 +1779,12 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 }
 
 /* The arrow prefix on a follow-up chip. Muted so the label leads. */
-.chip-prefix { color: rgb(var(--bureau-text-muted)); flex-shrink: 0; }
+/* The opening line of a reveal. `lede` already lifts it one type step; the
+   italic is the other half of the same signal — an opening statement rather
+   than the first of N paragraphs.
+   THE ITALIC FACE IS LOADED FOR THIS. app/layout.tsx now asks next/font for
+   Archivo in both styles, because without it the browser SYNTHESISES the
+   slant: a mechanical shear of the upright face, with none of the redrawn
+   letterforms a real italic has. That is the same class of thing as a font
+   fallback silently changing metrics, and this project does not ship it. */
+.lede-em { font-style: italic; }

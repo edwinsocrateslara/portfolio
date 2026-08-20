@@ -105,7 +105,7 @@ const html = `<!doctype html>
 <body>
 <x-dc>
 <helmet>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
   <style>
     *, *::before, *::after { box-sizing: border-box; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; }
     body { margin: 0; background: ${BG}; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
