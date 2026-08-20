@@ -188,7 +188,7 @@ export function Sidebar({
           has left the app chrome, not the site. */}
       <button type="button" className="rail-brand" onClick={pick(onHome)}>
         <Sparkle size="var(--brand-mark-size)" />
-        <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
+        <span className="type-wordmark" style={{ color: "rgb(var(--bureau-text-primary))" }}>
           Edwin Lara
         </span>
       </button>

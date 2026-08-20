@@ -316,6 +316,15 @@
      mark got smaller without the list shifting under it. Collapsing these
      back into one token re-breaks that alignment by exactly 8px. */
   --rail-doc-col:   var(--space-32);
+  /* The scrim above the footer. Doubled from 32: at 32 the occluded band was
+     shorter than one document row, so a row could sit half under it and read
+     as clipped rather than as continuing. 64 covers a row and a half. It is
+     the ONLY thing marking the footer now that the border is gone — and it can
+     only do that where there is content to cover, which is why the footer has
+     no drawn edge on desktop and does not need one. */
+  --rail-fade:      var(--space-64);
+  /* Where the scrim reaches full background: 48px of ramp, 16px of solid. */
+  --rail-fade-solid: 75%;
   --rail-doc-glyph: var(--space-24);
   /* A leading icon inside a .chip. Same 16 as the rail's nav icons and for the
      same reason, but its own name: a chip is not a rail row, and one may move
@@ -567,6 +576,19 @@ body {
     letter-spacing: var(--track-badge);
     text-transform: uppercase;
   }
+  /* The wordmark, and only the wordmark. Badge weight and tracking at the
+     BODY step — 16/24. The canvas raised the size to 16 but kept 18 leading,
+     which is the 16/18 pairing this scale explicitly refuses; 24 is the step
+     that already exists at 16. Weight stays 700 so the brand outranks the
+     section headers it now shares a size with (.type-section is 600). */
+  .type-wordmark {
+    font-family: var(--ff-plex-mono);
+    font-weight: 700;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+    letter-spacing: var(--track-badge);
+    text-transform: uppercase;
+  }
   .type-label {
     font-family: var(--ff-plex-mono);
     font-weight: 600;
@@ -687,14 +709,17 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: var(--space-32);
+  height: var(--rail-fade);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s;
+  /* Reaches full background BEFORE the bottom edge, so the strip meeting the
+     footer is solid rather than the ~90% a two-stop linear ramp leaves. Rows
+     passing under it disappear instead of showing through faintly. */
   background: linear-gradient(
     to bottom,
     rgb(var(--bureau-bg) / 0),
-    rgb(var(--bureau-bg))
+    rgb(var(--bureau-bg)) var(--rail-fade-solid)
   );
 }
 .rail-scroll-wrap[data-overflow="true"]::after { opacity: 1; }
@@ -880,8 +905,11 @@ body {
   flex: none;
   display: flex;
   align-items: center;
+  /* No border. What separates the footer is the empty rail above it — 793px at
+     1440x1000 — when the list is short, and the scrim below when it is not. A
+     hairline was doing neither job well: redundant against the void, and
+     weaker than the scrim against content. */
   padding: var(--space-12) var(--space-8);
-  border-top: 1px solid var(--hairline);
 }
 /* .rail-footer-label went with the footer. .rail-square stays — the About
    pane's reading label is its only remaining caller, and always was the reason
