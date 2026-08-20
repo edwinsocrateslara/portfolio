@@ -20,7 +20,7 @@ export function DeckPane() {
       {/* flex-end, so the button sits on the heading's baseline rather than
           centred against a 48px line box — centring left it visibly high. */}
       <div className="deck-head">
-        <h1 className="type-h2 pane-title">Case study</h1>
+        <h1 className="type-h2 pane-title">Case Study</h1>
         {/* .chip is the system's pill and already carries this exact shape:
             hairline border, --layer-1 fill, chip radius, secondary label that
             steps to primary on hover. A fourth inline pill would undo the
