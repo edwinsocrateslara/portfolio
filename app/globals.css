@@ -220,19 +220,6 @@
     (var(--type-label-lh) - var(--type-label-size)) / 2 + 1px
   );
 
-  /* The same thing one step up, for a --type-title line. Half-leading is
-     (30 − 20) / 2 = 5; Archivo's own cap inset measures 2px on top of it, so a
-     title's painted cap sits 7px below its border-box top.
-     MEASURED, NOT SCALED FROM THE h2's. The method: screenshot the element,
-     set its colour to transparent, screenshot again, and take the first row
-     that differs — no font metric is assumed, because the gap from the em box
-     to the cap top is a property of the typeface that CSS cannot compute. The
-     same method reproduces the h2's stated 10px exactly, which is what says it
-     can be trusted here. Archivo's constant reads as 2px at both 20 and 32;
-     that is rounding, not a claim that the inset does not scale. */
-  --optical-title-cap: calc(
-    (var(--type-title-lh) - var(--type-title-size)) / 2 + 2px
-  );
 
   /* ── Hero glow ─────────────────────────────────────────────────
      Its OWN token, not a pointer at --bureau-accent, so the wash can be
@@ -1105,17 +1092,27 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      and location sit above both columns as a header rather than as the first
      item of the left one.
      Composed, not measured as one number: the heading's line box, the rung
-     below it, the label's line box, the rung below THAT, then the lede's own
-     cap inset. Every part is a token the spine also spends, so moving a type
-     step or a rung moves this with it rather than leaving it stale. It does
-     NOT survive the heading or the location wrapping to two lines — at that
-     point the offset is a line short. Nothing between 900px and here wraps
-     them; below 900px this is reset to 0, where the mosaic is ordered FIRST
-     and has nothing beside it to align to. */
+     below it, the label's line box, and the rung below THAT. Every part is a
+     token the spine also spends, so moving a type step or a rung moves this
+     with it rather than leaving it stale.
+
+     TO THE LEDE'S BOX TOP, NOT ITS PAINTED CAP. This is the one alignment on
+     the page that is geometric rather than optical, and deliberately so: the
+     thing being aligned is a photograph, whose top edge IS its box — there is
+     no cap inset on the other side of the pairing to meet. An optical version
+     of this offset pushed the frames 7px down to chase ink that the picture
+     has no equivalent of, which read as the images sitting low.
+     The metadata line above still uses --optical-label-cap, where both sides
+     of that pairing are type.
+
+     It does NOT survive the heading or the location wrapping to two lines — at
+     that point the offset is a line short. The spine's min-width keeps that
+     from happening while the columns are side by side; below the wrap this is
+     reset to 0, where the mosaic is ordered FIRST and has nothing to align
+     to. */
   margin-top: calc(
     var(--type-h2-lh) + var(--space-group) +
-    var(--type-label-lh) + var(--space-between) +
-    var(--optical-title-cap)
+    var(--type-label-lh) + var(--space-between)
   );
 }
 .about-figure {
