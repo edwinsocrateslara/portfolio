@@ -220,6 +220,20 @@
     (var(--type-label-lh) - var(--type-label-size)) / 2 + 1px
   );
 
+  /* The same thing one step up, for a --type-title line. Half-leading is
+     (30 − 20) / 2 = 5; Archivo's own cap inset measures 2px on top of it, so a
+     title's painted cap sits 7px below its border-box top.
+     MEASURED, NOT SCALED FROM THE h2's. The method: screenshot the element,
+     set its colour to transparent, screenshot again, and take the first row
+     that differs — no font metric is assumed, because the gap from the em box
+     to the cap top is a property of the typeface that CSS cannot compute. The
+     same method reproduces the h2's stated 10px exactly, which is what says it
+     can be trusted here. Archivo's constant reads as 2px at both 20 and 32;
+     that is rounding, not a claim that the inset does not scale. */
+  --optical-title-cap: calc(
+    (var(--type-title-lh) - var(--type-title-size)) / 2 + 2px
+  );
+
   /* ── Hero glow ─────────────────────────────────────────────────
      Its OWN token, not a pointer at --bureau-accent, so the wash can be
      tuned — hue, or dropped entirely — without touching the accent that
@@ -265,6 +279,13 @@
      the column scannable. Same role as --about-portrait. */
   --resume-meta-col: 240px;
   --about-measure: 588px;
+  /* The BOTTOM of the same band. The spine was flex: 1 1 0 with min-width: 0,
+     so it took whatever the mosaic left and could take nothing: measured at
+     200px at 1300 and 0px at 1100, while the rule above it claimed the spine
+     "lands inside the mock's 328-588 band at every desktop size". It did not.
+     A floor makes the claim true by making the columns WRAP instead of
+     letting one of them starve. */
+  --about-measure-min: 328px;
   /* The mosaic's portrait column. Its two square siblings are half of it
      minus the gutter, so the stack's height matches the portrait exactly. */
   --about-portrait: 392px;
@@ -1020,7 +1041,15 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    mock's 328-588 band at every desktop size. */
 .about-spine {
   flex: 1 1 0;
-  min-width: 0;
+  /* Not 0. See --about-measure-min: at min-width 0 this column was squeezed to
+     nothing long before the layout wrapped, and a 40px column of 20/30 prose
+     is not a narrow measure, it is a broken one. It also broke the mosaic's
+     alignment: below 160px the location line wraps to two, which pushes the
+     lede down 18px while the mosaic's offset stays where it was. */
+  /* min(), not the bare token: below ~330px the floor is wider than the pane
+     itself and forced a horizontal scrollbar at 320. Verified — 320 overflowed
+     with the bare value and does not with this. */
+  min-width: min(var(--about-measure-min), 100%);
   max-width: var(--about-measure);
 }
 .about-lede {
@@ -1070,16 +1099,23 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   flex: 0 1 calc(
     var(--about-portrait) + var(--space-between) + var(--about-square)
   );
-  /* Aligns the frames' painted top edge to the METADATA line's painted cap
-     top, not the heading's — the grid starts where the page's first line of
-     supporting text starts, and the heading sits above both columns.
-     Composed, not measured as one number: the heading's line box, then the
-     rung below it, then the label's own cap inset. Every part is the same
-     token the spine spends, so moving the type step or the rung moves this
-     with it. Reset below 900px, where the mosaic is ordered FIRST and there is
-     nothing beside it to align to. */
+  /* Aligns the frames' painted top edge to the LEDE's painted cap top — the
+     downtime paragraph, not the metadata line above it. The photographs and
+     the sentence they illustrate now start on the same line, and the heading
+     and location sit above both columns as a header rather than as the first
+     item of the left one.
+     Composed, not measured as one number: the heading's line box, the rung
+     below it, the label's line box, the rung below THAT, then the lede's own
+     cap inset. Every part is a token the spine also spends, so moving a type
+     step or a rung moves this with it rather than leaving it stale. It does
+     NOT survive the heading or the location wrapping to two lines — at that
+     point the offset is a line short. Nothing between 900px and here wraps
+     them; below 900px this is reset to 0, where the mosaic is ordered FIRST
+     and has nothing beside it to align to. */
   margin-top: calc(
-    var(--type-h2-lh) + var(--space-group) + var(--optical-label-cap)
+    var(--type-h2-lh) + var(--space-group) +
+    var(--type-label-lh) + var(--space-between) +
+    var(--optical-title-cap)
   );
 }
 .about-figure {
@@ -1467,6 +1503,32 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* The mosaic's top offset only means anything while the two columns are SIDE
+   BY SIDE. Below this width the flex line wraps, the mosaic drops underneath
+   the spine, and the offset becomes dead space above a photograph — 121px of
+   it, since the offset grew when the alignment target moved from the metadata
+   line to the lede.
+
+   1100 IS NOT A CHOSEN BREAKPOINT. It is the width at which the wrap actually
+   happens, and it is composed:
+
+     --rail-width          264
+     --chat-scrollbar        4   (.pane-scroll overflows here, so it is shown)
+     .pane-scroll padding    80  (--space-40 either side)
+     --about-measure-min   328   (the spine's floor)
+     --space-64 gap          64
+     the mosaic's basis     688  (392 portrait + 16 + 280 square)
+                          ————
+                          1428
+
+   Media queries cannot read custom properties, so it is written out. If any of
+   those tokens moves this needs moving too and nothing will say so — which is
+   why the arithmetic is here rather than the number alone. Verified by
+   measurement, not derived and hoped for. */
+@media (max-width: 1427px) {
+  .about-mosaic { margin-top: 0; }
 }
 
 @media (max-width: 900px) {

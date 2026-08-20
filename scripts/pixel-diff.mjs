@@ -5,7 +5,11 @@
 // shape this decodes — anything else throws rather than guessing.
 import { inflateSync } from "zlib"
 
-function decodePNG(buf) {
+// Exported so callers can ask questions the region clustering cannot answer.
+// diffPNG reports regions on an 8px grid, which is right for "where did this
+// artboard go wrong" and too coarse for "which ROW does the ink start on" —
+// the optical cap-inset tokens are measured per pixel.
+export function decodePNG(buf) {
   if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error("not a PNG")
   let pos = 8, w = 0, h = 0, depth = 0, type = 0, interlace = 0
   const idat = []
