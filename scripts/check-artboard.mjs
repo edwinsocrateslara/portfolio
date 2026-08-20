@@ -26,7 +26,11 @@
 
 import { readFileSync } from "fs"
 
-const CSS = readFileSync("app/globals.css", "utf8")
+// Resolved from THIS FILE, not the cwd. Both of these are run from wherever
+// the artboards happen to live — a scratch directory, a canvas folder — and a
+// cwd-relative path made them work only when invoked from the repo root.
+const ROOT = new URL("..", import.meta.url).pathname
+const CSS = readFileSync(ROOT + "app/globals.css", "utf8")
 
 // ── The legal sets, derived ───────────────────────────────────────────────
 const decl = (re) => [...CSS.matchAll(re)]

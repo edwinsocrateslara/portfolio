@@ -19,7 +19,11 @@
 import { readFileSync, writeFileSync } from "fs"
 
 const OUT = (() => { const i = process.argv.indexOf("--out"); return i === -1 ? "." : process.argv[i + 1] })()
-const CSS = readFileSync("app/globals.css", "utf8")
+// Resolved from THIS FILE, not the cwd. Both of these are run from wherever
+// the artboards happen to live — a scratch directory, a canvas folder — and a
+// cwd-relative path made them work only when invoked from the repo root.
+const ROOT = new URL("..", import.meta.url).pathname
+const CSS = readFileSync(ROOT + "app/globals.css", "utf8")
 const all = (re) => [...CSS.matchAll(re)]
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
