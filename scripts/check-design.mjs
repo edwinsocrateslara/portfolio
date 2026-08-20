@@ -27,8 +27,6 @@ const ROOT_DIR = process.cwd()
 // write. A documented exception in a code comment does NOT exempt a value —
 // three separate `marginTop: 5` comments is how a missing token hides.
 const ALLOW = {
-  "components/chat/side-of-desk.tsx::no-off-grid::paddingBottom=3":
-    "Optical cap-height-to-underline gap on uppercase mono; 4px visibly loosens it.",
   "app/layout.tsx::no-raw-color::hex #131313":
     "PWA themeColor — read by browser chrome before CSS loads, so it cannot be a CSS var.",
 

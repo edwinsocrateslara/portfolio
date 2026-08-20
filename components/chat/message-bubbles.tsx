@@ -35,7 +35,8 @@ export interface TextMessage extends BaseMessage {
   text: string
   /** The opening line of a project reveal. Renders one type step up so it
    *  reads as an opening statement rather than as the first of N identical
-   *  paragraphs. Set by buildProjectBodyBlocks, so both surfaces get it. */
+   *  paragraphs. Set by buildProjectBodyBlocks rather than by this renderer,
+   *  so which line is the opening one is decided with the block order. */
   lede?: boolean
   /** Reference material rather than prose — a stack list, a cadence, counts.
    *  Renders in the mono system voice at the label step. A modifier on the

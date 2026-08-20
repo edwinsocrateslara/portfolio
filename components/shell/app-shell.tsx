@@ -49,9 +49,11 @@ export function AppShell({
 }) {
   const [input, setInput] = useState("")
   const prefersReducedMotion = usePrefersReducedMotion()
-  // Which destination the pane is showing. "chat" is home; VIBE CODING is the
-  // one rail row that swaps the pane instead of opening a conversation or a
-  // document.
+  // Which destination the pane is showing. "chat" is home; the three document
+  // rows (CASE STUDY, RESUME, ABOUT) are what swap it. VIBE CODING does NOT —
+  // it is a rail section of projects, and its rows open conversations through
+  // the same flow as the seven. An earlier comment here said otherwise; it was
+  // describing SideOfDesk, which no longer exists.
   const [pane, setPane] = useState<Pane>(initialPane)
   const [sheetOpen, setSheetOpen] = useState(false)
 

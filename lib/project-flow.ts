@@ -31,10 +31,17 @@ function isVibe(p: Project): boolean {
 //   why I made those decisions) -> image 2 -> THE CHALLENGE -> the rest of
 //   the images.
 //
-// Deliberately excludes the project header and the follow-up chips: the
-// chat reveal and the standalone /case-study route wrap this body with
-// their own versions of those (different chips, different handlers), but
-// must not diverge on the order in between.
+// Deliberately excludes the project header and the follow-up chips: the chat
+// reveal wraps this body with its own versions of those.
+//
+// THIS FUNCTION ONCE HAD TWO CONSUMERS. It was extracted so the chat reveal and
+// the standalone /case-study/[slug] route could not drift, and that route has
+// since been deleted. The extraction still earns itself, but say why honestly:
+// not because two surfaces share it, because it is the single statement of
+// block order across TWO FLOWS and every entry in both lists. Folding it back
+// into projectStream would move ~130 lines rather than remove them, and would
+// merge "what order a case study goes in" with "what wraps it" — which are
+// different questions with different reasons to change.
 //
 // The data is uneven. ai-workforce-development has no challenge, atStake
 // or decision; ai-investing has no impacts; two projects have only two
@@ -126,9 +133,8 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
   // A placeholder project has no tagline yet, and an empty text block renders
   // as an empty bubble. Skip it rather than assert a blank line — the seven
   // real projects all have one, so this only ever fires for a placeholder.
-  // `lede` is set HERE rather than in either renderer, so the chat reveal and
-  // /case-study/[slug] cannot disagree about which line is the opening one —
-  // the same reason the block order lives in this function.
+  // `lede` is set HERE rather than in the renderer, so which line is the
+  // opening one is decided with the block order rather than alongside it.
   const blocks: MessageBlock[] = p.tagline
     ? [{ kind: "text", text: p.tagline, lede: true }]
     : []

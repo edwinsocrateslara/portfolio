@@ -85,14 +85,14 @@ export const SCRIPTED_TOPICS: ScriptedTopic[] = [
 ]
 
 // The chat reveal: the shared body, then follow-up chips. The order of the
-// body lives in lib/project-flow.ts and is shared with the standalone
-// /case-study route so the two cannot drift.
+// body lives in lib/project-flow.ts, which is the single statement of block
+// order for both flows.
 //
 // No project-header card. The rail names the open project permanently, and on
 // mobile the top bar does — a card repeating it at the top of the transcript
 // was a third copy that scrolled away the moment the reveal got going.
-// ProjectHeaderBubble itself stays: /case-study/[slug] has no rail and still
-// renders it directly (components/case-study/case-study-view.tsx).
+// ProjectHeaderBubble itself stays — message-bubbles.tsx still renders it for
+// the header kind; nothing in the project flow emits one.
 /** The seven, then the vibe-coded ones. Rail order, and the order slugs and
  *  rotation indices resolve against. */
 export const allProjects = [...projects, ...vibeProjects]
