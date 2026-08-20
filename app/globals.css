@@ -634,15 +634,31 @@ body {
   border-right: 1px solid var(--hairline);
 }
 
+/* The head row: the way home on the left, the two contact links on the right.
+   The PADDING LIVES HERE, not on the brand button, so the button can be its
+   own 44px target instead of being one only because the row's padding made it
+   tall. 12/24 against the 44px children gives a 68px row — two more than the
+   66 this was, so the rhythm below it is unchanged to the eye. */
+.rail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
+}
 .rail-brand {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  padding: var(--space-24);
+  min-height: var(--space-44);
+  padding: 0;
   background: none;
   border: 0;
   cursor: pointer;
   text-align: left;
+  /* Shrinks before the links do. The wordmark is fixed-width text and the
+     links are fixed-width boxes, so on a narrow rail something has to give,
+     and losing a letter of the name beats losing a control. */
+  min-width: 0;
 }
 
 /* The nav scrolls; the footer below it stays pinned. At 12px minimum type
@@ -654,7 +670,41 @@ body {
   min-height: 0;
   overflow-y: auto;
   padding-bottom: var(--space-16);
+  /* The scroller and its fade share a stacking context, so the fade can sit
+     over the list without a z-index race against anything else. */
+  position: relative;
 }
+/* THE SCROLL AFFORDANCE. A clipped rail said nothing: About sat below the fold
+   for three rounds and neither the page nor a screenshot gave any sign, which
+   is the whole reason it was missed. The fade is drawn only when there IS
+   something below — data-overflow is set by the observer in sidebar.tsx — so
+   it means "more", not "this is a scroller".
+   On the wrapper rather than the scroller: a background on a scrolling box
+   scrolls with its content, and this has to stay at the bottom edge. */
+.rail-scroll-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rail-scroll-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--space-32);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--bureau-bg) / 0),
+    rgb(var(--bureau-bg))
+  );
+}
+.rail-scroll-wrap[data-overflow="true"]::after { opacity: 1; }
 
 .rail-section {
   margin: 0;
@@ -821,17 +871,13 @@ body {
   color: rgb(var(--bureau-text-primary));
 }
 
-.rail-footer {
-  flex: none;
-  padding: var(--space-20) var(--space-24);
-  border-top: 1px solid var(--hairline);
-}
-/* No longer a flex row: the 8px square that sat beside the word is gone, and
-   with it the only reason for the row. .rail-square is NOT deleted — the About
-   pane's reading label still carries one. */
-.rail-footer-label {
-  margin: 0 0 var(--space-8);
-}
+/* .rail-footer is GONE. It held a CONTACT heading over two text links, and
+   the links moved into the head row as icons; a footer with nothing in it is
+   133px of reserved height and a hairline drawn under an empty box. The rail
+   now ends where its list ends. */
+/* .rail-footer-label went with the footer. .rail-square stays — the About
+   pane's reading label is its only remaining caller, and always was the reason
+   it survived the last pass. */
 .rail-square {
   width: var(--space-8);
   height: var(--space-8);
@@ -839,29 +885,51 @@ body {
   display: inline-block;
   flex: none;
 }
-/* The two contact links, stacked. `within` between them because they are
-   parts of one thing — how to reach him. No margin above: the CONTACT label's
-   own `within` binds it to the links it labels. It used to carry `between`
-   here, separating the group from a "Toronto, Canada" line that sat above it;
-   that line is gone, and a rung left behind after the thing it spaced away
-   from is deleted is just an unexplained gap. */
+/* The two contact links, in the head row. `margin-left: auto` rather than
+   `justify-content: space-between` on the parent: the brand is the thing that
+   grows, and pushing from this side keeps the pair glued to the right edge
+   however long the name gets. */
 .rail-contact {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-within);
+  align-items: center;
+  margin-left: auto;
+  flex: none;
 }
+/* A REAL 44px box, not a 16px glyph with an invisible area drawn around it.
+   The pseudo-element trick .chat-input-send uses is right where one control
+   sits alone; here there are two side by side, and two 44px areas centred on
+   glyphs 8px apart would overlap by 20px — the pixels between them would
+   belong to whichever came later in the DOM. Boxes cannot overlap, so the
+   ambiguity does not exist. */
 .rail-contact-link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
+  justify-content: center;
+  width: var(--space-44);
+  height: var(--space-44);
   text-decoration: none;
-  /* 12px label on an 18px leading is an 18px target, under the 24x24 that
-     WCAG 2.5.8 AA requires — and this is the contact row, which is the one
-     thing a recruiter on a phone is trying to hit. --space-4 top and bottom
-     takes it to 26. It does not reach the 44 of 2.5.5 AAA; see DESIGN.md. */
-  padding: var(--space-4) 0;
+  transition: color 0.15s;
 }
+.rail-contact-link:hover {
+  color: rgb(var(--bureau-text-primary));
+}
+/* 16, the brand mark's own size. These sit on the mark's row, so matching it
+   keeps ONE glyph size across the row; 12 would read as a mark on the wordmark
+   rather than a control of its own, and the 24 the document rows take would
+   out-weigh the brand it sits beside. */
+.rail-contact-icon {
+  width: var(--brand-mark-size);
+  height: var(--brand-mark-size);
+  flex: none;
+}
+/* The external arrow rides the corner of the LinkedIn glyph rather than
+   sitting beside it — beside it, two marks in a 44px box read as two
+   controls, and there is no room for a gap that says otherwise. */
+.rail-contact-link .link-ext {
+  position: absolute;
+  transform: translate(9px, -9px);
+}
+.rail-contact-link { position: relative; }
 .rail-contact-link:hover {
   color: rgb(var(--bureau-text-primary));
   text-decoration: underline;
@@ -1408,9 +1476,17 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     border-right: 0;
   }
   .shell[data-sheet="true"] .pane { display: none; }
-  /* The top bar already shows the brand, so the rail's own brand row would
-     just repeat it directly underneath. */
+  /* The top bar already shows the brand, so the rail's own copy would repeat
+     it directly underneath. The BUTTON goes; the ROW stays, because the two
+     contact links live in it now and the footer that used to carry them on a
+     phone is gone. Without this distinction the sheet would have no way to
+     reach email or LinkedIn at all. */
   .rail[data-open="true"] .rail-brand { display: none; }
+  /* With the brand hidden the links would sit alone against the right edge,
+     a 68px row with one thing in it at the far side. Pull them left so the
+     row reads as the sheet's own header rather than as a fragment of the
+     desktop one. */
+  .rail[data-open="true"] .rail-contact { margin-left: 0; }
   .rail[data-open="true"] .rail-scroll { padding-top: var(--space-16); }
   .pane-front { padding: 0 var(--space-20) var(--space-40); }
   /* The anchor is measured from the VIEWPORT, and below 900px the pane no

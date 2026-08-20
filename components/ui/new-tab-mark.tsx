@@ -41,11 +41,16 @@ export function NewTabMark({ glyph = true }: { glyph?: boolean }) {
  * For `mailto:`. Same glyph, different truth — a mailto does not open a tab,
  * it hands off to whatever handles mail. The new-tab wording would be false,
  * and a false announcement is worse than none.
+ *
+ * `glyph={false}` matches NewTabMark's, and for the same reason: the rail's
+ * contact link IS a Mail icon, so a second mark beside it would read as two
+ * actions. The ANNOUNCEMENT is never optional — dropping a glyph is a visual
+ * decision and must not quietly remove a screen reader's warning.
  */
-export function MailMark() {
+export function MailMark({ glyph = true }: { glyph?: boolean }) {
   return (
     <>
-      <Glyph />
+      {glyph && <Glyph />}
       <span className="sr-only"> (opens your email app)</span>
     </>
   )
