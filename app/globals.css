@@ -1030,7 +1030,12 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 .about-rule {
   border: 0;
   border-top: 1px solid var(--hairline);
-  margin: var(--space-section) 0 var(--space-group);
+  /* SYMMETRIC, 32 both sides. It was section above and group below, which made
+     the rule belong to the reading list rather than divide the column — the
+     paragraph was pushed a whole scale step away while the list sat close
+     underneath. One value either side reads as a division between two equal
+     halves, which is what it is. */
+  margin: var(--space-group) 0;
 }
 .about-reading-label {
   display: flex;
