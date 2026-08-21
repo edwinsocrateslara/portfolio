@@ -107,9 +107,17 @@ export const vibeProjects: Project[] =
             // pipeline copy names — friction/pain point, unmet need, feature
             // request, competitive mention — which is the thing that
             // identifies it, and a positional filename hid that.
+            //
+            // The names now carry the SOURCE SYSTEM as well as the view, which
+            // is the part that was actually load-bearing: "meeting-notes" did
+            // not survive contact with a window titled Product Feedback, and
+            // "clarify-meeting-notes" would have. Replacing these two was also
+            // the first test of the rename rule — the files changed, so the
+            // names did too, rather than the bytes moving under a URL that had
+            // already been fetched.
             { url: "/framer/futurefit-ideas-dashboard/dashboard.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/board-post.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/meeting-notes.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/canny-board-post.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/clarify-meeting-notes.webp", alt: "" },
           ],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven
