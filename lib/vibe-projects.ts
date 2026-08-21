@@ -91,13 +91,25 @@ export const vibeProjects: Project[] =
           // TODO(edwin): alt text. Authored, never generated — same rule as
           // the 32 project images.
           images: [
-            // dashboard.webp, not image-1.webp, and the rename is the point: a
-            // dev server that has been running since before an image was
-            // replaced can keep serving the old bytes for the same URL. See
-            // DESIGN.md, Photography — "Replacing an image in place".
+            // NAMED FOR WHAT THEY SHOW, not image-1/2/3. Two reasons, and the
+            // second is why the first was worth the churn:
+            //
+            // A dev server running since before an image was replaced can keep
+            // serving the old bytes for the same URL — see DESIGN.md,
+            // Photography, "Replacing an image in place". A new name is the
+            // reliable fix, and a folder of image-N.webp makes every future
+            // swap reach for the unreliable one.
+            //
+            // And image-3.webp told nobody what image-3 was. It was read as a
+            // product-feedback list that contradicted the slot comment, when
+            // it is in fact exactly what the comment says: the meeting-notes
+            // table. Its Feedback type column carries the same four tags the
+            // pipeline copy names — friction/pain point, unmet need, feature
+            // request, competitive mention — which is the thing that
+            // identifies it, and a positional filename hid that.
             { url: "/framer/futurefit-ideas-dashboard/dashboard.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/image-2.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/image-3.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/board-post.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/meeting-notes.webp", alt: "" },
           ],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven
