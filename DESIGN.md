@@ -1148,6 +1148,37 @@ No hover-reveal either. A filter that lifts on hover implies the resting
 state is a preview of the real thing; there is no reason for the resting
 state to be worse.
 
+### Replacing an image in place
+
+**Give the new file a new name. Do not overwrite the old one.**
+
+A `next dev` server that has been running since before the swap can go on
+serving the OLD bytes for the same URL, and it will do it convincingly:
+`.next/cache/images` can be deleted and report empty, `curl` of the raw path
+can return the new bytes with a matching checksum, every width of
+`/_next/image?url=…&w=…` can return the new dimensions, and a browser with
+DevTools "Disable cache" on can still paint the old picture. Every layer you
+can inspect agrees, and the screen still disagrees.
+
+That happened here, and it cost four exchanges. The tell is worth writing
+down: **when someone says the image is wrong and the file is right, believe
+the screen.** The failure is between the file and the paint, and it is not
+reachable by checking the file harder. Two specific traps:
+
+- **Checking dimensions is not checking the picture.** A ratio, a byte count
+  and a checksum can all be correct while the wrong image is on screen. Open
+  the pixels and say what is in them. If the old file has been overwritten,
+  recover it — `git show <commit>~1:path > /tmp/old.webp` — and open that too,
+  because "what the old one looked like" is what makes a report recognisable
+  to the person looking at it.
+- **A URL that has never been requested cannot be stale.** Renaming defeats
+  every cache in the chain at once — server, optimiser, browser, and any proxy
+  between them — without needing to work out which one is holding on. It is
+  faster than diagnosing and it cannot half-work.
+
+Restart the dev server after any asset swap regardless. It is free, and this
+one had been up for two days.
+
 Two fixed aspect ratios, set by the actual asset dimensions rather than a
 layout choice — do not crop assets to a third ratio:
 

@@ -91,7 +91,11 @@ export const vibeProjects: Project[] =
           // TODO(edwin): alt text. Authored, never generated — same rule as
           // the 32 project images.
           images: [
-            { url: "/framer/futurefit-ideas-dashboard/image-1.webp", alt: "" },
+            // dashboard.webp, not image-1.webp, and the rename is the point: a
+            // dev server that has been running since before an image was
+            // replaced can keep serving the old bytes for the same URL. See
+            // DESIGN.md, Photography — "Replacing an image in place".
+            { url: "/framer/futurefit-ideas-dashboard/dashboard.webp", alt: "" },
             { url: "/framer/futurefit-ideas-dashboard/image-2.webp", alt: "" },
             { url: "/framer/futurefit-ideas-dashboard/image-3.webp", alt: "" },
           ],
