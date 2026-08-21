@@ -56,7 +56,20 @@ export const vibeProjects: Project[] =
           // flow places them; see lib/project-flow.ts.
           //
           //   0  the dashboard — the weekly ten, rendered after the opening
-          //      line, where a reader has just been told what the tool does
+          //      line, where a reader has just been told what the tool does.
+          //      A LAPTOP MOCKUP, unlike every other image on the site, and it
+          //      costs legibility: the browser window is 58% of the frame, so
+          //      the UI renders at 0.29 of its captured size against 0.50 for
+          //      a full-bleed screenshot. 14px body text lands at 4.1px in the
+          //      chat block and 7.5px in the lightbox, against this system's
+          //      12px floor — the same measurement that kept the architecture
+          //      diagram out, noted below. Kept because the dashboard is the
+          //      opening image and reads as a product here rather than as a
+          //      screenshot; what it is doing is legible even when the words
+          //      are not. Encoded at 2750 rather than the siblings' 1600 so
+          //      the browser window inside it carries 1601px — the same pixel
+          //      width a sibling's whole frame does — which is the only lever
+          //      left once the mockup has taken 42% of the width.
           //   1  a single feedback post with its board, status and Slack-bot
           //      origin — the convergence point
           //   2  the meeting-notes table, transcripts tagged by type — the
