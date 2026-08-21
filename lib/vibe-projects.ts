@@ -57,19 +57,15 @@ export const vibeProjects: Project[] =
           //
           //   0  the dashboard — the weekly ten, rendered after the opening
           //      line, where a reader has just been told what the tool does.
-          //      A LAPTOP MOCKUP, unlike every other image on the site, and it
-          //      costs legibility: the browser window is 58% of the frame, so
-          //      the UI renders at 0.29 of its captured size against 0.50 for
-          //      a full-bleed screenshot. 14px body text lands at 4.1px in the
-          //      chat block and 7.5px in the lightbox, against this system's
-          //      12px floor — the same measurement that kept the architecture
-          //      diagram out, noted below. Kept because the dashboard is the
-          //      opening image and reads as a product here rather than as a
-          //      screenshot; what it is doing is legible even when the words
-          //      are not. Encoded at 2750 rather than the siblings' 1600 so
-          //      the browser window inside it carries 1601px — the same pixel
-          //      width a sibling's whole frame does — which is the only lever
-          //      left once the mockup has taken 42% of the width.
+          //      A laptop mockup, unlike every other image here: the browser
+          //      window is 58.2% of the frame rather than the whole of it.
+          //      Encoded at 2750 rather than the siblings' 1600 so that window
+          //      still carries 1601px — the same pixel width a sibling's whole
+          //      frame does. That is a resolution decision about the picture,
+          //      which is ours to make. How large the dashboard's OWN interface
+          //      text ends up is not: see DESIGN.md under the 12px floor. A
+          //      screenshot is a picture of a thing, and its contents are
+          //      subject matter rather than type this system set.
           //   1  a single feedback post with its board, status and Slack-bot
           //      origin — the convergence point
           //   2  the meeting-notes table, transcripts tagged by type — the
@@ -81,10 +77,16 @@ export const vibeProjects: Project[] =
           // on). A fourth image would fall through to after the proof links,
           // which is the wrong place — see the warning in project-flow.ts.
           //
-          // The architecture diagram is NOT here. Measured at the exact render
-          // sizes it comes out at 4px annotation ink in the chat block and 7px
-          // in the lightbox, against this system's 12px type floor, so it is
-          // linked at native size instead.
+          // The architecture diagram is NOT here. It is 16:10 against the
+          // block's 16:9, so the crop removes the top 80 rows and takes the
+          // first annotation line with it — the image would be shown missing a
+          // part of itself, which is a judgment about the picture and still
+          // stands. It is linked at native size instead.
+          //
+          // The reason originally given ALSO cited its annotations measuring
+          // 4px against the 12px type floor. That half no longer applies: see
+          // DESIGN.md under the floor. If the crop were ever solved, the ink
+          // measurement would not be grounds to keep it out.
           //
           // TODO(edwin): alt text. Authored, never generated — same rule as
           // the 32 project images.

@@ -105,13 +105,17 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     }
     out.push({ kind: "section-heading", text: "See it running" })
     out.push({ kind: "doc-link", docKey: "ideas-showcase" })
-    // The architecture diagram is LINKED, not embedded. Measured at the exact
-    // render sizes: 4px annotation ink in the chat block, 7px in the lightbox
-    // at 1440x900, 6px at 1280x720 — under the 12px floor this system states
-    // for type. The 16:10 source also loses 10% of its height to the block's
-    // 16:9 crop, which clips the top annotation line (first ink at y=78, crop
-    // removes the first 80 rows). Native size in a tab is legible; a preview
-    // that cannot be read is worse than a link that can.
+    // The architecture diagram is LINKED, not embedded, and the reason is the
+    // CROP: the 16:10 source loses 10% of its height to the block's 16:9 frame,
+    // which clips the top annotation line outright (first ink at y=78, the crop
+    // removes the first 80 rows). Showing an image with a piece missing is a
+    // judgment about the picture, and it is the one that decides this.
+    //
+    // The original note also argued from the annotations measuring 4px against
+    // the 12px type floor. That argument is withdrawn — DESIGN.md, under the
+    // floor: a screenshot's contents are subject matter, not type this system
+    // set, and measuring them against the ramp is a category error. The crop
+    // stands on its own.
     out.push({ kind: "doc-link", docKey: "ideas-architecture" })
     // ⚠ Anything past slot 2 lands HERE — after the proof links, at the very
     // end. That is fine for the work flow, where images trail by design, and

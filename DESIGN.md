@@ -526,6 +526,23 @@ renders below a reasonable legibility threshold. The size/line-height
 pairs are tokens (`--type-*-size` / `--type-*-lh`) so the two cannot drift
 apart.
 
+**The floor governs type this system sets. It does not govern the contents
+of a screenshot.** A screenshot is a picture of a thing, not type — the
+pixels inside it are subject matter, the way a face or a building in a
+photograph is. Measuring the interface inside one against this ramp is a
+category error: it treats a depiction as if it were a specimen. So do not
+scale, crop or re-shoot an image to make its embedded text clear the floor,
+and do not report such text as a violation — of this rule or of `check-design`,
+which cannot see inside an image and is not failing to.
+
+What still applies to an image is everything that is genuinely ours: its
+frame, its ratio, its crop, its resolution, the caption or alt text beside
+it. An image can still be the wrong choice — too low-resolution for the
+frame, cropped so the subject is lost, or simply not showing what the
+sentence beside it claims. Those are judgments about the picture. "Its
+interface text measures 4px against our 12px step" is not one of them, and
+should not be dressed up as one.
+
 | Step | Size / line-height |
 |---|---|
 | `label` | 12 / 18 |
