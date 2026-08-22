@@ -530,20 +530,23 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
         >
           {doc.label}
         </span>
-        {/* The second line answers "what will I get?". For a file that is the
-            format; for a destination the format is meaningless, so it carries
-            the description instead — which until now was written on every DOCS
-            entry and rendered nowhere. */}
-        <span
-          className="type-meta"
-          style={{
-            display: "block",
-            color: "rgb(var(--bureau-text-muted))",
-            marginTop: "var(--space-optical-meta)",
-          }}
-        >
-          {local ? "PDF" : doc.description}
-        </span>
+        {/* The second line answers "what will I get?" — the file's format. A
+            destination has none, and the question does not arise: the label is
+            a verb, the arrow says where it goes, and a line under it was
+            describing the link rather than telling anyone anything they were
+            about to need. So the link-out is one line. */}
+        {local && (
+          <span
+            className="type-meta"
+            style={{
+              display: "block",
+              color: "rgb(var(--bureau-text-muted))",
+              marginTop: "var(--space-optical-meta)",
+            }}
+          >
+            PDF
+          </span>
+        )}
       </span>
       <span className="type-label" style={{ color: "rgb(var(--bureau-text-primary))" }}>
         {local ? (
