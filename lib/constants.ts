@@ -1,4 +1,14 @@
 export const DOCS = {
+  // ⚠ STILL EXTERNAL, and the only entry that is. It renders as a link-out
+  // because DocLinkBubble reads that off the url — correct today, and wrong as
+  // a destination for a document this site should serve.
+  //
+  // WHEN THE PDF LANDS at /edwin-lara-resume-2026.pdf, THREE THINGS CHANGE,
+  // not one. This url; the résumé pane's pill, which reads DOCS.resume.url
+  // directly; and a DocHub link inside the PROSE of the résumé answer's
+  // follow-up block, lib/scripted-responses.ts, which renders as body text and
+  // so appears in no component. That third one is the one a search for
+  // "DocLinkBubble" or "pill" does not find.
   resume: {
     key: "resume",
     label: "Edwin Socrates Lara — Resume 2026",
@@ -17,16 +27,22 @@ export const DOCS = {
   },
   // Not a document, and that is a deliberate stretch of this table rather than
   // an oversight. It is a running deployment, and the doc-link card is the
-  // right shape for it — glyph, title, mono meta, trailing mark. A second card
+  // right shape for it — title, mono meta, trailing mark. A second card
   // component that differed only in the noun would be a second place for the
-  // external-link rules to drift.
+  // external-link rules to drift; DocLinkBubble now reads the difference off
+  // this url instead, so there is nothing here to keep in agreement by hand.
   //
   // A redacted clone of the internal tool, so it can be opened by anyone. It
   // is the one thing a vibe-coded entry can offer that the seven work projects
   // structurally cannot: the actual artefact, running.
+  //
+  // The label is a VERB where the other two are titles, and that is the point:
+  // the others hand you a thing, this one sends you somewhere. It also sits
+  // under a heading that already names the project, so repeating the name here
+  // spent the line twice.
   "ideas-showcase": {
     key: "ideas-showcase",
-    label: "Weekly Feedback Synthesis — live showcase",
+    label: "View live project",
     description: "Redacted, running",
     url: "https://future-fit-ideas-showcase.vercel.app",
   },

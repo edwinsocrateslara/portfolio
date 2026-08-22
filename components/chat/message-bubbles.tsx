@@ -462,16 +462,30 @@ export function ImpactBubble({
   )
 }
 
-// Document link card — square glyph + title + meta + download arrow
+// Document link card, in two forms: a file this site serves, and a link out.
+//
+// DERIVED FROM THE URL, not declared on the entry. A same-origin href is a
+// file in public/ — it downloads, it does not leave the site, and announcing a
+// new tab for it would be false. Anything else is a destination. That is the
+// actual difference between these two cards, so reading it off the URL is
+// reading the fact rather than a description of it: a `kind` field would have
+// to be kept in agreement with the URL by hand, and on the day the résumé
+// moves from DocHub to /edwin-lara-resume-2026.pdf this changes verb on its
+// own with no second edit to remember.
+//
+// One card is a link-out today. That is not a reason to special-case it at the
+// call site — the rule costs one expression and describes all three.
 export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
   const doc = DOCS[docKey]
+  const local = doc.url.startsWith("/")
   return (
     <a
       href={doc.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      // The ↓ below is this card's own visual mark, so NewTabMark runs
-      // glyph-less: two arrows on one control would read as two actions.
+      // download on a same-origin file; target/rel only where the link really
+      // does reassign the window.
+      {...(local
+        ? { download: true }
+        : { target: "_blank", rel: "noopener noreferrer" })}
       style={{
         display: "flex",
         alignItems: "center",
@@ -484,23 +498,28 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
         textDecoration: "none",
       }}
     >
-      <span
-        className="type-badge"
-        style={{
-          // 34 -> 32 to land on the grid; the glyph also grew 8px -> 12px.
-          width: "var(--space-32)",
-          height: "var(--space-32)",
-          flexShrink: 0,
-          border: "1px solid var(--hairline-strong)",
-          borderRadius: "var(--bureau-radius-media)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "rgb(var(--bureau-text-secondary))",
-        }}
-      >
-        PDF
-      </span>
+      {/* File-type chip, so only where there is a file type. A running
+          deployment has none, and a PDF badge on one would be a lie in the
+          most literal place on the card. */}
+      {local && (
+        <span
+          className="type-badge"
+          style={{
+            // 34 -> 32 to land on the grid; the glyph also grew 8px -> 12px.
+            width: "var(--space-32)",
+            height: "var(--space-32)",
+            flexShrink: 0,
+            border: "1px solid var(--hairline-strong)",
+            borderRadius: "var(--bureau-radius-media)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "rgb(var(--bureau-text-secondary))",
+          }}
+        >
+          PDF
+        </span>
+      )}
       <span style={{ flex: 1, minWidth: 0 }}>
         <span
           className="type-card-h3"
@@ -511,6 +530,10 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
         >
           {doc.label}
         </span>
+        {/* The second line answers "what will I get?". For a file that is the
+            format; for a destination the format is meaningless, so it carries
+            the description instead — which until now was written on every DOCS
+            entry and rendered nowhere. */}
         <span
           className="type-meta"
           style={{
@@ -519,12 +542,26 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
             marginTop: "var(--space-optical-meta)",
           }}
         >
-          PDF
+          {local ? "PDF" : doc.description}
         </span>
       </span>
       <span className="type-label" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-        ↓
-        <NewTabMark glyph={false} />
+        {local ? (
+          <>
+            {/* aria-hidden: as text this was being announced as a character.
+                The announcement beside it says what the control does, and it
+                does NOT say "opens in a new tab" — a download reassigns
+                nothing, and a false announcement is worse than none. Same
+                reasoning as MailMark's. */}
+            <span aria-hidden="true">↓</span>
+            <span className="sr-only"> (downloads the file)</span>
+          </>
+        ) : (
+          // WITH its glyph. The download arrow is gone from this branch, so
+          // the "two arrows read as two actions" reason for suppressing it
+          // has gone with it.
+          <NewTabMark />
+        )}
       </span>
     </a>
   )
