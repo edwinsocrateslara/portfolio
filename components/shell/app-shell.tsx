@@ -493,7 +493,7 @@ export function AppShell({
 
       <main className="pane" ref={paneRef}>
         {pane === "resume" ? (
-          <div className="pane-scroll">
+          <div className="pane-scroll resume-glow">
             <ResumePane resume={resume} />
           </div>
         ) : pane === "about" ? (
@@ -599,7 +599,7 @@ export function AppShell({
           </div>
         ) : (
           <>
-            <div className="pane-scroll" ref={paneScrollRef}>
+            <div className="pane-scroll reveal-glow" ref={paneScrollRef}>
               <div style={{ ...CHAT_COLUMN, paddingBottom: "var(--space-8)", gap: "var(--space-between)" }} className="flex flex-col">
               {/* Structured messages (scripted) */}
               {activeMessages.map((message, i) => {

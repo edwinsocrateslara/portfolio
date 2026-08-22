@@ -233,7 +233,15 @@
      --bureau-accent, and the hero is allowlisted by name with its reason.
      Everywhere else, both are still blocked. */
   --hero-glow: var(--bureau-accent);
-  --hero-glow-alpha: 0.13;
+  /* 0.13 -> 0.20, deliberately visible. The ceiling is contrast, not taste:
+     at 0.20 the brightest point composites to rgb(41,59,27), where primary
+     reads 9.87 and secondary 4.63 against a 4.5 floor — but MUTED reads 3.74
+     and fails. Muted was already failing at 0.13 (4.47); raising the alpha
+     made a marginal failure an unambiguous one, so every muted string that
+     sits inside a wash moved to secondary. See "Muted has no place in the top
+     band" in DESIGN.md. Secondary at 4.63 leaves 0.13 of headroom, which is
+     thin — a further rise needs primary, not another colour swap. */
+  --hero-glow-alpha: 0.20;
   --hero-glow-extent: 64%;
   /* The glow's own height, so its size stops being a remainder.
      It used to be painted on .hero-band, which meant the wash was sized by
@@ -1423,6 +1431,33 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 /* The About pane's wash. Same recipe, same tokens, third selector — see the
    note on .deck-glow for why these are not one shared class, and the note in
    check-design.mjs for what three entries now says about the exception. */
+/* The résumé's wash and the reveal's. Same tokens, same recipe, same anchor
+   on the scroller as the deck's and About's — see the note above .deck-glow
+   for why the scroller rather than the content wrapper, and why the five
+   selectors are not one shared class.
+   Rule 6 now permits these BY RULE rather than by allowlist entry: a ::before
+   using --hero-glow at z-index:-1 with pointer-events:none is the wash by
+   definition. Drop any of those and the gate fires again. */
+.resume-glow,
+.reveal-glow {
+  position: relative;
+  isolation: isolate;
+}
+.resume-glow::before,
+.reveal-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--hero-glow-height);
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at top center,
+    rgb(var(--hero-glow) / var(--hero-glow-alpha)),
+    rgb(var(--hero-glow) / 0) var(--hero-glow-extent)
+  );
+}
+
 .about-glow {
   position: relative;
   isolation: isolate;

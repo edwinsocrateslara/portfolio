@@ -114,7 +114,15 @@ export function ChatInput({
         }}
         aria-label="Chat input"
       />
-      <style>{`textarea::placeholder { color: rgb(var(--bureau-text-muted)); }`}</style>
+      {/* SECONDARY, not muted. The hero wash went from 0.13 to 0.20 alpha, and
+          DESIGN.md had already named this the binding constraint: measured at
+          380px, where the field is narrowest and sits highest in the wash, the
+          brightest background under it is rgb(38,47,32) and muted reads 4.30
+          against a 4.5 floor. Secondary reads 5.32 there and 5.89 at 1440.
+          Sampled with the placeholder blanked — measuring the mean with the
+          glyphs present reads the glyph colour as background and reports a
+          number that is wrong in both directions. */}
+      <style>{`textarea::placeholder { color: rgb(var(--bureau-text-secondary)); }`}</style>
       <button
         type="button"
         onClick={onSubmit}

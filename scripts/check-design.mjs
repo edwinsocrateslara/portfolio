@@ -38,26 +38,6 @@ const ALLOW = {
     "The SEND button fill, 42px tall, and only once there is something to send.",
   "components/chat/message-bubbles.tsx::no-accent-surface::background":
     "The 8px square IMPACT marker. A glyph, not a surface.",
-  "app/globals.css::no-accent-surface::.hero-band::before background (GRADIENT)":
-    "THE ONE EXCEPTION, taken deliberately. The front-door hero wash: an ellipse from top centre at 13% alpha fading out by 64%, on its own pseudo-element at --hero-glow-height so its size is not a remainder of the hero content. This is the accent as a surface, which is exactly what this rule exists to stop, and it is the largest painted area on the site. It is allowed because the front door has one job, and because the cost is understood: it uses --hero-glow, its own token, so tuning or removing the wash cannot move the accent that marks controls. Nowhere else may do this. If a second site ever needs an entry here, the rule has stopped meaning anything and the exception should be reconsidered rather than extended.",
-  // ⚠ THE ENTRY ABOVE SAYS A SECOND SITE MEANS THE EXCEPTION SHOULD BE
-  // RECONSIDERED RATHER THAN EXTENDED. This is that second site, added
-  // knowingly. The sentence stands as written and is not being softened: it is
-  // the record that "one deliberate exception" became two, and the next
-  // request for a third should be read against it, not against this entry.
-  //
-  // ⚠⚠ AND HERE IS THE THIRD, BELOW. The wash is now on every pane a visitor
-  // can open. At that point it is not an exception to "the accent is never a
-  // surface" — it is the house style, and the RULE is what is stale, not the
-  // allowlist. Two honest options, neither taken here because neither is a
-  // silent edit: (a) narrow rule 6 to say the accent may not be a surface
-  // EXCEPT as the top-of-view wash, and drop these three entries; or (b) keep
-  // the rule and accept that the allowlist is now the real spec. What must not
-  // happen is a fourth entry appended without anybody deciding which.
-  "app/globals.css::no-accent-surface::.deck-glow::before background (GRADIENT)":
-    "The deck pane's wash. Same tokens, same alpha, same extent, same height as the hero's — a second SELECTOR, not a second recipe, because a class shared by both panes would let any later element take an accent surface by adding a class name without ever tripping this rule. Painted area is far smaller than it looks: the 21 slide tiles are opaque object-cover images above a z-index:-1 pseudo, so the wash paints only above the first row and in the 8px gutters. Verified by A/B pixel sample — every tile pixel is byte-identical with the glow on and off. Contrast at the brightest point (32,44,24): primary 11.94, secondary 5.60, muted 4.53 against a 4.5 floor. Nothing muted currently sits there, and 0.03 of headroom is the reason to check before putting anything muted in the top 225px of this pane.",
-  "app/globals.css::no-accent-surface::.about-glow::before background (GRADIENT)":
-    "The About pane's wash. Same tokens, same alpha, same extent, same height as the hero's and the deck's — a third SELECTOR, not a third recipe, so adopting the wash on a fourth element still trips this rule instead of being a class name anyone can add. The only text sitting inside it is the h2 heading and the mono metadata line, both above the 4.5 floor by a wide margin; the photographs below are opaque and unaffected, the same as the deck's slide tiles. See the note above this block: at three sites the exception is the house style, and the rule is what needs revisiting.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────
@@ -124,6 +104,20 @@ function selectorAt(src, idx) {
 }
 
 /**
+ * The four conditions above, read off the source. `idx` points at the value of
+ * the flagged declaration; the block is the {...} it sits in.
+ */
+function isTopOfViewWash(src, idx, token) {
+  if (token !== "--hero-glow") return false
+  if (!/::before\s*$/.test(selectorAt(src, idx))) return false
+  const open = src.lastIndexOf("{", idx)
+  const close = src.indexOf("}", idx)
+  if (open === -1 || close === -1) return false
+  const block = src.slice(open, close)
+  return /z-index\s*:\s*-1\b/.test(block) && /pointer-events\s*:\s*none\b/.test(block)
+}
+
+/**
  * Rule 6 — the accent may not become a surface.
  *
  * DESIGN.md: "It is never a surface, never a large painted area, never a
@@ -132,10 +126,37 @@ function selectorAt(src, idx) {
  *
  * A grep cannot measure rendered size, so "larger than a control" is not
  * decided here — every accent fill is flagged and the judgment is recorded in
- * ALLOW, where somebody has to write down why that element is a control. A
- * gradient is the one case decided outright: a gradient is never a control,
- * and an accent gradient is precisely how the hero wash would have turned
- * green when the accent gained hue.
+ * ALLOW, where somebody has to write down why that element is a control.
+ *
+ * ── THE TOP-OF-VIEW WASH IS PERMITTED BY THIS RULE, not by the allowlist ───
+ *
+ * It used to be an allowlist entry, and that entry said: "Nowhere else may do
+ * this. If a second site ever needs an entry here, the rule has stopped
+ * meaning anything and the exception should be reconsidered rather than
+ * extended." It reached three sites. The wash is on every pane a visitor can
+ * open, so it is not an exception to the house style — it IS the house style,
+ * and a rule with more exceptions than applications is not describing the
+ * system any more.
+ *
+ * So the rule now states the real spec: the accent may not be a surface,
+ * EXCEPT as the top-of-view wash. The three entries are gone.
+ *
+ * RECOGNISED STRUCTURALLY, NEVER BY CLASS NAME. A `.glow-top` allowlisted by
+ * selector would let anything take an accent surface by adding a class, which
+ * is the objection the deck entry raised against sharing a class in the first
+ * place. Four conditions, all of them properties of what the wash IS:
+ *
+ *   1. CSS, not JSX — a component cannot mint one inline.
+ *   2. The selector is a ::before — it is a backdrop, not an element.
+ *   3. The value uses --hero-glow, never --bureau-accent directly. That token
+ *      exists precisely so tuning the wash cannot move the accent that marks
+ *      controls; using it is a declaration of intent.
+ *   4. The same block carries z-index:-1 AND pointer-events:none — it sits
+ *      behind content and cannot be interacted with.
+ *
+ * Miss any one and it is flagged as before. An accent gradient on a real
+ * element, or one that could take a click, or one reaching for the control
+ * accent, is still exactly what this rule exists to stop.
  */
 function checkAccentFills(file, raw, { css }) {
   const src = css ? stripCssComments(raw) : stripComments(raw)
@@ -150,6 +171,7 @@ function checkAccentFills(file, raw, { css }) {
       if (!token) continue
       const gradient = /\b(?:linear|radial|conic)-gradient\s*\(/.test(m[1])
       const where = css ? `${selectorAt(src, m.index)} ${prop}` : prop
+      if (css && gradient && isTopOfViewWash(src, m.index, token)) continue
       out.push({
         file, rule: "no-accent-surface",
         detail: gradient ? `${where} (GRADIENT)` : where,
@@ -394,6 +416,31 @@ const FIXTURE_CSS_GOOD = `
 .some-mark { border-left-color: rgb(var(--bureau-accent)); caret-color: rgb(var(--bureau-accent)); }
 .some-panel { background: var(--layer-1); outline: 2px solid rgb(var(--bureau-accent)); }
 `
+// The top-of-view wash, and four near-misses. The wash is permitted BY RULE
+// 6 now rather than by an allowlist entry, so the thing that has to be proven
+// is that it is a narrowing and not a hole: each near-miss drops exactly one
+// of the four conditions and must still be flagged.
+const FIXTURE_WASH_GOOD = `
+.pane-glow::before {
+  content: ""; position: absolute; inset: 0 0 auto 0;
+  height: var(--hero-glow-height); z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at top center, rgb(var(--hero-glow) / 0.2), rgb(var(--hero-glow) / 0) 64%);
+}
+`
+const FIXTURE_WASH_NEARMISS = `
+/* 1. control accent, not the wash's own token */
+.a::before { z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at top center, rgb(var(--bureau-accent) / 0.2), transparent); }
+/* 2. a real element, not a backdrop pseudo */
+.b { z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at top center, rgb(var(--hero-glow) / 0.2), transparent); }
+/* 3. sits above content */
+.c::before { z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at top center, rgb(var(--hero-glow) / 0.2), transparent); }
+/* 4. can take a click */
+.d::before { z-index: -1;
+  background: radial-gradient(ellipse at top center, rgb(var(--hero-glow) / 0.2), transparent); }
+`
 const FIXTURE_TRACK_BAD = `
 :root { --track-caps-body: 1.4px; }
 .type-thing { letter-spacing: 1.2px; }
@@ -419,6 +466,17 @@ function selfTest() {
     problems.push(`control: rule "no-accent-surface" found ${cssBad.length}/2 accent fills in the bad CSS fixture`)
   if (!cssBad.some((f) => f.gradient))
     problems.push('control: rule "no-accent-surface" did not flag the accent GRADIENT')
+
+  // The narrowing, both directions.
+  const washOk = checkAccentFills("<fixture-wash-good>", FIXTURE_WASH_GOOD, { css: true })
+  if (washOk.length !== 0)
+    problems.push(`control: the top-of-view wash was flagged (${washOk.length}) — rule 6's exception is not working`)
+  const nearMiss = checkAccentFills("<fixture-wash-nearmiss>", FIXTURE_WASH_NEARMISS, { css: true })
+  if (nearMiss.length !== 4)
+    problems.push(
+      `control: ${nearMiss.length}/4 near-miss washes flagged — rule 6's exception is a HOLE, not a narrowing. ` +
+      `Each fixture drops one condition (control accent / real element / above content / clickable) and must still fire.`
+    )
   // The second token must be caught too, or giving a colour another name would
   // be all it took to walk past this rule.
   const glowFix = checkAccentFills("<fixture-glow>", ".x { background: rgb(var(--hero-glow) / .13); }", { css: true })

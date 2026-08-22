@@ -173,7 +173,25 @@ If a future change puts colour in JSON, YAML, or an `.svg` file on disk, rule
 region it stops being a signal and becomes a theme. So: not a surface, not a
 large painted area, not a gradient — **with exactly one documented exception.**
 
-### The one exception: the front-door glow
+### The top-of-view wash — no longer an exception
+
+This section is kept because its reasoning is still the reasoning. What has
+changed is its status: the wash is on **five** surfaces now — the front door,
+the deck, About, Résumé, and the reveals — which is every pane a visitor can
+open. At that point it is not an exception to "the accent is never a surface";
+it is the house style, and the rule was what had gone stale.
+
+So rule 6 states it directly: the accent may not be a surface, EXCEPT as the
+top-of-view wash. The three allowlist entries are gone. The wash is recognised
+**structurally, never by class name** — a `::before`, using `--hero-glow` and
+not the control accent, at `z-index: -1` with `pointer-events: none`. Drop any
+one of those four and the gate fires as it always did; `check-design`'s
+self-test carries a fixture for each near-miss, so the narrowing is proven to
+be a narrowing rather than a hole.
+
+What follows is the original argument for allowing it once.
+
+### The original one exception: the front-door glow
 
 `.hero-band` carries a lime radial — an ellipse from top centre at 13% alpha
 fading out by 64%. That is the accent as a surface, and it is the largest
@@ -1119,17 +1137,21 @@ differs:
 
 | | background there | ratio |
 |---|---|---|
-| band's brightest point | `rgb(34,46,25)` | — |
-| headline `#e8e8e8` | `rgb(27,33,22)` | **13.43:1** |
-| placeholder `#8f8f8f` | `rgb(23,25,21)` | **5.47:1** (5.09 at 380) |
-| chip text `#a0a0a0` | `rgb(21,22,20)` | **6.94:1** |
+| headline `#e8e8e8` | `rgb(30,35,27)` | **12.7:1** |
+| placeholder `#a0a0a0` | `rgb(34,38,30)` at 1440, `rgb(38,47,32)` at 380 | **5.89 / 5.32** |
+| chip text `#a0a0a0` | `rgb(23,26,21)` | **6.6:1** |
 
-All clear AA. **The placeholder is the binding constraint on
-`--hero-glow-alpha`**, and it is tighter than it looks: `#8f8f8f` against the
-band's *brightest* point is **4.41:1**, a fail. It passes only because the
-input sits below the brightest region — and tightening `headline to input`
-from 64 to 32 moved it further up the gradient, taking 380 from 5.04 to 4.99.
-Re-measure this after any spacing change, not just after an alpha change.
+**The placeholder was the binding constraint and it broke.** At `0.13` it read
+5.47; at `0.20` it reads **4.30 at 380px**, under the floor. It is
+`--bureau-text-secondary` now, which reads 5.32 there. That is the one string
+the alpha rise cost, and it is recorded here rather than in a commit message
+because the next person raising the alpha needs to know the ceiling was already
+reached once.
+
+**Measure the placeholder with the placeholder text BLANKED.** Sampling the
+field with the glyphs present averages the glyph colour into the background and
+returns a number that is wrong in both directions — it read 3.52 before I
+noticed, which is neither the real contrast nor a real failure.
 
 ## Photography
 
