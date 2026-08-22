@@ -30,20 +30,6 @@ export const DOCS = {
     description: "Redacted, running",
     url: "https://future-fit-ideas-showcase.vercel.app",
   },
-  // Linked rather than embedded, and the reason is measured. Rendered inside
-  // a chat image block the annotations come out at 4px, and in the lightbox at
-  // 7px (1440x900) or 6px (1280x720) — against this system's stated 12px type
-  // floor. Raising the export resolution does not fix it: the lightbox caps
-  // the rendered width at ~1192px whatever the source, so what governs is the
-  // ratio of text height to canvas width, and this diagram's annotations are
-  // 0.66% of it. They would need to be ~1.5x larger RELATIVE TO THE DRAWING.
-  // Opened in a tab at native 2560px they are perfectly legible.
-  "ideas-architecture": {
-    key: "ideas-architecture",
-    label: "Weekly Feedback Synthesis — system architecture",
-    description: "Full diagram, native size",
-    url: "/futurefit-ideas-architecture.png",
-  },
 } as const
 
 export type DocKey = keyof typeof DOCS

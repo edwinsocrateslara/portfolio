@@ -94,6 +94,14 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
       if (all[2]) out.push({ kind: "image", image: all[2], group: all, groupIndex: 2 })
       if (all[1]) out.push({ kind: "image", image: all[1], group: all, groupIndex: 1 })
       if (rest) out.push({ kind: "text", text: rest })
+      // The architecture diagram, LAST in the section rather than beside the
+      // sources. It depicts the whole tool — the accept route, the status
+      // poll, the close-out and the dashboard are all on it — and those are
+      // this paragraph, not the first one. Put against the sources it would
+      // illustrate a third of itself; put here it summarises everything just
+      // described. Three images in one section, but not three in a row: two
+      // full paragraphs separate this from the pair above.
+      if (all[3]) out.push({ kind: "image", image: all[3], group: all, groupIndex: 3 })
     }
     if (p.decision) {
       out.push({ kind: "section-heading", text: "The calls" })
@@ -105,25 +113,20 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     }
     out.push({ kind: "section-heading", text: "See it running" })
     out.push({ kind: "doc-link", docKey: "ideas-showcase" })
-    // The architecture diagram is LINKED, not embedded, and the reason is the
-    // CROP: the 16:10 source loses 10% of its height to the block's 16:9 frame,
-    // which clips the top annotation line outright (first ink at y=78, the crop
-    // removes the first 80 rows). Showing an image with a piece missing is a
-    // judgment about the picture, and it is the one that decides this.
+    // ONE LINK, and it is the running artefact. The architecture diagram used
+    // to be a second card here because it could not be read inline; it is now
+    // embedded at the end of the pipeline section instead, and every link to
+    // it is gone — the DOCS entry, the card, and the PNG it served. A section
+    // headed "See it running" with two links under it was also describing only
+    // one of them.
     //
-    // The original note also argued from the annotations measuring 4px against
-    // the 12px type floor. That argument is withdrawn — DESIGN.md, under the
-    // floor: a screenshot's contents are subject matter, not type this system
-    // set, and measuring them against the ramp is a category error. The crop
-    // stands on its own.
-    out.push({ kind: "doc-link", docKey: "ideas-architecture" })
-    // ⚠ Anything past slot 2 lands HERE — after the proof links, at the very
+    // ⚠ Anything past slot 3 lands HERE — after the proof link, at the very
     // end. That is fine for the work flow, where images trail by design, and
     // wrong for this one, which ends on the running artefact deliberately. A
-    // fourth screenshot would be the last thing a reader sees, undercutting
-    // the link it follows. If one ever earns a place, give it a slot in the
-    // order above rather than letting it fall through to here.
-    for (let i = 3; i < all.length; i++) {
+    // fifth image would be the last thing a reader sees, undercutting the link
+    // it follows. If one ever earns a place, give it a slot in the order above
+    // rather than letting it fall through to here.
+    for (let i = 4; i < all.length; i++) {
       out.push({ kind: "image", image: all[i], group: all, groupIndex: i })
     }
     return out

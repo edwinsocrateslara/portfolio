@@ -70,6 +70,9 @@ export const vibeProjects: Project[] =
           //      origin — the convergence point
           //   2  the meeting-notes table, transcripts tagged by type — the
           //      tributary before it converges
+          //   3  the system architecture diagram — the whole tool, placed at
+          //      the END of the pipeline section because it depicts all three
+          //      of its paragraphs, not the first
           //
           // 2 and 1 both render inside the pipeline section, against the
           // paragraph describing the sources, and in that order: upstream
@@ -77,19 +80,30 @@ export const vibeProjects: Project[] =
           // on). A fourth image would fall through to after the proof links,
           // which is the wrong place — see the warning in project-flow.ts.
           //
-          // The architecture diagram is NOT here. It is 16:10 against the
-          // block's 16:9, so the crop removes the top 80 rows and takes the
-          // first annotation line with it — the image would be shown missing a
-          // part of itself, which is a judgment about the picture and still
-          // stands. It is linked at native size instead.
+          // THE ARCHITECTURE DIAGRAM IS NOW HERE, as slot 3, and both reasons
+          // it was excluded are gone.
           //
-          // The reason originally given ALSO cited its annotations measuring
-          // 4px against the 12px type floor. That half no longer applies: see
-          // DESIGN.md under the floor. If the crop were ever solved, the ink
-          // measurement would not be grounds to keep it out.
+          // The crop was the one that stood: at 16:10 into a 16:9 frame it lost
+          // 10% of its height and the first 80 rows went, taking the top
+          // annotation line (first ink at y=78) with it. The redraw is 7680x4320
+          // — exactly 16:9 — so the crop is 0.0000px, measured against the live
+          // frame rather than assumed.
           //
-          // TODO(edwin): alt text. Authored, never generated — same rule as
-          // the 32 project images.
+          // The other reason was that its annotations measured 4px, weighed
+          // against the 12px type floor. That was a category error and is
+          // withdrawn: see DESIGN.md under the floor. What replaces it is a
+          // legibility judgment made by looking — the annotations were rendered
+          // at each real display scale and read: legible in the lightbox at
+          // both 1440x900 and 1440x720, not legible in the chat block, which is
+          // the same contract every other screenshot here has.
+          //
+          // Encoded at 2650 because the lightbox caps at 1325 CSS px and 2x is
+          // the useful ceiling; beyond that is bytes nothing can display.
+          //
+          // TODO(edwin): alt text for all four. Authored, never generated —
+          // same rule as the 32 project images. The diagram needs the most
+          // care: it is the one image here whose content is a structure rather
+          // than a screenshot, so its alt has to carry the flow, not the look.
           images: [
             // NAMED FOR WHAT THEY SHOW, not image-1/2/3. Two reasons, and the
             // second is why the first was worth the churn:
@@ -118,6 +132,7 @@ export const vibeProjects: Project[] =
             { url: "/framer/futurefit-ideas-dashboard/dashboard.webp", alt: "" },
             { url: "/framer/futurefit-ideas-dashboard/canny-board-post.webp", alt: "" },
             { url: "/framer/futurefit-ideas-dashboard/clarify-meeting-notes.webp", alt: "" },
+            { url: "/framer/futurefit-ideas-dashboard/system-architecture.webp", alt: "" },
           ],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven
