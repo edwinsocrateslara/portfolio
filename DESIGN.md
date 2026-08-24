@@ -1201,6 +1201,33 @@ reachable by checking the file harder. Two specific traps:
 Restart the dev server after any asset swap regardless. It is free, and this
 one had been up for two days.
 
+**The image cache is at `.next/dev/cache/images`, not `.next/cache/images`.**
+Deleting the second one succeeds silently, reports nothing, and clears nothing
+— it is not where this version of Next keeps optimized images. That cost a long
+diagnosis: the same bytes served crisp under a fresh URL and soft under the
+real one, reproducibly, which reads like an impossible encoder bug rather than
+a cache. It is a cache. Check the entry count before and after clearing, and if
+it was already zero, you are deleting the wrong directory.
+
+### Screenshots are lossless
+
+**Ship interface screenshots as lossless WebP and let `next/image` do the only
+lossy pass.** It re-encodes everything to WebP at q75 regardless of input, so a
+lossy intermediate means the second pass compresses the first pass's artefacts:
+small text, thin rules and flat colour are the worst case for that, and it is
+visible as softness and colour fringing on type. The tell is fine
+high-frequency detail — a background dot-grid disappearing is the first thing
+to go.
+
+Measured on the same image at the same output width and quality: a q82 WebP
+intermediate produced 51,427 bytes of served data where a lossless one produced
+56,256, and the difference is legibility, not file size. `cwebp -lossless` at
+source resolution costs roughly half what the PNG does and is pixel-identical.
+
+Do not pre-resize below 3840 either: that is `next/image`'s largest device
+size, so it can never request more, and anything smaller throws away detail the
+lightbox can use.
+
 Two fixed aspect ratios, set by the actual asset dimensions rather than a
 layout choice — do not crop assets to a third ratio:
 
