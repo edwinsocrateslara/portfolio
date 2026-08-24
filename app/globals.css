@@ -402,7 +402,13 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--hairline-strong);
-  border-radius: 0;
+  /* The pill token, same as chips and the send button. At --chat-scrollbar
+     wide the radius clamps to half the width, so this is a capsule rather
+     than a 9999px curve — 2px of round at each end on a 4px thumb. Written as
+     the token rather than 2px because it is the same DECISION as a chip's:
+     fully round, whatever the width turns out to be. Change the width and it
+     stays a capsule. */
+  border-radius: var(--bureau-radius-chip);
 }
 
 ::-webkit-scrollbar-thumb:hover {
