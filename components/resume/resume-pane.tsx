@@ -23,12 +23,10 @@ export function ResumePane({ resume }: { resume: Resume }) {
             system's pill, so a second inline one would be a second place for
             the border, fill and hover to drift. Still points at the hosted
             copy — a file in public/ replaces the URL and nothing else. */}
-        <a
-          className="chip type-label deck-download"
-          href={DOCS["resume"].url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        {/* `download`, no target — it says "Download PDF" and now does that.
+            It used to open DocHub in a tab, which is the mismatch that started
+            the audit. Matches the deck pane's pill exactly. */}
+        <a className="chip type-label deck-download" href={DOCS["resume"].url} download>
           <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
           Download PDF
         </a>

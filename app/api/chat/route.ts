@@ -27,6 +27,24 @@ const edwinContext = readFileSync(
   "utf-8"
 )
 
+// THE [DOC:...] AND [PROJECT:slug] INSTRUCTIONS ARE GONE, and nothing replaced
+// them. The prompt used to ask the model to emit those markers; nothing has
+// ever parsed either one. The API branch renders a model answer as a single
+// flat text bubble, and TextBubble transforms exactly two things — **bold**
+// and [text](url) — so a marker with no parentheses matched neither and would
+// have printed to the visitor as the literal string "[DOC:resume]".
+//
+// REMOVED RATHER THAN PARSED, deliberately. Parsing is not the small change it
+// looks like: the markers would have to survive being split across stream
+// chunks, the API branch would have to render a LIST of blocks where it now
+// renders one bubble, and the commit-into-thread path takes a single message
+// rather than a sequence. That is a rewrite of the API render path to reach a
+// card the scripted answers already produce — the résumé and the deck both
+// have scripted triggers and both render a real doc-link card today.
+//
+// If the API path ever should emit cards, this is a feature to design rather
+// than an instruction to restore: the parsing, the streaming, and the unknown
+// -key case all need answers, and none of them existed.
 const SYSTEM_PROMPT = `You are a strict Q&A bot for Edwin Socrates Lara's portfolio. You can ONLY answer questions using the REFERENCE DOCUMENT below.
 
 <ABSOLUTE_RULES>
@@ -66,13 +84,7 @@ TOPICS GENUINELY ABSENT FROM THE DOCUMENT, WHICH REQUIRE THE FALLBACK:
 
 When you DO have information, be direct and conversational. Lead with outcomes for projects.
 
-## Project Cards
-Emit [PROJECT:slug] on its own line when relevant.
-Slugs: ai-workforce-development, retail-banking, ai-investing, live-selling, car-comparison, ecommerce, product-management
-
-## Documents
-[DOC:resume] — resume
-[DOC:meridian-case-study] — Meridian case study
+NO MARKUP, NO MARKERS. Answer in plain sentences.
 
 <REFERENCE_DOCUMENT>
 ${edwinContext}

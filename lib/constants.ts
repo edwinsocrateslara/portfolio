@@ -1,19 +1,17 @@
 export const DOCS = {
-  // ⚠ STILL EXTERNAL, and the only entry that is. It renders as a link-out
-  // because DocLinkBubble reads that off the url — correct today, and wrong as
-  // a destination for a document this site should serve.
+  // ⚠ THE FILE AT THIS PATH IS A PLACEHOLDER, not the résumé. It is one page
+  // reading "PLACEHOLDER - NOT A RESUME", written so that if it ever reaches
+  // the live site it is unmistakably an error rather than somebody's career.
+  // Replace the FILE; this entry does not change when the real one lands.
   //
-  // WHEN THE PDF LANDS at /edwin-lara-resume-2026.pdf, THREE THINGS CHANGE,
-  // not one. This url; the résumé pane's pill, which reads DOCS.resume.url
-  // directly; and a DocHub link inside the PROSE of the résumé answer's
-  // follow-up block, lib/scripted-responses.ts, which renders as body text and
-  // so appears in no component. That third one is the one a search for
-  // "DocLinkBubble" or "pill" does not find.
+  // Local, so DocLinkBubble renders it as a download — that is derived from
+  // the url rather than declared, so pointing here was the whole change. The
+  // DocHub URL that used to live here is dead and was reachable three ways.
   resume: {
     key: "resume",
     label: "Edwin Socrates Lara — Resume 2026",
     description: "Product design resume",
-    url: "https://dochub.com/edwinsocrateslara/orO7lgeVLk9z02JKjMP2p5/edwin-socrates-lara-2026-docx?dt=DxoBt5hCbfZDbPkqfswW",
+    url: "/edwin-lara-resume-2026.pdf",
   },
   // Served from public/, not dochub. The deck is 21 slides and 7.2 MB; a
   // third-party viewer that could rot, rate-limit, or reflow it was doing no
