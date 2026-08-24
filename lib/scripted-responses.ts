@@ -274,7 +274,12 @@ export function buildResponse(
         { kind: "doc-link", docKey: "resume" },
         {
           kind: "followups",
-          text: "It's here: [Edwin Socrates Lara — Résumé](https://dochub.com/edwinsocrateslara/orO7lgeVLk9z02JKjMP2p5/edwin-socrates-lara-2026-docx)\n\nHappy to walk through any section in more detail.",
+          // The card directly above already names the document and offers it.
+          // This used to open with "It's here:" and a link to the same place —
+          // two controls, one destination, six inches apart — and the link was
+          // to DocHub, which is dead. What is left is the part that was doing
+          // work: an offer to keep talking.
+          text: "Happy to walk through any section in more detail.",
           chips: rotationFor(SURFACE.resume, 2).map((c) => ({ text: c.label })),
         },
       ],
