@@ -34,7 +34,12 @@ export const vibeProjects: Project[] =
           slug: "futurefit-ideas-dashboard",
           client: "FutureFit AI",
           projectTitle: "Weekly Feedback Synthesis",
-          railSubtitle: "Feedback Synthesis",
+          // Names the DOMAIN, like the seven — Retail Banking, AI Investing,
+          // Live Selling. "Feedback Synthesis" named the mechanism, which no
+          // other row does, and it read as a second title rather than as the
+          // line that tells rows apart. projectTitle stays "Weekly Feedback
+          // Synthesis": the mechanism is the right name for the thing itself.
+          railSubtitle: "Product Prioritization",
           // WHAT IT IS. Two sentences, no jargon, no company-specific nouns —
           // a visitor who has never heard of FutureFit understands it. The
           // terms are defined later, in the pipeline, as they appear.
