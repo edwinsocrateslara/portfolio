@@ -72,21 +72,35 @@ export const projects: Project[] = [
     role: "Lead Product Designer",
     status: "wip",
     tags: ["AI", "design systems", "workforce", "B2B"],
+    // ALL THREE IMAGES WERE REPLACED, AND ALL THREE ALT STRINGS WENT WITH
+    // THEM. The previous set showed a dark Career Explorer chat and a dark job
+    // detail; these show the light career-paths graph and the light role
+    // detail. The old alt was authored and accurate — to screens that are no
+    // longer here. A correct-sounding description of an image that is not on
+    // the page is worse than none, because nothing about it reads as
+    // unfinished, so it went empty with the others rather than being kept.
+    //
+    // New filenames rather than overwrites: the old ones had been fetched, and
+    // a dev server that predates the swap will keep serving the old bytes for
+    // the same URL. See DESIGN.md, Photography — "Replacing an image in place".
+    //
+    // TODO(edwin): alt text for all three. Authored, never generated — same
+    // rule as the rest. The graph needs a sentence carrying that it relates
+    // roles across three seniority levels by three kinds of connection; the
+    // role detail one pairing requirements and learning with labour-market
+    // figures.
     previewImage: {
-      url: "/framer/ai-workforce-development/preview-image.png",
-      alt:
-        "Career Explorer conversation where the AI coach reads a job-seeker's stated priorities and returns two matched roles, each tagged as a strong match.",
+      url: "/framer/ai-workforce-development/preview-image.webp",
+      alt: "",
     },
     images: [
       {
-        url: "/framer/ai-workforce-development/image-1.png",
-        alt:
-          "AI coach summarising a job-seeker's priorities and surfacing matched roles with employer, location, seniority and work-arrangement tags.",
+        url: "/framer/ai-workforce-development/career-paths-graph.webp",
+        alt: "",
       },
       {
-        url: "/framer/ai-workforce-development/image-2.png",
-        alt:
-          "Job detail view with salary, location and seniority, an Ask AI panel offering prompts like tailoring a resume or predicting salary range, and a sidebar of other strong matches.",
+        url: "/framer/ai-workforce-development/role-detail.webp",
+        alt: "",
       },
     ],
     // Framer's Formatted Text 3 is empty ("<p><br></p>") and Formatted Text 2

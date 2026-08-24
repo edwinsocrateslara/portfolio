@@ -103,17 +103,20 @@ function ProjectSection({
               onClick={pick(() => onSelect(p.slug))}
             >
               {/* Decorative: the row's accessible name is the title beside it,
-                  so alt="" avoids announcing the same project twice. The source
-                  is 2048px square and renders at 32 — `sizes` is what stops the
-                  optimizer shipping the full-size file. */}
+                  so alt="" avoids announcing the same project twice.
+                  40, not 32, and all three numbers matter: the thumbnails grew
+                  with --rail-thumb-size and these did not follow, so next/image
+                  kept serving a 32px file into a 40px box — soft at 1x and
+                  visibly soft at 2x, on all eight rows. `sizes` is also what
+                  stops the optimizer shipping the full 1200-2160px source. */}
               {p.previewImage.url ? (
                 <Image
                   className="rail-thumb"
                   src={p.previewImage.url}
                   alt=""
-                  width={32}
-                  height={32}
-                  sizes="32px"
+                  width={40}
+                  height={40}
+                  sizes="40px"
                 />
               ) : (
                 /* No image exists for this project yet. An empty frame, not a
@@ -209,14 +212,15 @@ export function Sidebar({
         {/* Rendered only when there is something under it — a section heading
             above nothing is worse than no section.
             
-            BOTH conditions, and each does a different job. The length check is
-            the real one: it is what will start rendering the section when real
-            entries exist. The NODE_ENV check is what lets the minifier fold
-            this branch away in production, taking the "Vibe Coding" string
-            literal with it — with the length check alone the heading survived
-            in the client bundle, because vibeProjects is an imported binding
-            the minifier cannot evaluate. Verified by grepping .next both ways. */}
-        {process.env.NODE_ENV === "development" && vibeProjects.length > 0 && (
+            THE LENGTH CHECK IS THE ONLY CONDITION NOW. It used to be paired
+            with a NODE_ENV check whose job was letting the minifier fold this
+            branch away in production, taking the "Vibe Coding" string literal
+            with it — the length check alone could not do that, because
+            vibeProjects is an imported binding the minifier cannot evaluate.
+            The section is public now, so there is nothing to fold away, and
+            what remains is the condition that was always the real one: render
+            the heading only when there is something under it. */}
+        {vibeProjects.length > 0 && (
           <ProjectSection
             heading="Vibe Coding"
             items={vibeProjects}

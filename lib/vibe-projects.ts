@@ -18,18 +18,15 @@ import type { Project } from "./projects"
 // something the chat states as fact. That is a property of the module graph,
 // not a promise made by a filter somebody could later remove.
 //
-// DEV-ONLY, and the gate is on the DATA, not the render. `process.env.NODE_ENV`
-// is inlined at build time, so in production this collapses to a constant and
-// the minifier drops the array literal — the strings never reach the bundle.
-// Same pattern the Side of Desk cards used before they were deleted.
+// PUBLIC. This was gated on NODE_ENV while the case study was unfinished — the
+// gate sat on the DATA rather than the render, so the minifier dropped the
+// strings entirely and the whole VIBE CODING section was absent in production.
+// The case study is finished, so the gate is gone and the section ships.
 //
-// Consequence, intended: with only a dev-only entry, the whole VIBE CODING
-// section is absent in production. The rail renders the header only when there
-// is something under it — a section heading above nothing is worse than no
-// section.
-export const vibeProjects: Project[] =
-  process.env.NODE_ENV === "development"
-    ? [
+// The rail still renders the header only when there is something under it, so
+// emptying this array removes the section rather than leaving a heading above
+// nothing. That guard is in sidebar.tsx and is unrelated to the environment.
+export const vibeProjects: Project[] = [
         {
           slug: "futurefit-ideas-dashboard",
           client: "FutureFit AI",
@@ -54,9 +51,18 @@ export const vibeProjects: Project[] =
           // tags — verified, zero consumers outside the data file — so filling
           // it would store data no surface displays.
           tags: [],
-          // No preview yet, so the rail row draws an empty frame rather than
-          // borrowing a screenshot from another project — see .rail-thumb-empty.
-          previewImage: { url: "", alt: "" },
+          // The dashboard in a laptop mockup, square, matching how the seven
+          // frame theirs — they are device mockups on a dark ground too, which
+          // is what makes this sit in the sampler beside them rather than
+          // beside them looking like a different kind of thing.
+          //
+          // 1200px square from a 2160 source: the largest it ever renders is
+          // the sampler card at 227px, so 455 at 2x, and 1200 leaves room
+          // without paying for pixels nothing displays. Same filename the
+          // seven use — the role IS the name here, and it does not collide
+          // with dashboard.webp beside it, which is the 16:9 reveal image of
+          // the same screen.
+          previewImage: { url: "/framer/futurefit-ideas-dashboard/preview-image.webp", alt: "" },
           // Slot order here is DECLARATION order, not render order — the vibe
           // flow places them; see lib/project-flow.ts.
           //
@@ -104,6 +110,15 @@ export const vibeProjects: Project[] =
           //
           // Encoded at 2650 because the lightbox caps at 1325 CSS px and 2x is
           // the useful ceiling; beyond that is bytes nothing can display.
+          //
+          // REDACTION IS SETTLED AND CONSISTENT, though it does not look it.
+          // The dashboard's white boxes are not something applied to the
+          // screenshot: it is captured from the public showcase build, which
+          // redacts at the DATABASE level, so those blanks are what that
+          // system renders. The Canny and Clarify shots carry visible customer
+          // names because everything in them is cleared for publication. All
+          // four ship as they are; the difference is provenance, not an
+          // oversight, and it is recorded here so it stops being re-raised.
           //
           // TODO(edwin): alt text for all four. Authored, never generated —
           // same rule as the 32 project images. The diagram needs the most
@@ -191,7 +206,6 @@ export const vibeProjects: Project[] =
             "People review the 10. Every field the model set can be overridden by hand, and accepting an item creates a ticket in the engineering tracker. A daily check watches that ticket, and when it ships the tool closes the original post — so the person who asked for it hears back.",
         },
       ]
-    : []
 
 // Both sections, in rail order. The chat resolves slugs against this so a vibe
 // project is findable by exactly the same path as the seven.

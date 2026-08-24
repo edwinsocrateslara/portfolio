@@ -15,7 +15,7 @@ import { ResumePane } from "@/components/resume/resume-pane"
 import type { Resume } from "@/lib/resume"
 import { Sparkle } from "@/components/ui/sparkle"
 import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
-import { buildResponse } from "@/lib/scripted-responses"
+import { buildResponse, allProjects } from "@/lib/scripted-responses"
 import {
   AssistantBubble,
   UserBubble,
@@ -416,9 +416,16 @@ export function AppShell({
   // What the mobile top bar names. Only a project thread has an identity worth
   // repeating — the deck pane leads with its own h1, and the front door is
   // self-evident.
+  // allProjects, not projects: the seven plus the vibe-coded ones. With
+  // `projects` a vibe project resolved to undefined, so the top bar — which
+  // the comment on it calls the only thing naming the open project once the
+  // rail is behind the sheet — named nothing at all on mobile. That was
+  // invisible while the section was dev-only and ships the moment it is not.
+  // Reusing scripted-responses' list rather than concatenating a second one
+  // here, so the two cannot disagree about what "every project" means.
   const activeProject =
     pane === "chat" && currentProjectSlug
-      ? projects.find((p) => p.slug === currentProjectSlug)
+      ? allProjects.find((p) => p.slug === currentProjectSlug)
       : undefined
 
   const isFrontDoor =
