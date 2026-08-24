@@ -331,7 +331,13 @@
      32 column + 8 gap). The glyph inside it drops to 24 and centres, so the
      mark got smaller without the list shifting under it. Collapsing these
      back into one token re-breaks that alignment by exactly 8px. */
-  --rail-doc-col:   var(--space-32);
+  /* The thumbnail, and the document column beside it. ONE TOKEN EACH, but the
+     same value, because they are two different facts that must agree: how big
+     a picture is, and how wide the column before a document label is. They
+     line up every rail label on one left edge (70px), which took a full round
+     to establish and is not something a size change may quietly break. */
+  --rail-thumb-size: var(--space-40);
+  --rail-doc-col:   var(--rail-thumb-size);
   /* The scrim above the footer. Doubled from 32: at 32 the occluded band was
      shorter than one document row, so a row could sit half under it and read
      as clipped rather than as continuing. 64 covers a row and a half. It is
@@ -341,6 +347,17 @@
   --rail-fade:      var(--space-64);
   /* Where the scrim reaches full background: 48px of ramp, 16px of solid. */
   --rail-fade-solid: 75%;
+  /* STAYS 24 while the column grows to 40. Two reasons, and the first is
+     measurable: Lucide expresses stroke-width in viewBox units, so the painted
+     weight scales with the rendered size — the 1.25 stroke paints 1.25px at
+     24 and would paint 1.67px at 32. Growing the glyph moves the ink weight
+     too, and the note on DOC_ICON_STROKE explicitly says not to move two
+     variables at once.
+     Second, the column and the glyph are different things: the column is what
+     puts every label on one left edge, and the glyph is a drawn mark whose
+     size is an aesthetic call. This change is the first; re-picking the glyph
+     against a 40px thumbnail is the second, and it is worth doing — beside a
+     40px picture a 24px mark is lighter than it was beside a 32px one. */
   --rail-doc-glyph: var(--space-24);
   /* A leading icon inside a .chip. Same 16 as the rail's nav icons and for the
      same reason, but its own name: a chip is not a rail row, and one may move
@@ -809,8 +826,16 @@ body {
 }
 .rail-thumb {
   flex: none;
-  width: var(--space-32);
-  height: var(--space-32);
+  /* 40, matching the LABEL BLOCK's height exactly: client line box 18, the
+     4px rung, subtitle line box 18. At 32 the thumbnail was 8px short of a
+     space already reserved for it — 4px of dead air above and below inside
+     every row — and the type read as outweighing the picture.
+     This does NOT make the row taller. The row is align-items:center with the
+     thumbnail beside a 40px text block, so it was always sized by the labels;
+     the thumbnail now reaches the same height and stops. Measured: row height
+     56 before and after, rail content 745 before and after. */
+  width: var(--rail-thumb-size);
+  height: var(--rail-thumb-size);
   object-fit: cover;
   border: 1px solid var(--hairline);
   border-radius: var(--bureau-radius-thumb);
@@ -825,8 +850,8 @@ body {
    where the site asserts what a project looks like. */
 .rail-thumb-empty {
   display: block;
-  width: var(--space-32);
-  height: var(--space-32);
+  width: var(--rail-thumb-size);
+  height: var(--rail-thumb-size);
   background: var(--layer-1);
 }
 /* min-width:0 is what lets the title actually truncate — without it the
