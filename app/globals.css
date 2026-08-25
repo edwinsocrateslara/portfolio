@@ -282,14 +282,35 @@
      straddles that edge, so the rail's width is really the gap between the
      dates and the prose; the drawing happens on one pixel of it.
 
-     1092 is the pane's content width at 1440 — the size all five arrangement
-     boards were drawn and judged at. It is a CEILING, not a width: at 1440 and
-     below it never binds, and above it stops the bullets growing past the
-     measure they were designed for. Without it a 2560px window runs a 16px
-     bullet to 2100px, which is nobody's line length. */
+     The column is DERIVED — the prose measure plus everything that sits left
+     of it — so it stays correct if either of the two above ever moves. It used
+     to be a typed 1092, the pane's content width at 1440, which is the size
+     the five arrangement boards were drawn at. That number was a description
+     of the window, not a decision about reading: it ran a 16px bullet to 956px
+     and 103 characters, against a comfortable band of 45-90. 720 puts the
+     widest rendered line at 78.
+
+     ⚠ 720 IS THE RÉSUMÉ'S OWN MEASURE. It is not "the same as the chat
+     column", and nothing may be built on the two being equal — they land on
+     the same number for unrelated reasons and either is free to move. See the
+     note above .sampler on why there is no --content-width CSS var: one
+     already existed, mirrored CONTENT_WIDTH in lib/layout.ts, and was deleted
+     precisely because the 720 had two homes with nothing keeping them equal.
+     Tying this token to that constant would re-create it.
+
+     Capping the WHOLE column rather than only the prose is the reason the
+     header, the rules, the tools grid and the bullets all end on one right
+     edge. Capping the body alone was measured and is cheaper — the tools block
+     does not move, so the first role stays at 674px instead of 698 — but it
+     leaves the grid ending at 1092 and every bullet at 856, which is two right
+     edges on a page whose whole claim is one axis. 24px of tools height and
+     24px before the first role is what that costs. */
   --resume-date-col: 96px;
   --resume-rail-col: 40px;
-  --resume-column: 1092px;
+  --resume-measure: 720px;
+  --resume-column: calc(
+    var(--resume-measure) + var(--resume-date-col) + var(--resume-rail-col)
+  );
   --about-measure: 588px;
   /* The BOTTOM of the same band. The spine was flex: 1 1 0 with min-width: 0,
      so it took whatever the mosaic left and could take nothing: measured at
@@ -1349,7 +1370,9 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
    The whole pane is capped at --resume-column rather than each piece being
    capped separately, so the header, the rules, the tools grid and the spine
-   all end on the same right edge at any width. */
+   all end on the same right edge at any width. That cap is derived from
+   --resume-measure; the reasoning, and the token it must not be tied to, are
+   at its definition. */
 .resume {
   max-width: var(--resume-column);
 }
@@ -1866,7 +1889,13 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 /* Width comes from the component as maxWidth: CONTENT_WIDTH, the same way the
    input and chip columns beside it get theirs. There is no --content-width
    CSS var: it existed only for this rule and mirrored lib/layout.ts, so the
-   720 had two homes and nothing keeping them equal. */
+   720 had two homes and nothing keeping them equal.
+
+   There IS a 720 in the token block now — --resume-measure. It is not this
+   one. The résumé's prose measure was solved from its own line length and
+   landed on the same number by coincidence; the two are free to move
+   independently, and pointing either at the other would rebuild the variable
+   this note exists to explain the absence of. */
 .sampler {
   width: 100%;
   display: grid;
