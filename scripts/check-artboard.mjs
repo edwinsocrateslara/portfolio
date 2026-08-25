@@ -103,6 +103,19 @@ function elements(html) {
 
 const px = (v) => (/^-?[\d.]+px$/.test(v) ? parseFloat(v) : null)
 
+// Hex to the rgb() form the palette table is built in. An EXTRACTED artboard
+// carries computed styles, which are always rgb(), so this never mattered
+// until artboards started being hand-authored — where #e8e8e8 is the natural
+// way to write a colour and matched nothing, reporting the whole palette as
+// off-system. Compare a normalised value, not a spelling.
+const norm = (v) => {
+  const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(v.trim())
+  if (!m) return v.trim().toLowerCase()
+  const h = m[1].length === 3 ? m[1].replace(/./g, (c) => c + c) : m[1]
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16))
+  return `rgb(${r}, ${g}, ${b})`
+}
+
 // Properties whose px value must sit on the spacing scale. Deliberately NOT
 // every px property: width/height/top/left are layout results, not spacing
 // decisions, and flagging them would bury the real findings.
@@ -153,7 +166,7 @@ function check(file) {
     //    UA supplies one for every element and reporting it would drown the
     //    real findings in Tailwind's default grey.
     for (const prop of COLORED) {
-      const v = (p.get(prop) || "").toLowerCase()
+      const v = norm(p.get(prop) || "")
       if (!v) continue
       // Absent width means the extractor diffed it away as equal to the base,
       // and the base is border-width:0 — so absent is zero, not unknown. A
