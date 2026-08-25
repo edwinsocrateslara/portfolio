@@ -40,10 +40,19 @@ export interface ResumeEducation {
   institution: string
 }
 
+/** One labelled band of the skills list. The label is CONTENT — it is printed
+ *  above the run it names — and the order of the bands is the order in the
+ *  source. Six today; the parser counts them rather than knowing them, so
+ *  adding a seventh band is a source edit and nothing else. */
+export interface ResumeSkillBand {
+  label: string
+  items: string[]
+}
+
 export interface Resume {
   roles: ResumeRole[]
   education: ResumeEducation[]
-  skills: string[]
+  skills: ResumeSkillBand[]
 }
 
 const SOURCE = join(process.cwd(), "lib", "sources", "resume.txt")
@@ -57,8 +66,26 @@ const HEADING = /^[A-Z][A-Z&\s]+$/
 /** Hard-wrapped prose in the source; one paragraph on the page. */
 const unwrap = (s: string) => s.replace(/\s*\n\s*/g, " ").trim()
 
+// A NOTE LINE. `#` at the start of a line, and the rest of that line is for
+// whoever opens the file — never parsed, never rendered.
+//
+// The file had no comment syntax, which meant there was nowhere to say why the
+// content is the shape it is. That is not a theoretical gap: the education
+// block carries no years ON PURPOSE, and with no way to write that down the
+// omission reads as an oversight — which is exactly how three invented years
+// ended up on a set of design boards. A blank line separates blocks here, so a
+// note written without this convention becomes a fourth education entry rather
+// than a note.
+//
+// Stripped before anything else looks at the file, so a note is invisible to
+// every rule below it: headings, roles, group labels, bullets, blocks.
+const COMMENT = /^\s*#/
+
 function parse(): Resume {
   const raw = readFileSync(SOURCE, "utf8")
+    .split("\n")
+    .filter((line) => !COMMENT.test(line))
+    .join("\n")
 
   const sections: Record<string, string[]> = {}
   let current: string | null = null
@@ -153,10 +180,42 @@ function parse(): Resume {
     }
   })
 
-  const skills = unwrap(blocks("SKILLS & METHODOLOGIES")[0] ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
+  // SPLIT ON COMMAS THAT ARE NOT INSIDE PARENTHESES.
+  //
+  // `.split(",")` looks obviously right and is not: the Integrations band
+  // carries "REST APIs built from scratch (Canny, Jira, Clarify)", which a
+  // naive split shreds into three items, two of them fragments with an
+  // unbalanced bracket. It fails silently — the page renders, the count goes
+  // up, and the list reads as noise. The depth counter is four lines and the
+  // assertion below refuses anything with brackets left open.
+  const splitItems = (line: string) => {
+    const out: string[] = []
+    let depth = 0
+    let buf = ""
+    for (const ch of line) {
+      if (ch === "(") depth++
+      else if (ch === ")") depth--
+      if (ch === "," && depth === 0) { out.push(buf); buf = "" } else buf += ch
+    }
+    out.push(buf)
+    return out.map((t) => t.trim()).filter(Boolean)
+  }
+
+  // Six blocks, each "Label:" then a comma-separated run over one or more
+  // hard-wrapped lines. The label line is REQUIRED: a block without one is a
+  // problem rather than an unnamed band, because the alternative is a mistyped
+  // label quietly turning six bands into five and one long anonymous run.
+  const skills: ResumeSkillBand[] = []
+  const skillProblems: string[] = []
+  for (const block of blocks("SKILLS & METHODOLOGIES")) {
+    const [head, ...rest] = block.split("\n")
+    const label = head.trim()
+    if (!label.endsWith(":") || !rest.length) {
+      skillProblems.push(`skills block has no "Label:" line: ${JSON.stringify(block.slice(0, 40))}`)
+      continue
+    }
+    skills.push({ label: label.slice(0, -1), items: splitItems(unwrap(rest.join("\n"))) })
+  }
 
   // FAIL LOUDLY. A parser that silently returns nothing renders an empty page
   // that looks like a styling bug, and the build would pass. These assertions
@@ -165,7 +224,24 @@ function parse(): Resume {
   const problems: string[] = []
   if (roles.length < 6) problems.push(`expected at least 6 roles, parsed ${roles.length}`)
   if (education.length < 3) problems.push(`expected at least 3 education entries, parsed ${education.length}`)
-  if (skills.length < 20) problems.push(`expected at least 20 skills, parsed ${skills.length}`)
+  // The skills floor is now three claims, not one count. A single
+  // `terms >= 20` would still pass if the six labelled bands collapsed into
+  // one anonymous run of thirty — which is exactly the shape this parse
+  // replaced, so it is exactly the regression worth naming.
+  problems.push(...skillProblems)
+  const terms = skills.reduce((n, b) => n + b.items.length, 0)
+  if (skills.length < 6) problems.push(`expected at least 6 skill bands, parsed ${skills.length}`)
+  if (terms < 20) problems.push(`expected at least 20 skill terms, parsed ${terms}`)
+  for (const band of skills) {
+    if (!band.items.length) problems.push(`skills band "${band.label}" has no items under it`)
+    for (const item of band.items) {
+      // A bracket left open means splitItems ran off the end of a term — the
+      // fragment case, caught at the source rather than on the page.
+      const opens = (item.match(/\(/g) ?? []).length
+      const closes = (item.match(/\)/g) ?? []).length
+      if (opens !== closes) problems.push(`skills item has unbalanced brackets: ${JSON.stringify(item)}`)
+    }
+  }
   for (const r of roles) {
     if (!r.employer || !r.title || !r.dates) {
       problems.push(`incomplete role header: ${r.employer || "(no employer)"}`)

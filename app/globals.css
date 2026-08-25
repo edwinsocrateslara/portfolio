@@ -268,11 +268,28 @@
   /* The About page's prose measure. The mock puts the words on a 328-588
      band inside the full-width pane; 588 is the upper end, which is where
      the sentence reads best at desktop. */
-  /* The résumé's left column — employer, title, dates. A measure, not
-     spacing: it is sized to hold "Meridian Credit Union" and "Lead Product
-     Designer (Contract)" without wrapping to three lines, which is what makes
-     the column scannable. Same role as --about-portrait. */
-  --resume-meta-col: 240px;
+  /* ── The résumé's spine ───────────────────────────────────────
+     Three measures, not spacing, and they only mean anything together: the
+     date column, the rail the timeline is drawn in, and the width the whole
+     pane is designed at.
+
+     96 holds "Nov 2021" over "Apr 2022" at the 12px mono step without
+     wrapping, which is the entire job of that column. It replaced a 240px
+     column that carried employer, title AND dates — those moved right of the
+     rail when the spine arrived, and 240 had nothing left to hold.
+
+     40 is the rail. The 1px hairline sits at its left edge and the 8px node
+     straddles that edge, so the rail's width is really the gap between the
+     dates and the prose; the drawing happens on one pixel of it.
+
+     1092 is the pane's content width at 1440 — the size all five arrangement
+     boards were drawn and judged at. It is a CEILING, not a width: at 1440 and
+     below it never binds, and above it stops the bullets growing past the
+     measure they were designed for. Without it a 2560px window runs a 16px
+     bullet to 2100px, which is nobody's line length. */
+  --resume-date-col: 96px;
+  --resume-rail-col: 40px;
+  --resume-column: 1092px;
   --about-measure: 588px;
   /* The BOTTOM of the same band. The spine was flex: 1 1 0 with min-width: 0,
      so it took whatever the mosaic left and could take nothing: measured at
@@ -1323,37 +1340,150 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
 /* ── Resume pane ──────────────────────────────────────────────────
    Every string here is parsed from lib/sources/resume.txt; see lib/resume.ts.
-   The layout is the About pane's proportions rather than the 720px chat
-   column: a résumé is a long list of short entries, and at 720 the six roles
-   become a wall. */
-.resume-section {
-  margin-top: var(--space-section);
+
+   The arrangement is "Lede", one of five full-page boards: tools above
+   experience in two columns, then ONE spine carrying experience and
+   education. The layout is the About pane's proportions rather than the 720px
+   chat column — a résumé is a long list of short entries, and at 720 the six
+   roles become a wall.
+
+   The whole pane is capped at --resume-column rather than each piece being
+   capped separately, so the header, the rules, the tools grid and the spine
+   all end on the same right edge at any width. */
+.resume {
+  max-width: var(--resume-column);
 }
+/* `group`, not `section`. 64 is the landing page's band rung and it is wrong
+   here twice over: after an <hr> it doubles a boundary that is already drawn,
+   and at the Experience → Education seam it opens 96px of empty rail between
+   the last role's node and the first degree's — which reads as two spines
+   where the arrangement's whole argument is that there is one. */
+.resume-section {
+  margin-top: var(--space-group);
+}
+/* 16/24 mono caps — .type-section, the voice this system already has at the
+   body step. It replaced .type-label (12/18): three section headers at the
+   same size as the band labels underneath them left the page with no rung
+   between "Tools" and "AI & LLM work". Tracking comes with the class, which
+   is why this is a class swap and not a font-size override — at 16 the ramp
+   wants --track-caps-body (1.4px), not the 1.2px that belongs to 12. */
 .resume-heading {
   margin: 0 0 var(--space-group);
   color: rgb(var(--bureau-text-secondary));
 }
-/* Identifying facts left, prose right. A résumé is scanned by employer and
-   date before it is read, so those take their own column instead of opening
-   the paragraph. The meta column is fixed and the prose takes the remainder,
-   capped at the measure — same pairing as the About spine and mosaic. */
-.resume-role {
-  display: flex;
+/* A thematic break, and an <hr> because that is what it is. The rules bracket
+   the tools block: one under the header, one above Experience. Education gets
+   none — it belongs to the spine above it, and a rule there would cut the one
+   axis the page is organised on. */
+.resume-rule {
+  height: 1px;
+  border: 0;
+  background: var(--hairline);
+  margin: var(--space-group) 0 0;
+}
+
+/* ── Tools ────────────────────────────────────────────────────────
+   Two columns. One column runs the bands to 1092px and the labels stop
+   working as an index; three cuts the Design band's fifteen items to four
+   lines of ragged fragments. Row and column gutters are the same level —
+   these are groups sitting beside groups, and an uneven gutter would imply a
+   pairing that isn't there. */
+.resume-bands {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-group);
-  align-items: flex-start;
-  margin-bottom: var(--space-group);
 }
-.resume-role:last-child {
-  margin-bottom: 0;
+.resume-band-label {
+  margin: 0 0 var(--space-within);
+  color: rgb(var(--bureau-text-muted));
 }
-.resume-role-meta {
-  flex: 0 0 var(--resume-meta-col);
+.resume-band-items {
+  margin: 0;
+  color: rgb(var(--bureau-text-primary));
+}
+/* The separator is muted so the run reads as terms with gaps between them
+   rather than as a list of dots. Its leading space is an NBSP in the
+   component, which is what keeps a dot off the start of a wrapped line. */
+.resume-band-sep {
+  color: rgb(var(--bureau-text-muted));
+}
+
+/* ── The spine ────────────────────────────────────────────────────
+   GRID, not flex, and that is the whole mobile story: at ≤900px the same
+   three cells re-lay as rail-left with dates over body, and the rail spans
+   both rows on its own without a second element or a duplicated line. Flex
+   cannot move a child across an axis, so it would have taken either a DOM
+   change or two rails. */
+.resume-row {
+  display: grid;
+  grid-template-columns: var(--resume-date-col) var(--resume-rail-col) minmax(0, 1fr);
+  grid-template-areas: "dates rail body";
+}
+.resume-row-dates {
+  grid-area: dates;
   min-width: 0;
 }
-.resume-description {
-  flex: 1 1 0;
+.resume-row-rail {
+  grid-area: rail;
+  position: relative;
+}
+.resume-row-body {
+  grid-area: body;
   min-width: 0;
-  max-width: var(--about-measure);
+  padding-bottom: var(--space-group);
+}
+/* Both offsets are DERIVED from the 12px mono line the node sits beside, not
+   measured and typed in. The node's centre is that line's optical centre —
+   (18 − 8) / 2 = 5 — and the line starts at the same centre, 18 / 2 = 9, so
+   it runs out of the node rather than past it. Same construction as
+   .resume-bullet::before, and it stays correct if the label step ever moves.
+
+   left: (1px − 8px) / 2 straddles the 8px node on the 1px hairline. */
+.resume-row-line {
+  position: absolute;
+  left: 0;
+  top: calc(var(--type-label-lh) / 2);
+  bottom: 0;
+  width: 1px;
+  background: var(--hairline);
+  transform-origin: top;
+}
+/* The last row's line stops short instead of running to the bottom of a row
+   whose padding is only there to separate it from the next section. */
+.resume-row:last-child .resume-row-line {
+  bottom: auto;
+  height: var(--space-24);
+}
+.resume-row-node {
+  position: absolute;
+  top: calc((var(--type-label-lh) - var(--space-8)) / 2);
+  left: calc((1px - var(--space-8)) / 2);
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--bureau-radius-chip);
+  background: rgb(var(--bureau-accent));
+}
+/* Education. A ring rather than a filled mark: a degree is not an event on
+   the same axis as a job, and the ring says that without a second axis. */
+.resume-row-node[data-mark="open"] {
+  background: rgb(var(--bureau-bg));
+  border: 1px solid rgb(var(--bureau-text-muted));
+}
+.resume-date-start {
+  margin: 0;
+  color: rgb(var(--bureau-text-primary));
+}
+.resume-date-end {
+  margin: var(--space-4) 0 0;
+  color: rgb(var(--bureau-text-muted));
+}
+.resume-employer {
+  margin: 0;
+  color: rgb(var(--bureau-text-primary));
+}
+.resume-role-title {
+  margin: var(--space-4) 0 var(--space-between);
+  color: rgb(var(--bureau-text-secondary));
 }
 /* `between` between groups, `within` between bullets inside one — the four
    levels doing exactly what they are for. Only the contracting block has more
@@ -1396,27 +1526,62 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   height: var(--space-4);
   background: var(--hairline-strong);
 }
-.resume-employer {
-  margin: 0;
-  color: rgb(var(--bureau-text-primary));
-}
-.resume-title {
-  margin: var(--space-4) 0 0;
-  color: rgb(var(--bureau-text-secondary));
-}
-.resume-dates {
-  margin: var(--space-4) 0 0;
-  color: rgb(var(--bureau-text-muted));
-}
-.resume-education + .resume-education {
-  margin-top: var(--space-between);
-}
-/* One wrapped block, capped at the measure so the line length stays readable
-   rather than running the full pane width. */
-.resume-skills {
-  margin: 0;
-  max-width: var(--about-measure);
-  color: rgb(var(--bureau-text-muted));
+
+/* ── The timeline entrance ────────────────────────────────────────
+   A row resolves in place: the hairline above its node DRAWS DOWN, the node
+   scales up once the line reaches it, then the dates and the prose fade up
+   behind the node. Nothing moves horizontally and nothing scales but the
+   node, so the spine never appears to shift.
+
+     line   0 →240ms   scaleY 0 → 1
+     node 240 →400ms   scale  0 → 1
+     text 280 →520ms   opacity + 8px rise
+
+   The cadence BETWEEN rows is ROW_STAGGER_MS in resume-pane.tsx, and the
+   arrival line is ARRIVAL_FRACTION there too — both schedule attribute flips
+   rather than transitions. Everything about how one row MOVES is here;
+   everything about WHEN is there.
+
+   The hidden state lives inside the no-preference query rather than being
+   armed by a class from JS, and that is deliberate. Arming from an effect
+   means the rows paint at rest for one frame and then jump away — a flash on
+   every visit. Written this way, a reduced-motion visitor never matches the
+   rule at all: the rows are not hidden, so there is nothing to reveal and the
+   effect never constructs an observer. The two halves agree by construction
+   instead of by both being remembered.
+
+   The cost, stated: with JS disabled and motion allowed, the rows stay
+   hidden. This pane is behind a client-side navigation in a chat shell —
+   there is no no-JS route to it — so that state is unreachable. If the pane
+   ever gets a server-rendered URL, this becomes a real hole. */
+@media (prefers-reduced-motion: no-preference) {
+  .resume-row-line,
+  .resume-row-node,
+  .resume-row-dates,
+  .resume-row-body {
+    transition-timing-function: var(--motion-block-in-ease);
+  }
+  .resume-row-line {
+    transition: transform 240ms;
+  }
+  .resume-row-node {
+    transition: transform 160ms 240ms;
+  }
+  .resume-row-dates,
+  .resume-row-body {
+    transition: opacity 240ms 280ms, transform 240ms 280ms;
+  }
+  .resume-row[data-resolved="false"] .resume-row-line {
+    transform: scaleY(0);
+  }
+  .resume-row[data-resolved="false"] .resume-row-node {
+    transform: scale(0);
+  }
+  .resume-row[data-resolved="false"] .resume-row-dates,
+  .resume-row[data-resolved="false"] .resume-row-body {
+    opacity: 0;
+    transform: translateY(var(--space-8));
+  }
 }
 
 /* The same wash as the hero, on the deck pane. A SECOND pseudo-element rather
@@ -1653,11 +1818,28 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .about-spine { max-width: none; flex: none; order: 2; }
   .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; margin-top: 0; }
   .about-stack { flex-direction: column; }
-  /* The résumé's two columns stack, same breakpoint and same reason as the
-     mosaic: at this width a 240px meta column leaves the prose too narrow to
-     read. `within` between the facts and the paragraph they describe. */
-  .resume-role { flex-direction: column; gap: var(--space-within); }
-  .resume-role-meta { flex: none; }
+  /* The résumé, same breakpoint and same reason as the mosaic: a 96px date
+     column plus a 40px rail leaves ~200px of prose at 380, which is four
+     words a line. So the DATE COLUMN GOES and the rail stays — the spine is
+     the page's organising device and dropping it would cost more than it
+     saves. The rail spans both rows, so one line still runs the whole column
+     with no second element. */
+  .resume-row {
+    grid-template-columns: var(--resume-rail-col) minmax(0, 1fr);
+    grid-template-areas:
+      "rail dates"
+      "rail body";
+  }
+  /* The range goes horizontal once it is no longer a column: two stacked
+     lines above the employer read as two facts, one line reads as one. */
+  .resume-row-dates {
+    display: flex;
+    gap: var(--space-8);
+    margin-bottom: var(--space-within);
+  }
+  .resume-date-end { margin: 0; }
+  /* One column. Two would put the Design band's fifteen items at ~150px. */
+  .resume-bands { grid-template-columns: minmax(0, 1fr); }
   /* Full-width, per the mock's mobile note. `flex: none` because the basis
      above would otherwise size these by HEIGHT in a column — flex-basis
      resolves on the MAIN axis, which is vertical here.

@@ -38,6 +38,8 @@ const ALLOW = {
     "The SEND button fill, 42px tall, and only once there is something to send.",
   "components/chat/message-bubbles.tsx::no-accent-surface::background":
     "The 8px square IMPACT marker. A glyph, not a surface.",
+  "app/globals.css::no-accent-surface::.resume-row-node background":
+    "The 8px round node on the résumé timeline. Same judgment as the IMPACT marker one line up: it marks a point on a hairline, and the hairline is 1px wide. Education's node is the ring variant and is not accent at all.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────

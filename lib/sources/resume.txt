@@ -17,11 +17,29 @@ developing robust design systems, and crafting scalable product strategies.
 
 SKILLS & METHODOLOGIES
 
-Claude Code, Claude Design, Supabase, Github, Vercel, Anthropic API, Open AI
-API, Hotjar, v0, Lovable, Aura Build, Figma, Shadcn, Maze, UserTesting,
-Useberry, Lottie Lab, Magic Animator, Jitter, Miro, Design Thinking,
-Information Architecture, Design Systems, User Research, Prototyping, A/B
-Testing, Accessibility, Agile/Scrum, Product Strategy, UX Strategy
+AI & LLM work:
+Claude API, Open AI API, prompt and persona engineering, LLM output validation,
+Vercel AI SDK, Claude Code, Cursor, v0, Lovable, Claude Design
+
+Build & ship:
+TypeScript, React, Next.js, Node, Python, Supabase / PostgreSQL, Vercel, Vite,
+Tailwind, Git, Github, shadcn/ui, S3, Agile/Scrum
+
+Integrations:
+REST APIs built from scratch (Canny, Jira, Clarify), GraphQL, Slack apps,
+scheduled jobs
+
+Design:
+Design systems, design tokens, Figma, Framer, Storybook, Information
+Architecture, Prototyping, Design Thinking, Product Strategy, UX Strategy, Miro,
+Aura Build, Lottie Lab, Magic Animator, Jitter
+
+Research & analytics:
+User Research, A/B Testing, Heap, Hotjar, Contentsquare, Maze, UserTesting,
+Useberry, SQL
+
+Accessibility:
+WCAG 2.2 AA auditing and remediation, axe, screen-reader semantics
 
 
 EXPERIENCE
@@ -112,6 +130,17 @@ Volkswagen:
   over 112,000 customers per month to date.
 
 EDUCATION
+
+# NO YEARS HERE, DELIBERATELY. Three qualifications spread over six years say
+# less than the work does, and dating them invites arithmetic about age that
+# has nothing to do with whether Edwin can do the job. The Resume pane renders
+# these on the same spine as the roles with an empty date column, which is the
+# honest shape: a degree is not an event on the same axis as a job.
+#
+# This note exists because the omission already read as a gap once — a set of
+# design boards filled it in with 2015, 2011 and 2009, three numbers nobody
+# had written down. If you want years, that is a decision to make on purpose.
+# Do not add them to close a hole.
 
 Graduate Diploma, Interactive Design
 CFC Media Lab, Toronto, Ontario, Canada

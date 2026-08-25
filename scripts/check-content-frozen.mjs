@@ -51,6 +51,21 @@ const FROZEN = [
   "lib/voice-answers.ts",
   "scripts/build-context.mjs",
   "scripts/check-voice.mjs",
+  // WIDENED when the skills list became six labelled bands in resume.txt.
+  //
+  // lib/sources/ was already frozen, so the résumé's BYTES were safe. Its
+  // STRUCTURE was not: resume.txt now carries a format — "Label:" then a
+  // comma-separated run, commas inside brackets not being separators — and
+  // lib/resume.ts is the only thing that knows it. Rewrite the parser and the
+  // page renders different content from a byte-identical source. That is the
+  // same hole the note above describes for check:sources, one layer down: a
+  // self-consistent change on both sides of a contract that no byte comparison
+  // sees.
+  //
+  // This is the parser only. Nothing here is presentation — the Resume pane,
+  // its CSS and its animation are all outside the boundary, so a visual
+  // experiment still has everything it needs.
+  "lib/resume.ts",
 ]
 // Whole directories, frozen recursively.
 const FROZEN_DIRS = ["lib/sources"]
