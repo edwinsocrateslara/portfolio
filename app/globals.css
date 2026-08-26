@@ -268,35 +268,28 @@
      straddles that edge, so the rail's width is really the gap between the
      dates and the prose; the drawing happens on one pixel of it.
 
-     The column is DERIVED — the prose measure plus everything that sits left
-     of it — so it stays correct if either of the two above ever moves. It used
-     to be a typed 1092, the pane's content width at 1440, which is the size
-     the five arrangement boards were drawn at. That number was a description
-     of the window, not a decision about reading: it ran a 16px bullet to 956px
-     and 103 characters, against a comfortable band of 45-90. 720 puts the
-     widest rendered line at 78.
+     THE MEASURE CAPS THE PROSE, NOT THE PAGE. --resume-measure is applied to
+     .resume-row-body and to nothing else; the pane itself runs to the width of
+     the pane, like About and the deck.
 
-     ⚠ 720 IS THE RÉSUMÉ'S OWN MEASURE. It is not "the same as the chat
-     column", and nothing may be built on the two being equal — they land on
-     the same number for unrelated reasons and either is free to move. See the
-     note above .sampler on why there is no --content-width CSS var: one
-     already existed, mirrored CONTENT_WIDTH in lib/layout.ts, and was deleted
-     precisely because the 720 had two homes with nothing keeping them equal.
-     Tying this token to that constant would re-create it.
+     This replaced a --resume-column of 856px — the measure plus the two
+     columns above it — applied to the pane's root. That cap was solving a real
+     problem the wrong way. The bullets had been running to 956px and 103
+     characters, well past a comfortable 45-90, and capping the whole column
+     did fix the line length. But it also stopped the header, the rules and the
+     tools grid at 856 inside a 1092 pane, making the résumé a narrower page
+     than any other surface for a reason that only ever applied to sentences.
 
-     Capping the WHOLE column rather than only the prose is the reason the
-     header, the rules, the tools grid and the bullets all end on one right
-     edge. Capping the body alone was measured and is cheaper — the tools block
-     does not move, so the first role stays at 674px instead of 698 — but it
-     leaves the grid ending at 1092 and every bullet at 856, which is two right
-     edges on a page whose whole claim is one axis. 24px of tools height and
-     24px before the first role is what that costs. */
+     The argument for the wider cap was one right edge. That argument was
+     weaker than it looked: the thing that makes this page read as one axis is
+     the RAIL, which sits at x=96 on every row of both spines and is unaffected
+     either way. The right edge was a second, softer claim riding on the first.
+     Measured after: the tools grid gets its full 1092 and is 24px SHORTER at
+     two columns of 530, the first role moves 698 -> 674, and the pane is 24px
+     shorter overall. The prose is unchanged at 78 characters. */
   --resume-date-col: 96px;
   --resume-rail-col: 40px;
   --resume-measure: 720px;
-  --resume-column: calc(
-    var(--resume-measure) + var(--resume-date-col) + var(--resume-rail-col)
-  );
   --about-measure: 588px;
   /* The BOTTOM of the same band. The spine was flex: 1 1 0 with min-width: 0,
      so it took whatever the mosaic left and could take nothing: measured at
@@ -1412,14 +1405,10 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    chat column — a résumé is a long list of short entries, and at 720 the six
    roles become a wall.
 
-   The whole pane is capped at --resume-column rather than each piece being
-   capped separately, so the header, the rules, the tools grid and the spine
-   all end on the same right edge at any width. That cap is derived from
-   --resume-measure; the reasoning, and the token it must not be tied to, are
-   at its definition. */
-.resume {
-  max-width: var(--resume-column);
-}
+   The pane is NOT capped. It fills its scroller like About and the deck do,
+   and only the prose column inside the spine takes a measure. */
+/* No max-width. The pane's own padding is the right edge, as on every other
+   surface. The measure lives on .resume-row-body instead. */
 /* `group`, not `section`. 64 is the landing page's band rung and it is wrong
    here twice over: after an <hr> it doubles a boundary that is already drawn,
    and at the Experience → Education seam it opens 96px of empty rail between
@@ -1494,9 +1483,13 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   grid-area: rail;
   position: relative;
 }
+/* THE ONLY THING ON THIS PAGE THAT IS CAPPED. Employer, title, bullets and
+   degrees all sit here, so capping the body caps every sentence in the pane
+   without narrowing the header, the rules or the tools grid above it. */
 .resume-row-body {
   grid-area: body;
   min-width: 0;
+  max-width: var(--resume-measure);
   padding-bottom: var(--space-group);
 }
 /* Both offsets are DERIVED from the 12px mono line the node sits beside, not
