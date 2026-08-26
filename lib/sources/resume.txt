@@ -17,29 +17,44 @@ developing robust design systems, and crafting scalable product strategies.
 
 SKILLS & METHODOLOGIES
 
+# CASING RULE, for the whole block below: a proper noun or a product name keeps
+# its canonical form, and everything else is sentence case — first word
+# capitalised, nothing else. "Design thinking" and "User research" are
+# practices, not products, so they take the rule. "Claude Code" and "Aura Build"
+# are what those things are called, so they do not.
+#
+# FOUR PIECES ARE LOWERCASE ON PURPOSE. Do not "fix" them:
+#
+#   v0          the product is named v0, not V0
+#   shadcn/ui   both halves — "shadcn", and the "ui" after the slash
+#   axe         Deque's accessibility engine ships lowercase
+#
+# Each is the product's own orthography. Capitalising one makes this list wrong
+# in a way that reads as careful, which is the worst kind of wrong.
+
 AI & LLM work:
-Claude API, Open AI API, prompt and persona engineering, LLM output validation,
+Claude API, OpenAI API, Prompt and persona engineering, LLM output validation,
 Vercel AI SDK, Claude Code, Cursor, v0, Lovable, Claude Design
 
 Build & ship:
 TypeScript, React, Next.js, Node, Python, Supabase / PostgreSQL, Vercel, Vite,
-Tailwind, Git, Github, shadcn/ui, S3, Agile/Scrum
+Tailwind, Git, GitHub, shadcn/ui, S3, Agile/Scrum
 
 Integrations:
 REST APIs built from scratch (Canny, Jira, Clarify), GraphQL, Slack apps,
-scheduled jobs
+Scheduled jobs
 
 Design:
-Design systems, design tokens, Figma, Framer, Storybook, Information
-Architecture, Prototyping, Design Thinking, Product Strategy, UX Strategy, Miro,
+Design systems, Design tokens, Figma, Framer, Storybook, Information
+architecture, Prototyping, Design thinking, Product strategy, UX strategy, Miro,
 Aura Build, Lottie Lab, Magic Animator, Jitter
 
 Research & analytics:
-User Research, A/B Testing, Heap, Hotjar, Contentsquare, Maze, UserTesting,
+User research, A/B testing, Heap, Hotjar, Contentsquare, Maze, UserTesting,
 Useberry, SQL
 
 Accessibility:
-WCAG 2.2 AA auditing and remediation, axe, screen-reader semantics
+WCAG 2.2 AA auditing and remediation, axe, Screen-reader semantics
 
 
 EXPERIENCE
