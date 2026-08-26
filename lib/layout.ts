@@ -1,7 +1,22 @@
-export const CONTENT_WIDTH = 720 // chat column, inputs, welcome screen
+// THE READING MEASURE LIVES IN CSS, as --prose-measure in app/globals.css.
+// This is the one place that still needs it as a NUMBER: next/image's `sizes`
+// attribute is parsed by the optimizer at build time and cannot resolve a
+// custom property, so a var() there produces no candidate at all.
+//
+// A MIRROR THAT IS ALLOWED TO DRIFT, which is the only reason it is tolerable
+// to have two homes for 720 again. `sizes` picks which pre-rendered candidate
+// to download; being twenty pixels stale costs a slightly larger file and
+// nothing else. A stale LAYOUT value would be a visible bug, which is why the
+// layout half moved to the token and this half is documented as a hint rather
+// than left looking like a second source of truth.
+//
+// It used to be the layout value too, applied as an inline maxWidth on the
+// chat column, the input, the chips and the sampler. Those now read
+// var(--prose-measure) directly.
+export const IMAGE_SIZES_MEASURE = 720
 
 // Landing hero measures. Not spacing — these are line-length limits, so they
-// are not on the 4px scale any more than CONTENT_WIDTH is.
+// are not on the 4px scale any more than the reading measure is.
 //
 // HERO_MEASURE keeps the headline to TWO lines at desktop.
 //
@@ -17,7 +32,7 @@ export const CONTENT_WIDTH = 720 // chat column, inputs, welcome screen
 // option rather than a regression.
 export const HERO_MEASURE = 1120
 
-// Bordered blocks inside the 720px chat column, capped so they read as objects
+// Bordered blocks inside the chat column, capped so they read as objects
 // sitting in the column rather than as the column itself.
 //
 // CARD and CALLOUT are deliberately NOT merged. CARD is the thumbnail-plus-text

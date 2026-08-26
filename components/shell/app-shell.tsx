@@ -14,7 +14,7 @@ import { AboutPane } from "@/components/about/about-pane"
 import { ResumePane } from "@/components/resume/resume-pane"
 import type { Resume } from "@/lib/resume"
 import { Sparkle } from "@/components/ui/sparkle"
-import { CONTENT_WIDTH, HERO_MEASURE } from "@/lib/layout"
+import { HERO_MEASURE } from "@/lib/layout"
 import { buildResponse, allProjects } from "@/lib/scripted-responses"
 import {
   AssistantBubble,
@@ -25,7 +25,11 @@ import {
 import { useScriptedStream, generateMessageId, HOME_THREAD } from "@/hooks/use-scripted-stream"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
-const CHAT_COLUMN = { maxWidth: CONTENT_WIDTH, margin: "0 auto" } as const
+// The chat column IS the reading measure — that is why it is the width it is,
+// and why the input, the chips and the sampler match it rather than having
+// widths of their own. One token, in CSS, so a change to how wide a sentence
+// runs moves the whole column with it. See --prose-measure.
+const CHAT_COLUMN = { maxWidth: "var(--prose-measure)", margin: "0 auto" } as const
 
 // Derived from the answers, never listed here. See lib/chips.ts — adding an
 // answer with placement "front-door" changes this with no edit to this file.
@@ -543,7 +547,7 @@ export function AppShell({
                     data-hero-col="input"
                     style={{
                       width: "100%",
-                      maxWidth: CONTENT_WIDTH,
+                      maxWidth: "var(--prose-measure)",
                       marginTop: "var(--space-group)",
                       animationDelay: delay(120),
                     }}
@@ -570,7 +574,7 @@ export function AppShell({
                     data-hero-col="chips"
                     style={{
                       width: "100%",
-                      maxWidth: CONTENT_WIDTH,
+                      maxWidth: "var(--prose-measure)",
                       marginTop: "var(--space-between)",
                       display: "flex",
                       flexWrap: "wrap",

@@ -6,7 +6,7 @@ import { Sparkle } from "@/components/ui/sparkle"
 import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { DOCS, type DocKey } from "@/lib/constants"
-import { CONTENT_WIDTH, CARD_WIDTH, CALLOUT_WIDTH } from "@/lib/layout"
+import { IMAGE_SIZES_MEASURE, CARD_WIDTH, CALLOUT_WIDTH } from "@/lib/layout"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
 import { SlideGrid } from "@/components/case-study/slide-grid"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
@@ -322,7 +322,7 @@ export function ImageBubble({
           alt={image.alt || ""}
           fill
           className="object-cover"
-          sizes={`${CONTENT_WIDTH}px`}
+          sizes={`${IMAGE_SIZES_MEASURE}px`}
         />
       </button>
       {lightboxOpen && (
@@ -368,7 +368,7 @@ export function ImageRowBubble({
               alt={img.alt || ""}
               fill
               className="object-cover"
-              sizes={`${CONTENT_WIDTH}px`}
+              sizes={`${IMAGE_SIZES_MEASURE}px`}
             />
           </button>
         ))}
