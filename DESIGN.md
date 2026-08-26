@@ -411,10 +411,18 @@ voice and the 16px body voice, because 12 reads small on a 44px target and 16
 reads like prose inside a pill. The leading is still the derived 1.5x; 21 is
 off-grid too, and line-height has never been asked to be on it.
 
-Other exceptions to the 4px grid, all deliberate: **1px** borders and hairlines, the
-**2px** radii below, and **9999px** for fully-round pills. Letter-spacing
-is optical tracking rather than layout, is sub-pixel by nature, and is
-also exempt.
+Other exceptions to the 4px grid, all deliberate: **1px** borders and
+hairlines, the **2px** left border on the active rail row, and **9999px** for
+fully-round pills. Letter-spacing is optical tracking rather than layout, is
+sub-pixel by nature, and is also exempt.
+
+This line used to name **2px radii** as an exception too. It no longer exists:
+the radius scale opened flat at 2px and was replaced by the four steps below,
+every one of them a multiple of 4 except the pill. The exception outlived the
+values it was written for — an exception with no consumer is a permission
+nobody asked for, so it retires rather than waiting for a use. `check-design`
+allowed `border-radius: 2px` on the strength of this sentence; it no longer
+does.
 
 Exempt from the grid is not exempt from the token layer. Tracking lives in
 `--track-*`, named by the voice or the step it corrects and never by the

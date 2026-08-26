@@ -104,7 +104,6 @@
   --space-32: 32px;
   --space-40: 40px;
   --space-44: 44px;  /* touch-target floor; see .rail-sheet-close */
-  --space-48: 48px;
   --space-56: 56px;
   --space-64: 64px;
   --space-80: 80px;
@@ -206,19 +205,6 @@
      three separate "documented exceptions" before becoming a token — which is
      how a missing token hides. One name, one value, one place to change it. */
   --space-optical-meta: 5px;
-
-  /* Optical cap-top offset for a --type-label line. The half-leading is
-     derivable — (18 − 12) / 2 — but the gap from the em box's top to IBM Plex
-     Mono's cap top is a property of the typeface, not of the box, so CSS
-     cannot compute it. Measured at 1px: the label's painted cap sits 4px below
-     its border-box top, and half-leading accounts for 3 of that.
-     Used to align a bordered box beside a label to the label's INK rather than
-     to its box. The h2's equivalent is 10px (8 half-leading + 2), which is why
-     this cannot be one shared token — the inset is per type step, and reusing
-     the heading's would land the grid 6px high. */
-  --optical-label-cap: calc(
-    (var(--type-label-lh) - var(--type-label-size)) / 2 + 1px
-  );
 
 
   /* ── Hero glow ─────────────────────────────────────────────────
@@ -595,13 +581,13 @@ body {
     line-height: var(--type-hero-lh);
     letter-spacing: var(--track-display-hero);
   }
-  .type-subhead {
-    font-family: var(--ff-archivo);
-    font-weight: 700;
-    font-size: var(--type-subhead-size);
-    line-height: var(--type-subhead-lh);
-    letter-spacing: var(--track-display-sub);
-  }
+  /* THE `subhead` STEP HAS TOKENS BUT NO CLASS. 24/36 is live and load-bearing
+     — it is what .type-hero and .type-h2 both step down to below 640px, at the
+     bottom of this block — but no element has ever worn it directly. The class
+     rule was deleted rather than kept "in case": an unused class is an
+     invitation to reach for a step by name without asking whether the element
+     wants the ramp's 24 or the h2 it is standing in for. Add it back the day
+     something needs 24/36 in its own right. */
   .type-title {
     font-family: var(--ff-archivo);
     font-weight: 700;
@@ -1179,8 +1165,13 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      no cap inset on the other side of the pairing to meet. An optical version
      of this offset pushed the frames 7px down to chase ink that the picture
      has no equivalent of, which read as the images sitting low.
-     The metadata line above still uses --optical-label-cap, where both sides
-     of that pairing are type.
+     Nothing on this page does the optical version. There WAS a token for it —
+     --optical-label-cap, a per-step cap inset — and this note used to claim
+     the metadata line still used it. It did not, and by the time anyone
+     checked, nothing did: the token had zero references and the sentence
+     pointing at it was the only evidence it had ever been wanted. Both are
+     gone. A comment naming a dead token is worse than no comment, because it
+     reads as a working example.
 
      It does NOT survive the heading or the location wrapping to two lines — at
      that point the offset is a line short. The spine's min-width keeps that

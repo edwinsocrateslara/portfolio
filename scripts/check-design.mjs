@@ -62,7 +62,13 @@ const TYPE_PROPS = ["fontSize", "lineHeight", "fontFamily", "fontWeight", "lette
 // system-level and stated in the doc, so they belong in the rule. Per-instance
 // exceptions belong in ALLOW, where somebody has to review them.
 const PROP_EXCEPTIONS = {
-  borderRadius: new Set([1, 2, 9999]),
+  // 2 is GONE from borderRadius. The system's radius scale is 4/8/12/9999 —
+  // the flat 2px it opened with was replaced, DESIGN.md's grid-exception line
+  // still named it, and this set still permitted it. Nothing in the repo
+  // writes a 2px radius, so the permission was doing no work except being
+  // available. borderWidth keeps 2: the active rail row's left border is 2px
+  // and is named in DESIGN.md.
+  borderRadius: new Set([1, 9999]),
   borderWidth: new Set([1, 2]),
 }
 
