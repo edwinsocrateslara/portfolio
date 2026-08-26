@@ -411,10 +411,19 @@ voice and the 16px body voice, because 12 reads small on a 44px target and 16
 reads like prose inside a pill. The leading is still the derived 1.5x; 21 is
 off-grid too, and line-height has never been asked to be on it.
 
-Other exceptions to the 4px grid, all deliberate: **1px** borders and
-hairlines, the **2px** left border on the active rail row, and **9999px** for
-fully-round pills. Letter-spacing is optical tracking rather than layout, is
-sub-pixel by nature, and is also exempt.
+Other exceptions to the 4px grid, all deliberate: **1px** hairlines — as a
+border, and equally as a `width` or a `height` where the hairline is drawn as
+a box rather than an edge — the **2px** left border on the active rail row and
+the focus ring that matches it, and **9999px** for fully-round pills.
+Letter-spacing is optical tracking rather than layout, is sub-pixel by nature,
+and is also exempt.
+
+The hairline clause used to say "1px borders". It was written when every
+hairline in the system was a `border`, and the résumé's timeline is the case
+that broke it: the spine's rule is a `height: 1px` box and its line is a
+`width: 1px` box, because a border cannot be animated from one end. Same
+value, same reason, different property — so the exception is about the
+HAIRLINE, not about the property it happens to be spelled with.
 
 This line used to name **2px radii** as an exception too. It no longer exists:
 the radius scale opened flat at 2px and was replaced by the four steps below,
@@ -423,6 +432,22 @@ values it was written for — an exception with no consumer is a permission
 nobody asked for, so it retires rather than waiting for a use. `check-design`
 allowed `border-radius: 2px` on the strength of this sentence; it no longer
 does.
+
+**Type may be set in a `.type-*` rule, or once on `body` from the ramp's own
+tokens, and nowhere else.** The second clause is the document default, and it
+is narrow on purpose: `body { font-size: var(--type-body-size) }` is permitted,
+`body { font-size: 16px }` is not, even though the two render the same today.
+The default exists so it cannot drift from the step it mirrors, and a literal
+can. `check-design`'s `css-inline-type` enforces exactly that shape.
+
+It was made explicit late. Before, `body` set only the family, and the default
+resolved to 16/24/400 Archivo out of three unrelated sources — the browser's
+own `font: medium`, Tailwind preflight's `line-height: 1.5`, and that one
+declaration. That happens to be exactly `.type-body`, which is why a missing
+`.type-*` class has never produced a visible symptom on this site: an unclassed
+element renders identically to a classed one. An audit across all six surfaces
+found seven unclassed text nodes, every one `.sr-only` and none of them
+visible. The discipline held. It was held by habit, not by the stylesheet.
 
 Exempt from the grid is not exempt from the token layer. Tracking lives in
 `--track-*`, named by the voice or the step it corrects and never by the

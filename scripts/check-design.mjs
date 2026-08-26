@@ -28,7 +28,7 @@ const ROOT_DIR = process.cwd()
 // three separate `marginTop: 5` comments is how a missing token hides.
 const ALLOW = {
   "app/layout.tsx::no-raw-color::hex #131313":
-    "PWA themeColor — read by browser chrome before CSS loads, so it cannot be a CSS var.",
+    "PWA themeColor - read by browser chrome before CSS loads, so it cannot be a CSS var.",
 
   // Rule 6. Each of these is a CONTROL or a MARK, which is what the accent is
   // for; the rule cannot measure rendered size, so the judgment is recorded
@@ -39,7 +39,59 @@ const ALLOW = {
   "components/chat/message-bubbles.tsx::no-accent-surface::background":
     "The 8px square IMPACT marker. A glyph, not a surface.",
   "app/globals.css::no-accent-surface::.resume-row-node background":
-    "The 8px round node on the résumé timeline. Same judgment as the IMPACT marker one line up: it marks a point on a hairline, and the hairline is 1px wide. Education's node is the ring variant and is not accent at all.",
+    "The 8px round node on the resume timeline. Same judgment as the IMPACT marker one line up: it marks a point on a hairline, and the hairline is 1px wide. Education's node is the ring variant and is not accent at all.",
+
+  // ── Rules 1-5, CSS dialect ─────────────────────────────────────────────
+  // Every entry below is a value that was ALREADY documented somewhere — in
+  // DESIGN.md, or in a comment at its own definition — before this checker
+  // could see it. Recording them here is not silencing them: it is moving a
+  // reason a person had written into a place a program can check, so the next
+  // off-grid value in this file is the only thing the report shows.
+  //
+  // These were ruled on ONE AT A TIME, before any were added, precisely so the
+  // list could not become the place findings go to stop being findings.
+  "app/globals.css::css-off-grid:::root — --bureau-radius-chip: 9999px":
+    "The fully-round pill. DESIGN.md names 9999px as a grid exception and the radius table gives it a row.",
+  "app/globals.css::css-off-grid:::root — --track-display-hero: -1px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-display-h2: -1px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-display-sub: -0.6px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-display-title: -0.4px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-caption: 0.4px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-badge: 0.8px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-caps-body: 1.4px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --track-caps-label: 1.2px":
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+  "app/globals.css::css-off-grid:::root — --type-label-lh: 18px":
+    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
+  "app/globals.css::css-off-grid:::root — --type-control-lh: 21px":
+    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
+  "app/globals.css::css-off-grid:::root — --type-title-lh: 30px":
+    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
+  "app/globals.css::css-off-grid:::root — --type-hero-lh: 42px":
+    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
+  "app/globals.css::css-off-grid:::root — --type-control-size: 14px":
+    "DESIGN.md: \"One type size is off the 4px grid: control, at 14/21. It is the only one, and it is deliberate\" - a chip label wants to sit between the 12px label voice and the 16px body voice.",
+  "app/globals.css::css-off-grid:::root — --space-optical-meta: 5px":
+    "The title-to-meta optical gap. Documented at its definition: the meta line's own leading already separates the two, so `within` (8px) reads as a break rather than a pairing. It was written out as three separate documented exceptions before becoming one token, which is the whole argument for it having a name.",
+  "app/globals.css::css-off-grid:::root — --input-border: 1px":
+    "The hairline, named so the chat input's height arithmetic can reference it rather than repeating the 1.",
+  "app/globals.css::css-off-grid:::root — --rail-inset: calc(var(--space-8) + 2px + var(--space-12))":
+    "22px, and deliberately written as its composition: the list's padding, the 2px active bar, and the row's own padding. The 2px is the rail bar DESIGN.md names as an exception. Writing it as the sum is what keeps the section headers aligned with the rows under them - they sat at 24 and 22 when it was a number.",
+  "app/globals.css::css-off-grid:::root — --bureau-focus-ring: 0 0 0 2px rgb(var(--bureau-accent) / 0.11)":
+    "A glow, not the focus indicator. The indicator is the border: hairline -> text-secondary, measured on the running page at 4.76:1 between states and 7.11:1 against the ground, which is what satisfies 1.4.11. This ring reads 1.23:1 and cannot count as indicator area under 1.4.11 or 2.4.13, so its size is a visual decision. 2px matches the active rail row's border, the width DESIGN.md already names. 4px would need no entry at all; it was not taken because a 4px glow at 11% reads as a halo rather than an edge.",
+  "app/globals.css::css-off-grid::.resume-rule — height: 1px":
+    "The 1px hairline, drawn as a box rather than as an edge. DESIGN.md's exception is about the HAIRLINE, not the property it is spelled with - a border cannot be animated from one end, and the timeline draws this line downward.",
+  "app/globals.css::css-off-grid::.resume-row-line — width: 1px":
+    "The 1px hairline, drawn as a box rather than as an edge. DESIGN.md's exception is about the HAIRLINE, not the property it is spelled with - a border cannot be animated from one end, and the timeline draws this line downward.",
+  "app/globals.css::css-off-grid::.resume-row-node — left: calc((1px - var(--space-8)) / 2)":
+    "Centres the 8px timeline node on the 1px hairline: (1 - 8) / 2. Derived from the hairline it straddles rather than measured, so it stays correct if the node size moves. -3.5px is the only sub-pixel value on the pane.",
 }
 
 // ── Rule 2 config ────────────────────────────────────────────────────────
@@ -345,6 +397,173 @@ function checkFile(file, raw) {
   return found
 }
 
+// ── Rules 1-5, CSS dialect ───────────────────────────────────────────────
+// Rules 1-5 walked `.tsx` only. That was not a scoping decision anybody made;
+// it fell out of `walk()` matching /\.tsx?$/, and it meant the checker was
+// blind to roughly nine tenths of this system's layout. This repo styles in
+// hand-written CSS and keeps `style={{}}` almost empty — rule 5, which reports
+// every bare length in a style object, currently finds ZERO across the whole
+// app. A gate returning nothing because it is looking at an empty room reads
+// exactly like a gate returning nothing because the room is clean.
+//
+// Demonstrated rather than argued: `padding-left: 13px` and `margin: 0 0 7px`
+// were pasted into globals.css and check:design still printed TOTAL 0.
+//
+// These are the same five invariants in the other dialect. Rule 3 has no CSS
+// form — there are no Tailwind class strings in a stylesheet — so four of the
+// five port. They are REPORT-ONLY for now: switching ~90% of the layout from
+// unchecked to build-failing in one commit would mean triaging every finding
+// under time pressure, which is how real exceptions get silenced with a token
+// instead of recorded with a reason. They graduate to failing once each
+// finding has been ruled on.
+const CSS_TYPE_PROPS = ["font-size", "line-height", "font-family", "font-weight"]
+
+// The ONE shape allowed outside a .type-* rule: `body`, set from the ramp.
+// A property missing from this table can never be satisfied, which is how
+// font-weight stays out of the document default without a second rule.
+const RAMP_SHAPE = {
+  "font-size": /^var\(--type-body-size\)$/,
+  "line-height": /^var\(--type-body-lh\)$/,
+  "font-family": /^var\(--ff-[a-z-]+\)$/,
+}
+
+// Same set as LENGTH_PROPS, spelled the way CSS spells it. Kept parallel on
+// purpose: a property governed in a style object and ungoverned in a
+// stylesheet is the hole this whole section exists to close.
+const CSS_LENGTH_PROPS = new Set([
+  "width", "height", "min-width", "max-width", "min-height", "max-height",
+  "top", "right", "bottom", "left", "inset",
+  "margin", "margin-top", "margin-bottom", "margin-left", "margin-right",
+  "padding", "padding-top", "padding-bottom", "padding-left", "padding-right",
+  "gap", "row-gap", "column-gap",
+  "border-radius", "border-width", "flex-basis",
+  "border", "border-top", "border-right", "border-bottom", "border-left",
+  "outline", "outline-offset",
+])
+const CSS_PROP_EXCEPTIONS = Object.fromEntries([
+  ["border-radius", PROP_EXCEPTIONS.borderRadius],
+  // Every border-ish property takes the same stated exception. Spelled out
+  // rather than pattern-matched so adding one is a visible edit.
+  ...["border-width", "border", "border-top", "border-right", "border-bottom",
+      "border-left", "outline", "outline-offset"].map((k) => [k, PROP_EXCEPTIONS.borderWidth]),
+])
+
+/**
+ * Every declaration in a stylesheet, with the selector stack it sits under.
+ *
+ * Written rather than borrowed because the offsets have to survive: every
+ * finding reports a line in the ORIGINAL file, so comments are blanked to
+ * spaces instead of removed. The stack matters for at-rules — a declaration
+ * inside `@media (...) { .type-h2 { ... } }` belongs to `.type-h2`, and a
+ * walker that only records preludes at depth 0 labels it `@media`, which is
+ * both useless in a report and wrong for the `.type-*` exemption below.
+ */
+function cssDeclarations(raw) {
+  const src = stripCssComments(raw)
+  const out = []
+  const stack = []
+  let buf = "", start = 0
+  for (let i = 0; i < src.length; i++) {
+    const c = src[i]
+    if (c === "{") { stack.push(buf.trim().replace(/\s+/g, " ")); buf = ""; start = i + 1; continue }
+    if (c === "}") { stack.pop(); buf = ""; start = i + 1; continue }
+    if (c === ";" && !stack.length) { buf = ""; start = i + 1; continue }
+    if (c === ";" && stack.length) {
+      const text = src.slice(start, i).trim()
+      const colon = text.indexOf(":")
+      if (colon > 0) {
+        out.push({
+          prop: text.slice(0, colon).trim(),
+          value: text.slice(colon + 1).trim(),
+          stack: [...stack],
+          sel: stack[stack.length - 1] || "?",
+          start,
+        })
+      }
+      buf = ""; start = i + 1; continue
+    }
+    buf += c
+  }
+  return out
+}
+
+function checkCssLayout(file, raw) {
+  const found = []
+  const add = (rule, detail, d) =>
+    found.push({ file, rule, detail: `${d.sel} — ${detail}`, line: lineAt(raw, d.start), reportOnly: true })
+
+  for (const d of cssDeclarations(raw)) {
+    const isToken = d.prop.startsWith("--")
+    // `:root` is where the system's values are DEFINED. A rule that flagged
+    // the token block would be flagging the token layer for existing.
+    const inRoot = d.stack.some((s) => /(^|\s|,):root\b/.test(s) || s.trim() === ":root")
+
+    // 1 — type declared outside the type layer.
+    //
+    //     "Type may be set in a .type-* rule, or once on `body` from the
+    //     ramp's own tokens, and nowhere else." This is that sentence, and the
+    //     second clause is deliberately narrow: it permits the SHAPE, not the
+    //     selector. `body { font-size: 16px }` is the same value as
+    //     `var(--type-body-size)` and fires anyway, because the point of the
+    //     document default is that it cannot drift from the step it mirrors —
+    //     and a literal can.
+    //
+    //     font-weight has no ramp token, so nothing satisfies the permitted
+    //     shape and any attempt to set it on body fires. That is intended:
+    //     the default's weight is the UA's 400, which happens to equal
+    //     .type-body's, and the next person to notice should have to argue for
+    //     a token rather than type a number.
+    if (CSS_TYPE_PROPS.includes(d.prop) && !isToken) {
+      const inTypeLayer = d.stack.some((s) => /\.type-[a-z0-9-]+/.test(s))
+      const isDocumentDefault =
+        d.stack.length === 1 && d.stack[0].trim() === "body" && RAMP_SHAPE[d.prop]?.test(d.value)
+      if (!inTypeLayer && !isDocumentDefault) add("css-inline-type", `${d.prop}: ${d.value}`, d)
+    }
+
+    // 4 — raw colour literals. Hex anywhere, and a numeric rgb()/rgba() —
+    //     `rgb(var(--x))` is the correct form and starts with a letter, so the
+    //     digit in the pattern is what separates the two.
+    if (!(isToken && inRoot)) {
+      for (const [re, label] of [[/#[0-9a-fA-F]{3,8}\b/g, "hex"], [/\brgba?\(\s*[\d.]/g, "rgba"]]) {
+        re.lastIndex = 0
+        let m
+        while ((m = re.exec(d.value))) add("css-raw-color", `${d.prop}: ${label} ${m[0]}`, d)
+      }
+    }
+
+    // 2 and 5 — px literals in a length property. A custom property whose name
+    //     says it is a length counts too: --rail-inset hides a 2px border
+    //     inside a calc, and that is exactly the kind of value this looks for.
+    const lengthish = CSS_LENGTH_PROPS.has(d.prop) || (isToken && /px/.test(d.value))
+    if (!lengthish) continue
+
+    // A :root custom property whose whole value is one bare length IS the
+    // scale — `--space-16: 16px` is the definition of 16, and flagging it
+    // would be flagging the token layer for holding values. Anything richer
+    // than that is a literal smuggled into a composition: --rail-inset hides
+    // a 2px border inside a calc of three tokens, and --bureau-focus-ring
+    // carries a 3px spread inside a shadow list. Those are exactly the values
+    // that end up with no home and no reason.
+    //
+    // The exemption is for ON-GRID definitions only. An OFF-GRID one is a
+    // deliberate exception by definition, and the whole point of this pass is
+    // that those get recorded in ALLOW with their reason rather than living
+    // wherever somebody happened to type them.
+    const isBareDefinition = isToken && inRoot && /^-?[\d.]+px$/.test(d.value)
+
+    const exceptions = CSS_PROP_EXCEPTIONS[d.prop]
+    for (const m of d.value.matchAll(/(-?\d*\.?\d+)px/g)) {
+      const n = Number(m[1])
+      if (n === 0) continue
+      if (exceptions?.has(Math.abs(n))) continue
+      const offGrid = !Number.isInteger(n) || n % 4 !== 0
+      if (isBareDefinition && !offGrid) continue
+      add(offGrid ? "css-off-grid" : "css-bare-length", `${d.prop}: ${d.value}`, d)
+    }
+  }
+  return found
+}
+
 // ── Rule 7 — the tracking ramp ───────────────────────────────────────────
 // Reads globals.css only. Two halves, and they fail for opposite reasons:
 //
@@ -459,6 +678,39 @@ const FIXTURE_TRACK_GOOD = `
 :root { --track-caps-body: 1.4px; --track-caps-label: 1.2px; }
 .type-thing { letter-spacing: var(--track-caps-label); }
 `
+// Rules 1-5 in CSS. Every line of BAD must trip exactly the rule named beside
+// it; GOOD is the same shapes written correctly, plus the three things that
+// most plausibly produce a false positive — the :root token block, a `.type-*`
+// rule setting type (which is its job), and a stated 1px/9999px exception.
+const FIXTURE_CSS_LAYOUT_BAD = `
+.a { padding-left: 13px; }                         /* off-grid */
+.b { margin: 0 0 7px; }                            /* off-grid, 0 ignored */
+.c { gap: 16px; }                                  /* on-grid literal, rule 5 */
+.d { font-size: 15px; line-height: 22px; }         /* type outside .type-* */
+.e { color: #ff0000; background: rgba(0,0,0,.5); } /* raw colour */
+:root { --thing-inset: calc(var(--space-8) + 3px); } /* off-grid inside a calc */
+:root { --odd-step: 5px; }                         /* off-grid DEFINITION still reported */
+.i { border: 3px solid var(--hairline); }          /* shorthand, past the stated exception */
+body { font-size: 16px; }                          /* the RIGHT value, the wrong kind — still fires */
+body { font-weight: 400; }                         /* no ramp token for weight, so nothing permits it */
+body { line-height: var(--type-title-lh); }        /* a ramp token, but not the body step */
+.j body { font-size: var(--type-body-size); }      /* the shape, but not the document default */
+@media (max-width: 900px) { .f { margin-top: 9px; } } /* inside an at-rule */
+`
+const FIXTURE_CSS_LAYOUT_GOOD = `
+/* padding-left: 13px and #ff0000 inside a comment must not trip. */
+:root {
+  --bureau-bg: 19 19 19;
+  --hairline: rgb(255 255 255 / 0.14);
+  --space-16: 16px;
+  --type-body-size: 16px;
+}
+.type-body { font-family: var(--ff-archivo); font-size: var(--type-body-size); line-height: var(--type-body-lh); font-weight: 400; }
+@media (max-width: 640px) { .type-h2 { font-size: var(--type-subhead-size); } }
+body { font-family: var(--ff-archivo); font-size: var(--type-body-size); line-height: var(--type-body-lh); }
+.g { padding: var(--space-16); gap: var(--space-within); color: rgb(var(--bureau-text-primary)); }
+.h { border-width: 1px; border-radius: 9999px; border: 2px solid var(--hairline); outline-offset: 2px; }
+`
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
@@ -512,6 +764,32 @@ function selfTest() {
     if (!bad.some((f) => f.rule === rule))
       problems.push(`control: rule "${rule}" did NOT fire on the bad fixture — matcher is broken`)
   }
+
+  // Rules 1-5 in CSS. This is the control that did not exist, and its absence
+  // is why check:design reported TOTAL 0 on a stylesheet with 13px in it.
+  const cssLayoutBad = checkCssLayout("<fixture-css-layout-bad>", FIXTURE_CSS_LAYOUT_BAD)
+  const cssLayoutGood = checkCssLayout("<fixture-css-layout-good>", FIXTURE_CSS_LAYOUT_GOOD)
+  const cssHits = (rule) => cssLayoutBad.filter((f) => f.rule === rule)
+  for (const [rule, want] of [["css-off-grid", 6], ["css-bare-length", 1], ["css-inline-type", 6], ["css-raw-color", 2]]) {
+    if (cssHits(rule).length !== want)
+      problems.push(
+        `control: rule "${rule}" found ${cssHits(rule).length}/${want} in the bad CSS fixture — ` +
+        `the CSS dialect is broken, and a clean CSS report would mean nothing`
+      )
+  }
+  // The at-rule case specifically: a declaration nested inside @media must be
+  // reached, and must be labelled with its own selector rather than the query.
+  if (!cssHits("css-off-grid").some((f) => /^\.f — margin-top/.test(f.detail)))
+    problems.push('control: rule "css-off-grid" did not reach a declaration nested inside @media')
+  // A px hidden inside a calc on a custom property is the --rail-inset shape.
+  if (!cssHits("css-off-grid").some((f) => /--thing-inset/.test(f.detail)))
+    problems.push('control: rule "css-off-grid" did not look inside a calc() on a custom property')
+  // Everything in the CSS layer is report-only for now. If one of these ever
+  // lands in `violations` it starts failing builds without anyone deciding to.
+  if (cssLayoutBad.some((f) => !f.reportOnly))
+    problems.push("control: a CSS-layer finding was not marked reportOnly — it would fail the build")
+  for (const f of cssLayoutGood)
+    problems.push(`control: false positive on the good CSS fixture — ${f.rule} / ${f.detail}`)
 
   // Rule 5 must fire on an ON-GRID bare length. That is the whole reason it
   // exists — if it only fired on off-grid values it would just be rule 2.
@@ -575,6 +853,32 @@ for (const rel of CSS_FILES) {
   const css = readFileSync(join(ROOT_DIR, rel), "utf8")
   for (const v of checkAccentFills(rel, css, { css: true })) record(v)
   for (const v of checkTracking(rel, css)) record(v)
+  for (const v of checkCssLayout(rel, css)) record(v)
+}
+
+// The CSS layer's rules, and their one-line reasons. Deliberately a SEPARATE
+// table from RULES: everything here is report-only, and mixing the two would
+// make it read as though these fail the build.
+const CSS_RULES = {
+  "css-off-grid": "px length not a multiple of 4 (or an off-grid token definition)",
+  "css-bare-length": "px literal where a --space-* token belongs",
+  "css-inline-type": "type set outside a .type-* rule",
+  "css-raw-color": "raw colour literal in a stylesheet",
+}
+
+const cssFindings = reportOnly.filter((v) => v.rule in CSS_RULES)
+
+if (process.argv.includes("--css")) {
+  console.log("CSS RULES 1-5 (REPORT-ONLY) — these do not fail the build\n")
+  for (const [rule, label] of Object.entries(CSS_RULES)) {
+    const hits = cssFindings.filter((v) => v.rule === rule)
+    console.log(`── ${rule} — ${label}: ${hits.length}`)
+    for (const h of hits) console.log(`   :${String(h.line).padStart(4)}  ${h.detail}`)
+    if (!hits.length) console.log("   (none)")
+    console.log()
+  }
+  console.log(`TOTAL ${cssFindings.length} report-only CSS finding(s)`)
+  process.exit(0)
 }
 
 if (process.argv.includes("--bare")) {
@@ -610,7 +914,7 @@ if (process.argv.includes("--list")) {
     for (const v of untitled) console.error(`  ${v.file}:${v.line}\t${v.rule}\t${v.detail}`)
     process.exit(2)
   }
-  console.log(`self-test PASS — all ${Object.keys(RULES).length} matchers fire on the bad fixtures, none on the good ones`)
+  console.log(`self-test PASS — all ${Object.keys(RULES).length} build-failing matchers + ${Object.keys(CSS_RULES).length} report-only CSS matchers fire on the bad fixtures, none on the good ones`)
   console.log(`scanned ${files.length} files under ${ROOTS.join(", ")}, plus ${CSS_FILES.join(", ")}\n`)
   for (const [rule, label] of Object.entries(RULES)) {
     const hits = violations.filter((v) => v.rule === rule)
@@ -623,6 +927,18 @@ if (process.argv.includes("--list")) {
     console.log()
   }
   console.log(`TOTAL: ${violations.length} violation(s)`)
+
+  // Report-only, and printed anyway. A layer that is checked but never shown
+  // is the same failure as a layer that was never checked — which is the bug
+  // this section was added to fix.
+  if (cssFindings.length) {
+    const byRule = Object.entries(CSS_RULES)
+      .map(([r, l]) => [r, l, cssFindings.filter((v) => v.rule === r).length])
+      .filter(([, , n]) => n)
+    console.log(`\nCSS rules 1-5 (REPORT-ONLY, does not fail the build): ${cssFindings.length} finding(s)`)
+    for (const [rule, label, n] of byRule) console.log(`   ${String(n).padStart(4)}  ${rule} — ${label}`)
+    console.log("   run `npm run check:design -- --css` for the list")
+  }
 }
 
 process.exit(violations.length ? 1 : 0)

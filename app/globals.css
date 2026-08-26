@@ -402,8 +402,25 @@
      meant to be: it is the source animation's own duration. */
   --indicator-cycle: 1.6667s;
 
-  /* Focus ring — input focus state */
-  --bureau-focus-ring: 0 0 0 3px rgb(var(--bureau-accent) / 0.11);
+  /* Focus ring — the chat input's focus state, and the only consumer.
+     A GLOW, not the indicator. The indicator is the border: at rest it is
+     --hairline and on focus it becomes text-secondary, measured on the running
+     page as 4.76:1 between the two states and 7.11:1 against the ground behind
+     it. That is what satisfies 1.4.11 for a change of state, with margin.
+
+     This ring composites to rgb(31, 41, 24) over the ground and reads 1.23:1
+     against it — nowhere near the 3:1 that would let it COUNT as indicator
+     area under 1.4.11 or 2.4.13. So its size is a visual decision and not an
+     accessibility one, which is why it can move at all.
+
+     3px -> 2px. 3 had no reason recorded anywhere — it was the one off-grid
+     value in this file with no sentence attached. 2 is the width DESIGN.md
+     already names as an exception for the active rail row, so the value now
+     matches something the system says out loud instead of standing alone.
+     Measured before moving it: WCAG-neutral, because the ring never counted.
+     4px would be on the grid and need no exception at all; it was not taken
+     because a 4px glow at 11% reads as a halo rather than an edge. */
+  --bureau-focus-ring: 0 0 0 2px rgb(var(--bureau-accent) / 0.11);
 
   /* Font stacks — UI/prose (Archivo) and the mono "system voice" (IBM Plex Mono) */
   --ff-archivo:    var(--font-archivo), system-ui, sans-serif;
@@ -422,11 +439,47 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* THE DOCUMENT DEFAULT, and the one place outside a .type-* rule where this
+   system sets type. It is stated here because it was NOT stated anywhere
+   before, and what it resolved to was an accident that happened to be right.
+   Three unrelated sources produced it:
+
+     font-size    16px   the BROWSER's `font: medium`. No rule in this repo
+                         set it. Not Tailwind's, not ours.
+     line-height  24px   Tailwind preflight's `html { line-height: 1.5 }`,
+                         times that 16.
+     font-family  Archivo  preflight's `html { font-family }` from
+                         tailwind.config's fontFamily.sans, AND the line below,
+                         which said the same thing twice.
+
+   16/24/400 Archivo is EXACTLY .type-body. Nobody decided that; it fell out of
+   a UA default meeting a preflight ratio. And that coincidence is precisely
+   why a missing .type-* class has never produced a visible symptom: an
+   unclassed <p> anywhere on this site renders identically to a classed one,
+   so the discipline has been held by habit rather than by anything that would
+   complain. A DOM audit across all six surfaces found seven unclassed text
+   nodes, every one of them .sr-only and none of them visible — the habit has
+   held. It is not a mechanism.
+
+   Setting size and leading from the ramp's own tokens turns the coincidence
+   into a decision: .type-body and the fallback are now provably the same
+   thing, and if the body step ever moves they move together.
+
+   font-weight is still the UA's 400, which is also .type-body's. Left
+   undeclared deliberately: there is no --type-body-weight, and inventing one
+   for a single use is the nudge-shaped edit the tracking budget exists to
+   refuse. check-design fires on any attempt to declare weight here, so the
+   remaining coincidence is visible rather than quietly papered over.
+
+   check-design's css-inline-type permits exactly this shape — `body` set from
+   var(--type-body-*) / var(--ff-*) — and nothing looser. A literal here fires. */
 body {
   background-color: rgb(var(--bureau-bg));
   color: rgb(var(--bureau-text-primary));
   margin: 0;
   font-family: var(--ff-archivo);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
 }
 
 /* ── Custom scrollbar ─────────────────────────────────────────── */
