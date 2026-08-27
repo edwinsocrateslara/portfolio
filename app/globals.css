@@ -2283,9 +2283,19 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   gap: var(--space-within);
   /* 12px caption on 18px leading is an 18px box. --space-12 top and bottom
      takes the TARGET to 44 while the TEXT reads at 12: 12 + 18 + 12 + 2 = 44.
-     This reverses the earlier ruling that chips take body type because
-     shrinking a tap target's label works against it — the label shrank, the
-     target did not. Measured, not assumed. */
+     Measured, not assumed — and measured again after the label briefly went to
+     16/24, which stretched this same padding to a 50px pill. Over target
+     rather than under, so nothing broke; but the rule and this comment stopped
+     describing each other, which is how a number goes stale without failing.
+
+     WHY AN INTERACTIVE ELEMENT SITS AT THE RAMP'S FLOOR, since that is the
+     question this invites: a chip label is typographically identical to a rail
+     subtitle, which is not interactive. THE PILL DOES THE AFFORDANCE WORK —
+     the border, the fill, the hover, and the 44px target around an 18px line.
+     That is the same bargain every other control here makes, and it is why the
+     text size is free to say "supporting" while the box says "press me".
+     Shrinking the label does not shrink the target; the padding above is what
+     holds it, and it is derived from the label rather than guessed. */
   padding: var(--space-12) var(--space-16);
   border-radius: var(--bureau-radius-chip);
   border: 1px solid var(--hairline);
