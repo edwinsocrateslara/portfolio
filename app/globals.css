@@ -1530,6 +1530,9 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   margin: 0 0 var(--space-within);
   color: rgb(var(--bureau-text-muted));
 }
+/* Primary against the label's muted, which is half of what separates the two
+   now that they share a size and a family. See the note at the call site for
+   the other half. */
 .resume-band-items {
   margin: 0;
   color: rgb(var(--bureau-text-primary));

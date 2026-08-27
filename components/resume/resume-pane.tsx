@@ -207,6 +207,19 @@ export function ResumePane({ resume }: { resume: Resume }) {
             on the site, and check-design rule 6 exists to stop exactly that.
             Not chips either — a chip is a control and none of these is
             clickable.
+
+            DATA VOICE — .type-meta, mono 12/18. A technical inventory is the
+            interface reporting, not speaking, so these are mono by the rule.
+            They were Archivo 16/24 and were the last thing on the site sitting
+            on the wrong side of it.
+
+            The label above each band is .type-label, also mono 12/18. Four
+            things separate a label from its contents and none of them is size:
+            CASE (caps against sentence case), weight (600 against 400),
+            tracking (1.2px against none) and colour (muted against primary).
+            Case is the one doing most of the work, which is the vibe reveal's
+            STACK block's arrangement rather than the résumé dates' — those are
+            both sentence case and lean on colour alone.
             The bands and their labels are PARSED. This component does not know
             what any of them are called, so a seventh band is a resume.txt edit
             and nothing else. */}
@@ -214,7 +227,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
           {resume.skills.map((band) => (
             <div key={band.label} className="resume-band">
               <p className="type-label resume-band-label">{band.label}</p>
-              <p className="type-body resume-band-items">
+              <p className="type-meta resume-band-items">
                 {band.items.map((item, i) => (
                   <Fragment key={item}>
                     {i > 0 && <span className="resume-band-sep">{"\u00A0\u00B7 "}</span>}

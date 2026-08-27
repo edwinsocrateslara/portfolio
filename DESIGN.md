@@ -732,6 +732,7 @@ rule describes.
 | `Toronto, Canada` | résumé, About | locations |
 | `Meridian · Mobile Banking · 21 slides` | deck | counts |
 | `01` / `02` | reveals | indices |
+| the six tools bands — 55 terms | résumé | technical inventories |
 
 #### The one exception
 
@@ -750,14 +751,32 @@ navigation furniture, not a report about content, so Product wins. For any
 future heading on that boundary the question is the same one: does it describe
 content, or does it organise targets?
 
-#### Known open item
+#### The audit reads zero
 
-The résumé's six tools bands — 55 terms, `Claude API · OpenAI API · TypeScript ·
-React · Figma · …` — are a **technical inventory**, which is Data voice. They are
-currently Archivo at 16/24. Both this rule and the one it replaced give the same
-answer, from different directions, which is worth something. Left as-is pending
-a decision; the measured cost of moving them is recorded in the commit that
-raised it.
+Every typeset element on every surface is on the side the rule assigns it.
+Measured on the rendered pages, not the source: 319 instances, 151 distinct
+strings, six surfaces, nothing unclassifiable and nothing on the wrong side.
+
+The last thing to move was the résumé's six tools bands — 55 terms,
+`Claude API · OpenAI API · TypeScript · React · Figma · …`. A technical
+inventory is the interface reporting, so it is Data voice; they had been
+Archivo at 16/24. Both this rule and the one it replaced gave the same answer
+from different directions, which is what made it a decision rather than a
+preference. They are now `.type-meta`, mono 12/18, and the section is **48px
+shorter** at the same thirteen lines — the one case where the rule-correct
+answer was also the better-looking one.
+
+**What separates a label from its contents once they share a size and a
+family.** The band label is `.type-label` and the terms are `.type-meta`, both
+mono 12/18. Four things carry the hierarchy and none of them is size: **case**
+(caps against sentence case), weight (600 against 400), tracking (1.2px against
+none) and colour (muted against primary). Case does most of the work.
+
+That is the vibe reveal's `STACK` block's arrangement rather than the résumé
+dates'. The dates are both sentence case and lean on colour alone, which works
+because they sit in a narrow column with nothing else in it. A label sitting
+directly above its own contents needs more than colour, and caps is what
+provides it.
 
 Both voices are load-bearing. That split is what keeps an achromatic palette
 legible without color.
