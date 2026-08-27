@@ -171,12 +171,67 @@ If a future change puts colour in JSON, YAML, or an `.svg` file on disk, rule
 
 **Where it is forbidden.** It marks an edge or a state; the moment it paints a
 region it stops being a signal and becomes a theme. So: not a surface, not a
-large painted area, not a gradient — **with exactly one documented exception.**
+large painted area, not a gradient — **with exactly one documented exception,
+which is currently switched off.**
 
-### The top-of-view wash — no longer an exception
+**Every place the accent paints today**, measured on the rendered pages across
+all six surfaces rather than read from source:
 
-This section is kept because its reasoning is still the reasoning. What has
-changed is its status: the wash is on **five** surfaces now — the front door,
+| where | property | size |
+|---|---|---|
+| active rail row — `.rail-item[data-active]` | `border-left-color` | 2px |
+| active document row — `.rail-doc[data-active]` | `border-left-color` | 2px |
+| the résumé timeline node | `background` | 8px |
+| the IMPACT callout's rule | `border-left-color` | 2px |
+| the IMPACT marker | `background` | 8px |
+| the chat caret | `caret-color` | 1px |
+| SEND, once there is something to send | `background` + `border` | 34px |
+| the input's focus ring | `box-shadow` at 11% | 2px |
+| the lightbox's focus ring | `outline` | 2px |
+
+Nine uses, none wider than 34px. With the wash off the accent is **purely
+structural**: active state, focus, caret, send, and two marks.
+
+### The top-of-view wash — OFF, for now
+
+**The wash paints nowhere.** One rule turns all five off:
+
+```css
+.hero-band::before, .deck-glow::before, .about-glow::before,
+.resume-glow::before, .reveal-glow::before { content: none; }
+```
+
+`content: none` stops the pseudo-element being generated, so there is no box
+and no compositing layer — unlike `display: none` or `opacity: 0`, which keep
+painting nothing at a cost. **Delete that one rule and the wash comes back.**
+Nothing else was touched: the five selectors, the `--hero-glow-*` tokens, the
+gradient recipe and rule 6's structural exception are all intact, including the
+0.13 → 0.20 alpha work solved against the contrast floor.
+
+Why it went: on a real capture at 1440 the wash composites to `rgb(41,59,27)`
+over the ground — an olive that reads as a stain rather than a decision, and
+the largest chromatic gesture on a site whose every other accent use is 8px or
+smaller.
+
+**Rule 6's exception now has five consumers that paint nothing.** The gradients
+are still in the file, so `isTopOfViewWash` still recognises and permits them,
+and `check-design` still reports zero. The exception is dormant rather than
+dead — if the wash is not coming back, the five `::before` blocks and the
+`--hero-glow-*` tokens should go with it, and then the exception can be removed
+from rule 6 and its four near-miss fixtures retired. That is a separate
+decision and it is not taken here.
+
+**The allowlist was never where the wash lived.** Rule 6's three
+`no-accent-surface` entries are the SEND fill, the IMPACT marker and the
+résumé's timeline node — all three still painting. The wash was permitted by
+rule, not by entry, which is why turning it off leaves the allowlist untouched.
+
+What follows is the reasoning as it stood while the wash was on. Kept, because
+it is what would have to be re-argued.
+
+### Why it was on five surfaces
+
+The wash was on **five** surfaces — the front door,
 the deck, About, Résumé, and the reveals — which is every pane a visitor can
 open. At that point it is not an exception to "the accent is never a surface";
 it is the house style, and the rule was what had gone stale.

@@ -1811,6 +1811,35 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     rgb(var(--hero-glow) / 0) var(--hero-glow-extent)
   );
 }
+
+/* ── THE WASH IS OFF ──────────────────────────────────────────────
+   FOR NOW, NOT DELETED. Everything above stays exactly as it was: five
+   selectors, the --hero-glow-* tokens, the gradient recipe, rule 6's
+   structural exception that permits them. This one rule is the whole switch.
+
+   TO BRING IT BACK, DELETE THIS RULE. Nothing else has to be reconstructed —
+   no tokens to re-derive, no allowlist entry to re-argue, no alpha to re-solve
+   against the contrast floor. That is why it is written as an off-switch
+   rather than as commented-out blocks or a deletion with the tokens kept:
+   commented CSS rots because nothing checks it, and a deletion would throw
+   away the 0.13 -> 0.20 contrast work that is recorded in the tokens' own
+   comments.
+
+   `content: none` rather than `display: none` or `opacity: 0`: it stops the
+   pseudo-element being GENERATED at all, so there is no box and no compositing
+   layer. The other two would keep painting nothing at a cost.
+
+   Why it went: on a real capture at 1440 the wash composites to rgb(41,59,27)
+   over the ground — an olive that reads as a stain rather than a decision, and
+   the largest chromatic gesture on a site whose every other accent use is 8px
+   or smaller. See the design critique. */
+.hero-band::before,
+.deck-glow::before,
+.about-glow::before,
+.resume-glow::before,
+.reveal-glow::before {
+  content: none;
+}
 .pane-scroll {
   flex: 1;
   min-height: 0;
