@@ -52,32 +52,32 @@ const ALLOW = {
   // list could not become the place findings go to stop being findings.
   "app/globals.css::css-off-grid:::root — --bureau-radius-chip: 9999px":
     "The fully-round pill. DESIGN.md names 9999px as a grid exception and the radius table gives it a row.",
-  "app/globals.css::css-off-grid:::root — --track-display-hero: -1px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
-  "app/globals.css::css-off-grid:::root — --track-display-h2: -1px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
-  "app/globals.css::css-off-grid:::root — --track-display-sub: -0.6px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
-  "app/globals.css::css-off-grid:::root — --track-display-title: -0.4px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caption: 0.4px":
     "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
-  "app/globals.css::css-off-grid:::root — --track-badge: 0.8px":
+  "app/globals.css::css-off-grid:::root — --track-wordmark: 0.8px":
     "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caps-body: 1.4px":
     "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caps-label: 1.2px":
     "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
-  "app/globals.css::css-off-grid:::root — --type-label-lh: 18px":
-    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
-  "app/globals.css::css-off-grid:::root — --type-control-lh: 21px":
-    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
-  "app/globals.css::css-off-grid:::root — --type-title-lh: 30px":
-    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
-  "app/globals.css::css-off-grid:::root — --type-hero-lh: 42px":
-    "Derived leading, 1.5x the step. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid, and the ratio holds at every step with no exception.",
-  "app/globals.css::css-off-grid:::root — --type-control-size: 14px":
-    "DESIGN.md: \"One type size is off the 4px grid: control, at 14/21. It is the only one, and it is deliberate\" - a chip label wants to sit between the 12px label voice and the 16px body voice.",
+  "app/globals.css::css-off-grid:::root — --type-data-lh: 18px":
+    "Derived leading. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid. 1.5x at every step except display, where the >=40px bound applies and 58 is 1.16x.",
+  "app/globals.css::css-off-grid:::root — --type-section-lh: 30px":
+    "Derived leading. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid. 1.5x at every step except display, where the >=40px bound applies and 58 is 1.16x.",
+  "app/globals.css::css-off-grid:::root — --type-name-lh: 39px":
+    "Derived leading. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid. 1.5x at every step except display, where the >=40px bound applies and 58 is 1.16x.",
+  "app/globals.css::css-off-grid:::root — --type-display-lh: 58px":
+    "Derived leading. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid. 1.5x at every step except display, where the >=40px bound applies and 58 is 1.16x.",
+  "app/globals.css::css-off-grid:::root — --type-name-size: 26px":
+    "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
+  "app/globals.css::css-off-grid:::root — --type-display-size: 50px":
+    "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
+  "app/globals.css::css-off-grid:::root — --type-legacy-control-size: 14px":
+    "A legacy rung, alive only so the alias classes can hold their old values while each surface moves to the new ramp one commit at a time. Deleted with the aliases in the last commit of that sequence. It was allowlisted under its old name before the rename.",
+  "app/globals.css::css-off-grid:::root — --type-legacy-control-lh: 21px":
+    "A legacy rung, alive only so the alias classes can hold their old values while each surface moves to the new ramp one commit at a time. Deleted with the aliases in the last commit of that sequence. It was allowlisted under its old name before the rename.",
+  "app/globals.css::css-off-grid:::root — --type-legacy-hero-lh: 42px":
+    "A legacy rung, alive only so the alias classes can hold their old values while each surface moves to the new ramp one commit at a time. Deleted with the aliases in the last commit of that sequence. It was allowlisted under its old name before the rename.",
   "app/globals.css::css-off-grid:::root — --space-optical-meta: 5px":
     "The title-to-meta optical gap. Documented at its definition: the meta line's own leading already separates the two, so `within` (8px) reads as a break rather than a pairing. It was written out as three separate documented exceptions before becoming one token, which is the whole argument for it having a name.",
   "app/globals.css::css-off-grid:::root — --input-border: 1px":

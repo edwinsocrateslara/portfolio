@@ -124,20 +124,22 @@
      These were six literals sitting in six .type-* rules. Nothing was
      wrong with any of them; the problem was that a seventh could be
      added without anyone seeing the ramp it had to fit into. */
-  --track-display-hero:  -1px;    /* 28px — deliberately the same value as
-                                     h2: 28 and 32 are close enough that a
-                                     different correction would be false
-                                     precision. Its own name so the two can
-                                     diverge if either step moves. */
-  --track-display-h2:    -1px;    /* 32px */
-  --track-display-sub:   -0.6px;  /* 24px */
-  --track-display-title: -0.4px;  /* 20px */
+  /* ONE DISPLAY TRACKING TOKEN, IN EM. There used to be four, one per size,
+     and they were not even consistent with each other: -1px at 28 is -0.036em,
+     -1px at 32 is -0.031em, -0.6 at 24 is -0.025em, -0.4 at 20 is -0.020em.
+     Four tokens encoding one intention, badly. In em the intention states
+     itself once and scales to any rung, including rungs that do not exist yet.
+     This is a normalisation, not an identity: 20px tightens from -0.4 to -0.6
+     and 32px loosens from -1 to -0.96. */
+  --track-display:       -0.03em;
   /* The sans face at the 12px floor. The scale already tightened the
      display steps; this is the same correction at the other end, and
      .type-caption is the only sans class down here, so the role and the
      class are one-to-one. */
   --track-caption:        0.4px;
-  --track-badge:          0.8px;  /* mono caps, 700 */
+  --track-wordmark:       0.8px;  /* mono caps, 700 — the brand, and only the brand.
+                                     Was --track-wordmark, named for a class that had zero
+                                     instances and has been deleted. */
   /* Mono caps, split by STEP. .type-section put caps at two sizes for the
      first time and one value cannot serve both: in EM — which is what the eye
      reads — 1.4/16 is 0.088em and 1.2/12 is 0.100em, so the smaller caps open
@@ -158,32 +160,60 @@
      resolves to. The mono caps above stay in px because their two values are
      genuinely different corrections (0.100em and 0.088em), not one.
 
-     0.8px also happens to equal --track-badge. It is not the same value:
-     badge is mono caps at 700 and this is sans caps at 600, solved from a
+     0.8px also happens to equal --track-wordmark. It is not the same value:
+     the wordmark is mono caps at 700 and this is sans caps at 600, solved from a
      different face. Pointing one at the other would rebuild the coincidence
      this system has spent several commits removing. */
   --track-caps-sans:      0.05em;
 
-  --type-label-size:   12px;  --type-label-lh:   18px;
-  /* 14 is the ONE size on this ramp that is not a multiple of 4, and it is
-     here deliberately rather than by accident: a control label wants to sit
-     between the 12px label voice and the 16px body voice, because 12 reads
-     small on a 44px target and 16 reads like prose inside a pill. Leading is
-     still the derived 1.5x — 21 is not on the grid either, and line-height
-     has never been asked to be. Recorded in DESIGN.md beside the 1px borders
-     and the 9999 pills, which is where this system keeps its exceptions. */
-  --type-control-size: 14px;  --type-control-lh: 21px;
-  --type-body-size:    16px;  --type-body-lh:    24px;
-  --type-title-size:   20px;  --type-title-lh:   30px;
-  --type-subhead-size: 24px;  --type-subhead-lh: 36px;
-  /* 28/42. The front door's headline and nothing else — the same shape as the
-     `hero` step that was deleted, and worth saying why this is not that: that
-     step went when its last user left, not because one user is too few.
-     42 is exactly 1.5x. It replaced 28/48, and 1.71 would have been the first
-     exception to the leading rule since the old hero step took the last one
-     with it. */
-  --type-hero-size:    28px;  --type-hero-lh:    42px;
-  --type-h2-size:      32px;  --type-h2-lh:      48px;
+  /* ── The ramp ─────────────────────────────────────────────────────────
+     A 1.25 LADDER, NOT A +4 SEQUENCE. The old ramp added a constant, so each
+     step was a smaller PROPORTION of the one below it — 16 to 20 is +25%, 28
+     to 32 is +14% — and the top could never separate from the bottom no
+     matter how many steps were added. A geometric ladder makes every jump the
+     same perceptual size, so distance compounds.
+
+     EVERY RUNG IS POPULATED. That is a rule, not an observation. The ramp it
+     replaced defined 24/36 and rendered it nowhere above 640px: a step with
+     no consumer is a step someone will eventually use for the wrong reason.
+
+     12 is the floor and is not on the ladder — 16/1.25 is 12.8. It is where
+     the Data voice lives and it is not negotiable, so the ladder is anchored
+     on the 16px body and climbs from there.
+
+     Measured ratios: 1.33, 1.25, 1.30, 1.23, then 1.56 to display. That last
+     jump skips the 40 rung deliberately — nothing on this site sits between a
+     page title and the front door, and building a rung for nothing is the
+     disease this ramp was written to cure. */
+  --type-data-size:     12px;  --type-data-lh:     18px;  /* floor  */
+  --type-body-size:     16px;  --type-body-lh:     24px;  /* x1.33  */
+  --type-section-size:  20px;  --type-section-lh:  30px;  /* x1.25  */
+  --type-name-size:     26px;  --type-name-lh:     39px;  /* x1.30  */
+  --type-page-size:     32px;  --type-page-lh:     48px;  /* x1.23  */
+  /* 50/58 — THE ONE PLACE THE 1.5x LEADING RULE IS BROKEN, and the bound is
+     written into DESIGN.md rather than left to judgement: steps of 40px and
+     above may tighten to no lower than 1.15x, and nothing below 40 may.
+
+     The reason is measurable. Archivo's cap height is ~0.72em, so at 50px the
+     ink band is ~36px and 1.5x leading would put 39px of air between two
+     baselines — MORE SPACE THAN LETTER. A two-line headline stops reading as
+     one object and starts reading as two sentences. Leading exists to help the
+     eye find the next line; a two-line block barely asks that of it. 58 is
+     1.16x. Material tightens to 1.12x at Display Large for the same reason. */
+  --type-display-size:  50px;  --type-display-lh:  58px;  /* x1.56, 1.16 lh */
+
+  /* ── LEGACY RUNGS — DELETED IN THE LAST COMMIT OF THIS SEQUENCE ────────
+     These exist so the alias classes below can hold their OLD VALUES, which
+     makes the commit that introduces the new ramp a visual no-op. Each surface
+     then moves to the new class names on its own commit and takes the new
+     sizes with it, one surface at a time, and the site is coherent after every
+     one of them. Without these the ramp would land everywhere at once and the
+     staging would be a fiction.
+
+     Nothing new may use them. They go when the aliases go. */
+  --type-legacy-control-size: 14px;  --type-legacy-control-lh: 21px;
+  --type-legacy-hero-size:    28px;  --type-legacy-hero-lh:    42px;
+  --type-legacy-subhead-size: 24px;  --type-legacy-subhead-lh: 36px;
 
   /* Scrollbar width for the chat message area. The messages pane reserves
      this as a stable gutter and the input below it pads its right edge by
@@ -673,44 +703,44 @@ body {
    and the only escape hatch is an inline style — which is exactly
    what this system is trying to eliminate. */
 @layer components {
-  /* Archivo — prose and headings */
-  .type-h2 {
-    font-family: var(--ff-archivo);
-    font-weight: 700;
-    font-size: var(--type-h2-size);
-    line-height: var(--type-h2-lh);
-    letter-spacing: var(--track-display-h2);
-  }
-  /* The front door's headline. Weight 400 lives HERE rather than as a
-     font-normal utility at the call site: this step exists for one element,
-     and its weight is part of what the step IS rather than a variation on
-     it. */
-  .type-hero {
+  /* ═══ SIZE RANKS. WEIGHT SORTS. ═══════════════════════════════════════
+     The governing sentence, and the one to read before adding anything here.
+
+     SIZE says which level a thing is on. WEIGHT says what kind of thing it is
+     at that level. The two axes never encode the same information, which is
+     what stops them contradicting each other — note that the LARGEST step is
+     the LIGHTEST (display is 400, names are 700). If weight tracked rank that
+     would be backwards. It does not, so it is not.
+
+     The corollary is a ceiling: AT MOST THREE WEIGHTS MAY SHARE ONE RANK.
+     Mono at 12 currently uses all three — 400 values, 500 attributes, 600
+     labels. A fourth kind arriving at one rank is not a weight problem, it is
+     a signal that the level is overloaded and needs a size of its own.
+
+     Voice is stated per class. Archivo speaks, mono reports; the wordmark is
+     the one documented exception. */
+
+  /* ── Product voice — Archivo. The interface speaking. ────────────────── */
+  .type-display {
     font-family: var(--ff-archivo);
     font-weight: 400;
-    font-size: var(--type-hero-size);
-    line-height: var(--type-hero-lh);
-    letter-spacing: var(--track-display-hero);
+    font-size: var(--type-display-size);
+    line-height: var(--type-display-lh);
+    letter-spacing: var(--track-display);
   }
-  /* THE `subhead` STEP HAS TOKENS BUT NO CLASS. 24/36 is live and load-bearing
-     — it is what .type-hero and .type-h2 both step down to below 640px, at the
-     bottom of this block — but no element has ever worn it directly. The class
-     rule was deleted rather than kept "in case": an unused class is an
-     invitation to reach for a step by name without asking whether the element
-     wants the ramp's 24 or the h2 it is standing in for. Add it back the day
-     something needs 24/36 in its own right. */
-  .type-title {
+  .type-page {
     font-family: var(--ff-archivo);
     font-weight: 700;
-    font-size: var(--type-title-size);
-    line-height: var(--type-title-lh);
-    letter-spacing: var(--track-display-title);
+    font-size: var(--type-page-size);
+    line-height: var(--type-page-lh);
+    letter-spacing: var(--track-display);
   }
-  .type-card-h3 {
+  .type-name {
     font-family: var(--ff-archivo);
-    font-weight: 600;
-    font-size: var(--type-body-size);
-    line-height: var(--type-body-lh);
+    font-weight: 700;
+    font-size: var(--type-name-size);
+    line-height: var(--type-name-lh);
+    letter-spacing: var(--track-display);
   }
   .type-body {
     font-family: var(--ff-archivo);
@@ -718,49 +748,16 @@ body {
     font-size: var(--type-body-size);
     line-height: var(--type-body-lh);
   }
-  /* Control labels: the prompt chips, and anything else whose job is to
-     label a tap target. Archivo, because these are things a person would say
-     — the same reasoning that kept the chips off the mono voice. */
-  .type-control {
-    font-family: var(--ff-archivo);
-    font-weight: 400;
-    font-size: var(--type-control-size);
-    line-height: var(--type-control-lh);
-  }
-  /* Supporting prose — taglines, locations, role lines, card descriptions.
-     Archivo, because it is the interface speaking rather than reporting —
-     but at the label step so it reads as secondary to the body text and
-     headings it sits beside. */
-  .type-caption {
-    font-family: var(--ff-archivo);
-    font-weight: 400;
-    font-size: var(--type-label-size);
-    line-height: var(--type-label-lh);
-    letter-spacing: var(--track-caption);
-  }
-
-  /* ── Caps on something you act on ──────────────────────────────
-     Archivo caps at the two steps. Weight 600, matching the mono labels these
-     replaced, so the change is family and tracking only.
-
-     .type-action WAS .type-rail-label FOR ONE COMMIT. It was named for the
-     surface, with a note saying that if a second surface adopted it the pair
-     should be renamed for the voice — and that the rename would be the signal
-     it had become a voice rather than a place. That happened immediately: the
-     front door's sampler cards carry the same three project names as the rail,
-     and the deck and résumé download pills are buttons. Three surfaces, one
-     voice: a caps label on something a person clicks.
-
-     .type-rail-section keeps its surface name because it is still true —
-     "Work" and "Vibe Coding" are group headings inside the navigation and
-     exist nowhere else. If that changes, rename it too. */
-  .type-action {
+  /* Weight sorting on the Product side, and the reason .type-card-h3 did not
+     simply merge into .type-name: the doc-link card is 58px tall, and 26/39
+     would not fit inside it. A card title is not a rank above body — it is a
+     different kind of thing at the same rank, which is exactly what weight is
+     for. */
+  .type-body-strong {
     font-family: var(--ff-archivo);
     font-weight: 600;
-    font-size: var(--type-label-size);
-    line-height: var(--type-label-lh);
-    letter-spacing: var(--track-caps-sans);
-    text-transform: uppercase;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
   }
   .type-rail-section {
     font-family: var(--ff-archivo);
@@ -770,49 +767,30 @@ body {
     letter-spacing: var(--track-caps-sans);
     text-transform: uppercase;
   }
-
-  /* IBM Plex Mono — DATA voice: the interface reporting about something. */
-  /* Badges and glyph tiles — the heaviest mono weight, for text that sits
-     on an inverted fill or inside a bordered tile. */
-  .type-badge {
-    font-family: var(--ff-plex-mono);
-    font-weight: 700;
-    font-size: var(--type-label-size);
-    line-height: var(--type-label-lh);
-    letter-spacing: var(--track-badge);
-    text-transform: uppercase;
-  }
-  /* The wordmark, and only the wordmark. Badge weight and tracking at the
-     BODY step — 16/24. The canvas raised the size to 16 but kept 18 leading,
-     which is the 16/18 pairing this scale explicitly refuses; 24 is the step
-     that already exists at 16. Weight stays 700 so the brand outranks the
-     section headers it now shares a size with (.type-section is 600). */
-  .type-wordmark {
-    font-family: var(--ff-plex-mono);
-    font-weight: 700;
-    font-size: var(--type-body-size);
-    line-height: var(--type-body-lh);
-    letter-spacing: var(--track-badge);
-    text-transform: uppercase;
-  }
-  .type-label {
-    font-family: var(--ff-plex-mono);
+  .type-action {
+    font-family: var(--ff-archivo);
     font-weight: 600;
-    font-size: var(--type-label-size);
-    line-height: var(--type-label-lh);
-    letter-spacing: var(--track-caps-label);
+    font-size: var(--type-data-size);
+    line-height: var(--type-data-lh);
+    letter-spacing: var(--track-caps-sans);
     text-transform: uppercase;
   }
-  .type-nav {
-    font-family: var(--ff-plex-mono);
-    font-weight: 500;
-    font-size: var(--type-label-size);
-    line-height: var(--type-label-lh);
-    letter-spacing: var(--track-caps-label);
-    text-transform: uppercase;
+  .type-caption {
+    font-family: var(--ff-archivo);
+    font-weight: 400;
+    font-size: var(--type-data-size);
+    line-height: var(--type-data-lh);
+    letter-spacing: var(--track-caption);
   }
-  /* Mono caps at the body step. See DESIGN.md — the scale is unchanged;
-     this is a voice at an existing step, not a new step. */
+
+  /* ── Data voice — IBM Plex Mono. The interface reporting. ────────────── */
+  /* HOLDS AT 16 UNTIL THE RÉSUMÉ MOVES. .type-section is the one class whose
+     name survives the rename while its VALUE changes — 16 -> 20, the new
+     ladder's third rung — so it has no alias to hide behind. It keeps the body
+     step here and takes the section step on the résumé's own commit, which is
+     the only surface that uses it. Caught by measurement, not by reading: the
+     résumé pane grew 2780 -> 2806px on a commit that claimed to change
+     nothing. */
   .type-section {
     font-family: var(--ff-plex-mono);
     font-weight: 600;
@@ -821,23 +799,127 @@ body {
     letter-spacing: var(--track-caps-body);
     text-transform: uppercase;
   }
-  .type-meta {
+  /* THE EXCEPTION. The brand is Product voice by the rule — it is the product
+     naming itself — and stays mono because a brand mark is allowed to be its
+     own thing, and because with the rail in Archivo this is the only place the
+     mono voice appears on every surface. */
+  .type-wordmark {
+    font-family: var(--ff-plex-mono);
+    font-weight: 700;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+    letter-spacing: var(--track-wordmark);
+    text-transform: uppercase;
+  }
+  .type-label {
+    font-family: var(--ff-plex-mono);
+    font-weight: 600;
+    font-size: var(--type-data-size);
+    line-height: var(--type-data-lh);
+    letter-spacing: var(--track-caps-label);
+    text-transform: uppercase;
+  }
+  /* THE SPLIT. .type-meta was 40 elements doing five jobs in one style —
+     dates, role lines, client groups, institutions and the six tools bands,
+     all indistinguishable. Weight now separates a thing from an attribute OF
+     a thing, at the same rank, without a new size.
+
+     500 was measured before it was adopted, at 12px on #131313 at 1x: +28.9%
+     ink over 400, which is 2.4x the signal of the secondary/muted colour step
+     this site already relies on, and 62% of the 400->600 step used for labels.
+     If it ever fails on a display, the fallback is +0.2px tracking here — NOT
+     colour, which is already carrying the primary/secondary/muted hierarchy. */
+  .type-attribute {
+    font-family: var(--ff-plex-mono);
+    font-weight: 500;
+    font-size: var(--type-data-size);
+    line-height: var(--type-data-lh);
+  }
+  .type-value {
     font-family: var(--ff-plex-mono);
     font-weight: 400;
-    font-size: var(--type-label-size);
-    line-height: var(--type-label-lh);
+    font-size: var(--type-data-size);
+    line-height: var(--type-data-lh);
   }
 
-  /* Mobile steps down the ramp rather than off it — h2 takes the subhead
-     step. Line-height is 1.5x at every size, with NO exceptions now that the
-     hero step is gone: the 52/60 step existed only to carry the front-door
-     headline, and that headline moved to h2. */
+  /* ── Aliases, temporary ───────────────────────────────────────────────
+     The old names, pointing at their new homes, so this commit changes no
+     consumer and every gate and board stays green. They are deleted in the
+     last commit of this sequence; nothing new may use them.
+
+     EACH ALIAS HOLDS ITS OLD SIZE, so this commit changes nothing on screen.
+     The new size arrives when a surface moves to the new name.
+
+       .type-hero    -> .type-display      28 -> 50
+       .type-h2      -> .type-page         unchanged at 32
+       .type-title   -> .type-name         20 -> 26
+       .type-card-h3 -> .type-body-strong  unchanged at 16/600
+       .type-control -> .type-body         14 -> 16, the 14 step is retired
+       .type-meta    -> .type-value        the 400 half of the split
+       .type-nav     -> .type-label        they differed by one weight step
+       .type-badge   -> .type-wordmark, responsive (12 on mobile, 16 above)
+
+     The one thing that is NOT a no-op: display tracking is now -0.03em rather
+     than four hand-set px values, so .type-hero moves -1 -> -0.84 and
+     .type-title -0.4 -> -0.6. Sub-pixel, and the point of the collapse. */
+  .type-hero    { font-family: var(--ff-archivo); font-weight: 400;
+                  font-size: var(--type-legacy-hero-size); line-height: var(--type-legacy-hero-lh);
+                  letter-spacing: var(--track-display); }
+  .type-h2      { font-family: var(--ff-archivo); font-weight: 700;
+                  font-size: var(--type-page-size); line-height: var(--type-page-lh);
+                  letter-spacing: var(--track-display); }
+  .type-title   { font-family: var(--ff-archivo); font-weight: 700;
+                  font-size: var(--type-section-size); line-height: var(--type-section-lh);
+                  letter-spacing: var(--track-display); }
+  .type-card-h3 { font-family: var(--ff-archivo); font-weight: 600;
+                  font-size: var(--type-body-size); line-height: var(--type-body-lh); }
+  .type-control { font-family: var(--ff-archivo); font-weight: 400;
+                  font-size: var(--type-legacy-control-size); line-height: var(--type-legacy-control-lh); }
+  .type-meta    { font-family: var(--ff-plex-mono); font-weight: 400;
+                  font-size: var(--type-data-size); line-height: var(--type-data-lh); }
+  .type-nav     { font-family: var(--ff-plex-mono); font-weight: 600;
+                  font-size: var(--type-data-size); line-height: var(--type-data-lh);
+                  letter-spacing: var(--track-caps-label); text-transform: uppercase; }
+  /* .type-badge IS NOT DEAD, and the audit that said it was is the reason this
+     comment exists. It reported zero instances because it measured six
+     surfaces at 1440 only, and this class renders in the MOBILE top bar — the
+     brand mark at 12 rather than the rail's 16, because that row fits 340px of
+     brand + subject + MENU exactly. Same error shape as capturing a 3275px
+     pane through a 1000px window: one viewport, a conclusion about the whole.
+
+     It resolves into a responsive .type-wordmark on the shell's commit, since
+     it is one role at two sizes and that is what the breakpoint is for. */
+  .type-badge   { font-family: var(--ff-plex-mono); font-weight: 700;
+                  font-size: var(--type-data-size); line-height: var(--type-data-lh);
+                  letter-spacing: var(--track-wordmark); text-transform: uppercase; }
+
+  /* Mobile steps DOWN THE SAME LADDER rather than collapsing two rungs onto
+     one. The old rule sent both 28 and 32 to 24, which made them identical on
+     a phone — two levels the desktop distinguishes, flattened. Each rung now
+     moves down by one, so the ratio survives the breakpoint:
+
+       display 50 -> 32   page 32 -> 26   name 26 -> 20
+
+     Leading returns to a strict 1.5x on mobile: at 32 the tightening bound
+     (>= 40px) does not apply, so display picks up the page step's 48. */
   @media (max-width: 640px) {
-    .type-hero,
-    .type-h2 {
-      font-size: var(--type-subhead-size);
-      line-height: var(--type-subhead-lh);
-      letter-spacing: var(--track-display-sub);
+    .type-display {
+      font-size: var(--type-page-size);
+      line-height: var(--type-page-lh);
+    }
+    .type-page {
+      font-size: var(--type-name-size);
+      line-height: var(--type-name-lh);
+    }
+    .type-name {
+      font-size: var(--type-section-size);
+      line-height: var(--type-section-lh);
+    }
+    /* The aliases keep the OLD mobile behaviour — both steps collapsing onto
+       24 — until their surfaces move. Deleted with them. */
+    .type-hero, .type-h2 {
+      font-size: var(--type-legacy-subhead-size);
+      line-height: var(--type-legacy-subhead-lh);
     }
   }
 }
@@ -1322,8 +1404,8 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      reset to 0, where the mosaic is ordered FIRST and has nothing to align
      to. */
   margin-top: calc(
-    var(--type-h2-lh) + var(--space-group) +
-    var(--type-label-lh) + var(--space-between)
+    var(--type-page-lh) + var(--space-group) +
+    var(--type-data-lh) + var(--space-between)
   );
 }
 .about-figure {
@@ -1602,7 +1684,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 .resume-row-line {
   position: absolute;
   left: 0;
-  top: calc(var(--type-label-lh) / 2);
+  top: calc(var(--type-data-lh) / 2);
   bottom: 0;
   width: 1px;
   background: var(--hairline);
@@ -1616,7 +1698,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 }
 .resume-row-node {
   position: absolute;
-  top: calc((var(--type-label-lh) - var(--space-8)) / 2);
+  top: calc((var(--type-data-lh) - var(--space-8)) / 2);
   left: calc((1px - var(--space-8)) / 2);
   width: var(--space-8);
   height: var(--space-8);
