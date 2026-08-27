@@ -1,5 +1,7 @@
 "use client"
 
+import { ResumeTerminal } from "@/components/lab/resume-terminal"
+import { Shimmer } from "@/components/lab/shimmer"
 import { Fragment, useEffect, useRef } from "react"
 import { Download } from "lucide-react"
 import { DOCS } from "@/lib/constants"
@@ -195,6 +197,9 @@ export function ResumePane({ resume }: { resume: Resume }) {
         <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
           <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
           Download PDF
+          {/* LAB — the shimmer on a download pill. Two here, seven on the
+              front door. Inert unless html[data-lab-shimmer]. */}
+          <Shimmer />
         </a>
       </div>
 
@@ -203,6 +208,9 @@ export function ResumePane({ resume }: { resume: Resume }) {
       <hr className="resume-rule" />
 
       <section className="resume-section">
+        {/* LAB — the résumé as shell output, above the record it describes.
+            Inert unless html[data-lab-terminal]. */}
+        <ResumeTerminal resume={resume} />
         <h2 className="type-section resume-heading">Tools</h2>
         {/* Six labelled bands in source order, two columns, set in type. Not
             logos: fifty-five brand marks would be the only uncontrolled colour

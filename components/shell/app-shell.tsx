@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
+import { LabPanel } from "@/components/lab/lab-panel"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { projects } from "@/lib/projects"
@@ -437,6 +438,7 @@ export function AppShell({
 
   return (
     <div className="shell" data-sheet={sheetOpen}>
+      <LabPanel />
       {/* Mobile only — the rail collapses behind this. */}
       {/* Same brand as the rail — "Edwin Lara". This used to be "Edwin" while
           the rail said "Edwin Socrates Lara", which gave one person two name
@@ -527,6 +529,8 @@ export function AppShell({
           </div>
         ) : isFrontDoor ? (
           <div className="pane-front">
+            {/* LAB: the 4-declaration dot field. Inert unless html[data-lab-dots]. */}
+            <div className="lab-dots" aria-hidden="true" />
             <div className="hero-band" data-hero-col="stack">
                   {/* .type-display — the top of the ladder, at 50/58.
                       It was 28/42 and occupied 2.34% of a 1440x1000 viewport
@@ -555,8 +559,11 @@ export function AppShell({
                       animationDelay: delay(60),
                     }}
                   >
-                    I&apos;m Edwin, AI designer &amp; builder making useful
-                    products and workflows.
+                    {/* LAB: one word wrapped so the aurora has something to
+                        clip to. The span is inert unless html[data-lab-aurora]
+                        is set, and the text is unchanged either way. */}
+                    I&apos;m Edwin, AI <span className="aurora-word">designer</span> &amp;
+                    builder making useful products and workflows.
                   </h1>
 
                   <div

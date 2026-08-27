@@ -1,0 +1,187 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LAB — Magic UI ideas, maximal, on branch lab/magic-ui-maximal.
+   NOT PART OF THE SYSTEM. Every rule here is scoped to a data-lab-* attribute
+   on <html>, so with the panel off this file paints nothing. Delete this file
+   and the <LabPanel/> import and the branch is gone.
+
+   These deliberately break check:design. They are not written to pass it —
+   the point is to look at the real thing before deciding which rules to bend.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1 · AURORA on one word ─────────────────────────────────────────────── */
+.aurora-word { position: relative; display: inline-block; }
+
+/* LOOPING — as Magic UI ships it: four-stop gradient, 10s, infinite. The stops
+   are Magic UI's own defaults so the comparison is honest. */
+html[data-lab-aurora="loop"] .aurora-word {
+  background-image: linear-gradient(135deg, #ff0080, #7928ca, #0070f3, #38bdf8, #ff0080);
+  background-size: 300% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: lab-aurora 10s linear infinite;
+}
+/* ONCE — achromatic, primary → secondary → primary, one pass on arrival then
+   held. The gradient stays painted; only the motion stops. */
+html[data-lab-aurora="once"] .aurora-word {
+  background-image: linear-gradient(115deg,
+    rgb(var(--bureau-text-primary)) 0%,
+    rgb(var(--bureau-text-secondary)) 25%,
+    rgb(var(--bureau-text-primary)) 50%,
+    rgb(var(--bureau-text-secondary)) 75%,
+    rgb(var(--bureau-text-primary)) 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: lab-aurora 2.4s cubic-bezier(0.22, 1, 0.36, 1) 0.35s 1 both;
+}
+@keyframes lab-aurora {
+  from { background-position: 0% center; }
+  to   { background-position: 300% center; }
+}
+
+/* ── 2 · DOT PATTERN — the 4-declaration version, three alphas ──────────── */
+.lab-dots { display: none; }
+html[data-lab-dots] .lab-dots {
+  display: block;
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 1px 1px,
+    rgb(255 255 255 / var(--lab-dot-a)) 1px, transparent 0);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(460px circle at 50% 42%, #000, transparent);
+  mask-image: radial-gradient(460px circle at 50% 42%, #000, transparent);
+}
+html[data-lab-dots="12"] { --lab-dot-a: 0.12; }
+html[data-lab-dots="20"] { --lab-dot-a: 0.20; }
+html[data-lab-dots="32"] { --lab-dot-a: 0.32; }
+
+/* ── 3 · SHIMMER — conic gradient behind, inset highlight, active nudge ─── */
+.lab-shimmer { display: none; }
+html[data-lab-shimmer="on"] .lab-shimmer { display: block; }
+html[data-lab-shimmer="on"] .chip,
+html[data-lab-shimmer="on"] .lab-shimmer-host {
+  position: relative; overflow: hidden; isolation: isolate;
+  /* transform-gpu, exactly as shipped — a PERMANENT transform, not just on
+     :active. See the report: this is the containing-block question. */
+  transform: translateZ(0);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+html[data-lab-shimmer="on"] .chip:active,
+html[data-lab-shimmer="on"] .lab-shimmer-host:active { transform: translateY(1px); }
+
+.lab-shimmer {
+  position: absolute; inset: 0; z-index: -30; filter: blur(2px); overflow: visible;
+  /* Magic UI's @container-[size]. Without it 100cqh below resolves to 0 and
+     the spark has no height — the effect silently paints nothing. */
+  container-type: size;
+}
+.lab-shimmer-spark {
+  position: absolute; inset: 0; aspect-ratio: 1; height: 100cqh;
+  animation: lab-shimmer-slide 3s ease-in-out infinite alternate;
+}
+.lab-shimmer-spark::before {
+  content: ""; position: absolute; inset: -100%; rotate: 0deg;
+  background: conic-gradient(from calc(270deg - 45deg), transparent 0,
+    rgb(var(--bureau-accent)) 90deg, transparent 90deg);
+  animation: lab-spin-around 6s infinite linear;
+}
+.lab-shimmer-backdrop {
+  position: absolute; inset: 0.05em; z-index: -20;
+  border-radius: inherit;
+  /* MUST BE OPAQUE. Magic UI's default is rgba(0,0,0,1) and the whole effect
+     depends on it: the backdrop covers the conic gradient except for a rim.
+     --layer-1 is rgb(255 255 255 / 0.04) — translucent — so the spark bled
+     through the middle of the chip and read as a green flare rather than an
+     edge. This is layer-1 FLATTENED over the ground. A real adoption would
+     have to make chips opaque, which changes them on every surface. */
+  background: #1c1c1c;
+}
+/* The inset highlight — a surface treatment this system does not otherwise
+   have. Hover and active deepen it, as shipped. */
+.lab-shimmer-hl {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 -8px 10px #ffffff1f;
+  transition: box-shadow 0.3s ease-in-out;
+}
+html[data-lab-shimmer="on"] .chip:hover .lab-shimmer-hl,
+html[data-lab-shimmer="on"] .lab-shimmer-host:hover .lab-shimmer-hl {
+  box-shadow: inset 0 -6px 10px #ffffff3f;
+}
+html[data-lab-shimmer="on"] .chip:active .lab-shimmer-hl,
+html[data-lab-shimmer="on"] .lab-shimmer-host:active .lab-shimmer-hl {
+  box-shadow: inset 0 -10px 10px #ffffff3f;
+}
+@keyframes lab-shimmer-slide { to { transform: translate(calc(100cqw - 100%), 0); } }
+@keyframes lab-spin-around {
+  0%   { transform: translateZ(0) rotate(0deg); }
+  15%, 35% { transform: translateZ(0) rotate(90deg); }
+  65%, 85% { transform: translateZ(0) rotate(270deg); }
+  100% { transform: translateZ(0) rotate(360deg); }
+}
+
+/* ── 4 · TERMINAL on the résumé ─────────────────────────────────────────── */
+.lab-terminal { display: none; }
+html[data-lab-terminal="on"] .lab-terminal {
+  display: block;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: #0b0b0b;
+  overflow: hidden;
+  max-width: 720px;
+  margin-bottom: var(--space-section);
+}
+.lab-term-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-bottom: 1px solid var(--hairline); background: #151515;
+}
+.lab-term-dot { width: 12px; height: 12px; border-radius: 9999px; }
+.lab-term-body { padding: 16px 18px 20px; }
+.lab-term-line {
+  font-family: var(--ff-plex-mono); font-size: 12px; line-height: 20px;
+  color: rgb(var(--bureau-text-secondary));
+  opacity: 0; animation: lab-term-in 0.28s ease-out forwards;
+  animation-delay: calc(0.9s + var(--i) * 0.16s);
+}
+.lab-term-tick { color: rgb(var(--bureau-accent)); }
+.lab-term-info { color: #6aa6ff; }
+.lab-term-prompt {
+  font-family: var(--ff-plex-mono); font-size: 12px; line-height: 20px;
+  color: rgb(var(--bureau-text-primary));
+  overflow: hidden; white-space: nowrap;
+  border-right: 2px solid rgb(var(--bureau-accent));
+  width: 0; animation: lab-term-type 0.9s steps(28, end) forwards, lab-term-caret 0.7s step-end infinite;
+}
+@keyframes lab-term-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@keyframes lab-term-type { to { width: 27ch; } }
+@keyframes lab-term-caret { 50% { border-color: transparent; } }
+
+/* ── The panel ──────────────────────────────────────────────────────────── */
+.lab-panel {
+  position: fixed; right: 12px; bottom: 12px; z-index: 9999;
+  background: #0a0a0a; border: 1px solid var(--hairline); border-radius: 10px;
+  padding: 10px 12px; font-family: var(--ff-plex-mono); font-size: 11px; line-height: 16px;
+  color: rgb(var(--bureau-text-secondary)); box-shadow: 0 8px 30px rgb(0 0 0 / 0.6);
+}
+.lab-panel h6 { margin: 0 0 6px; font-size: 10px; letter-spacing: 1.2px;
+  text-transform: uppercase; color: rgb(var(--bureau-text-muted)); }
+.lab-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.lab-row > span:first-child { width: 62px; color: rgb(var(--bureau-text-muted)); }
+.lab-panel button {
+  font: inherit; padding: 2px 7px; border-radius: 5px; cursor: pointer;
+  border: 1px solid var(--hairline); background: transparent;
+  color: rgb(var(--bureau-text-secondary));
+}
+.lab-panel button[data-on="1"] {
+  border-color: rgb(var(--bureau-accent)); color: rgb(var(--bureau-accent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-lab-aurora] .aurora-word,
+  .lab-shimmer-spark, .lab-shimmer-spark::before,
+  .lab-term-line, .lab-term-prompt { animation: none !important; }
+  html[data-lab-aurora] .aurora-word {
+    background: none; -webkit-text-fill-color: rgb(var(--bureau-text-primary));
+    color: rgb(var(--bureau-text-primary));
+  }
+  .lab-term-line { opacity: 1; }
+  .lab-term-prompt { width: 27ch; }
+}
