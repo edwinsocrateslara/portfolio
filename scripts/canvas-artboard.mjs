@@ -240,7 +240,7 @@ const EXTRACT = `(() => {
     "textTransform","textAlign","textDecorationLine","textOverflow","whiteSpace","textWrap",
     "flexDirection","flexWrap","justifyContent","alignItems","alignSelf","alignContent",
     "flexGrow","flexShrink","flexBasis","gap","rowGap","columnGap","order",
-    "gridTemplateColumns","gridTemplateRows","gridColumn","gridRow",
+    "gridTemplateColumns","gridTemplateRows","gridTemplateAreas","gridColumn","gridRow",
     "objectFit","aspectRatio","verticalAlign","listStyleType","transform",
     "isolation","pointerEvents","fill","stroke","strokeWidth","backdropFilter",
     "resize","content","textIndent","boxShadow",
@@ -402,8 +402,22 @@ const EXTRACT = `(() => {
       const rects = range.getClientRects()
       const parent = el.parentElement
       const room = parent ? parent.getBoundingClientRect().width : Infinity
+      // ⚠ THIS NO LONGER FIRES ON ORDINARY TEXT, and the reason is editing.
+      // Locking a measured single line with nowrap protects the artboard from
+      // being re-wrapped by different font metrics at the destination — but it
+      // also makes the text UNEDITABLE in any way that changes its width. Type
+      // a longer word, or set the headline bold, and it overflows its box
+      // instead of reflowing, because nowrap says it may not wrap.
+      //
+      // The fault this was written for was PINNED HEIGHT, not free wrapping:
+      // a two-line headline in a 42px box painted over the chat input. Height
+      // is no longer pinned on text elements, so a rewrap now pushes content
+      // down rather than overlapping it — which --verify still catches.
+      //
+      // So nowrap is emitted only where the APP itself asks for it. Where the
+      // app lets text wrap, the artboard lets it wrap too.
       oneLine = rects.length === 1 &&
-        cs.whiteSpace === "normal" &&
+        cs.whiteSpace === "nowrap" &&
         rects[0].width < room - 1
     }
 
@@ -451,6 +465,19 @@ const EXTRACT = `(() => {
       if (FAULT && FAULT.props.includes(p) && (!FAULT.tags || FAULT.tags.includes(tag))) continue
       // Inherited: the artboard root carries the app's baseline, so a value
       // that merely matches it needs no repeating.
+      // FONT-FAMILY IS ALWAYS EMITTED ON TEXT. Inherited properties are
+      // normally skipped when they match the parent, which is right for
+      // rendering and wrong for editing: an element with no font-family of
+      // its own gives the canvas editor nothing to hang a weight picker on,
+      // so the family's other weights are not offerable. The front door's
+      // headline was the case that surfaced it — it is an <h1>, so the UA's
+      // bold forces font-WEIGHT to be emitted outright, while font-FAMILY
+      // matched its parent and was skipped. Weight declared, family absent,
+      // no bold available.
+      //
+      // Emitting it costs one declaration per text element and cannot change
+      // what renders: the value written is the one that was being inherited.
+      if (p === "fontFamily" && textish) { decls.push(KEBAB(p) + ":" + v); continue }
       if (INHERITED.has(p)) {
         // Did the sentinel reach this tag's probe? If not, the UA sets the
         // property itself and inheritance never happens here — so emit it
@@ -526,9 +553,19 @@ const EXTRACT = `(() => {
         // uneven 16-43px in three different places while every x stayed exact.
         const pd = cs.display
         if (pd.includes("flex") || pd.includes("grid")) continue
+        // A TEXT SIBLING COUNTS, and missing that lost a real space. JSX like
+        //   {a} · {b} ·{" "}
+        //   {n} slides
+        // renders as adjacent TEXT nodes with a whitespace-only node between
+        // them — the explicit {" "} React inserts to survive the line break.
+        // Testing only for element siblings dropped it, and the deck's meta
+        // line came out "· 21 slides" in the app and "·21 slides" on the
+        // board. --verify caught it as an 88x16 region and nothing else would
+        // have: it is one space, in one line, on one surface.
         const prev = n.previousSibling, next = n.nextSibling
-        const inlineish = e => e && e.nodeType === 1 &&
-          /inline|contents/.test(getComputedStyle(e).display)
+        const inlineish = e => e && (
+          (e.nodeType === 1 && /inline|contents/.test(getComputedStyle(e).display)) ||
+          (e.nodeType === 3 && e.textContent.trim().length > 0))
         if (inlineish(prev) && inlineish(next)) inner += " "
       } else if (n.nodeType === 1) inner += walk(n, cs)
     }
@@ -665,6 +702,21 @@ const IMG_PROBE = `JSON.stringify([...document.querySelectorAll("img")].map((i) 
   return { x: b.x, y: b.y, w: b.width, h: b.height, loaded: i.complete && i.naturalWidth > 0 };
 }))`
 
+// Every element that is actually scrolling, and the gutter strip its thumb
+// occupies. offsetWidth - clientWidth IS the reserved gutter, measured rather
+// than assumed — it is 0 on a pane that does not overflow and does not depend
+// on knowing --chat-scrollbar. Only vertical gutters: nothing on this site
+// scrolls horizontally, and a horizontal strip would mask a real edge.
+const SCROLLER_PROBE = `JSON.stringify([...document.querySelectorAll("*")].filter((e) => {
+  const gut = e.offsetWidth - e.clientWidth;
+  return gut > 0 && e.scrollHeight > e.clientHeight + 1;
+}).map((e) => {
+  const b = e.getBoundingClientRect();
+  const gut = e.offsetWidth - e.clientWidth;
+  const bw = parseFloat(getComputedStyle(e).borderRightWidth) || 0;
+  return { x: b.right - gut - bw, y: b.y, w: gut, h: b.height };
+}))`
+
 async function shoot(cdp, url, setup) {
   // Page.navigate rather than shot.mjs's goto: goto preflights that the origin
   // is a live `next dev`, which is right for the app and wrong for the static
@@ -686,8 +738,9 @@ async function shoot(cdp, url, setup) {
   await cdp.evalJS(FREEZE)
   await cdp.sleep(400)
   const imgs = JSON.parse(await cdp.evalJS(IMG_PROBE))
+  const scrollers = JSON.parse(await cdp.evalJS(SCROLLER_PROBE))
   const r = await cdp.send("Page.captureScreenshot", { format: "png" })
-  return { png: Buffer.from(r.result.data, "base64"), imgs }
+  return { png: Buffer.from(r.result.data, "base64"), imgs, scrollers }
 }
 
 export async function verify({ dir, route, w, h, masks: masksIn = [], label = "", setup = null }) {
@@ -738,6 +791,23 @@ export async function verify({ dir, route, w, h, masks: masksIn = [], label = ""
     masks = masks.concat([[Math.round(box.x) + 1, Math.round(box.y) + 1,
                            Math.max(0, Math.round(box.w) - 2), Math.max(0, Math.round(box.h) - 2)]])
   }
+
+  // ── Scrollbar gutters: the same argument as image interiors ──────────────
+  // A scrolling pane in the app paints a thumb. The artboard is a static box
+  // with explicit widths and nothing to scroll, so it never can — and the
+  // strip where the app's thumb sits reads as a solid column of difference.
+  // On the deck that was 8x624 of the 2523 differing pixels, the whole failure.
+  //
+  // This is destination chrome, not content. The app draws the thumb; a
+  // canvas, a PDF export or a print will each draw their own or none. What
+  // masking could hide is the gutter's WIDTH and POSITION, and those are
+  // asserted from the app's own geometry rather than assumed — the mask is
+  // exactly the reserved gutter of each scroller, measured, and nothing wider.
+  const gutters = app.scrollers || []
+  for (const g of gutters) {
+    masks = masks.concat([[Math.round(g.x), Math.round(g.y),
+                           Math.round(g.w), Math.round(g.h)]])
+  }
   writeFileSync(join(dir, "__app.png"), appPng)
   writeFileSync(join(dir, "__artboard.png"), artPng)
   const d = diffPNG(appPng, artPng, { masks })
@@ -759,8 +829,9 @@ export async function verify({ dir, route, w, h, masks: masksIn = [], label = ""
   const LIMIT = 0.0015
   const ok = d.ratio <= LIMIT
   console.log(`${head}: ${ok ? "PASS" : "FAIL"} — ${d.differing} px differ (${pct}% of ${d.w}x${d.h}), limit ${(LIMIT*100).toFixed(4)}%`)
-  console.log(`  ${masks.length} image interior(s) masked, ${d.maskedPixels} px excluded — ` +
-    `presence, load state, position and size asserted instead; 1px edges still compared`)
+  console.log(`  ${art.imgs.length} image interior(s) + ${gutters.length} scrollbar gutter(s) masked, ` +
+    `${d.maskedPixels} px excluded — presence, load state, position and size asserted instead; ` +
+    `1px edges still compared`)
   if (!ok) {
     console.error(`  differing regions, largest first (x, y, w, h):`)
     for (const r of d.regions.slice(0, 8)) {
