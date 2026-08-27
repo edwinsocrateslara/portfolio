@@ -136,14 +136,14 @@ export function TextBubble({
 }) {
   if (!text) return null
 
-  // .type-title, the same class the About page's opening sentence uses — one
+  // .type-name, the same class the About page's opening sentence uses — one
   // step up in size AND weight, which separates it from the paragraphs below
   // on two axes. Weight alone at body size read as bold prose rather than as
-  // an opening line. It stays well under .type-h2 (32/700), so the reveal
+  // an opening line. It stays well under .type-page (32/700), so the reveal
   // still reads as a conversation rather than as a page with a heading.
   return (
     <div
-      className={mono ? "type-meta" : lede ? "type-title lede-em" : "type-body"}
+      className={mono ? "type-value" : lede ? "type-name lede-em" : "type-body"}
       style={{
         color: mono
           ? "rgb(var(--bureau-text-secondary))"
@@ -264,7 +264,7 @@ export function ProjectHeaderBubble({
           {project.client}
         </div>
         <div
-          className="type-title"
+          className="type-name"
           style={{ color: "rgb(var(--bureau-text-primary))" }}
         >
           {project.projectTitle}
@@ -460,7 +460,7 @@ export function SpecBubble({ items }: { items: string[] }) {
             // STACK block already uses for its labels, so the figure and the
             // label it replaced get their emphasis the same way.
             <div
-              className="type-meta"
+              className="type-value"
               style={{
                 width: "var(--spec-figure-col)",
                 flex: "none",
@@ -471,7 +471,7 @@ export function SpecBubble({ items }: { items: string[] }) {
               <strong>{r.figure}</strong>
             </div>
           )}
-          <div className="type-meta" style={{ flex: "1 1 0", minWidth: 0, color: "rgb(var(--bureau-text-secondary))" }}>
+          <div className="type-value" style={{ flex: "1 1 0", minWidth: 0, color: "rgb(var(--bureau-text-secondary))" }}>
             {r.rest}
           </div>
         </div>
@@ -536,7 +536,7 @@ export function ImpactBubble({
             }}
           >
             <span
-              className="type-nav"
+              className="type-label"
               style={{
                 flexShrink: 0,
                 width: "var(--space-20)",
@@ -613,7 +613,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       )}
       <span style={{ flex: 1, minWidth: 0 }}>
         <span
-          className="type-card-h3"
+          className="type-body-strong"
           style={{
             display: "block",
             color: "rgb(var(--bureau-text-primary))",
@@ -628,7 +628,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
             about to need. So the link-out is one line. */}
         {local && (
           <span
-            className="type-meta"
+            className="type-attribute"
             style={{
               display: "block",
               color: "rgb(var(--bureau-text-muted))",

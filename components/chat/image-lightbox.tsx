@@ -232,7 +232,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
         </div>
 
         {hasMultiple && (
-          <div className="type-nav" style={{ color: "rgb(var(--bureau-text-secondary))" }}>
+          <div className="type-label" style={{ color: "rgb(var(--bureau-text-secondary))" }}>
             {String(currentIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
           </div>
         )}
