@@ -624,8 +624,17 @@ so these are the only way *out* of a view and the only way *home*. A control
 that is the sole route somewhere does not get to be 18px because the rest of
 the system likes 42.
 
-**Prompt chips are 44px** — `--space-12` above and below a 12px caption. They
-were 42 at body type; the text shrank and the target grew.
+**Prompt chips are 47px** — `--space-12` above and below a 14/21 control
+label, plus the 2px border. Not 44: no `--space-*` token lands on 44 with a
+21px line box (it wants 10.5) or on this system's usual 42 (9.5), and an
+off-grid spacing token invented to hit a round number is a worse trade than
+three pixels. `--space-8` would give 39 — below both 42 and 2.5.5's 44, a
+smaller target for a larger label.
+
+The number moves with the label and the arithmetic has been stale twice, so it
+belongs in one place: **12/18 + 12 = 44 · 14/21 + 12 = 47 · 16/24 + 12 = 50.**
+The earlier claim that chips "were 42 at body type" described a state with
+`--space-8` padding that had already been replaced when it was written.
 
 **The rail's contact links are 26px** — `--space-4` above and below a 12px
 label on 18px leading. That clears 2.5.8's 24×24 AA floor and does not reach
@@ -674,6 +683,7 @@ type chip on a doc-link card was the first thing to test this: it was mono 12 at
 | step | size / lh | ratio | voice |
 |---|---|---|---|
 | data | 12 / 18 | floor | Data |
+| control | 14 / 21 | *off-ladder* | Product |
 | body | 16 / 24 | ×1.33 | Product |
 | section | 20 / 30 | ×1.25 | Data |
 | name | 26 / 39 | ×1.30 | Product |
@@ -696,6 +706,38 @@ front door, which is why display jumps ×1.56 instead of ×1.25 twice.
 force it back into the arithmetic ramp it replaced. Spacing is still on the grid.
 
 **12px is the floor.** There is no step below it.
+
+#### The 14/21 step is off the ladder, and kept on purpose
+
+**It is not a rung.** 12→14 is ×1.167 and 14→16 is ×1.143; neither is 1.25 and
+neither is trying to be. It sits between the floor and the body step, and its
+**only consumer is the prompt chip.**
+
+That is a deliberate exception to the rule two paragraphs up — every rung
+populated, no step without a reason. This step inverts it: **one component is
+the reason.** It is recorded here rather than left to be inferred, because it
+has already been deleted once by someone reasoning from the count.
+
+**The history, in order:**
+
+| | size | what happened |
+|---|---|---|
+| 1 | **14 / 21** | where chips started, as `.type-control` |
+| 2 | **16 / 24** | the step was retired as a single-consumer leftover and chips merged up into `.type-body` — **an error.** They landed on exactly the composer's type: same family, size, leading, weight and tracking, separated only by colour. A suggestion and the thing you act with read as peers. |
+| 3 | **12 / 18** | dropped to `.type-caption`, which is where `.chip`'s padding had always pointed (12 + 18 + 12 + 2 = 44). Correct arithmetic, and too small for something you tap. |
+| 4 | **14 / 21** | back, as a step held for one component. |
+
+**So: if you are reading this because you found a step with one consumer and
+wondered whether it is a leftover — it is not.** It was that once, it was
+deleted for that reason, and the two sizes either side of it were both tried
+and both wrong. The ladder governs ranks; this is a control label, and 14 is
+the size it wants.
+
+**No tracking on `.type-control`,** and that is a decision rather than an
+omission. `.type-caption`'s 0.4px exists to open up 12px counters; carrying it
+to 14 would be inheriting a value tuned for a different size, which is the
+mistake the four display-tracking tokens were making before they collapsed into
+one em value. At 14 the counters do not need the help.
 
 ### Line-height: 1.5×, with one bounded exception
 

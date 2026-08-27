@@ -7,16 +7,16 @@ interface PromptChipProps {
   prefix?: string
 }
 
-// .type-caption — the ramp's floor, in Product voice, and deliberately a step
-// BELOW the composer these sit under.
+// .type-control — 14/21, one step below the composer these sit under, and a
+// step that exists for this component alone. Held deliberately; see DESIGN.md
+// for why, and for the three moves that got here.
 //
-// They had ended up identically typed: chip and input were both Archivo 16/24
-// at weight 400 with normal tracking, separated only by colour. That was a
-// regression from retiring the 14px step — chips were .type-control and got
-// merged upward into .type-body, landing on the input. A suggestion and the
-// thing you act with are not on the same level, and under "size ranks" saying
-// so is size's job. Colour was already trying and could not carry it alone:
-// secondary against primary is about a 12% difference in ink.
+// The problem it solves is still the original one: chip and input had ended up
+// identically typed, both Archivo 16/24 at 400 with normal tracking, separated
+// only by colour. A suggestion and the thing you act with are not on the same
+// level, and under "size ranks" saying so is size's job — colour alone could
+// not, at roughly 12% in ink. 12 said it and said it too loudly for something
+// you tap. 14 says it once.
 //
 // Still Archivo, not mono — these are things a person would say. The
 // hover state lives in .chip rather than in React state — it was three
@@ -24,7 +24,7 @@ interface PromptChipProps {
 // hover that depends on a re-render is a hover that can miss.
 export function PromptChip({ label, onClick, disabled = false, prefix }: PromptChipProps) {
   return (
-    <button type="button" className="chip type-caption" onClick={onClick} disabled={disabled}>
+    <button type="button" className="chip type-control" onClick={onClick} disabled={disabled}>
       {prefix && <span className="type-attribute chip-prefix">{prefix}</span>}
       {label}
     </button>

@@ -72,6 +72,10 @@ const ALLOW = {
     "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
   "app/globals.css::css-off-grid:::root — --type-display-size: 50px":
     "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
+  "app/globals.css::css-off-grid:::root — --type-control-size: 14px":
+    "An OFF-LADDER step, kept for one component on purpose. 14/21 is not a rung of the 1.25 ladder and type sizes are not bound to the 4px grid anyway; DESIGN.md carries the reason it exists and the three moves that got there, so a later audit finding a single-consumer step reads why rather than assuming it is a leftover. It was retired once on that assumption.",
+  "app/globals.css::css-off-grid:::root — --type-control-lh: 21px":
+    "An OFF-LADDER step, kept for one component on purpose. 14/21 is not a rung of the 1.25 ladder and type sizes are not bound to the 4px grid anyway; DESIGN.md carries the reason it exists and the three moves that got there, so a later audit finding a single-consumer step reads why rather than assuming it is a leftover. It was retired once on that assumption.",
   "app/globals.css::css-off-grid:::root — --space-optical-meta: 5px":
     "The title-to-meta optical gap. Documented at its definition: the meta line's own leading already separates the two, so `within` (8px) reads as a break rather than a pairing. It was written out as three separate documented exceptions before becoming one token, which is the whole argument for it having a name.",
   "app/globals.css::css-off-grid:::root — --input-border: 1px":

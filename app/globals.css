@@ -187,6 +187,17 @@
      disease this ramp was written to cure. */
   --type-data-size:     12px;  --type-data-lh:     18px;  /* floor  */
   --type-body-size:     16px;  --type-body-lh:     24px;  /* x1.33  */
+  /* 14/21 — NOT A RUNG OF THE LADDER. It sits between the floor and the body
+     step at ratios of 1.167 and 1.143, which is not 1.25 and is not trying to
+     be. It is a step held for ONE COMPONENT, deliberately, and the history is
+     in DESIGN.md so nobody deletes it a second time assuming it is a leftover.
+
+     Short version: chips were 14, went to 16 when this step was retired (an
+     error — they landed on exactly the input's type), went to 12 (which the
+     padding had always pointed at, and which reads too small for something you
+     tap), and are back at 14. A step existing for one component is the price
+     of the label being the right size. */
+  --type-control-size:  14px;  --type-control-lh:  21px;  /* off-ladder */
   --type-section-size:  20px;  --type-section-lh:  30px;  /* x1.25  */
   --type-name-size:     26px;  --type-name-lh:     39px;  /* x1.30  */
   --type-page-size:     32px;  --type-page-lh:     48px;  /* x1.23  */
@@ -735,6 +746,18 @@ body {
     font-weight: 400;
     font-size: var(--type-body-size);
     line-height: var(--type-body-lh);
+  }
+  /* The off-ladder step, and its only consumer is the prompt chip. NO
+     TRACKING, and that is a decision rather than an omission: .type-caption's
+     0.4px exists to open up 12px counters, and inheriting a value tuned for a
+     smaller size is the same mistake the four display-tracking tokens were
+     making before they collapsed into one em value. At 14 the counters do not
+     need the help. */
+  .type-control {
+    font-family: var(--ff-archivo);
+    font-weight: 400;
+    font-size: var(--type-control-size);
+    line-height: var(--type-control-lh);
   }
   /* Weight sorting on the Product side, and the reason .type-card-h3 did not
      simply merge into .type-name: the doc-link card is 58px tall, and 26/39
@@ -2281,21 +2304,26 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   display: inline-flex;
   align-items: center;
   gap: var(--space-within);
-  /* 12px caption on 18px leading is an 18px box. --space-12 top and bottom
-     takes the TARGET to 44 while the TEXT reads at 12: 12 + 18 + 12 + 2 = 44.
-     Measured, not assumed — and measured again after the label briefly went to
-     16/24, which stretched this same padding to a 50px pill. Over target
-     rather than under, so nothing broke; but the rule and this comment stopped
-     describing each other, which is how a number goes stale without failing.
+  /* 14/21 label + --space-12 top and bottom + 2px border = A 47px TARGET.
+     Not 44, and that is accepted rather than worked around: no --space-* token
+     lands on 44 with a 21px line box (it wants 10.5) or on the 42 this system
+     usually builds to (9.5), and inventing an off-grid spacing token to hit a
+     round number is a worse trade than three pixels. --space-8 would give 39 —
+     BELOW both 42 and 2.5.5's 44, a smaller target for a larger label, which
+     is backwards. 47 clears AA's 24x24 outright and AAA's 44 as well.
 
-     WHY AN INTERACTIVE ELEMENT SITS AT THE RAMP'S FLOOR, since that is the
-     question this invites: a chip label is typographically identical to a rail
-     subtitle, which is not interactive. THE PILL DOES THE AFFORDANCE WORK —
-     the border, the fill, the hover, and the 44px target around an 18px line.
-     That is the same bargain every other control here makes, and it is why the
-     text size is free to say "supporting" while the box says "press me".
-     Shrinking the label does not shrink the target; the padding above is what
-     holds it, and it is derived from the label rather than guessed. */
+     THE ARITHMETIC HAS BEEN STALE HERE TWICE, so it is stated per state:
+       12/18 + 12 = 44      14/21 + 12 = 47      16/24 + 12 = 50
+     This comment sat at the first while the rule produced the third. Over
+     target, so nothing failed — which is exactly how a number goes stale
+     without anything catching it.
+
+     WHY AN INTERACTIVE ELEMENT SITS BELOW THE BODY STEP, since that is the
+     question this invites: THE PILL DOES THE AFFORDANCE WORK — the border, the
+     fill, the hover, and a 47px target around a 21px line. That is the same
+     bargain every other control here makes, and it is why the text is free to
+     say "supporting" while the box says "press me". Shrinking the label does
+     not shrink the target; the padding above is what holds it. */
   padding: var(--space-12) var(--space-16);
   border-radius: var(--bureau-radius-chip);
   border: 1px solid var(--hairline);
