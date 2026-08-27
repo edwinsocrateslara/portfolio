@@ -213,13 +213,27 @@ over the ground — an olive that reads as a stain rather than a decision, and
 the largest chromatic gesture on a site whose every other accent use is 8px or
 smaller.
 
-**Rule 6's exception now has five consumers that paint nothing.** The gradients
-are still in the file, so `isTopOfViewWash` still recognises and permits them,
-and `check-design` still reports zero. The exception is dormant rather than
-dead — if the wash is not coming back, the five `::before` blocks and the
-`--hero-glow-*` tokens should go with it, and then the exception can be removed
-from rule 6 and its four near-miss fixtures retired. That is a separate
-decision and it is not taken here.
+**Rule 6's exception is DORMANT, PENDING A DECISION THAT HAS NOT BEEN MADE.**
+Not dead, and not an oversight. The gradients are still in the file, so
+`isTopOfViewWash` still recognises and permits them and `check-design` still
+reports zero — the exception currently guards five rules that paint nothing.
+
+⚠ **Do not tidy this away.** A reader finding an exception with no visible
+consumer will reasonably want to delete it, and that would be deciding
+something nobody decided. The wash is off *for now*. Removing it for good is a
+four-step sequence, and all four steps happen together or none do:
+
+1. delete the five `::before` blocks
+2. delete the `--hero-glow-*` tokens
+3. remove the exception from rule 6 in `check-design.mjs`
+4. retire its four near-miss fixtures from the self-test
+
+Doing step 3 alone would fail the build on gradients that are still declared.
+Doing 1 and 2 without 3 and 4 would leave the exception genuinely dead, which
+is the state this note exists to prevent being reached by accident.
+
+Until that decision is taken, the off-switch is the whole change and everything
+else stands ready.
 
 **The allowlist was never where the wash lived.** Rule 6's three
 `no-accent-surface` entries are the SEND fill, the IMPACT marker and the
@@ -1377,7 +1391,9 @@ A ladder only reads as a ladder when the rungs differ.
 
 **Contrast over the glow**, measured on rendered pixels rather than computed
 from the token — the glow is a gradient, so the value under each element
-differs:
+differs. **This table describes the wash while it was ON.** With it off, every
+element sits on the flat `#131313` ground and the numbers below are history
+that the next person to switch it back on will need:
 
 | | background there | ratio |
 |---|---|---|
@@ -1386,11 +1402,24 @@ differs:
 | chip text `#a0a0a0` | `rgb(23,26,21)` | **6.6:1** |
 
 **The placeholder was the binding constraint and it broke.** At `0.13` it read
-5.47; at `0.20` it reads **4.30 at 380px**, under the floor. It is
-`--bureau-text-secondary` now, which reads 5.32 there. That is the one string
-the alpha rise cost, and it is recorded here rather than in a commit message
-because the next person raising the alpha needs to know the ceiling was already
-reached once.
+5.47; at `0.20` it read **4.30 at 380px**, under the floor. It moved to
+`--bureau-text-secondary`, which read 5.32 there. That was the one string the
+alpha rise cost — a single line in one commit — and it is recorded here rather
+than in a commit message because anyone raising the alpha again needs to know
+the ceiling was already reached once.
+
+**It is back to `--bureau-text-muted` now the wash is off.** Measured against
+what it actually sits on, which is the input's `layer-1` fill over the ground
+at `rgb(28,28,28)` — not the pane background:
+
+| | on the input fill | on the old wash |
+|---|---|---|
+| muted `#8f8f8f` | **5.27:1** | 3.74:1 ✗ |
+| secondary `#a0a0a0` | 6.52:1 | 4.63:1 |
+
+Muted clears the 4.5 floor with 0.77 to spare. It was muted by design, moved
+under duress, and the duress is gone. **If the wash comes back, this string
+moves to secondary again** — that is the first thing to check, not the last.
 
 **Measure the placeholder with the placeholder text BLANKED.** Sampling the
 field with the glyphs present averages the glyph colour into the background and

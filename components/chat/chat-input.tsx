@@ -122,7 +122,7 @@ export function ChatInput({
           Sampled with the placeholder blanked — measuring the mean with the
           glyphs present reads the glyph colour as background and reports a
           number that is wrong in both directions. */}
-      <style>{`textarea::placeholder { color: rgb(var(--bureau-text-secondary)); }`}</style>
+      <style>{`textarea::placeholder { color: rgb(var(--bureau-text-muted)); }`}</style>
       <button
         type="button"
         onClick={onSubmit}
