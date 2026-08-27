@@ -460,9 +460,14 @@ export function AppShell({
             {activeProject.railSubtitle}
           </span>
         )}
+        {/* ARCHIVO, with the rest of the rail. This sits in the mobile top bar
+            rather than in .rail, but it is the sheet's toggle — the only way
+            in and out of the navigation on a phone — so by the rule it is
+            something a person navigates by, not a recorded fact. The brand
+            beside it keeps .type-badge and stays mono, deliberately. */}
         <button
           type="button"
-          className="type-label rail-sheet-close"
+          className="type-rail-label rail-sheet-close"
           aria-expanded={sheetOpen}
           aria-label={sheetOpen ? "Close menu" : "Open menu"}
           onClick={() => setSheetOpen((v) => !v)}

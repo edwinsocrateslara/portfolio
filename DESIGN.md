@@ -463,8 +463,20 @@ element that uses it:
 | `--track-badge` | 0.8px | Plex Mono caps, 700 |
 | `--track-caps-body` | 1.4px | Plex Mono caps at 16 |
 | `--track-caps-label` | 1.2px | Plex Mono caps at 12 |
+| `--track-caps-sans` | 0.05em | Archivo caps, both rail steps |
 
-Eight values, and the ramp runs monotonically with optical size — large sans
+**Nine values.** The budget in `check-design` was raised from 8 when the rail
+moved to Archivo, and the raise is the review — a row here plus a paragraph at
+`TRACK_BUDGET`. The ask started at three values and came down to one: the brand
+stayed mono so needed nothing, and the rail's two caps steps collapse into a
+single correction when it is written in **em** rather than px. `0.05em` is
+0.6px at 12 and 0.8px at 16.
+
+That 0.8px equals `--track-badge` and is **not** the same value — badge is mono
+caps at 700, solved from a different face. Pointing one at the other would
+rebuild the kind of coincidence this document keeps deleting.
+
+The ramp runs monotonically with optical size — large sans
 tightens, small sans opens, mono caps open furthest. Read the mono pair in
 **em**, not px, or it looks like it runs backwards: 1.4/16 is 0.088em and
 1.2/12 is 0.100em, so the smaller caps do open further. The absolute pixel
@@ -648,9 +660,36 @@ re-declare `font-family`, `font-weight`, `font-size`, `line-height`, or
 codebase precisely because inline re-declaration was available and easier
 than picking a role.
 
-Mono carries the "system voice"; Archivo carries all human-readable prose
-and headings. That split is what keeps an achromatic palette legible
-without color.
+### Mono for meta, Archivo for everything else
+
+**Mono is for machine-generated or recorded fact** — dates, counts, stack
+names, run figures, indices. Things that were measured or logged rather than
+written. Plus the brand, as the one deliberate exception below.
+
+**Archivo is for everything else** — anything a person wrote, and anything a
+person navigates by.
+
+This replaced *"mono for chrome and labels, Archivo for prose"*, which was
+never quite the intent and had stopped describing the site. Under the old
+wording the rail was chrome, so it was mono. Under this one a project name is
+**a label you click, not a fact**, and the rail was always on the wrong side of
+the line. Moving it is what made the rule and the site agree.
+
+What is left in mono is exactly what the rule describes: the résumé's dates and
+role lines, the vibe reveal's STACK / CADENCE / CORPUS / OUTPUT / SHIPPED /
+BUILT block, and the impact cards' `01` / `02` markers.
+
+**The brand is the exception, and it is the only one.** `.type-wordmark` stays
+IBM Plex Mono at 16/24 weight 700. A wordmark is not a fact and not something
+you navigate by — by the rule it should be Archivo. It stays mono because a
+brand mark is allowed to be its own thing, and because it is the one place the
+mono voice still appears on every surface: with the rail in Archivo it is what
+keeps the system voice visible above the fold rather than only inside a
+document. Two sizes of the same idea sitting next to each other in the rail
+would have made it a texture; alone at the top it reads as a mark.
+
+Both faces are still load-bearing. That split is what keeps an achromatic
+palette legible without color.
 
 ### The panes already share a top rung — the difference is half-leading
 

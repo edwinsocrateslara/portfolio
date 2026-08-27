@@ -579,7 +579,20 @@ function checkCssLayout(file, raw) {
 //      is exactly what arrives one plausible pixel at a time. Raising this
 //      number is a deliberate edit here, with a row added to the table in
 //      DESIGN.md — which is the review this rule exists to force.
-const TRACK_BUDGET = 8
+// RAISED 8 -> 9 when the rail moved from IBM Plex Mono to Archivo. The rail
+// sets caps at two steps and neither existing token fits: --track-caption is
+// the sans face at 12 but lowercase, and --track-badge's 0.8px is mono caps at
+// 700 — the same number solved from a different face, which is the coincidence
+// this repo keeps deleting rather than reusing.
+//
+// The ask was three values and came down to ONE by expressing the correction
+// in em: --track-caps-sans: 0.05em is 0.6px at 12 and 0.8px at 16. The brand
+// needed nothing because it stays mono.
+//
+// Raising this is meant to cost something. It costs a row in DESIGN.md's
+// tracking table and this paragraph. Nine is the number; the next one has to
+// argue for ten.
+const TRACK_BUDGET = 9
 
 function checkTracking(file, raw) {
   const found = []

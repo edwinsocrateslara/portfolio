@@ -146,6 +146,23 @@
      written as pixels. It is not. */
   --track-caps-body:      1.4px;  /* mono caps at 16 — region headings */
   --track-caps-label:     1.2px;  /* mono caps at 12 — rows, labels, links */
+  /* SANS CAPS — the rail, at both of its steps. The ninth token, and the
+     budget was raised from 8 to 9 to admit it; see TRACK_BUDGET in
+     check-design.mjs and the row in DESIGN.md's table.
+     
+     IN EM, NOT PX, AND THAT IS WHY IT IS ONE TOKEN INSTEAD OF TWO. The rail
+     sets caps at 12 and at 16, which in pixels wants 0.6 and 0.8 — two rows
+     for one correction. The ramp's own note already complains that writing
+     this in pixels "makes it look backwards" when the smaller step carries
+     the smaller number; 0.05em is the correction, and 0.6 and 0.8 are what it
+     resolves to. The mono caps above stay in px because their two values are
+     genuinely different corrections (0.100em and 0.088em), not one.
+
+     0.8px also happens to equal --track-badge. It is not the same value:
+     badge is mono caps at 700 and this is sans caps at 600, solved from a
+     different face. Pointing one at the other would rebuild the coincidence
+     this system has spent several commits removing. */
+  --track-caps-sans:      0.05em;
 
   --type-label-size:   12px;  --type-label-lh:   18px;
   /* 14 is the ONE size on this ramp that is not a multiple of 4, and it is
@@ -699,6 +716,35 @@ body {
     font-size: var(--type-label-size);
     line-height: var(--type-label-lh);
     letter-spacing: var(--track-caption);
+  }
+
+  /* ── The rail's voice ─────────────────────────────────────────
+     Archivo caps at the two steps the sidebar uses. NAMED FOR THE SURFACE,
+     which this layer otherwise refuses to do — the rule is that a class is
+     named by its voice, never by the element that happens to wear it. The
+     exception is deliberate and narrow: the rail is the only place a sans
+     caps voice exists, and naming it `.type-index` or `.type-nav-label` would
+     be inventing a generality that has one user. If a second surface ever
+     adopts it, rename the pair for the voice at that point — that rename is
+     the signal that it became a voice rather than a place.
+     
+     Weight 600, matching the mono labels these replaced, so the change is
+     family and tracking only. */
+  .type-rail-label {
+    font-family: var(--ff-archivo);
+    font-weight: 600;
+    font-size: var(--type-label-size);
+    line-height: var(--type-label-lh);
+    letter-spacing: var(--track-caps-sans);
+    text-transform: uppercase;
+  }
+  .type-rail-section {
+    font-family: var(--ff-archivo);
+    font-weight: 600;
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-lh);
+    letter-spacing: var(--track-caps-sans);
+    text-transform: uppercase;
   }
 
   /* IBM Plex Mono — system voice */
