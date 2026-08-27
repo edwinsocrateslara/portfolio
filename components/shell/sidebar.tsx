@@ -80,7 +80,7 @@ function ProjectSection({
 }) {
   return (
     <>
-      {/* .type-rail-section, not .type-rail-label: caps at the BODY step, not
+      {/* .type-rail-section, not .type-action: caps at the BODY step, not
           the label step. A region heading and a row label were the same size,
           which is what made the document rows read as headers in the first
           place — that distinction survives the move to Archivo unchanged,
@@ -133,7 +133,7 @@ function ProjectSection({
                     uses, so the row reads as a miniature of the card the click
                     produces. Truncation is CSS-only: the full strings stay in
                     the DOM and in the row's accessible name. */}
-                <span className="type-rail-label rail-item-client">{p.client}</span>
+                <span className="type-action rail-item-client">{p.client}</span>
                 <span className="type-caption rail-item-subtitle">{p.railSubtitle}</span>
               </span>
             </button>
@@ -250,7 +250,7 @@ export function Sidebar({
                 header above them, which inverts the hierarchy. See
                 DOC_ICON_STROKE. */}
             <Layers className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
-            <span className="type-rail-label rail-doc-label">Case Study</span>
+            <span className="type-action rail-doc-label">Case Study</span>
           </button>
 
           {/* A button, not a link. This row opened DocHub in a new tab until
@@ -266,7 +266,7 @@ export function Sidebar({
             onClick={pick(onSelectResume)}
           >
             <FileUser className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
-            <span className="type-rail-label rail-doc-label">Resume</span>
+            <span className="type-action rail-doc-label">Resume</span>
           </button>
 
           {/* Last in the document group, and a pane swap rather than a route:
@@ -281,7 +281,7 @@ export function Sidebar({
             onClick={pick(onSelectAbout)}
           >
             <UserRound className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
-            <span className="type-rail-label rail-doc-label">About</span>
+            <span className="type-action rail-doc-label">About</span>
           </button>
         </div>
       </nav>

@@ -467,7 +467,7 @@ export function AppShell({
             beside it keeps .type-badge and stays mono, deliberately. */}
         <button
           type="button"
-          className="type-rail-label rail-sheet-close"
+          className="type-action rail-sheet-close"
           aria-expanded={sheetOpen}
           aria-label={sheetOpen ? "Close menu" : "Open menu"}
           onClick={() => setSheetOpen((v) => !v)}

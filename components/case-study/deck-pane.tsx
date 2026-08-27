@@ -27,7 +27,7 @@ export function DeckPane() {
             consolidation that class exists for. `download` is what makes it
             save rather than navigate; the visible text is the accessible name,
             so there is no second string to drift. */}
-        <a className="chip type-label deck-download" href={meridianDeck.pdf} download>
+        <a className="chip type-action deck-download" href={meridianDeck.pdf} download>
           <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
           Download PDF
         </a>

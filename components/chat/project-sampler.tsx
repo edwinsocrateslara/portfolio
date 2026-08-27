@@ -48,7 +48,7 @@ export function ProjectSampler({
             />
           </span>
           <span className="sampler-foot">
-            <span className="type-label sampler-client">{p.client}</span>
+            <span className="type-action sampler-client">{p.client}</span>
             <span className="type-caption sampler-sub">{p.railSubtitle}</span>
           </span>
         </button>

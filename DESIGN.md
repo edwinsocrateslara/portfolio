@@ -662,31 +662,60 @@ than picking a role.
 
 ### Mono for meta, Archivo for everything else
 
-**Mono is for machine-generated or recorded fact** — dates, counts, stack
-names, run figures, indices. Things that were measured or logged rather than
-written. Plus the brand, as the one deliberate exception below.
+**Mono is for meta** — machine-generated or recorded fact, and labels the site
+applies to its own content: dates, counts, stack names, indices, section
+headings, captions, attributions.
 
-**Archivo is for everything else** — anything a person wrote, and anything a
-person navigates by.
+**Archivo is for everything a person wrote or acts on** — prose, navigation,
+buttons.
+
+The brand wordmark is the one exception.
 
 This replaced *"mono for chrome and labels, Archivo for prose"*, which was
 never quite the intent and had stopped describing the site. Under the old
-wording the rail was chrome, so it was mono. Under this one a project name is
-**a label you click, not a fact**, and the rail was always on the wrong side of
-the line. Moving it is what made the rule and the site agree.
+wording the rail was chrome, so it was mono. A project name is **a label you
+click, not a fact**, and the rail was always on the wrong side of the line.
 
-What is left in mono is exactly what the rule describes: the résumé's dates and
-role lines, the vibe reveal's STACK / CADENCE / CORPUS / OUTPUT / SHIPPED /
-BUILT block, and the impact cards' `01` / `02` markers.
+The second half of the rule is the part that took a pass to get right. A first
+attempt said mono was for *fact* alone, which left twenty-six headings and
+captions stranded — `Key impacts`, `Ten-year-old Alaskan Malamute`,
+`Currently reading`, `Greg Crabtree`. They looked like a third category and
+they are not: **a heading is a label the site applies to the content beneath
+it, and a caption is a label it applies to the image above it.** That is
+metadata about content, which is what "meta" already meant. Widening the
+wording to say so left only two things genuinely out of line — the sampler
+cards and the download pills — and both were fixed rather than excused.
+
+What is mono today, in full:
+
+| what | where | why |
+|---|---|---|
+| dates, role lines, institutions | résumé | recorded fact |
+| `STACK` / `CADENCE` / `CORPUS` / `OUTPUT` / `SHIPPED` / `BUILT` | vibe reveal | run figures |
+| `Tools` / `Experience` / `Education` | résumé | section headings |
+| band labels — `AI & LLM work`, `Design`, … | résumé | labels applied to content |
+| `The challenge` / `My role` / `Key impacts` / `The pipeline` | reveals | section headings |
+| photo captions and book attributions | About | labels applied to content |
+| `Toronto, Canada` | résumé, About | recorded fact |
+| the deck's `Meridian · Mobile Banking · 21 slides` | deck | counts |
+| `01` / `02` | reveals | an index |
+| the wordmark | every surface | the exception, below |
+
+**One place the wording needs a reading rather than a lookup.** The rail's
+`Work` and `Vibe Coding` are section headings, which the rule sends to mono —
+and they are Archivo. They are headings *inside the navigation*, labelling
+groups of things you click, not labels applied to content. Navigation wins.
+If a future heading sits on that boundary, that is the question to ask: does
+it describe content, or does it organise targets?
 
 **The brand is the exception, and it is the only one.** `.type-wordmark` stays
-IBM Plex Mono at 16/24 weight 700. A wordmark is not a fact and not something
-you navigate by — by the rule it should be Archivo. It stays mono because a
-brand mark is allowed to be its own thing, and because it is the one place the
-mono voice still appears on every surface: with the rail in Archivo it is what
-keeps the system voice visible above the fold rather than only inside a
-document. Two sizes of the same idea sitting next to each other in the rail
-would have made it a texture; alone at the top it reads as a mark.
+IBM Plex Mono at 16/24 weight 700. A wordmark is neither meta nor something
+you act on — by the rule it should be Archivo. It stays mono because a brand
+mark is allowed to be its own thing, and because it is now the only place the
+mono voice appears on every surface: with the rail in Archivo it is what keeps
+the system voice visible above the fold rather than only inside a document.
+Two sizes of the same idea sitting next to each other in the rail made it a
+texture; alone at the top it reads as a mark.
 
 Both faces are still load-bearing. That split is what keeps an achromatic
 palette legible without color.

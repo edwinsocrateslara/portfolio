@@ -718,19 +718,22 @@ body {
     letter-spacing: var(--track-caption);
   }
 
-  /* ── The rail's voice ─────────────────────────────────────────
-     Archivo caps at the two steps the sidebar uses. NAMED FOR THE SURFACE,
-     which this layer otherwise refuses to do — the rule is that a class is
-     named by its voice, never by the element that happens to wear it. The
-     exception is deliberate and narrow: the rail is the only place a sans
-     caps voice exists, and naming it `.type-index` or `.type-nav-label` would
-     be inventing a generality that has one user. If a second surface ever
-     adopts it, rename the pair for the voice at that point — that rename is
-     the signal that it became a voice rather than a place.
-     
-     Weight 600, matching the mono labels these replaced, so the change is
-     family and tracking only. */
-  .type-rail-label {
+  /* ── Caps on something you act on ──────────────────────────────
+     Archivo caps at the two steps. Weight 600, matching the mono labels these
+     replaced, so the change is family and tracking only.
+
+     .type-action WAS .type-rail-label FOR ONE COMMIT. It was named for the
+     surface, with a note saying that if a second surface adopted it the pair
+     should be renamed for the voice — and that the rename would be the signal
+     it had become a voice rather than a place. That happened immediately: the
+     front door's sampler cards carry the same three project names as the rail,
+     and the deck and résumé download pills are buttons. Three surfaces, one
+     voice: a caps label on something a person clicks.
+
+     .type-rail-section keeps its surface name because it is still true —
+     "Work" and "Vibe Coding" are group headings inside the navigation and
+     exist nowhere else. If that changes, rename it too. */
+  .type-action {
     font-family: var(--ff-archivo);
     font-weight: 600;
     font-size: var(--type-label-size);
