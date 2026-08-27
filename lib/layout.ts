@@ -51,7 +51,9 @@ export const IMAGE_SIZES_MEASURE = 720
 // lines regardless of this value, so the one-line version only exists above
 // that. And the earlier note here described the headline as "h2 at 32/48
 // weight 400" — it is .type-hero at 28/42, which is where the 54 and 30
-// character counts above come from.
+// character counts above come from — and it is now .type-display at 50/58,
+// so those counts are historic. Re-measured at 50: the string wraps to two
+// lines at this measure, 116px tall, 9.02% of a 1440x1000 viewport.
 export const HERO_MEASURE = 1120
 
 // Bordered blocks inside the chat column, capped so they read as objects

@@ -915,6 +915,15 @@ body {
       font-size: var(--type-section-size);
       line-height: var(--type-section-lh);
     }
+    /* ONE ROLE, TWO SIZES. The rail's brand is 16; the mobile top bar's is 12,
+       because that row fits brand + subject + MENU into 340px exactly. That
+       used to be a separate class (.type-badge) which an audit measuring only
+       1440 reported as having zero instances. It is the same role at a
+       breakpoint, which is what a breakpoint is for. */
+    .type-wordmark {
+      font-size: var(--type-data-size);
+      line-height: var(--type-data-lh);
+    }
     /* The aliases keep the OLD mobile behaviour — both steps collapsing onto
        24 — until their surfaces move. Deleted with them. */
     .type-hero, .type-h2 {

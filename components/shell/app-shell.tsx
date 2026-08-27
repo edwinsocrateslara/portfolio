@@ -447,7 +447,7 @@ export function AppShell({
       <div className="shell-topbar">
         <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
           <Sparkle size="var(--brand-mark-size)" />
-          <span className="type-badge" style={{ color: "rgb(var(--bureau-text-primary))" }}>
+          <span className="type-wordmark" style={{ color: "rgb(var(--bureau-text-primary))" }}>
             Edwin Lara
           </span>
         </button>
@@ -464,7 +464,7 @@ export function AppShell({
             rather than in .rail, but it is the sheet's toggle — the only way
             in and out of the navigation on a phone — so by the rule it is
             something a person navigates by, not a recorded fact. The brand
-            beside it keeps .type-badge and stays mono, deliberately. */}
+            beside it keeps .type-wordmark and stays mono, deliberately. */}
         <button
           type="button"
           className="type-action rail-sheet-close"
@@ -528,12 +528,15 @@ export function AppShell({
         ) : isFrontDoor ? (
           <div className="pane-front">
             <div className="hero-band" data-hero-col="stack">
-                  {/* .type-hero — its own step at 28/42, and its own weight.
-                      This used to be `type-h2 font-normal`, a utility stepping
-                      the class down; the headline now has a step of its own, so
-                      the weight belongs to it rather than to the call site. */}
+                  {/* .type-display — the top of the ladder, at 50/58.
+                      It was 28/42 and occupied 2.34% of a 1440x1000 viewport
+                      as a single 803px line; a critique put Suno's equivalent
+                      at 8%. Measured at the 1120 measure this pane already
+                      uses, 50/58 wraps to two lines and lands at 9.02%.
+                      The 1.16 leading is the ramp's one exception, bounded to
+                      steps of 40 and above. */}
                   <h1
-                    className={`type-hero ${fadeIn}`}
+                    className={`type-display ${fadeIn}`}
                     style={{
                       margin: 0,
                       maxWidth: HERO_MEASURE,
