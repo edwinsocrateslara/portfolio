@@ -116,14 +116,17 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
       // about outcomes and keeps the accent card.
       out.push({ kind: "spec", items: p.impacts })
     }
-    out.push({ kind: "section-heading", text: "See it running" })
     out.push({ kind: "doc-link", docKey: "ideas-showcase" })
     // ONE LINK, and it is the running artefact. The architecture diagram used
     // to be a second card here because it could not be read inline; it is now
     // embedded at the end of the pipeline section instead, and every link to
-    // it is gone — the DOCS entry, the card, and the PNG it served. A section
-    // headed "See it running" with two links under it was also describing only
-    // one of them.
+    // it is gone — the DOCS entry, the card, and the PNG it served.
+    //
+    // NO SECTION HEADING ON IT. "See it running" headed a section of one card
+    // whose own label already says "View live project" — the heading and the
+    // thing it introduced were saying the same sentence twice, and the heading
+    // said it less specifically. Every other heading in this flow names
+    // something a reader cannot see yet; this one named a button.
     //
     // ⚠ Anything past slot 3 lands HERE — after the proof link, at the very
     // end. That is fine for the work flow, where images trail by design, and
