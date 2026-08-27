@@ -14,47 +14,32 @@
 // chat column, the input, the chips and the sampler. Those now read
 // var(--prose-measure) directly.
 export const IMAGE_SIZES_MEASURE = 720
-
-// Landing hero measures. Not spacing — these are line-length limits, so they
-// are not on the 4px scale any more than the reading measure is.
+// THE HEADLINE'S MEASURE, AND NOW IT CHOOSES THE BREAK. It used to decide
+// one line versus two, back when the headline was 28/42 and 803px wide; at
+// 50/58 the string is ~1434px and two lines are a given, so this number does
+// a different job than it did and the reasoning that used to be here is gone
+// rather than edited — it described a headline that no longer exists.
 //
-// HERO_MEASURE was originally 1120 to compensate for leading that could not be
-// changed: the headline took a 52/78 hero step, and three centred lines at 78px
-// stacked to a 234px block that stopped reading as a headline. Widening the
-// measure was the only lever available.
+// WHAT IT DOES NOW: it puts the break after "making".
 //
-// CONSIDERED AND DECLINED, rather than an open option. An earlier version of
-// this note said narrowing was "a real option"; it was reopened, measured at
-// every candidate width, and closed. Keeping it at 1120 is the decision.
+//   I'm Edwin, AI designer & builder making
+//   useful products and workflows.
 //
-// The measured cost of narrowing to the reading measure, at 28/42 with today's
-// copy:
+// Measured by reading the rendered line boxes back out with a Range, not by
+// counting characters. That break holds from 810px to 940px — below 810 the
+// line count goes to three, above 940 "useful" is pulled up onto line one.
+// 880 is the middle of that window with about 70px of clearance either side,
+// which is what makes it safe against a font-loading difference or a tracking
+// change; it is NOT a value to nudge, because the two failure modes are 130px
+// apart and both are one word wide.
 //
-//     cap 1120 (today)   1 line    803px   54 characters   42px tall
-//     cap  900           1 line    803px   54 characters   42px tall
-//     cap  803 or below  2 lines   441px   30 characters   84px tall
+// Paired with `text-wrap: pretty` on the element, not `balance`: balance
+// equalises line lengths, which is what put "making" on line two.
 //
-// One sentence at 28px with a single return sweep beats a stacked pair of
-// 30-character fragments, and the second line adds 42px that pushes the input,
-// the chips and the sampler down by the same amount. That trade is worse both
-// ways, so the headline keeps its full width.
-//
-// ⚠ AT 1120 THIS CONSTANT DOES NOTHING. The headline renders at 803px because
-// that is the natural width of the copy, and any cap from 804 up is
-// indistinguishable — 1120, 900 and 10000 produce identical output. It only
-// begins to govern below ~803, where it immediately costs the second line. So
-// it is a ceiling with clearance, not a lever with slack: do not read 1120 as
-// a number that is doing work, and do not tune it expecting a gradual effect.
-//
-// Two related facts, both measured rather than assumed. Below a viewport of
-// about 1148 the pane's content drops under 803 and the headline wraps to two
-// lines regardless of this value, so the one-line version only exists above
-// that. And the earlier note here described the headline as "h2 at 32/48
-// weight 400" — it is .type-hero at 28/42, which is where the 54 and 30
-// character counts above come from — and it is now .type-display at 50/58,
-// so those counts are historic. Re-measured at 50: the string wraps to two
-// lines at this measure, 116px tall, 9.02% of a 1440x1000 viewport.
-export const HERO_MEASURE = 1120
+// Below a viewport of about 1225 the pane's own content width drops under 880
+// and governs instead; below about 1155 it drops under 810 and the headline
+// goes to three lines. Both are expected and neither is this constant's job.
+export const HERO_MEASURE = 880
 
 // Bordered blocks inside the chat column, capped so they read as objects
 // sitting in the column rather than as the column itself.

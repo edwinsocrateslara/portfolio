@@ -541,7 +541,16 @@ export function AppShell({
                       margin: 0,
                       maxWidth: HERO_MEASURE,
                       textAlign: "center",
-                      textWrap: "balance",
+                      // PRETTY, NOT BALANCE. balance equalises the two lines,
+                      // which is exactly what pushed "making" onto line two —
+                      // it optimises for even lengths and the sentence does not
+                      // want even lengths, it wants to break after the verb.
+                      // pretty fills the first line naturally (so the break
+                      // lands where HERO_MEASURE puts it) while still avoiding
+                      // a one-word last line, which plain wrapping leaves at
+                      // three lines: measured at 720, `wrap` orphans
+                      // "workflows." and `pretty` does not.
+                      textWrap: "pretty",
                       color: "rgb(var(--bureau-text-primary))",
                       animationDelay: delay(60),
                     }}
