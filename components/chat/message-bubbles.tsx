@@ -591,10 +591,18 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
     >
       {/* File-type chip, so only where there is a file type. A running
           deployment has none, and a PDF badge on one would be a lie in the
-          most literal place on the card. */}
+          most literal place on the card.
+
+          .type-label, not the .type-badge it used to be. A file type IS a
+          structural label — it says what kind of thing the link points at —
+          and the class it had was mono 12 at weight 700, which would have been
+          a FOURTH weight sharing the 12px rank alongside 400 values, 500
+          attributes and 600 labels. The ceiling is three, and a fourth is
+          defined as evidence the rank is overloaded rather than as a licence
+          to add one. This is not an overloaded rank; it is a label. */}
       {local && (
         <span
-          className="type-badge"
+          className="type-label"
           style={{
             // 34 -> 32 to land on the grid; the glyph also grew 8px -> 12px.
             width: "var(--space-32)",
