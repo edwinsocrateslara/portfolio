@@ -668,6 +668,33 @@ All three scrolling panes are `.pane-scroll` and share its
 | project reveal | **32** | 36 | `.type-title` 20/30 |
 | front door | 225 | 231 | `.type-h2`, `--hero-anchor: 25dvh` |
 
+#### The front door is exempt from the top rung, on purpose
+
+`.pane-front` sets `padding: 0 var(--space-40) var(--space-64)` — **zero top**,
+against the 32 every other pane takes from `.pane-scroll`. That is an exemption,
+not a miss, and it is worth stating because a padding audit will find it and
+want to close it.
+
+The band below it is **top-anchored, not centred**: both `.pane-front` and
+`.hero-band` are `justify-content: flex-start`, and the offset lives on the band
+as `padding-top: var(--hero-anchor)` — 25dvh at desktop, `--space-80` below
+900px. Centring was tried and rejected; the note on `.hero-band` records why, in
+short that it made the space below the chips a remainder and pulled the sampler
+back up into the viewport.
+
+The reason the offset has to live on the BAND rather than on the scroller is the
+wash. `.hero-band::before` is the top-of-view glow, `inset: 0 0 auto 0` on the
+band. Give the scroller 32px of top padding and the band starts 32px down, so
+the glow starts 32px down, and the front door opens with a flat strip above it.
+Measured at 1440: the band's box top is 0 and the headline's is 225, so the
+25dvh is doing exactly the job the 32 does elsewhere — it is the same rung,
+expressed on the element that also has to carry the glow.
+
+The BOTTOM padding is not an exemption. The front door's `--space-64` is the
+only real bottom value on a dockless pane, and the deck, About and Résumé
+reserve nothing on purpose — see the dock-reserve note above, where `--dock-h`
+is set to `0px` explicitly rather than left to a fallback.
+
 **The box tops are identical.** What differs is where the glyphs start inside
 their own line box: a 32px face in a 48px box begins 6px down, a 20px face in a
 30px box begins 4px. That is the same rule already stated for the rail — optical
