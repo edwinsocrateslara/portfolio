@@ -85,7 +85,7 @@ export function AboutPane() {
             lands on the pane's left edge either way, and hoisting it would
             push the mosaic down by the header's full height. The photographs
             do not move. */}
-        <h1 className="type-h2 pane-title about-title">About</h1>
+        <h1 className="type-page pane-title about-title">About</h1>
         <p className="type-label pane-meta">Toronto, Canada</p>
 
         {/* Verbatim from lib/sources/voice.md § Outside work, first sentence.
@@ -97,7 +97,7 @@ export function AboutPane() {
             `about-lede` class — so renaming that class means updating the
             script in the same commit, and editing this copy without editing
             the source fails the build. It used to be unguarded. */}
-        <p className="type-title about-lede">
+        <p className="type-name about-lede">
           In my downtime, I&apos;m usually bouldering or running races, camping
           and hiking with my ten-year-old Alaskan Malamute.
         </p>
