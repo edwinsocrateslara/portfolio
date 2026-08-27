@@ -46,7 +46,7 @@ export default function RootLayout({
     //
     // The effect was silent and total: every .type-label, .type-badge,
     // .type-nav and .type-meta on the site rendered in Archivo, so the mono
-    // "system voice" this design system is built around had never actually
+    // DATA voice this design system is built around had never actually
     // appeared. Nothing errors when a custom property is empty; the declaration
     // is simply dropped.
     <html lang="en" className={`${archivo.variable} ${ibmPlexMono.variable}`}>

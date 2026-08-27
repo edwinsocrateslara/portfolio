@@ -660,65 +660,107 @@ re-declare `font-family`, `font-weight`, `font-size`, `line-height`, or
 codebase precisely because inline re-declaration was available and easier
 than picking a role.
 
-### Mono for meta, Archivo for everything else
+### Two voices: Product and Data
 
-**Mono is for meta** — machine-generated or recorded fact, and labels the site
-applies to its own content: dates, counts, stack names, indices, section
-headings, captions, attributions.
+The type system has exactly two voices, and the question that assigns them is
+**is the interface speaking, or reporting?**
 
-**Archivo is for everything a person wrote or acts on** — prose, navigation,
-buttons.
+**PRODUCT VOICE — Archivo.** The interface speaking to the reader. Prose, page
+titles, navigation, buttons, links, prompts, and the primary scan anchor of an
+entry.
 
-The brand wordmark is the one exception.
+**DATA VOICE — IBM Plex Mono.** The interface reporting about something. Dates,
+counts, statuses, categories, technical inventories, structural labels,
+indices, locations, run figures, secondary role information, captions.
 
-This replaced *"mono for chrome and labels, Archivo for prose"*, which was
-never quite the intent and had stopped describing the site. Under the old
-wording the rail was chrome, so it was mono. A project name is **a label you
-click, not a fact**, and the rail was always on the wrong side of the line.
+The gut-check, when a case is genuinely unclear: **would it sound natural said
+aloud?** Then it is Product. **Would it make sense in a table, a log, a tag or
+a spec sheet?** Then it is Data.
 
-The second half of the rule is the part that took a pass to get right. A first
-attempt said mono was for *fact* alone, which left twenty-six headings and
-captions stranded — `Key impacts`, `Ten-year-old Alaskan Malamute`,
-`Currently reading`, `Greg Crabtree`. They looked like a third category and
-they are not: **a heading is a label the site applies to the content beneath
-it, and a caption is a label it applies to the image above it.** That is
-metadata about content, which is what "meta" already meant. Widening the
-wording to say so left only two things genuinely out of line — the sampler
-cards and the download pills — and both were fixed rather than excused.
+Call them Product and Data. Not "editorial", not "system", not "meta" — those
+were earlier names for overlapping ideas, and carrying two names for one
+concept is how a system drifts.
 
-What is mono today, in full:
+#### What "scan anchor" means, exactly
 
-| what | where | why |
+The scan-anchor clause is the one that hands `Backbase` to Product voice while
+the role and dates beside it stay Data. It is narrow on purpose, because read
+loosely it justifies anything — a date is also something a reader scans for.
+
+**The scan anchor is the ONE element per entry that NAMES the entry.** Not the
+most prominent element, not whatever the eye lands on first, not "the important
+bit". The test is substitution: if you replaced this element with a blank, could
+you still say which entry you were looking at? If no, it is the anchor. If yes,
+it is one of the entry's attributes and belongs to Data voice.
+
+An entry gets exactly one. `Backbase` names the role; `Senior Product Designer`
+and `Nov 2020` describe it. `Graduate Diploma, Interactive Design` names the
+credential; `CFC Media Lab` says where it came from. A list of nine attributes
+does not get nine anchors.
+
+#### What this replaced, and why
+
+The previous rule was *"mono for meta — machine-generated or recorded fact, and
+labels the site applies to its own content"*. It was an improvement on what came
+before it and it still produced contradictions that a full audit found:
+
+- **Page titles.** `Resume`, `About`, `Case Study` are headings, and the old
+  rule sent headings to mono. They are Archivo and always looked right. Under
+  Product/Data they are the product introducing a page — correct as built.
+- **Employer and qualification names.** The old rule made these a coin-flip:
+  arguably recorded fact, arguably not. The scan-anchor clause settles it.
+- **Headings were one category and they are not.** `Resume` is the product
+  introducing a page. `Experience` is a structural label on a list. Both are
+  headings; they do different jobs and take different voices.
+
+The reframing costs no code. Everything above is already built the way the new
+rule describes.
+
+#### What is Data voice today
+
+| what | where | clause |
 |---|---|---|
-| dates, role lines, institutions | résumé | recorded fact |
-| `STACK` / `CADENCE` / `CORPUS` / `OUTPUT` / `SHIPPED` / `BUILT` | vibe reveal | run figures |
-| `Tools` / `Experience` / `Education` | résumé | section headings |
-| band labels — `AI & LLM work`, `Design`, … | résumé | labels applied to content |
-| `The challenge` / `My role` / `Key impacts` / `The pipeline` | reveals | section headings |
-| photo captions and book attributions | About | labels applied to content |
-| `Toronto, Canada` | résumé, About | recorded fact |
-| the deck's `Meridian · Mobile Banking · 21 slides` | deck | counts |
-| `01` / `02` | reveals | an index |
-| the wordmark | every surface | the exception, below |
+| dates | résumé | dates |
+| role lines — `Senior Product Designer` | résumé | secondary role information |
+| institutions — `CFC Media Lab, Toronto…` | résumé | secondary role information |
+| client groups — `Fintech`, `Viafoura` | résumé | categories |
+| `STACK` / `CADENCE` / `CORPUS` / `OUTPUT` / `SHIPPED` / `BUILT` and their values | vibe reveal | run figures |
+| `Tools` / `Experience` / `Education` | résumé | structural labels |
+| band labels — `AI & LLM work`, `Design` | résumé | structural labels |
+| `The challenge` / `My role` / `Key impacts` | reveals | structural labels |
+| photo captions, book attributions | About | captions |
+| `Toronto, Canada` | résumé, About | locations |
+| `Meridian · Mobile Banking · 21 slides` | deck | counts |
+| `01` / `02` | reveals | indices |
 
-**One place the wording needs a reading rather than a lookup.** The rail's
-`Work` and `Vibe Coding` are section headings, which the rule sends to mono —
-and they are Archivo. They are headings *inside the navigation*, labelling
-groups of things you click, not labels applied to content. Navigation wins.
-If a future heading sits on that boundary, that is the question to ask: does
-it describe content, or does it organise targets?
+#### The one exception
 
-**The brand is the exception, and it is the only one.** `.type-wordmark` stays
-IBM Plex Mono at 16/24 weight 700. A wordmark is neither meta nor something
-you act on — by the rule it should be Archivo. It stays mono because a brand
-mark is allowed to be its own thing, and because it is now the only place the
-mono voice appears on every surface: with the rail in Archivo it is what keeps
-the system voice visible above the fold rather than only inside a document.
-Two sizes of the same idea sitting next to each other in the rail made it a
-texture; alone at the top it reads as a mark.
+`.type-wordmark` — the brand — stays IBM Plex Mono at 16/24 weight 700. By the
+rule it is Product voice: it is the product naming itself, and it is the most
+"said aloud" string on the site. It stays Data-voiced because a brand mark is
+allowed to be its own thing, and because with the rail in Archivo it is the only
+place the mono voice appears on every surface. Alone at the top it reads as a
+mark; two sizes of it in the rail read as a texture.
 
-Both faces are still load-bearing. That split is what keeps an achromatic
-palette legible without color.
+#### One boundary that needs a reading
+
+The rail's `Work` and `Vibe Coding` are structural labels, which the rule sends
+to Data — and they are Archivo. They label groups of things you click. They are
+navigation furniture, not a report about content, so Product wins. For any
+future heading on that boundary the question is the same one: does it describe
+content, or does it organise targets?
+
+#### Known open item
+
+The résumé's six tools bands — 55 terms, `Claude API · OpenAI API · TypeScript ·
+React · Figma · …` — are a **technical inventory**, which is Data voice. They are
+currently Archivo at 16/24. Both this rule and the one it replaced give the same
+answer, from different directions, which is worth something. Left as-is pending
+a decision; the measured cost of moving them is recorded in the commit that
+raised it.
+
+Both voices are load-bearing. That split is what keeps an achromatic palette
+legible without color.
 
 ### The panes already share a top rung — the difference is half-leading
 

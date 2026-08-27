@@ -459,7 +459,8 @@
      because a 4px glow at 11% reads as a halo rather than an edge. */
   --bureau-focus-ring: 0 0 0 2px rgb(var(--bureau-accent) / 0.11);
 
-  /* Font stacks — UI/prose (Archivo) and the mono "system voice" (IBM Plex Mono) */
+  /* Font stacks — the two voices. Archivo is PRODUCT, the interface speaking;
+     IBM Plex Mono is DATA, the interface reporting. See DESIGN.md. */
   --ff-archivo:    var(--font-archivo), system-ui, sans-serif;
   --ff-plex-mono:  var(--font-plex-mono), ui-monospace, monospace;
 }
@@ -707,7 +708,7 @@ body {
     line-height: var(--type-control-lh);
   }
   /* Supporting prose — taglines, locations, role lines, card descriptions.
-     Archivo, because it is human-readable prose rather than system chrome,
+     Archivo, because it is the interface speaking rather than reporting —
      but at the label step so it reads as secondary to the body text and
      headings it sits beside. */
   .type-caption {
@@ -750,7 +751,7 @@ body {
     text-transform: uppercase;
   }
 
-  /* IBM Plex Mono — system voice */
+  /* IBM Plex Mono — DATA voice: the interface reporting about something. */
   /* Badges and glyph tiles — the heaviest mono weight, for text that sits
      on an inverted fill or inside a bordered tile. */
   .type-badge {

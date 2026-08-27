@@ -39,7 +39,7 @@ export interface TextMessage extends BaseMessage {
    *  so which line is the opening one is decided with the block order. */
   lede?: boolean
   /** Reference material rather than prose — a stack list, a cadence, counts.
-   *  Renders in the mono system voice at the label step. A modifier on the
+   *  Renders in the mono DATA voice at the label step. A modifier on the
    *  text block, deliberately not a new kind: a second renderer would be a
    *  second place for the markdown handling and the link rules to drift. */
   mono?: boolean
@@ -409,7 +409,7 @@ export function ImpactBubble({
     >
       {/* type-label, like MY ROLE and THE CHALLENGE. It was the only section
           label in this surface without a type class, so it inherited Archivo
-          while its siblings took the mono system voice — invisible until the
+          while its siblings took the mono DATA voice — invisible until the
           font variables were fixed and the mono actually began rendering. */}
       <div
         className="type-label"
