@@ -644,84 +644,137 @@ Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 
 ## Typography
 
-One UI/prose family (**Archivo**, weights 400–800) plus a mono "system
-voice" (**IBM Plex Mono**, weights 400–700) for nav, eyebrows, tags,
-indices, badges, captions, and the SEND button. Loaded via
+One UI/prose family (**Archivo**, weights 400–800) plus a mono voice
+(**IBM Plex Mono**, weights 400–700). Which one speaks where is decided by
+Product/Data below, not by a list of component names. Loaded via
 `next/font/google` in `app/layout.tsx` as `--font-archivo` /
 `--font-plex-mono`; `tailwind.config.ts` maps `font-sans` → Archivo and
 `font-mono` → IBM Plex Mono. No serif anywhere in this system.
 
-**Six sizes, every one a multiple of 4. Line-height is 1.5× at every step
-with no exceptions.**
-**12px is the floor** — there is no step below it, so nothing on the site
-renders below a reasonable legibility threshold. The size/line-height
-pairs are tokens (`--type-*-size` / `--type-*-lh`) so the two cannot drift
-apart.
+### Size ranks. Weight sorts.
 
-**The floor governs type this system sets. It does not govern the contents
-of a screenshot.** A screenshot is a picture of a thing, not type — the
-pixels inside it are subject matter, the way a face or a building in a
-photograph is. Measuring the interface inside one against this ramp is a
-category error: it treats a depiction as if it were a specimen. So do not
-scale, crop or re-shoot an image to make its embedded text clear the floor,
-and do not report such text as a violation — of this rule or of `check-design`,
-which cannot see inside an image and is not failing to.
+**The governing sentence, and the one to read before adding anything to the
+ramp.** SIZE says which level a thing is on. WEIGHT says what kind of thing it
+is at that level. The two axes never encode the same information, which is what
+stops them contradicting each other — note that the largest step is the
+lightest: `.type-display` is 400 and `.type-name` is 700. If weight tracked rank
+that would be backwards. It does not, so it is not.
 
-What still applies to an image is everything that is genuinely ours: its
-frame, its ratio, its crop, its resolution, the caption or alt text beside
-it. An image can still be the wrong choice — too low-resolution for the
-frame, cropped so the subject is lost, or simply not showing what the
-sentence beside it claims. Those are judgments about the picture. "Its
-interface text measures 4px against our 12px step" is not one of them, and
-should not be dressed up as one.
+**The ceiling: at most three weights may share one rank.** Mono at 12 currently
+uses all three — 400 values, 500 attributes, 600 labels. A fourth kind arriving
+at a rank is not a weight problem to be solved with a fourth weight. **It is
+evidence that the level is overloaded and needs a size of its own.** The file
+type chip on a doc-link card was the first thing to test this: it was mono 12 at
+700, and it became `.type-label` rather than a fourth weight.
 
-| Step | Size / line-height |
-|---|---|
-| `label` | 12 / 18 |
-| `control` | 14 / 21 |
-| `body` | 16 / 24 |
-| `title` | 20 / 30 |
-| `subhead` | 24 / 36 |
-| `hero` | 28 / 42 |
-| `h2` | 32 / 48 |
+### The ramp
 
-There are more classes than sizes: several share a size and differ only in
-voice. Size is the scale; family, weight, and case are the voice.
+**Six steps, a 1.25 ladder, every rung populated.**
 
-| Class | Family | Weight | Step |
+| step | size / lh | ratio | voice |
 |---|---|---|---|
-| `.type-h2` | Archivo | 700 | h2 |
-| `.type-subhead` | Archivo | 700 | subhead |
-| `.type-title` | Archivo | 700 | title |
-| `.type-card-h3` | Archivo | 600 | body |
-| `.type-body` | Archivo | 400 | body |
-| `.type-hero` | Archivo | 400 | hero — the front door's headline |
-| `.type-control` | Archivo | 400 | control — chip and tap-target labels |
-| `.type-caption` | Archivo | 400 | label — supporting prose |
-| `.type-section` | Plex Mono | 600 | **body**, uppercase — region headings |
-| `.type-badge` | Plex Mono | 700 | label, uppercase |
-| `.type-label` | Plex Mono | 600 | label, uppercase |
-| `.type-nav` | Plex Mono | 500 | label, uppercase |
-| `.type-meta` | Plex Mono | 400 | label |
+| data | 12 / 18 | floor | Data |
+| body | 16 / 24 | ×1.33 | Product |
+| section | 20 / 30 | ×1.25 | Data |
+| name | 26 / 39 | ×1.30 | Product |
+| page | 32 / 48 | ×1.23 | Product |
+| display | 50 / 58 | ×1.56 | Product |
 
-`.type-section` is the mono voice at the **body** step, and it is worth
-being precise about what it added: **no new size.** 16/24 was already on the
-scale; what did not exist was a mono voice at it. A heading that labels a
-region — WORK, VIBE CODING, CONTACT — was previously the same size as the
-rows underneath it, which is what let a document row read as a header.
+The ramp this replaced added a constant, so each step was a smaller
+*proportion* of the one below it — 16→20 is +25%, 28→32 is +14% — and the top
+could never separate from the bottom however many steps were added. A geometric
+ladder makes every jump the same perceptual size, so distance compounds.
 
-It is 16/**24**, not 16/18. Line-height is derived as exactly 1.5x at every
-step, and that rule has had no exceptions since the `hero` step was deleted
-to remove the last one; a 16/18 heading would have reinstated exactly the
-thing that deletion bought.
+**Every rung is populated, and that is a rule rather than an observation.** The
+previous ramp defined 24/36 and rendered it nowhere above 640px. A step with no
+consumer is a step someone will eventually use for the wrong reason. The 40 rung
+is deliberately unbuilt: nothing on this site sits between a page title and the
+front door, which is why display jumps ×1.56 instead of ×1.25 twice.
 
-At ≤640px the two largest steps move **down the ramp rather than off it**:
-`hero` and `h2` both take `subhead` (24/36). No mobile-only sizes exist.
+**Type sizes are not bound to the 4px grid and never have been** — 14/21 and
+20/30 both predate this ramp. Binding a geometric ladder to a 4px lattice would
+force it back into the arithmetic ramp it replaced. Spacing is still on the grid.
 
-The classes live in `@layer components`, so Tailwind utilities — which
-come later in the cascade — can override a single property without an
-inline style. A state-driven weight change is `font-bold`, not
-`style={{ fontWeight }}`.
+**12px is the floor.** There is no step below it.
+
+### Line-height: 1.5×, with one bounded exception
+
+**Line-height is 1.5× at every step. Steps of 40px and above may tighten to no
+lower than 1.15×. Nothing below 40px may tighten at all.**
+
+This is a bound on a range, not a licence per step. Only `display` qualifies,
+at 50/58 — 1.16×.
+
+The reason is measurable rather than aesthetic. Archivo's cap height is ~0.72em,
+so at 50px the ink band is ~36px and 1.5× leading would put 39px of air between
+two baselines: **more space than letter.** A two-line headline stops reading as
+one object and starts reading as two sentences. Leading exists to help the eye
+find the start of the next line, and a two-line block barely asks that of it.
+Material Design tightens to 1.12× at Display Large and 1.25× at Headline for the
+same reason, against a strict 1.5× at Body.
+
+The counter-argument, recorded because it nearly won: an exception-free rule is
+worth something a ratio cannot price, and by block area the strict version is
+actually *larger* — 50/75 would occupy more of the viewport than 50/58. It gets
+there through air rather than letterforms, which is why the exception was taken.
+
+### Mobile steps down the ladder, not off it
+
+At ≤640px each rung moves down by one, so the ratio survives the breakpoint:
+**display 50→32, page 32→26, name 26→20.** Leading returns to a strict 1.5×,
+because the tightening bound does not reach below 40.
+
+The rule this replaced sent both 28 and 32 to 24, which made two levels the
+desktop distinguishes identical on a phone.
+
+`.type-wordmark` also steps, 16→12: one role at two sizes, the rail's brand and
+the mobile top bar's. That used to be a second class, `.type-badge`, which an
+audit measuring only 1440 reported as having zero instances.
+
+### The thirteen classes
+
+| class | family | size | wt | tracking | voice |
+|---|---|---|---|---|---|
+| `.type-display` | Archivo | 50/58 | 400 | −0.03em | Product |
+| `.type-page` | Archivo | 32/48 | 700 | −0.03em | Product |
+| `.type-name` | Archivo | 26/39 | 700 | −0.03em | Product |
+| `.type-body` | Archivo | 16/24 | 400 | — | Product |
+| `.type-body-strong` | Archivo | 16/24 | 600 | — | Product |
+| `.type-rail-section` | Archivo | 16/24 | 600 | 0.05em ᴜᴘ | Product |
+| `.type-action` | Archivo | 12/18 | 600 | 0.05em ᴜᴘ | Product |
+| `.type-caption` | Archivo | 12/18 | 400 | 0.4px | Product |
+| `.type-section` | Mono | 20/30 | 600 | 1.4px ᴜᴘ | Data |
+| `.type-wordmark` | Mono | 16/24 | 700 | 0.8px ᴜᴘ | *exception* |
+| `.type-label` | Mono | 12/18 | 600 | 1.2px ᴜᴘ | Data |
+| `.type-attribute` | Mono | 12/18 | 500 | — | Data |
+| `.type-value` | Mono | 12/18 | 400 | — | Data |
+
+**`.type-attribute` and `.type-value` are the split.** `.type-meta` was 40
+elements doing five jobs in one style — dates, role lines, client groups,
+institutions and the six tools bands, all indistinguishable. Weight now
+separates *a thing* from *an attribute of a thing*, at the same rank, with no
+new size.
+
+The 500 was measured before it was adopted, at 12px on `#131313` at 1×:
+**+28.9% ink over 400**, which is 2.4× the signal of the secondary→muted colour
+step this site already relies on, and 62% of the 400→600 step used for labels.
+If it ever fails on a display, the fallback is +0.2px tracking on
+`.type-attribute` — **not** colour, which is already carrying the
+primary/secondary/muted hierarchy.
+
+**`.type-body-strong` is the Product-side equivalent.** A doc-link card title is
+not a rank above body; it is a different kind of thing at the same rank. It also
+could not be `.type-name`: the card is 58px tall and 26/39 does not fit in it.
+
+### Tracking: six tokens
+
+There were nine, four of which were display tracking at one value per size —
+and they were not consistent with each other: −1px at 28 is −0.036em, −1px at 32
+is −0.031em, −0.6 at 24 is −0.025em, −0.4 at 20 is −0.020em. Four tokens
+encoding one intention, badly. `--track-display: -0.03em` states it once and
+scales to rungs that do not exist yet. This was a normalisation, not an
+identity: 20px tightened −0.4→−0.6 and 32px loosened −1→−0.96.
+
 
 **These classes are the only way to set type.** Components must not
 re-declare `font-family`, `font-weight`, `font-size`, `line-height`, or
@@ -831,12 +884,12 @@ The last thing to move was the résumé's six tools bands — 55 terms,
 inventory is the interface reporting, so it is Data voice; they had been
 Archivo at 16/24. Both this rule and the one it replaced gave the same answer
 from different directions, which is what made it a decision rather than a
-preference. They are now `.type-meta`, mono 12/18, and the section is **48px
+preference. They are now `.type-value`, mono 12/18, and the section is **48px
 shorter** at the same thirteen lines — the one case where the rule-correct
 answer was also the better-looking one.
 
 **What separates a label from its contents once they share a size and a
-family.** The band label is `.type-label` and the terms are `.type-meta`, both
+family.** The band label is `.type-label` and the terms are `.type-value`, both
 mono 12/18. Four things carry the hierarchy and none of them is size: **case**
 (caps against sentence case), weight (600 against 400), tracking (1.2px against
 none) and colour (muted against primary). Case does most of the work.
@@ -964,14 +1017,14 @@ edges. The impact card is narrower on the right by design
 
 ## Components
 
-- **Nav** — `.type-nav`, `text-secondary`; hover → `text-primary` +
+- **Nav** — `.type-label`, `text-secondary`; hover → `text-primary` +
   1px underline. Availability dot `text-primary`, 8px.
 - **Card** — `surface` fill or none, 1px `border`, `radius-card`. Image
   **1:1** (matches the source preview images — all 7 are square), unfiltered.
   Index bottom-right, mono. Hover: border → `border-strong`, lift 1px.
 - **Grid gutter** (Selected Work) — `group` (32px).
 - **Chip / tag** — see **Chips** below; one primitive, pill radius. Tag text
-  `text-muted` `.type-meta`; prompt-chip `text-secondary` `.type-body` with a
+  `text-muted` `.type-attribute`; prompt-chip `text-secondary` `.type-body` with a
   mono `→` prefix.
 - **Badge** — default = 1px `border-strong` + mono `text-secondary`.
   **Live/active = filled `accent` on `on-accent`** — the one deliberate
@@ -1516,7 +1569,7 @@ layout choice — do not crop assets to a third ratio:
 - Set type with a `.type-*` class, always. Pick the role, not the size.
 - Choose a spacing **level** by asking how related the two things are.
   Reach for a raw step only for element dimensions.
-- Use mono (`type-badge` / `type-label` / `type-nav` / `type-meta`) for
+- Use mono (`type-section` / `type-label` / `type-attribute` / `type-value`) for
   anything that is system chrome (nav, tags, indices, badges, captions) and
   Archivo for anything a human reads as prose.
 - Reserve the accent-filled/inverted treatment for "this is live / on."

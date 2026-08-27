@@ -72,12 +72,6 @@ const ALLOW = {
     "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
   "app/globals.css::css-off-grid:::root — --type-display-size: 50px":
     "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
-  "app/globals.css::css-off-grid:::root — --type-legacy-control-size: 14px":
-    "A legacy rung, alive only so the alias classes can hold their old values while each surface moves to the new ramp one commit at a time. Deleted with the aliases in the last commit of that sequence. It was allowlisted under its old name before the rename.",
-  "app/globals.css::css-off-grid:::root — --type-legacy-control-lh: 21px":
-    "A legacy rung, alive only so the alias classes can hold their old values while each surface moves to the new ramp one commit at a time. Deleted with the aliases in the last commit of that sequence. It was allowlisted under its old name before the rename.",
-  "app/globals.css::css-off-grid:::root — --type-legacy-hero-lh: 42px":
-    "A legacy rung, alive only so the alias classes can hold their old values while each surface moves to the new ramp one commit at a time. Deleted with the aliases in the last commit of that sequence. It was allowlisted under its old name before the rename.",
   "app/globals.css::css-off-grid:::root — --space-optical-meta: 5px":
     "The title-to-meta optical gap. Documented at its definition: the meta line's own leading already separates the two, so `within` (8px) reads as a break rather than a pairing. It was written out as three separate documented exceptions before becoming one token, which is the whole argument for it having a name.",
   "app/globals.css::css-off-grid:::root — --input-border: 1px":

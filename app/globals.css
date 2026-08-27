@@ -202,18 +202,6 @@
      1.16x. Material tightens to 1.12x at Display Large for the same reason. */
   --type-display-size:  50px;  --type-display-lh:  58px;  /* x1.56, 1.16 lh */
 
-  /* ── LEGACY RUNGS — DELETED IN THE LAST COMMIT OF THIS SEQUENCE ────────
-     These exist so the alias classes below can hold their OLD VALUES, which
-     makes the commit that introduces the new ramp a visual no-op. Each surface
-     then moves to the new class names on its own commit and takes the new
-     sizes with it, one surface at a time, and the site is coherent after every
-     one of them. Without these the ramp would land everywhere at once and the
-     staging would be a fiction.
-
-     Nothing new may use them. They go when the aliases go. */
-  --type-legacy-control-size: 14px;  --type-legacy-control-lh: 21px;
-  --type-legacy-hero-size:    28px;  --type-legacy-hero-lh:    42px;
-  --type-legacy-subhead-size: 24px;  --type-legacy-subhead-lh: 36px;
 
   /* Scrollbar width for the chat message area. The messages pane reserves
      this as a stable gutter and the input below it pads its right edge by
@@ -838,57 +826,6 @@ body {
     line-height: var(--type-data-lh);
   }
 
-  /* ── Aliases, temporary ───────────────────────────────────────────────
-     The old names, pointing at their new homes, so this commit changes no
-     consumer and every gate and board stays green. They are deleted in the
-     last commit of this sequence; nothing new may use them.
-
-     EACH ALIAS HOLDS ITS OLD SIZE, so this commit changes nothing on screen.
-     The new size arrives when a surface moves to the new name.
-
-       .type-hero    -> .type-display      28 -> 50
-       .type-h2      -> .type-page         unchanged at 32
-       .type-title   -> .type-name         20 -> 26
-       .type-card-h3 -> .type-body-strong  unchanged at 16/600
-       .type-control -> .type-body         14 -> 16, the 14 step is retired
-       .type-meta    -> .type-value        the 400 half of the split
-       .type-nav     -> .type-label        they differed by one weight step
-       .type-badge   -> .type-wordmark, responsive (12 on mobile, 16 above)
-
-     The one thing that is NOT a no-op: display tracking is now -0.03em rather
-     than four hand-set px values, so .type-hero moves -1 -> -0.84 and
-     .type-title -0.4 -> -0.6. Sub-pixel, and the point of the collapse. */
-  .type-hero    { font-family: var(--ff-archivo); font-weight: 400;
-                  font-size: var(--type-legacy-hero-size); line-height: var(--type-legacy-hero-lh);
-                  letter-spacing: var(--track-display); }
-  .type-h2      { font-family: var(--ff-archivo); font-weight: 700;
-                  font-size: var(--type-page-size); line-height: var(--type-page-lh);
-                  letter-spacing: var(--track-display); }
-  .type-title   { font-family: var(--ff-archivo); font-weight: 700;
-                  font-size: var(--type-section-size); line-height: var(--type-section-lh);
-                  letter-spacing: var(--track-display); }
-  .type-card-h3 { font-family: var(--ff-archivo); font-weight: 600;
-                  font-size: var(--type-body-size); line-height: var(--type-body-lh); }
-  .type-control { font-family: var(--ff-archivo); font-weight: 400;
-                  font-size: var(--type-legacy-control-size); line-height: var(--type-legacy-control-lh); }
-  .type-meta    { font-family: var(--ff-plex-mono); font-weight: 400;
-                  font-size: var(--type-data-size); line-height: var(--type-data-lh); }
-  .type-nav     { font-family: var(--ff-plex-mono); font-weight: 600;
-                  font-size: var(--type-data-size); line-height: var(--type-data-lh);
-                  letter-spacing: var(--track-caps-label); text-transform: uppercase; }
-  /* .type-badge IS NOT DEAD, and the audit that said it was is the reason this
-     comment exists. It reported zero instances because it measured six
-     surfaces at 1440 only, and this class renders in the MOBILE top bar — the
-     brand mark at 12 rather than the rail's 16, because that row fits 340px of
-     brand + subject + MENU exactly. Same error shape as capturing a 3275px
-     pane through a 1000px window: one viewport, a conclusion about the whole.
-
-     It resolves into a responsive .type-wordmark on the shell's commit, since
-     it is one role at two sizes and that is what the breakpoint is for. */
-  .type-badge   { font-family: var(--ff-plex-mono); font-weight: 700;
-                  font-size: var(--type-data-size); line-height: var(--type-data-lh);
-                  letter-spacing: var(--track-wordmark); text-transform: uppercase; }
-
   /* Mobile steps DOWN THE SAME LADDER rather than collapsing two rungs onto
      one. The old rule sent both 28 and 32 to 24, which made them identical on
      a phone — two levels the desktop distinguishes, flattened. Each rung now
@@ -919,12 +856,6 @@ body {
     .type-wordmark {
       font-size: var(--type-data-size);
       line-height: var(--type-data-lh);
-    }
-    /* The aliases keep the OLD mobile behaviour — both steps collapsing onto
-       24 — until their surfaces move. Deleted with them. */
-    .type-hero, .type-h2 {
-      font-size: var(--type-legacy-subhead-size);
-      line-height: var(--type-legacy-subhead-lh);
     }
   }
 }
