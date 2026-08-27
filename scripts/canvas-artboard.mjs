@@ -54,10 +54,13 @@
 //   chrome --remote-debugging-port=9222           (see shot.mjs)
 //   node scripts/canvas-artboard.mjs --out <dir> [--w 1440] [--h 1000]
 //
-// Writes <dir>/Main.dc.html plus one file per <img>, THEN screenshot-diffs the
-// result against the running app and exits non-zero if they do not match — so
-// a failing artboard cannot be seeded or published, because it never gets that
-// far. --no-verify skips the check and is for debugging only.
+// Writes <dir>/Main.dc.html, one file per <img>, AND <dir>/Legend.dc.html —
+// the legend is regenerated here rather than separately so it cannot be a
+// version behind the board it sits next to (see the block that spawns it).
+// THEN screenshot-diffs the result against the running app and exits non-zero
+// if they do not match — so a failing artboard cannot be seeded or published,
+// because it never gets that far. --no-verify skips the check and is for
+// debugging only.
 //
 //   node scripts/canvas-artboard.mjs --selftest   proves the check catches all
 //                                                 four historical faults
@@ -666,6 +669,38 @@ class Component extends DCLogic {
 `
 writeFileSync(join(OUT, "Main.dc.html"), file)
 console.log(`captured ${ROUTE} at ${w}x${h} -> ${OUT}/Main.dc.html (${(file.length/1024).toFixed(1)} KB, ${images.length} images)`)
+
+// ── The legend rides along ────────────────────────────────────────────────
+// IT IS WRITTEN HERE, NOT BY THE PERSON SEEDING THE CANVAS, and that is the
+// whole point. The legend is derived from app/globals.css so that it cannot go
+// stale — but only if something regenerates it. On 2026-08-26 a republish
+// re-extracted Main and carried the previous Legend across by hand, and five
+// published boards spent a day showing --space-48, a token retired that
+// morning. The board was current and the legend beside it was not, which is
+// worse than having no legend at all: a legend looks authoritative.
+//
+// So the two are now written by the same command. There is no sequence of
+// steps that produces a fresh Main next to a stale Legend, because producing
+// Main IS producing Legend. A seeder can still leave the legend out of the
+// canvas, but they can no longer include an old one.
+//
+// Spawned rather than imported: legend-artboard.mjs does its work at module
+// scope and writes on load, so importing it would run on import and bind this
+// script to that shape forever. A subprocess keeps the CLI the one interface,
+// which means the standalone `node scripts/legend-artboard.mjs` invocation and
+// this one cannot drift apart.
+const legendScript = new URL("./legend-artboard.mjs", import.meta.url).pathname
+const legend = spawnSync(process.execPath, [legendScript, "--out", OUT],
+  { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30000 })
+if (legend.status !== 0) {
+  // Hard stop, matching --verify's standard: an artboard does not leave this
+  // script in a state nobody has checked. A missing legend is recoverable; a
+  // silently-skipped regeneration is the bug this block exists to prevent.
+  console.error((legend.stdout || "") + (legend.stderr || ""))
+  console.error(`legend: FAILED (exit ${legend.status}) — Main.dc.html was written but its legend was not regenerated`)
+  process.exit(1)
+}
+process.stdout.write(legend.stdout)
 
 // ── Verify ───────────────────────────────────────────────────────────────
 // A geometry check compares the boxes it knows to look at. Every fault this

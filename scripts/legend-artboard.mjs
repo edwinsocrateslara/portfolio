@@ -15,6 +15,11 @@
 // canvas and it cannot lie.
 //
 //   node scripts/legend-artboard.mjs --out <dir>
+//
+// canvas-artboard.mjs SPAWNS THIS on every extraction, into the same directory
+// it writes Main.dc.html to. That is the guarantee: a board and its legend are
+// produced by one command, so no seeding routine can pair a fresh board with
+// an old legend. Run it directly only to refresh a legend on its own.
 
 import { readFileSync, writeFileSync } from "fs"
 
