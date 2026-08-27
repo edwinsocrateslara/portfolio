@@ -334,6 +334,26 @@
      would be a visible bug. */
   --prose-measure: 720px;
 
+  /* ── The spec table's two fixed columns ────────────────────────
+     The vibe reveal's "Stack and numbers" block. Both are measures, not
+     spacing, and both are sized in CHARACTERS rather than pixels because the
+     table is mono — 1ch is exactly one glyph advance, so the width says what
+     it holds instead of approximating it.
+
+     10ch on the label: CADENCE is the longest of the six and needs 7. Three
+     spare is one more label of that length arriving without a reflow.
+
+     6ch on the figure column, and this is the one worth stating: IT IS SIZED
+     TO A CAPACITY, NOT TO THE CONTENT THAT HAPPENS TO BE THERE. The widest
+     figure today is `~300` at 4 characters, and a column sized to that would
+     break the first time a five-digit number arrived. 6ch holds `457`, `~300`,
+     `12,345` and `~99,999`. Past six characters the figure would overflow its
+     cell rather than wrap — mono has no break opportunity inside a number —
+     so a longer one is a deliberate widening here, not something to discover
+     on the page. */
+  --spec-label-col:  10ch;
+  --spec-figure-col:  6ch;
+
   --about-measure: 588px;
   /* The BOTTOM of the same band. The spine was flex: 1 1 0 with min-width: 0,
      so it took whatever the mosaic left and could take nothing: measured at

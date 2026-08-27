@@ -109,7 +109,12 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
     }
     if (p.impacts?.length) {
       out.push({ kind: "section-heading", text: "Stack and numbers" })
-      out.push({ kind: "text", text: p.impacts.join("\n"), mono: true })
+      // A SPEC TABLE, not a mono paragraph. The same six strings, verbatim —
+      // SpecBubble splits `**LABEL** — 457 feedback items` into its three
+      // columns at render time, so the source stays exactly as written. The
+      // Meridian flow's `kind: "impact"` is untouched: that block is a claim
+      // about outcomes and keeps the accent card.
+      out.push({ kind: "spec", items: p.impacts })
     }
     out.push({ kind: "section-heading", text: "See it running" })
     out.push({ kind: "doc-link", docKey: "ideas-showcase" })

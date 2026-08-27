@@ -21,6 +21,7 @@ export type MessageKind =
   | "image-row"
   | "slide-grid"
   | "impact"
+  | "spec"
   | "followups"
   | "doc-link"
 
@@ -91,6 +92,15 @@ export interface ImpactMessage extends BaseMessage {
   items: string[]
 }
 
+/** The vibe reveal's spec table. Separate from ImpactMessage because the two
+ *  are different claims: impacts are outcomes and keep the accent card; a spec
+ *  is reference material and takes the table. Same `items` shape, so the
+ *  source strings are unchanged. */
+export interface SpecMessage extends BaseMessage {
+  kind: "spec"
+  items: string[]
+}
+
 export interface FollowupsMessage extends BaseMessage {
   kind: "followups"
   text?: string
@@ -110,6 +120,7 @@ export type StructuredMessage =
   | ImageRowMessage
   | SlideGridMessage
   | ImpactMessage
+  | SpecMessage
   | FollowupsMessage
   | DocLinkMessage
 
@@ -389,6 +400,86 @@ export function ImageRowBubble({
 }
 
 // Impact stats card
+/**
+ * A SPEC TABLE — three columns, one rule per row.
+ *
+ * The vibe reveal's "Stack and numbers" block. It was six uniform rows of
+ * `LABEL — sentence`, and it read as a wall because the six rows are not the
+ * same shape: STACK and CADENCE are sentences, while CORPUS, OUTPUT, SHIPPED
+ * and BUILT are figures with units. Eight figures — 457, ~300, 10, 66, 14, 14,
+ * 34, 25 — were buried inside prose where nothing could find them.
+ *
+ * The leading figure is lifted into its own right-aligned column so the eye can
+ * run down it. The words are untouched: `457 feedback items` is split into
+ * `457` and `feedback items` at render time, and the source string in
+ * lib/vibe-projects.ts still reads exactly as it always did.
+ *
+ * ROWS WITH NO FIGURE SPAN THE COLUMN rather than carrying an empty cell.
+ * Five treatments were drawn — em dash, blank, middle dot, hairline tick, and
+ * this — and the first four all read as a hole where a value should be. The
+ * dash is the table convention for "not applicable" and it still draws the eye
+ * to an absence; the tick reads as a redaction. A spanning cell has no empty
+ * cell to explain. It also puts the two sentence rows on their own left edge,
+ * which marks them as the other kind inside one uniform structure.
+ */
+export function SpecBubble({ items }: { items: string[] }) {
+  // `**LABEL** — value`, the shape the source has always used.
+  const rows = items.map((raw) => {
+    const m = /^\*\*(.+?)\*\*\s*—\s*(.*)$/.exec(raw)
+    const label = m ? m[1] : ""
+    const value = m ? m[2] : raw
+    // A leading figure is digits with an optional ~ and separators, followed by
+    // a space. Anything else — a word, a name — is not a figure and the row
+    // spans instead. Deliberately strict: "Next.js" must not become a figure.
+    const f = /^(~?\d[\d,.]*)\s+(.*)$/.exec(value)
+    return { label, figure: f ? f[1] : null, rest: f ? f[2] : value }
+  })
+  return (
+    // borderTop on the wrapper rather than a 1px spacer div: the same hairline,
+    // and it does not put a bare numeric length in a style object for rule 2
+    // to find. Every row carries its own borderBottom, so this is only the
+    // table's opening edge.
+    <div style={{ maxWidth: "var(--prose-measure)", borderTop: "1px solid var(--hairline)" }}>
+      {rows.map((r, i) => (
+        <div
+          key={i}
+          style={{
+            display: "flex",
+            gap: "var(--space-between)",
+            padding: "var(--space-12) 0",
+            borderBottom: "1px solid var(--hairline)",
+          }}
+        >
+          <div className="type-label" style={{ width: "var(--spec-label-col)", flex: "none", color: "rgb(var(--bureau-text-muted))" }}>
+            {r.label}
+          </div>
+          {r.figure !== null && (
+            // <strong>, not an inline fontWeight. Rule 1 forbids inline type
+            // declarations and it is right to: a weight typed at a call site
+            // is a weight nobody can find. The UA's bold is what the existing
+            // STACK block already uses for its labels, so the figure and the
+            // label it replaced get their emphasis the same way.
+            <div
+              className="type-meta"
+              style={{
+                width: "var(--spec-figure-col)",
+                flex: "none",
+                textAlign: "right",
+                color: "rgb(var(--bureau-text-primary))",
+              }}
+            >
+              <strong>{r.figure}</strong>
+            </div>
+          )}
+          <div className="type-meta" style={{ flex: "1 1 0", minWidth: 0, color: "rgb(var(--bureau-text-secondary))" }}>
+            {r.rest}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function ImpactBubble({
   label,
   items,
@@ -689,6 +780,10 @@ export function MessageContent({
           items={(message as ImpactMessage).items}
         />
       )}
+      {kind === "spec" && (
+        <SpecBubble items={(message as StructuredMessage & { items: string[] }).items} />
+      )}
+
       {kind === "doc-link" && (
         <DocLinkBubble docKey={(message as DocLinkMessage).docKey} />
       )}
