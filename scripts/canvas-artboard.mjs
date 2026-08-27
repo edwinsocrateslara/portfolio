@@ -52,7 +52,13 @@
 // ── Usage ────────────────────────────────────────────────────────────────
 //   npm run dev                                   (must be on :3200)
 //   chrome --remote-debugging-port=9222           (see shot.mjs)
-//   node scripts/canvas-artboard.mjs --out <dir> [--w 1440] [--h 1000]
+//   node scripts/canvas-artboard.mjs --out <dir> [--w 1440] [--h 1000] [--fold]
+//
+// --h IS A FLOOR, NOT A HEIGHT. The frame is measured from the deepest thing
+// that scrolls, so a pane taller than --h grows the capture until the whole
+// pane is inside it. --fold opts out: the frame stays at --h and the height
+// guard is waived, which is how the two reveals keep a board that still shows
+// the composer overlapping the transcript.
 //
 // Writes <dir>/Main.dc.html, one file per <img>, AND <dir>/Legend.dc.html —
 // the legend is regenerated here rather than separately so it cannot be a
@@ -65,10 +71,9 @@
 //   node scripts/canvas-artboard.mjs --selftest   proves the check catches all
 //                                                 four historical faults
 import { connect } from "./shot.mjs"
-import { diffPNG } from "./pixel-diff.mjs"
+import { FREEZE, verify } from "./verify-artboard.mjs"
 import { writeFileSync, mkdirSync, readFileSync, readdirSync } from "fs"
-import { join, extname } from "path"
-import { createServer } from "http"
+import { join } from "path"
 import { spawnSync } from "child_process"
 import { rmSync, mkdtempSync } from "fs"
 import { tmpdir } from "os"
@@ -102,6 +107,12 @@ const SETUP = SETUP_FILE
 // decode, and the dock re-measures. Deliberately separate from the post-load
 // settle: reaching a surface costs more than loading one.
 const SETUP_SETTLE = Number(arg("setup-settle", 1800))
+// FOLD BOARDS. Default is to grow the capture to the whole pane; --fold keeps
+// it at exactly --h and waives the height guard. It exists for one reason: at
+// full height the composer sits after the transcript and stops overlapping it,
+// and that overlap is a real condition with decisions attached. A fold board
+// is the only place it can still be seen, so the two reveals get one each.
+const FOLD = process.argv.includes("--fold")
 // A project reveal is a scripted stream: it arrives in blocks behind 400-900ms
 // typing pauses, so at any given instant there is no such thing as "the"
 // reveal. Under prefers-reduced-motion the hook skips every delay and the
@@ -216,6 +227,40 @@ if (SETUP) {
   await evalJS(SETUP)
   await sleep(SETUP_SETTLE)
   console.log(`setup: ${SETUP_FILE} (+${SETUP_SETTLE}ms)`)
+}
+
+// ── The capture height is MEASURED, not typed ────────────────────────────
+// --h used to be the whole story, and its default of 1000 is a viewport, so
+// every board was one screenful of a pane that might be three. The content
+// below simply never entered the picture — not the board's, and not the
+// verifier's, because verify photographs the app through the same window and
+// both sides were cut identically. A board missing 70% of its content passed
+// at 0.0000%.
+//
+// So the frame is now taken from the deepest thing that scrolls. --h is the
+// FLOOR, not the height: a pane that fits keeps it, a pane that overflows
+// grows the viewport until the whole pane is inside the frame and there is no
+// below-the-fold left for the check to miss.
+const CONTENT_PROBE = `(() => {
+  let deep = 0
+  for (const e of document.querySelectorAll("*")) {
+    if (e.scrollHeight > e.clientHeight + 1) deep = Math.max(deep, e.scrollHeight)
+  }
+  return Math.max(deep, document.documentElement.scrollHeight)
+})()`
+const contentH = Number(await evalJS(CONTENT_PROBE))
+let capH = H
+if (FOLD) {
+  console.log(`fold board: held at ${W}x${H}; pane is ${contentH}px — the height guard is waived`)
+} else if (contentH > H) {
+  capH = contentH
+  await send("Emulation.setDeviceMetricsOverride", {
+    width: W, height: capH, deviceScaleFactor: 1, mobile: false,
+  })
+  // The pane relaying out is not instant, and the reveals all cross the
+  // threshold at once when the viewport swallows them.
+  await sleep(1800)
+  console.log(`fit: pane is ${contentH}px, grew the frame ${H} -> ${capH}`)
 }
 
 // Everything below runs IN THE PAGE. It returns a JSON string, so it has to
@@ -590,17 +635,6 @@ const globalResetCSS = Object.entries(GLOBAL_RESET)
   .map(([k, v]) => k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()) + ": " + v + ";")
   .join(" ")
 
-// Animations are frozen BEFORE the styles are read. The brand mark's arc is a
-// running CSS animation, and getComputedStyle during one returns the value of
-// whatever frame is on screen — so without this the artboard captures a random
-// point in a 1.6667s loop and can never match a later screenshot.
-const FREEZE = `(() => {
-  const s = document.createElement("style");
-  s.id = "__dcfreeze";
-  s.textContent = "*,*::before,*::after{animation:none !important;transition:none !important;caret-color:transparent !important}";
-  document.head.appendChild(s);
-  return 1;
-})()`
 await evalJS(FREEZE)
 await sleep(150)
 const raw = await evalJS(EXTRACT)
@@ -668,6 +702,12 @@ class Component extends DCLogic {
 </html>
 `
 writeFileSync(join(OUT, "Main.dc.html"), file)
+// THE FRAME, WRITTEN DOWN. canvas.json's w/h used to be a number a person
+// typed from arithmetic, and the résumé board carried one that was 562px stale
+// while the board beside it was current. Nothing derived it and nothing checked
+// it. Now the extractor states the frame it actually produced and the seeding
+// step reads it, so the two cannot disagree.
+writeFileSync(join(OUT, "__frame.json"), JSON.stringify({ file: "Main.dc.html", w, h, fold: FOLD }, null, 1) + "\n")
 console.log(`captured ${ROUTE} at ${w}x${h} -> ${OUT}/Main.dc.html (${(file.length/1024).toFixed(1)} KB, ${images.length} images)`)
 
 // ── The legend rides along ────────────────────────────────────────────────
@@ -702,187 +742,11 @@ if (legend.status !== 0) {
 }
 process.stdout.write(legend.stdout)
 
-// ── Verify ───────────────────────────────────────────────────────────────
-// A geometry check compares the boxes it knows to look at. Every fault this
-// script has shipped was outside that set: a missing glow, a dropped border, a
-// bold heading, an empty placeholder. So the check is a picture of the app
-// against a picture of the artboard, and the artboard does not leave this
-// script unless they match.
-const MIME = { ".html": "text/html", ".jpg": "image/jpeg", ".png": "image/png", ".json": "application/json" }
-
-function serve(dir) {
-  const srv = createServer((req, res) => {
-    const name = decodeURIComponent(req.url.split("?")[0].replace(/^\//, "")) || "index.html"
-    try {
-      const body = readFileSync(join(dir, name))
-      res.writeHead(200, { "content-type": MIME[extname(name)] ?? "application/octet-stream" })
-      res.end(body)
-    } catch { res.writeHead(404); res.end("no") }
-  })
-  return new Promise((r) => srv.listen(0, "127.0.0.1", () => r({ srv, port: srv.address().port })))
-}
-
-// The artboard as a plain page: the same helmet and the same markup the canvas
-// will render, without the editor around it.
-function previewHTML(dcHtml) {
-  const helmet = dcHtml.match(/<helmet>([\s\S]*?)<\/helmet>/)[1]
-  const body = dcHtml.split("</helmet>")[1].split("</x-dc>")[0]
-  return `<!doctype html><html><head><meta charset="utf-8">${helmet}</head><body>${body}</body></html>`
-}
-
-// Every <img>, with enough about it to assert on. Collected while the page is
-// still loaded, because the screenshot is the last thing that happens on it.
-const IMG_PROBE = `JSON.stringify([...document.querySelectorAll("img")].map((i) => {
-  const b = i.getBoundingClientRect();
-  return { x: b.x, y: b.y, w: b.width, h: b.height, loaded: i.complete && i.naturalWidth > 0 };
-}))`
-
-// Every element that is actually scrolling, and the gutter strip its thumb
-// occupies. offsetWidth - clientWidth IS the reserved gutter, measured rather
-// than assumed — it is 0 on a pane that does not overflow and does not depend
-// on knowing --chat-scrollbar. Only vertical gutters: nothing on this site
-// scrolls horizontally, and a horizontal strip would mask a real edge.
-const SCROLLER_PROBE = `JSON.stringify([...document.querySelectorAll("*")].filter((e) => {
-  const gut = e.offsetWidth - e.clientWidth;
-  return gut > 0 && e.scrollHeight > e.clientHeight + 1;
-}).map((e) => {
-  const b = e.getBoundingClientRect();
-  const gut = e.offsetWidth - e.clientWidth;
-  const bw = parseFloat(getComputedStyle(e).borderRightWidth) || 0;
-  return { x: b.right - gut - bw, y: b.y, w: gut, h: b.height };
-}))`
-
-async function shoot(cdp, url, setup) {
-  // Page.navigate rather than shot.mjs's goto: goto preflights that the origin
-  // is a live `next dev`, which is right for the app and wrong for the static
-  // server holding the artboard. The app's own liveness is already proven —
-  // the extraction just read it.
-  await cdp.send("Page.navigate", { url })
-  await cdp.sleep(1600)
-  // The app side only. The artboard is a static reproduction that already has
-  // the surface baked into its markup — running a pane-swap click against it
-  // would find no handler and, if it somehow found one, would change the very
-  // thing being compared.
-  if (setup?.script) {
-    await cdp.evalJS(setup.script)
-    await cdp.sleep(setup.settle)
-  }
-  // Settle rather than tolerate: wait for the fonts, then stop every animation
-  // and hide the caret, so nothing time-dependent is in either frame.
-  await cdp.evalJS(`document.fonts.ready.then(() => 1)`)
-  await cdp.evalJS(FREEZE)
-  await cdp.sleep(400)
-  const imgs = JSON.parse(await cdp.evalJS(IMG_PROBE))
-  const scrollers = JSON.parse(await cdp.evalJS(SCROLLER_PROBE))
-  const r = await cdp.send("Page.captureScreenshot", { format: "png" })
-  return { png: Buffer.from(r.result.data, "base64"), imgs, scrollers }
-}
-
-export async function verify({ dir, route, w, h, masks: masksIn = [], label = "", setup = null }) {
-  let masks = masksIn
-  const { srv, port } = await serve(dir)
-  writeFileSync(join(dir, "__preview.html"), previewHTML(readFileSync(join(dir, "Main.dc.html"), "utf8")))
-  const cdp = await connect()
-  await cdp.send("Emulation.setDeviceMetricsOverride", { width: w, height: h, deviceScaleFactor: 1, mobile: false })
-  // Same media as the extraction, for the same reason --setup runs here: a
-  // board captured under reduced motion has to be diffed against an app under
-  // reduced motion, or the stream is still mid-flight on one side only.
-  if (setup?.media) await cdp.send("Emulation.setEmulatedMedia", setup.media)
-  const app = await shoot(cdp, route, setup)
-  const art = await shoot(cdp, `http://127.0.0.1:${port}/__preview.html`)
-  await cdp.close()
-  // close() stops accepting; Chrome's keep-alive sockets would hold the handle
-  // and the process open long after the verdict was printed. The failing path
-  // exited explicitly and hid this — the passing path just hung.
-  srv.closeAllConnections?.()
-  srv.close()
-  srv.unref?.()
-  const appPng = app.png, artPng = art.png
-
-  // ── Images: asserted, then excluded ──────────────────────────────────────
-  // A bitmap cannot be compared pixel-for-pixel here and it is not the
-  // check's fault. The app draws a 239px source into a 227.328px box; the
-  // artboard can only carry whole pixels, so one of the two resamples
-  // differently and photographic detail disagrees. That is a real limit of
-  // the medium, so the interiors are masked — and everything masking could
-  // hide is asserted instead: every image present, loaded, and in the same
-  // place at the same size. The 1px edge of each is left IN the comparison,
-  // so a shifted or missing image still fails on its own outline.
-  const imgProblems = []
-  if (app.imgs.length !== art.imgs.length) {
-    imgProblems.push(`image count: app has ${app.imgs.length}, artboard has ${art.imgs.length}`)
-  }
-  const n = Math.min(app.imgs.length, art.imgs.length)
-  for (let i = 0; i < n; i++) {
-    const p = app.imgs[i], q = art.imgs[i]
-    if (!q.loaded) { imgProblems.push(`image ${i} did not load in the artboard`); continue }
-    for (const k of ["x", "y", "w", "h"]) {
-      if (Math.abs(p[k] - q[k]) > 1) {
-        imgProblems.push(`image ${i} ${k}: app ${p[k].toFixed(2)}, artboard ${q[k].toFixed(2)}`)
-      }
-    }
-  }
-  for (const box of art.imgs) {
-    masks = masks.concat([[Math.round(box.x) + 1, Math.round(box.y) + 1,
-                           Math.max(0, Math.round(box.w) - 2), Math.max(0, Math.round(box.h) - 2)]])
-  }
-
-  // ── Scrollbar gutters: the same argument as image interiors ──────────────
-  // A scrolling pane in the app paints a thumb. The artboard is a static box
-  // with explicit widths and nothing to scroll, so it never can — and the
-  // strip where the app's thumb sits reads as a solid column of difference.
-  // On the deck that was 8x624 of the 2523 differing pixels, the whole failure.
-  //
-  // This is destination chrome, not content. The app draws the thumb; a
-  // canvas, a PDF export or a print will each draw their own or none. What
-  // masking could hide is the gutter's WIDTH and POSITION, and those are
-  // asserted from the app's own geometry rather than assumed — the mask is
-  // exactly the reserved gutter of each scroller, measured, and nothing wider.
-  const gutters = app.scrollers || []
-  for (const g of gutters) {
-    masks = masks.concat([[Math.round(g.x), Math.round(g.y),
-                           Math.round(g.w), Math.round(g.h)]])
-  }
-  writeFileSync(join(dir, "__app.png"), appPng)
-  writeFileSync(join(dir, "__artboard.png"), artPng)
-  const d = diffPNG(appPng, artPng, { masks })
-
-  const pct = (d.ratio * 100).toFixed(4)
-  const head = label ? `verify (${label})` : "verify"
-  if (imgProblems.length) {
-    console.error(`${head}: FAIL — image assertions:`)
-    for (const m of imgProblems) console.error(`    ${m}`)
-    return { ok: false, d }
-  }
-  if (d.sizeMismatch) {
-    console.error(`${head}: FAIL — sizes differ, app ${d.a.join("x")} vs artboard ${d.b.join("x")}`)
-    return { ok: false, d }
-  }
-  // The threshold is for subpixel text rasterisation and nothing else. It is
-  // not a dial: a real difference is orders of magnitude past it, which is why
-  // the report leads with WHERE rather than with the number.
-  const LIMIT = 0.0015
-  const ok = d.ratio <= LIMIT
-  console.log(`${head}: ${ok ? "PASS" : "FAIL"} — ${d.differing} px differ (${pct}% of ${d.w}x${d.h}), limit ${(LIMIT*100).toFixed(4)}%`)
-  console.log(`  ${art.imgs.length} image interior(s) + ${gutters.length} scrollbar gutter(s) masked, ` +
-    `${d.maskedPixels} px excluded — presence, load state, position and size asserted instead; ` +
-    `1px edges still compared`)
-  if (!ok) {
-    console.error(`  differing regions, largest first (x, y, w, h):`)
-    for (const r of d.regions.slice(0, 8)) {
-      console.error(`    ${String(r.x).padStart(5)},${String(r.y).padStart(5)}  ${r.w}x${r.h}`)
-    }
-    if (d.regions.length > 8) console.error(`    ... and ${d.regions.length - 8} more`)
-    console.error(`  images written: ${dir}/__app.png and ${dir}/__artboard.png`)
-  }
-  return { ok, d }
-}
-
 await close()
 
 if (VERIFY && !SELFTEST) {
   const { ok } = await verify({
-    dir: OUT, route: ROUTE, w: W, h: H,
+    dir: OUT, route: ROUTE, w: W, h: capH, fold: FOLD,
     setup: (SETUP || MEDIA) ? { script: SETUP, settle: SETUP_SETTLE, media: MEDIA } : null,
   })
   if (!ok) {
