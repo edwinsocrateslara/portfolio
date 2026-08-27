@@ -62,14 +62,16 @@ const joinSlashes = (item: string) => item.replace(/ \/ /g, "\u00A0/\u00A0")
 function RoleBody({ role }: { role: ResumeRole }) {
   return (
     <>
-      <p className="type-title resume-employer">{role.employer}</p>
-      <p className="type-meta resume-role-title">{role.title}</p>
+      <p className="type-name resume-employer">{role.employer}</p>
+      <p className="type-attribute resume-role-title">{role.title}</p>
       {role.groups.map((group, gi) => (
         <div key={group.label ?? gi} className="resume-group">
           {/* Only the contracting block has labels — three clients inside one
-              engagement. Mono, so it reads as a divider in the chrome voice
-              rather than as another heading level. */}
-          {group.label && <p className="type-meta resume-group-label">{group.label}</p>}
+              engagement. DATA VOICE, and at the ATTRIBUTE weight: a client
+              group is a category describing the engagement above it, the same
+              kind of thing as the role line and the dates. 500 rather than 400
+              is what separates it from the inventory it sits near. */}
+          {group.label && <p className="type-attribute resume-group-label">{group.label}</p>}
           <ul className="resume-bullets">
             {group.bullets.map((bullet) => (
               <li key={bullet} className="type-body resume-bullet">
@@ -185,7 +187,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
   return (
     <div className="resume" ref={rootRef}>
       <div className="deck-head">
-        <h1 className="type-h2 pane-title">Resume</h1>
+        <h1 className="type-page pane-title">Resume</h1>
         {/* Same control as the deck's, and the same reasoning: .chip is the
             system's pill, so a second inline one would be a second place for
             the border, fill and hover to drift.
@@ -208,7 +210,8 @@ export function ResumePane({ resume }: { resume: Resume }) {
             Not chips either — a chip is a control and none of these is
             clickable.
 
-            DATA VOICE — .type-meta, mono 12/18. A technical inventory is the
+            DATA VOICE — .type-value, mono 12/18 at weight 400. A technical
+            inventory is the
             interface reporting, not speaking, so these are mono by the rule.
             They were Archivo 16/24 and were the last thing on the site sitting
             on the wrong side of it.
@@ -227,7 +230,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
           {resume.skills.map((band) => (
             <div key={band.label} className="resume-band">
               <p className="type-label resume-band-label">{band.label}</p>
-              <p className="type-meta resume-band-items">
+              <p className="type-value resume-band-items">
                 {band.items.map((item, i) => (
                   <Fragment key={item}>
                     {i > 0 && <span className="resume-band-sep">{"\u00A0\u00B7 "}</span>}
@@ -258,8 +261,8 @@ export function ResumePane({ resume }: { resume: Resume }) {
                     paragraph. Start in primary, end muted: the pair reads as
                     one fact with a beginning that matters more than its end. */}
                 <div className="resume-row-dates">
-                  <p className="type-meta resume-date-start">{start}</p>
-                  {end && <p className="type-meta resume-date-end">{end}</p>}
+                  <p className="type-attribute resume-date-start">{start}</p>
+                  {end && <p className="type-attribute resume-date-end">{end}</p>}
                 </div>
                 <div className="resume-row-rail" aria-hidden="true">
                   <span className="resume-row-line" />
@@ -289,8 +292,8 @@ export function ResumePane({ resume }: { resume: Resume }) {
                 <span className="resume-row-node" data-mark="open" />
               </div>
               <div className="resume-row-body">
-                <p className="type-title resume-employer">{entry.qualification}</p>
-                <p className="type-meta resume-role-title">{entry.institution}</p>
+                <p className="type-name resume-employer">{entry.qualification}</p>
+                <p className="type-value resume-role-title">{entry.institution}</p>
               </div>
             </article>
           ))}

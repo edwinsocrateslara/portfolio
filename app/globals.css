@@ -784,18 +784,14 @@ body {
   }
 
   /* ── Data voice — IBM Plex Mono. The interface reporting. ────────────── */
-  /* HOLDS AT 16 UNTIL THE RÉSUMÉ MOVES. .type-section is the one class whose
-     name survives the rename while its VALUE changes — 16 -> 20, the new
-     ladder's third rung — so it has no alias to hide behind. It keeps the body
-     step here and takes the section step on the résumé's own commit, which is
-     the only surface that uses it. Caught by measurement, not by reading: the
-     résumé pane grew 2780 -> 2806px on a commit that claimed to change
-     nothing. */
+  /* Tools / Experience / Education — the résumé's landmarks, and the only
+     consumer of this class. 16 -> 20, the ladder's third rung, so a landmark
+     outranks the employer names beneath it in size as well as in space. */
   .type-section {
     font-family: var(--ff-plex-mono);
     font-weight: 600;
-    font-size: var(--type-body-size);
-    line-height: var(--type-body-lh);
+    font-size: var(--type-section-size);
+    line-height: var(--type-section-lh);
     letter-spacing: var(--track-caps-body);
     text-transform: uppercase;
   }
