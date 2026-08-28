@@ -15,7 +15,7 @@ const OPTIONS: Record<Key, { label: string; values: (string | null)[] }> = {
   aurora:   { label: "aurora",   values: [null, "loop", "once"] },
   dots:     { label: "dots",     values: [null, "12", "20", "32"] },
   shimmer:  { label: "shimmer",  values: [null, "on"] },
-  seq:      { label: "sequence", values: [null, "full", "slow"] },
+  seq:      { label: "sequence", values: [null, "full", "slow", "words"] },
 }
 
 function apply(k: Key, v: string | null) {

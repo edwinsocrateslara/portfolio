@@ -2,6 +2,7 @@
 
 import { Shimmer } from "@/components/lab/shimmer"
 import { useLabFlag } from "@/components/lab/use-lab-flag"
+import { Words, wordCount } from "@/components/lab/words"
 import { Fragment, useEffect, useRef } from "react"
 import { Download } from "lucide-react"
 import { DOCS } from "@/lib/constants"
@@ -75,11 +76,21 @@ function RoleBody({ role }: { role: ResumeRole }) {
               is what separates it from the inventory it sits near. */}
           {group.label && <p className="type-attribute resume-group-label">{group.label}</p>}
           <ul className="resume-bullets">
-            {group.bullets.map((bullet) => (
-              <li key={bullet} className="type-body resume-bullet">
-                {bullet}
-              </li>
-            ))}
+            {/* LAB — the counter continues across the group so four bullets in
+                one role cascade instead of all writing at once. Plain text
+                under every other mode; the spans only ever change opacity. */}
+            {(() => {
+              let n = 0
+              return group.bullets.map((bullet) => {
+                const at = n
+                n += wordCount(bullet)
+                return (
+                  <li key={bullet} className="type-body resume-bullet">
+                    <Words text={bullet} offset={at} />
+                  </li>
+                )
+              })
+            })()}
           </ul>
         </div>
       ))}
@@ -143,7 +154,10 @@ export function ResumePane({ resume }: { resume: Resume }) {
     // LAB: "full"/"slow" sequence every opted-in element, not only the rows.
     // The elements carry data-resolved either way; with the lab off the extra
     // ones are simply never queried and never hidden.
-    const stagger = labSeq === "slow" ? 420 : labSeq === "full" ? 220 : ROW_STAGGER_MS
+    // "words" sequences inside each element too, so the gap between elements
+    // can be shorter than "slow" without the two running together.
+    const stagger =
+      labSeq === "slow" ? 420 : labSeq === "full" ? 220 : labSeq === "words" ? 240 : ROW_STAGGER_MS
     const selector = labSeq ? "[data-resolved]" : ".resume-row"
 
     // Flipping the switch re-runs this effect, so reset first — otherwise the
@@ -220,7 +234,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
         </a>
       </div>
 
-      <p className="type-label pane-meta" data-resolved="false">Toronto, Canada</p>
+      <p className="type-label pane-meta" data-resolved="false"><Words text="Toronto, Canada" /></p>
 
       <hr className="resume-rule" />
 
@@ -253,10 +267,21 @@ export function ResumePane({ resume }: { resume: Resume }) {
             <div key={band.label} className="resume-band" data-resolved="false">
               <p className="type-label resume-band-label">{band.label}</p>
               <p className="type-value resume-band-items">
+                {/* LAB — the unit here is the TERM, not the word. Splitting on
+                    spaces would break "Supabase / PostgreSQL" and "WCAG 2.2 AA
+                    auditing and remediation" into pieces that are not things.
+                    The items are already separate in the source, so an
+                    inventory enumerates itself one entry at a time. */}
                 {band.items.map((item, i) => (
                   <Fragment key={item}>
-                    {i > 0 && <span className="resume-band-sep">{"\u00A0\u00B7 "}</span>}
-                    {joinSlashes(item)}
+                    {i > 0 && (
+                      <span className="resume-band-sep lab-w" style={{ "--i": i } as React.CSSProperties}>
+                        {"\u00A0\u00B7 "}
+                      </span>
+                    )}
+                    <span className="lab-w" style={{ "--i": i } as React.CSSProperties}>
+                      {joinSlashes(item)}
+                    </span>
                   </Fragment>
                 ))}
               </p>

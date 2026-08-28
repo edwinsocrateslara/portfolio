@@ -155,6 +155,44 @@ html[data-lab-shimmer="on"] .lab-shimmer-host:active .lab-shimmer-hl {
   }
 }
 
+/* ── 4b · WORDS — the line writing itself out ────────────────────────────
+   THE STAGGER RULE INVERTS AT THIS SCALE, and that is the interesting part.
+
+   At element scale the finding was: the gap must EXCEED the duration it
+   separates, or arrivals overlap and read as one wash. 90ms against a 520ms
+   entrance put six rows in flight at once, which is why the shipped timeline
+   is hard to see as a sequence.
+
+   At word scale you want exactly the thing that failed there. A word fades in
+   over 260ms and the next starts 26ms later, so about TEN words are in flight
+   at any moment — a soft leading edge sweeping along the line. That IS what
+   writing out looks like. Set the gap above the duration instead and each word
+   would be fully opaque before the next began, which reads as a stutter, not a
+   write. Same arithmetic, opposite goal: elements want discrete arrivals,
+   words want a travelling gradient.
+
+   26ms also keeps the reader ahead of the effect rather than behind it. A
+   20-word bullet's edge crosses in about 520ms and the last word lands at
+   ~780ms — faster than the eye gets there, so it never gates reading.
+
+   OPACITY ONLY. The spans are laid out at final size on the first frame and
+   the spaces are text nodes between them, so the line already occupies its
+   final width and wraps identically. Nothing here can reflow the pane. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-lab-seq="words"] .lab-w { opacity: 0; }
+  html[data-lab-seq="words"] [data-resolved="true"] .lab-w {
+    animation: lab-word-in 260ms var(--motion-block-in-ease) forwards;
+    animation-delay: calc(var(--i) * 26ms);
+  }
+  /* In words mode the body does not fade as a block — the words carry its
+     arrival. Without this the bullets would fade in twice. */
+  html[data-lab-seq="words"] .resume-row[data-resolved="false"] .resume-row-body {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lab-word-in { from { opacity: 0; } to { opacity: 1; } }
+
 /* ── The panel ──────────────────────────────────────────────────────────── */
 .lab-panel {
   position: fixed; right: 12px; bottom: 12px; z-index: 9999;
