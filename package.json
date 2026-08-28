@@ -10,10 +10,11 @@
     "check:voice": "node scripts/check-voice.mjs",
     "build:context": "node --experimental-strip-types scripts/build-context.mjs",
     "check:context": "node --experimental-strip-types scripts/build-context.mjs --check",
-    "check:sources": "npm run check:voice && npm run check:context",
+    "check:sources": "npm run check:voice && npm run check:context && npm run check:docs",
     "check:design": "node scripts/check-design.mjs",
     "check:chips": "node --experimental-strip-types scripts/check-chips.mjs",
-    "clean": "node scripts/clean.mjs"
+    "clean": "node scripts/clean.mjs",
+    "check:docs": "node --experimental-strip-types scripts/check-docs.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
