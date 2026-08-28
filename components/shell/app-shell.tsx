@@ -570,9 +570,13 @@ export function AppShell({
 
                         The gradient is continuous along the phrase rather
                         than restarting per word — measured, see .aurora-word. */}
-                    I&apos;m Edwin, AI{" "}
-                    <span className="aurora-word">designer &amp; builder</span> making
-                    useful products and workflows.
+                    {/* The space before the span is INSIDE the text node, not a
+                        {" "} expression, and so is the one after it — the whole
+                        sentence is one line for that reason. The extractor
+                        drops a whitespace-only JSX child, so {" "} serialised
+                        as "AIdesigner" and then as "buildermaking". Same fault
+                        the deck hit once before. */}
+                    I&apos;m Edwin, AI <span className="aurora-word">designer &amp; builder</span> making useful products and workflows.
                   </h1>
 
                   <div

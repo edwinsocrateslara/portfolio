@@ -2481,7 +2481,21 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    containing block for position:fixed descendants — the bug that broke the
    lightbox. It is a compositing hint, not a requirement, and the effect runs
    without it. */
-.chip { isolation: isolate; }
+/* OVERFLOW: HIDDEN IS LOAD-BEARING, not tidiness. .shimmer-spark::before is
+   inset: -100%, so without the chip clipping it the pseudo-element overflows
+   and inflates every ancestor's scrollHeight — measured, the résumé's
+   .pane-scroll reported 7461px instead of 2887. That is invisible on screen
+   and it broke the artboard extractor, which sizes a frame from the deepest
+   scroller.
+
+   POSITION: RELATIVE IS THE OTHER HALF. .shimmer is inset:0 absolute, so
+   without a positioned chip its containing block is the nearest positioned
+   ancestor — .pane-scroll — and the spark stretches across the whole pane
+   instead of sitting in the pill. Both of these were being supplied by the
+   lab stylesheet and had to be found again when it was deleted.
+
+   isolation keeps the negative z-index layers inside the chip. */
+.chip { position: relative; overflow: hidden; isolation: isolate; }
 .shimmer {
   position: absolute;
   inset: 0;

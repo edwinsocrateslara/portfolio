@@ -261,6 +261,26 @@ if (FOLD) {
   // threshold at once when the viewport swallows them.
   await sleep(1800)
   console.log(`fit: pane is ${contentH}px, grew the frame ${H} -> ${capH}`)
+
+  // ── DOES IT CONVERGE? ───────────────────────────────────────────────────
+  // Fitting assumes content height is independent of viewport height. That is
+  // true of a transcript and false of a pane built to fill the window: the
+  // front door's hero band is viewport-sized with the sampler cards below it,
+  // so growing the frame grows the content and the two never meet — measured
+  // 1132 at a 1000px viewport, 1198 at 1132, 1284 at 1300.
+  //
+  // Left undetected this failed downstream, in verify, as "the frame is
+  // shorter than the content" — true, but silent about why and impossible to
+  // fix by re-running. So it is caught here, where the cause is visible, and
+  // named: a pane like this cannot be fitted and wants --fold.
+  const after = Number(await evalJS(CONTENT_PROBE))
+  if (after > capH + 1) {
+    console.error(`fit: FAILED TO CONVERGE — the frame grew to ${capH} and the content`)
+    console.error(`    grew with it, to ${after}. This pane is sized to the viewport, so`)
+    console.error(`    there is no height at which the whole of it is inside the frame.`)
+    console.error(`    Capture it with --fold, which is what a one-viewport board is for.`)
+    process.exit(1)
+  }
 }
 
 // Everything below runs IN THE PAGE. It returns a JSON string, so it has to
@@ -283,6 +303,15 @@ const EXTRACT = `(() => {
     "borderTopColor","borderRightColor","borderBottomColor","borderLeftColor",
     "borderTopLeftRadius","borderTopRightRadius","borderBottomRightRadius","borderBottomLeftRadius",
     "backgroundColor","backgroundImage","backgroundSize","backgroundPosition","backgroundRepeat",
+    // backgroundClip and webkitTextFillColor are what make a gradient paint
+    // THROUGH glyphs instead of behind them. Without them the front-door
+    // aurora serialised as ordinary text sitting on a coloured box, and the
+    // pixel diff caught it at 2.76% — which is the check doing exactly its
+    // job, and the reason the property list is a list rather than a guess.
+    "backgroundClip","webkitBackgroundClip","webkitTextFillColor",
+    // mask-image, for the dot field. A masked background that serialises
+    // without its mask is a full-bleed field of dots.
+    "maskImage","webkitMaskImage","maskSize","maskRepeat",
     "color","opacity","boxShadow","overflow","overflowX","overflowY",
     "fontFamily","fontSize","fontWeight","fontStyle","lineHeight","letterSpacing",
     "textTransform","textAlign","textDecorationLine","textOverflow","whiteSpace","textWrap",
