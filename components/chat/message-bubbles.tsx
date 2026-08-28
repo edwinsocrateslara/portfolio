@@ -5,6 +5,7 @@ import { NewTabMark } from "@/components/ui/new-tab-mark"
 import { Sparkle } from "@/components/ui/sparkle"
 import { useRef, useState } from "react"
 import { PromptChip } from "@/components/chat/prompt-chip"
+import { renderInline } from "@/lib/inline-markdown"
 import { DOCS, type DocKey } from "@/lib/constants"
 import { IMAGE_SIZES_MEASURE, CARD_WIDTH, CALLOUT_WIDTH } from "@/lib/layout"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
@@ -154,32 +155,7 @@ export function TextBubble({
         <p
           key={i}
           style={{ margin: i === 0 ? 0 : "var(--space-within) 0 0" }}
-          dangerouslySetInnerHTML={{
-            __html: p
-              .replace(
-                /\*\*(.+?)\*\*/g,
-                '<strong style="font-weight:700">$1</strong>'
-              )
-              .replace(
-                /\[([^\]]+)\]\(([^)]+)\)/g,
-                // Inline prose links, so the mark is appended as markup rather than by
-                // rendering <NewTabMark/> — this branch builds an HTML string. Same
-                // two parts: an aria-hidden glyph and visually-hidden text. The
-                // literal "sr-only" here is enough for Tailwind's scanner to keep
-                // the utility in the bundle, and it is used in JSX elsewhere too.
-                '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">$1' +
-                  // The same ArrowUpRight the rail uses, inlined as markup because this
-                  // branch builds an HTML string and cannot render a component.
-                  // Keeping the typed \u2197 here would have left one of the five
-                  // arrow sites at a different weight from the other four —
-                  // which it did, until it was measured: SPAN, not svg.
-                  // Path data from lucide-react v0.544 arrow-up-right.
-                  '<svg class="link-ext" aria-hidden="true" viewBox="0 0 24 24" fill="none"' +
-                  ' stroke="currentColor" stroke-width="2" stroke-linecap="round"' +
-                  ' stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>' +
-                  '<span class="sr-only"> (opens in a new tab)</span></a>'
-              ),
-          }}
+          dangerouslySetInnerHTML={{ __html: renderInline(p) }}
         />
       ))}
     </div>
