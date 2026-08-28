@@ -385,7 +385,14 @@ export function AppShell({
     })
     ro.observe(dock)
     return () => ro.disconnect()
-  })
+    // WHAT ACTUALLY CHANGES THE ANSWER: which pane is mounted, and whether that
+    // pane has a composer. Both are decided by `pane`. With no array at all the
+    // observer was disconnected and rebuilt on EVERY render — including on
+    // every token of a streamed answer, which is the one interaction where
+    // rebuilding an observer and forcing a layout read is least welcome.
+    // The observer handles height changes after that; it does not need React
+    // to re-subscribe it to notice one.
+  }, [pane])
 
   // Follow-up chips inside a reveal. A chip naming another project switches to
   // that project's thread (dispatch decides); a general question answers here.

@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss"
-import animate from "tailwindcss-animate"
 
 const config: Config = {
   content: [
@@ -46,7 +45,10 @@ const config: Config = {
       // by file type. One way to say 16px, not three.
     },
   },
-  plugins: [animate],
+  // No plugins. tailwindcss-animate was registered and supplied nothing —
+  // the animation classes here are local @keyframes in globals.css, and
+  // .animate-fade-in is one of those, not a plugin utility.
+  plugins: [],
 }
 
 export default config

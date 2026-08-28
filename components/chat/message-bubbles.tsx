@@ -17,9 +17,7 @@ import type { MessageBlock } from "@/hooks/use-scripted-stream"
 export type MessageKind =
   | "text"
   | "section-heading"
-  | "project-header"
   | "image"
-  | "image-row"
   | "slide-grid"
   | "impact"
   | "spec"
@@ -52,17 +50,6 @@ export interface SectionHeadingMessage extends BaseMessage {
   text: string
 }
 
-export interface ProjectHeaderMessage extends BaseMessage {
-  kind: "project-header"
-  project: {
-    slug: string
-    client: string
-    projectTitle: string
-    role: string
-    year?: string
-    previewImage: string
-  }
-}
 
 export interface ImageMessage extends BaseMessage {
   kind: "image"
@@ -75,10 +62,6 @@ export interface ImageMessage extends BaseMessage {
   groupIndex?: number
 }
 
-export interface ImageRowMessage extends BaseMessage {
-  kind: "image-row"
-  images: { url: string; alt?: string }[]
-}
 
 // A compact grid of deck slides. Full-width stacked images would be roughly
 // 8,800px of scroll for a 21-slide deck.
@@ -116,9 +99,7 @@ export interface DocLinkMessage extends BaseMessage {
 export type StructuredMessage =
   | TextMessage
   | SectionHeadingMessage
-  | ProjectHeaderMessage
   | ImageMessage
-  | ImageRowMessage
   | SlideGridMessage
   | ImpactMessage
   | SpecMessage
@@ -176,88 +157,6 @@ export function SectionHeading({ text }: { text: string }) {
   )
 }
 
-// Project header card
-export function ProjectHeaderBubble({
-  project,
-}: {
-  project: ProjectHeaderMessage["project"]
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "var(--space-between)",
-        background: "var(--layer-1)",
-        border: "1px solid var(--hairline)",
-        padding: "var(--space-between)",
-        maxWidth: CARD_WIDTH,
-        borderRadius: "var(--bureau-radius-card)",
-      }}
-    >
-      <div
-        style={{
-          width: "var(--space-64)",
-          height: "var(--space-64)",
-          flexShrink: 0,
-          background: "var(--layer-2)",
-          border: "1px solid var(--hairline)",
-          borderRadius: "var(--bureau-radius-media)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        <Image
-          src={project.previewImage}
-          alt=""
-          fill
-          className="object-contain"
-          style={{ padding: "var(--space-4)" }}
-          sizes="64px"
-        />
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          minWidth: 0,
-          flex: 1,
-          gap: "var(--space-4)",
-        }}
-      >
-        <div
-          className="type-label"
-          style={{
-            color: "rgb(var(--bureau-text-secondary))",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-          }}
-        >
-          {project.client}
-        </div>
-        <div
-          className="type-name"
-          style={{ color: "rgb(var(--bureau-text-primary))" }}
-        >
-          {project.projectTitle}
-        </div>
-        <div className="type-caption" style={{ color: "rgb(var(--bureau-text-muted))" }}>
-          {project.role}
-          {project.year && (
-            <>
-              {" · "}
-              <span className="font-mono">{project.year}</span>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 // Shared visual style for a clickable case-study image thumbnail —
 // a real <button> (not a div) so it's keyboard-reachable and
@@ -326,54 +225,6 @@ export function ImageBubble({
   )
 }
 
-// Full-width, stacked column of images (was a side-by-side grid — each
-// image now gets the full chat-column width instead of a ~1/3 thumbnail)
-export function ImageRowBubble({
-  images,
-}: {
-  images: { url: string; alt?: string }[]
-}) {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const triggerRefs = useRef<(HTMLButtonElement | null)[]>([])
-
-  return (
-    <div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-between)" }}>
-        {images.map((img, i) => (
-          <button
-            key={i}
-            type="button"
-            ref={(el) => {
-              triggerRefs.current[i] = el
-            }}
-            onClick={() => setLightboxIndex(i)}
-            aria-label={img.alt ? `Open image: ${img.alt}` : `Open image ${i + 1} of ${images.length}`}
-            style={IMAGE_TRIGGER_STYLE}
-          >
-            <Image
-              src={img.url}
-              alt={img.alt || ""}
-              fill
-              className="object-cover"
-              sizes={`${IMAGE_SIZES_MEASURE}px`}
-            />
-          </button>
-        ))}
-      </div>
-      {lightboxIndex !== null && (
-        <ImageLightbox
-          images={images}
-          initialIndex={lightboxIndex}
-          onClose={() => {
-            const openedFrom = lightboxIndex
-            setLightboxIndex(null)
-            triggerRefs.current[openedFrom]?.focus()
-          }}
-        />
-      )}
-    </div>
-  )
-}
 
 // Impact stats card
 /**
@@ -738,21 +589,11 @@ export function MessageContent({
       {kind === "section-heading" && (
         <SectionHeading text={(message as SectionHeadingMessage).text} />
       )}
-      {kind === "project-header" && (
-        <ProjectHeaderBubble
-          project={(message as ProjectHeaderMessage).project}
-        />
-      )}
       {kind === "image" && (
         <ImageBubble
           image={(message as ImageMessage).image}
           group={(message as ImageMessage).group}
           groupIndex={(message as ImageMessage).groupIndex}
-        />
-      )}
-      {kind === "image-row" && (
-        <ImageRowBubble
-          images={(message as ImageRowMessage).images}
         />
       )}
       {kind === "slide-grid" && (

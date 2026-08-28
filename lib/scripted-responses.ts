@@ -91,8 +91,8 @@ export const SCRIPTED_TOPICS: ScriptedTopic[] = [
 // No project-header card. The rail names the open project permanently, and on
 // mobile the top bar does — a card repeating it at the top of the transcript
 // was a third copy that scrolled away the moment the reveal got going.
-// ProjectHeaderBubble itself stays — message-bubbles.tsx still renders it for
-// the header kind; nothing in the project flow emits one.
+// The bubble is gone too, with the "project-header" kind — it had no producer
+// and the renderer advertised a state that could not occur.
 /** The seven, then the vibe-coded ones. Rail order, and the order slugs and
  *  rotation indices resolve against. */
 export const allProjects = [...projects, ...vibeProjects]

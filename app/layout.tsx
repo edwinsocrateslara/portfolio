@@ -17,7 +17,12 @@ const archivo = Archivo({
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  // 700 is here for .type-wordmark and nothing else. Without it the brand mark
+  // asked for a weight that was never fetched, so the browser synthesised one
+  // — a smeared fake bold, on the most persistent text on the site, differing
+  // by platform. Every other .type-* weight in both families is loaded;
+  // this was the only gap.
+  weight: ["400", "500", "600", "700"],
   variable: "--font-plex-mono",
 })
 
