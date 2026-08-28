@@ -11,7 +11,7 @@
 // escaped everything and rendered nothing, which is the failure mode of most
 // hastily-added escaping.
 //
-//   node --experimental-strip-types scripts/check-render.mjs
+//   node --import ./scripts/ts-extensionless.mjs scripts/check-render.mjs
 import { renderInline, isSafeHref } from "../lib/inline-markdown.ts"
 
 const CASES = [

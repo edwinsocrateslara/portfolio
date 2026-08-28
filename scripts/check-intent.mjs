@@ -13,12 +13,21 @@
 // triggers and never reaches the location test. That ordering is load-bearing
 // and undocumented by anything a program can check — until this.
 //
-// TWO ASSERTIONS, because the whole matcher cannot be imported here: its
-// transitive imports are extensionless and --experimental-strip-types will not
-// resolve them. So the predicate is tested directly, and the ordering is
-// asserted against the source.
+// TWO ASSERTIONS: the predicate is tested directly, and the ordering is
+// asserted against the source. The ordering half has to be a source assertion
+// either way — it is a fact about the SHAPE of the branch chain, not about
+// what any one call returns, so no amount of calling the matcher would catch
+// a reorder.
 //
-//   node --experimental-strip-types scripts/check-intent.mjs
+// The predicate half was originally split out for a worse reason: the matcher
+// could not be imported at all, because its transitive imports are
+// extensionless and Node's resolver requires a file extension. That is fixed
+// — see scripts/ts-extensionless.mjs — so importing matchVoiceAnswer here is
+// now possible. It is left as-is because the predicate is the branch that
+// caused the damage and testing it directly says so; if this file grows a
+// third assertion, the matcher end-to-end is the one to add.
+//
+//   node --import ./scripts/ts-extensionless.mjs scripts/check-intent.mjs
 import { readFileSync } from "fs"
 import { asksLocation } from "../lib/location-intent.ts"
 

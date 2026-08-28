@@ -15,9 +15,9 @@
     "check:chips": "node --experimental-strip-types scripts/check-chips.mjs",
     "clean": "node scripts/clean.mjs",
     "check:docs": "node --experimental-strip-types scripts/check-docs.mjs",
-    "check:render": "node --experimental-strip-types scripts/check-render.mjs",
-    "check:intent": "node --experimental-strip-types scripts/check-intent.mjs",
-    "check:alt": "node --experimental-strip-types scripts/check-alt.mjs"
+    "check:render": "node --import ./scripts/ts-extensionless.mjs scripts/check-render.mjs",
+    "check:intent": "node --import ./scripts/ts-extensionless.mjs scripts/check-intent.mjs",
+    "check:alt": "node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",

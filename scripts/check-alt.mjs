@@ -19,7 +19,7 @@
 // for them, so they are skipped by NAME rather than by being allowed to be
 // empty — a content image cannot become exempt by moving.
 //
-//   node --experimental-strip-types scripts/check-alt.mjs
+//   node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs
 import { readFileSync, readdirSync, statSync } from "fs"
 import { join, relative } from "path"
 
