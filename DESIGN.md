@@ -136,6 +136,22 @@ for AI-native craft cannot wear it.
 - the IMPACT left rule and its square marker
 - ~~the shimmer's rim on a chip or download pill~~ — **dormant, see below**
 
+### ⚠ OPEN QUESTION: rule 6 now has two dormant exceptions and no live ones
+
+The top-of-view wash is switched off. The shimmer's rim went white. **Both of
+rule 6's structural exceptions currently guard nothing**, which means the rule
+actually in force is the plain one — *the accent may never be a surface* — and
+the two carve-outs are machinery waiting for a consumer.
+
+That is a fair state and both are deliberately kept (see below and the wash's
+own note). But it is worth asking, at some point that is not now: **do these
+exceptions describe the system, or do they only remember it?** A rule whose
+every exception is dormant is either well-designed and waiting, or carrying two
+paragraphs that no longer correspond to anything.
+
+Recorded here so it is a live question rather than something rediscovered by
+whoever next reads the rule and cannot tell which.
+
 ### The masked rim — dormant, and admitted on a bad number
 
 **The shimmer is white now, so `--accent-rim` has zero consumers and rule 6's

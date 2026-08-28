@@ -2500,29 +2500,35 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
    isolation keeps the negative z-index layers inside the chip. */
 .chip { position: relative; overflow: hidden; isolation: isolate; }
-/* ── HOW THICK THE RIM READS, and which lever actually does it ──────────────
-   TWO PROPERTIES, and they are not equally strong:
+/* ── ⚠ THE PROPERTY NAMES LIE ABOUT WHICH ONE THINS THE RIM ────────────────
+   IF YOU ARE HERE TO MAKE THE RIM THINNER, CHANGE --shimmer-blur. Not the
+   inset. The names suggest the opposite and they are wrong.
 
-     --shimmer-inset  the backdrop's inset. This is the GEOMETRIC rim — the
-                      strip of gradient the backdrop does not cover.
-     --shimmer-blur   the blur on the whole layer. This is what you SEE,
-                      because a 0.7px strip blurred by 2px paints about 4.7px.
+   --shimmer-inset is the backdrop's inset, and it sets the GEOMETRIC rim: the
+   strip of conic gradient the opaque backdrop does not cover. It is the
+   obvious lever and it is nearly powerless, because the layer is blurred.
+
+   --shimmer-blur is what you actually SEE. A 0.7px strip blurred by 1px paints
+   about 2.7px, so the blur contributes roughly four times what the strip does.
 
    Measured, holding one and moving the other:
 
      blur 2, inset 0.05em -> 0.69px geometric, 4.69px apparent
-     blur 2, inset 0.02em -> 0.27px geometric, 4.27px apparent   (-9%)
-     blur 0, inset 0.05em -> 0.69px geometric, 0.69px apparent   (-85%)
+     blur 2, inset 0.02em -> 0.27px geometric, 4.27px apparent    -9%
+     blur 0, inset 0.05em -> 0.69px geometric, 0.69px apparent   -85%
 
-   So the inset is nearly powerless while the blur is on. Anyone reaching for
-   "thinner" wants the blur first. Spark size and the conic spread are not
-   levers for width at all: 100cqh sets how much of the perimeter is lit at
-   once and 90deg sets the wedge's angular extent, so both change the LENGTH
-   and brightness of the travelling highlight, never its thickness. */
-:root { --shimmer-inset: 0.05em; --shimmer-blur: 2px; }
-html[data-rim="fine"] { --shimmer-inset: 0.05em; --shimmer-blur: 1px;   }
-html[data-rim="hair"] { --shimmer-inset: 0.03em; --shimmer-blur: 0.5px; }
-html[data-rim="wire"] { --shimmer-inset: 0.02em; --shimmer-blur: 0;     }
+   Cutting the geometric rim by 60% changed what you see by 9%. Turning the
+   blur off changed it by 85%.
+
+   AND NEITHER OF THE OTHER TWO NUMBERS IS A WIDTH LEVER. The spark's 100cqh
+   sets how much of the perimeter is lit at once; the conic gradient's 90deg
+   sets the wedge's angular extent. Both change the LENGTH and the brightness
+   of the travelling highlight and neither changes its thickness.
+
+   Chosen at 2.69px apparent, from four measured on the running site. The three
+   alternatives were flipped between at ?rim=fine|hair|wire and are gone with
+   the component that read them. */
+:root { --shimmer-inset: 0.05em; --shimmer-blur: 1px; }
 
 .shimmer {
   position: absolute;
