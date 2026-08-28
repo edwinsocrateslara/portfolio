@@ -2,6 +2,7 @@ import { projects } from "./projects"
 import { vibeProjects } from "./vibe-projects"
 import { buildProjectBodyBlocks } from "./project-flow"
 import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
+import { asksLocation } from "./location-intent"
 import { meridianDeck } from "./case-study-deck"
 import { rotationFor } from "./chips"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
@@ -374,7 +375,20 @@ export function buildResponse(
   }
 
   // Location. SCRIPTED_TOPICS "location"
-  if (t.includes("based") || t.includes("where") || t.includes("location")) {
+  //
+  // PHRASES, NOT THE WORD "where". This is the last branch before the API
+  // fallback, so a bare t.includes("where") claimed every un-triggered
+  // question containing it: "Where did you study?" answered "Toronto,
+  // Ontario, Canada."
+  //
+  // The ordering above is what kept that from being worse and is deliberately
+  // untouched — matchVoiceAnswer runs first, so the shipped chip "Where do you
+  // see yourself in five years?" resolves on its own triggers and never
+  // reaches here. This narrows the branch; it does not move it.
+  //
+  // "based" is likewise a phrase now: "Which projects were based on research?"
+  // is not a question about where anyone lives.
+  if (asksLocation(t)) {
     return {
       response: [
         {
