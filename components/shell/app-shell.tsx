@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
+import { RimSwitch } from "@/components/chat/rim-switch"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { projects } from "@/lib/projects"
@@ -437,6 +438,7 @@ export function AppShell({
 
   return (
     <div className="shell" data-sheet={sheetOpen}>
+      <RimSwitch />
       {/* Mobile only — the rail collapses behind this. */}
       {/* Same brand as the rail — "Edwin Lara". This used to be "Edwin" while
           the rail said "Edwin Socrates Lara", which gave one person two name

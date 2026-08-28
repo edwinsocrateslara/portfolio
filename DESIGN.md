@@ -134,9 +134,37 @@ for AI-native craft cannot wear it.
 - the textarea caret
 - the SEND fill, once there is something to send
 - the IMPACT left rule and its square marker
-- **the shimmer's rim on a chip or download pill**, via `--accent-rim`
+- ~~the shimmer's rim on a chip or download pill~~ — **dormant, see below**
 
-### The masked rim, and the second narrowing of rule 6
+### The masked rim — dormant, and admitted on a bad number
+
+**The shimmer is white now, so `--accent-rim` has zero consumers and rule 6's
+second exception guards nothing.** That is the same state the top-of-view wash's
+exception is in, and it is recorded the same way: dormant pending a decision,
+not an oversight. The token, the narrowing and its four near-miss fixtures all
+stay — they cost nothing and deleting them would lose the proof that the
+narrowing is a narrowing.
+
+**But it should not be reactivated on the argument that admitted it, because
+that argument was measuring the wrong thing.** The case made below was "the
+visible rim is about 0.7px, narrower than the 2px rail bar this rule already
+permits". 0.7px is the *geometric* rim — the strip of gradient the backdrop
+does not cover. The layer also carries `filter: blur(2px)`, and a 0.7px strip
+blurred by 2px paints about **4.69px**. Measured:
+
+| blur | inset | geometric | apparent |
+|---|---|---|---|
+| 2px | 0.05em | 0.69px | **4.69px** |
+| 2px | 0.02em | 0.27px | 4.27px |
+| 0 | 0.05em | 0.69px | 0.69px |
+
+So the rim that shipped was **more than twice the width of the rail bar**, not
+half of it. The exception may still be defensible — a soft moving highlight is
+not the same object as a 2px static bar — but it has to be argued on apparent
+width, and it was not. If anything ever wants this exception again, that is the
+number to argue from.
+
+### The narrowing itself, kept for whenever it is wanted
 
 The shimmer paints a conic gradient in the accent and then covers all but a rim
 of it with an opaque backdrop inset by `0.05em`. **The visible result is about

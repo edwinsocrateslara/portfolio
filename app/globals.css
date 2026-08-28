@@ -41,6 +41,10 @@
   --highlight-inset:        rgb(255 255 255 / 0.12);
   --highlight-inset-strong: rgb(255 255 255 / 0.25);
 
+  /* The shimmer's rim. WHITE, not the accent — see DESIGN.md for what that
+     does to rule 6's second exception. */
+  --shimmer-ink: rgb(255 255 255);
+
   /* THE ACCENT, DECLARED FOR A MASKED RIM. Same mechanism as --hero-glow and
      for the same reason: naming this token is a declaration of intent that a
      grep can check, and tuning the rim can never move the accent that marks
@@ -2496,11 +2500,35 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
    isolation keeps the negative z-index layers inside the chip. */
 .chip { position: relative; overflow: hidden; isolation: isolate; }
+/* ── HOW THICK THE RIM READS, and which lever actually does it ──────────────
+   TWO PROPERTIES, and they are not equally strong:
+
+     --shimmer-inset  the backdrop's inset. This is the GEOMETRIC rim — the
+                      strip of gradient the backdrop does not cover.
+     --shimmer-blur   the blur on the whole layer. This is what you SEE,
+                      because a 0.7px strip blurred by 2px paints about 4.7px.
+
+   Measured, holding one and moving the other:
+
+     blur 2, inset 0.05em -> 0.69px geometric, 4.69px apparent
+     blur 2, inset 0.02em -> 0.27px geometric, 4.27px apparent   (-9%)
+     blur 0, inset 0.05em -> 0.69px geometric, 0.69px apparent   (-85%)
+
+   So the inset is nearly powerless while the blur is on. Anyone reaching for
+   "thinner" wants the blur first. Spark size and the conic spread are not
+   levers for width at all: 100cqh sets how much of the perimeter is lit at
+   once and 90deg sets the wedge's angular extent, so both change the LENGTH
+   and brightness of the travelling highlight, never its thickness. */
+:root { --shimmer-inset: 0.05em; --shimmer-blur: 2px; }
+html[data-rim="fine"] { --shimmer-inset: 0.05em; --shimmer-blur: 1px;   }
+html[data-rim="hair"] { --shimmer-inset: 0.03em; --shimmer-blur: 0.5px; }
+html[data-rim="wire"] { --shimmer-inset: 0.02em; --shimmer-blur: 0;     }
+
 .shimmer {
   position: absolute;
   inset: 0;
   z-index: -30;
-  filter: blur(2px);
+  filter: blur(var(--shimmer-blur));
   overflow: visible;
   container-type: size;   /* without this the 100cqh below resolves to 0 */
 }
@@ -2516,12 +2544,12 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   position: absolute;
   inset: -100%;
   z-index: -30;
-  background: conic-gradient(from 225deg, transparent 0, rgb(var(--accent-rim)) 90deg, transparent 90deg);
+  background: conic-gradient(from 225deg, transparent 0, var(--shimmer-ink) 90deg, transparent 90deg);
   animation: shimmer-spin 6s infinite linear;
 }
 .shimmer-backdrop {
   position: absolute;
-  inset: 0.05em;
+  inset: var(--shimmer-inset);
   z-index: -20;
   border-radius: inherit;
   background: var(--layer-1-flat);
