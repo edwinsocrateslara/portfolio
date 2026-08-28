@@ -15,7 +15,7 @@ export function Words({ text, offset = 0 }: { text: string; offset?: number }) {
     <>
       {parts.map((w, i) => (
         <span key={`${i}-${w}`}>
-          <span className="lab-w" style={{ "--i": offset + i } as React.CSSProperties}>
+          <span className="word" style={{ "--i": offset + i } as React.CSSProperties}>
             {w}
           </span>
           {i < parts.length - 1 ? " " : null}

@@ -1,6 +1,6 @@
 "use client"
 
-import { Shimmer } from "@/components/lab/shimmer"
+import { Shimmer } from "@/components/chat/shimmer"
 
 interface PromptChipProps {
   label: string
@@ -29,9 +29,9 @@ export function PromptChip({ label, onClick, disabled = false, prefix }: PromptC
     <button type="button" className="chip type-control" onClick={onClick} disabled={disabled}>
       {prefix && <span className="type-attribute chip-prefix">{prefix}</span>}
       {label}
-      {/* LAB — inert unless html[data-lab-shimmer]. Seven of these run at once
-          on the front door plus a reveal, which is the case the border beam
-          failed. */}
+      {/* Four run at once on the front door, three on a reveal — the case
+          the border beam failed on. Measured at 4x CPU throttle: identical to
+          baseline, 0 frames over budget. */}
       <Shimmer />
     </button>
   )

@@ -1,8 +1,7 @@
 "use client"
 
-import { Shimmer } from "@/components/lab/shimmer"
-import { useLabFlag } from "@/components/lab/use-lab-flag"
-import { Words, wordCount } from "@/components/lab/words"
+import { Shimmer } from "@/components/chat/shimmer"
+import { Words, wordCount } from "@/components/chat/words"
 import { Fragment, useEffect, useRef } from "react"
 import { Download } from "lucide-react"
 import { DOCS } from "@/lib/constants"
@@ -30,7 +29,13 @@ import type { Resume, ResumeRole } from "@/lib/resume"
 // .resume-row-line / -node / -body); this is only the cadence between rows,
 // which has to be JS because it schedules the attribute flips. Its one home is
 // here — nothing in the stylesheet knows about it.
-const ROW_STAGGER_MS = 90
+// 240, not the 90 this shipped at. THE GAP HAS TO EXCEED THE DURATION IT
+// SEPARATES or the arrivals overlap into one wash: a row's entrance runs 240ms
+// for the spine, the node at +240 and the dates and body at +280 — about 520ms
+// end to end — so at 90ms six rows were always mid-animation and the sequence
+// read as a single fade. That rule INVERTS inside an element, where the words
+// want to overlap; see .word in globals.css.
+const ROW_STAGGER_MS = 240
 
 /** How far up the scroller the arrival line sits, as a fraction of its height
  *  measured from the bottom: 0.15 puts the line at 85%. A row resolves when
@@ -138,11 +143,6 @@ export function ResumePane({ resume }: { resume: Resume }) {
   // inside @media (prefers-reduced-motion: no-preference) keyed on
   // data-resolved, so under reduced motion the rows are simply never hidden,
   // and there is no frame where they paint at rest and then jump away.
-  // LAB — null is the shipped behaviour and nothing below changes. "full" and
-  // "slow" widen WHAT sequences and lengthen the gap BETWEEN arrivals; they do
-  // not add a second sequencer. See the note above the stagger constant.
-  const labSeq = useLabFlag("seq")
-
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
@@ -151,22 +151,10 @@ export function ResumePane({ resume }: { resume: Resume }) {
     const scroller = root.closest<HTMLElement>(".pane-scroll")
     if (!scroller) return
 
-    // LAB: "full"/"slow" sequence every opted-in element, not only the rows.
-    // The elements carry data-resolved either way; with the lab off the extra
-    // ones are simply never queried and never hidden.
-    // "words" sequences inside each element too, so the gap between elements
-    // can be shorter than "slow" without the two running together.
-    const stagger =
-      labSeq === "slow" ? 420 : labSeq === "full" ? 220 : labSeq === "words" ? 240 : ROW_STAGGER_MS
-    const selector = labSeq ? "[data-resolved]" : ".resume-row"
-
-    // Flipping the switch re-runs this effect, so reset first — otherwise the
-    // second run finds everything already resolved and there is nothing to
-    // watch. This is the one thing the shipped path never has to do.
-    const all = Array.from(root.querySelectorAll<HTMLElement>("[data-resolved]"))
-    for (const el of all) el.dataset.resolved = "false"
-
-    const pending = Array.from(root.querySelectorAll<HTMLElement>(selector))
+    // EVERY opted-in element, not only the rows: the page title, the location,
+    // the three section headings and the six tools bands carry data-resolved
+    // too, so the pane composes itself top-down rather than only its entries.
+    const pending = Array.from(root.querySelectorAll<HTMLElement>("[data-resolved]"))
     const queue: HTMLElement[] = []
     let timer: number | undefined
     let frame = 0
@@ -176,7 +164,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       const next = queue.shift()
       if (!next) return
       next.dataset.resolved = "true"
-      if (queue.length) timer = window.setTimeout(drain, stagger)
+      if (queue.length) timer = window.setTimeout(drain, ROW_STAGGER_MS)
     }
 
     const sweep = () => {
@@ -215,7 +203,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       if (frame) cancelAnimationFrame(frame)
       if (timer !== undefined) window.clearTimeout(timer)
     }
-  }, [labSeq])
+  }, [])
 
   return (
     <div className="resume" ref={rootRef}>
@@ -228,8 +216,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
         <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
           <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
           Download PDF
-          {/* LAB — the shimmer on a download pill. Two here, seven on the
-              front door. Inert unless html[data-lab-shimmer]. */}
+          {/* The shimmer on a download pill. */}
           <Shimmer />
         </a>
       </div>
@@ -275,11 +262,11 @@ export function ResumePane({ resume }: { resume: Resume }) {
                 {band.items.map((item, i) => (
                   <Fragment key={item}>
                     {i > 0 && (
-                      <span className="resume-band-sep lab-w" style={{ "--i": i } as React.CSSProperties}>
+                      <span className="resume-band-sep word" style={{ "--i": i } as React.CSSProperties}>
                         {"\u00A0\u00B7 "}
                       </span>
                     )}
-                    <span className="lab-w" style={{ "--i": i } as React.CSSProperties}>
+                    <span className="word" style={{ "--i": i } as React.CSSProperties}>
                       {joinSlashes(item)}
                     </span>
                   </Fragment>

@@ -3,15 +3,15 @@
  * highlight on top. Corner radius is irrelevant to it — which is the whole
  * reason it works on a pill where the border beam could not.
  *
- * Rendered inert; app/lab.css only paints it under html[data-lab-shimmer]. */
+ * The backdrop must be OPAQUE — a translucent one cannot mask the spark. */
 export function Shimmer() {
   return (
     <>
-      <span className="lab-shimmer" aria-hidden="true">
-        <span className="lab-shimmer-spark" />
+      <span className="shimmer" aria-hidden="true">
+        <span className="shimmer-spark" />
       </span>
-      <span className="lab-shimmer-backdrop" aria-hidden="true" />
-      <span className="lab-shimmer-hl" aria-hidden="true" />
+      <span className="shimmer-backdrop" aria-hidden="true" />
+      <span className="shimmer-highlight" aria-hidden="true" />
     </>
   )
 }

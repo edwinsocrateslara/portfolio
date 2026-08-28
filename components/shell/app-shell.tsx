@@ -5,7 +5,6 @@ import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
-import { LabPanel } from "@/components/lab/lab-panel"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { projects } from "@/lib/projects"
@@ -438,7 +437,6 @@ export function AppShell({
 
   return (
     <div className="shell" data-sheet={sheetOpen}>
-      <LabPanel />
       {/* Mobile only — the rail collapses behind this. */}
       {/* Same brand as the rail — "Edwin Lara". This used to be "Edwin" while
           the rail said "Edwin Socrates Lara", which gave one person two name
@@ -529,8 +527,8 @@ export function AppShell({
           </div>
         ) : isFrontDoor ? (
           <div className="pane-front">
-            {/* LAB: the 4-declaration dot field. Inert unless html[data-lab-dots]. */}
-            <div className="lab-dots" aria-hidden="true" />
+            {/* Four declarations and no DOM nodes; see .dot-field. */}
+            <div className="dot-field" aria-hidden="true" />
             <div className="hero-band" data-hero-col="stack">
                   {/* .type-display — the top of the ladder, at 50/58.
                       It was 28/42 and occupied 2.34% of a 1440x1000 viewport
@@ -570,8 +568,8 @@ export function AppShell({
                         ampersand binds a unit, "and" separates a list of two.
                         The different conjunction is doing work.
 
-                        Inert unless html[data-lab-aurora]; the text is
-                        unchanged either way. */}
+                        The gradient is continuous along the phrase rather
+                        than restarting per word — measured, see .aurora-word. */}
                     I&apos;m Edwin, AI{" "}
                     <span className="aurora-word">designer &amp; builder</span> making
                     useful products and workflows.

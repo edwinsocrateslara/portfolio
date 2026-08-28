@@ -31,6 +31,45 @@
   --hairline:        rgb(255 255 255 / 0.14);
   --hairline-strong: rgb(255 255 255 / 0.23);
 
+  /* THE INSET HIGHLIGHT on a shimmer control. Two more rungs on the white-alpha
+     family that --layer-1/--layer-2/--hairline already form, and they are new
+     values rather than reuses: 0.25 is close to --hairline-strong's 0.23 and is
+     NOT it. A hairline is an edge and this is a wash inside a box; pointing one
+     at the other would rebuild exactly the coincidence this system has spent
+     several commits removing. No rule changes for these — a token was all the
+     raw hex needed. */
+  --highlight-inset:        rgb(255 255 255 / 0.12);
+  --highlight-inset-strong: rgb(255 255 255 / 0.25);
+
+  /* THE ACCENT, DECLARED FOR A MASKED RIM. Same mechanism as --hero-glow and
+     for the same reason: naming this token is a declaration of intent that a
+     grep can check, and tuning the rim can never move the accent that marks
+     controls. Rule 6 permits an accent gradient ONLY through this token and
+     ONLY at a negative z-index — see the narrowing in check-design.mjs. */
+  --accent-rim: var(--bureau-accent);
+
+  /* THE AURORA'S FOUR STOPS. These are Magic UI's own defaults and they are
+     the only chromatic colours in this system — everything else is achromatic
+     plus one lime. Tokenised rather than inlined so that fact is visible in
+     the palette instead of buried in a gradient: four colours arrived, and a
+     later audit should be able to see them without reading a keyframe. */
+  --aurora-1: #ff0080;
+  --aurora-2: #7928ca;
+  --aurora-3: #0070f3;
+  --aurora-4: #38bdf8;
+
+  /* The dot field's ink. 0.12 also happens to equal --highlight-inset. It is
+     NOT the same value: that is a wash inside a control and this is a mark on
+     a ground, solved separately. Pointing one at the other would rebuild the
+     coincidence this system keeps removing. */
+  --dot-ink: rgb(255 255 255 / 0.12);
+
+  /* --layer-1 FLATTENED over the ground, for the one place that needs an
+     opaque surface: the shimmer's backdrop, which cannot mask anything if it
+     is translucent. Measured identical to --layer-1 on every surface a chip
+     appears on — a pixel diff of the two came back 0. */
+  --layer-1-flat: #1c1c1c;
+
   /* Blur for layers that sit over real content rather than flat ground.
      Applied deliberately, never as a default: backdrop-filter forces a
      new compositing layer, and on a surface with nothing behind it that
@@ -2359,3 +2398,203 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    letterforms a real italic has. That is the same class of thing as a font
    fallback silently changing metrics, and this project does not ship it. */
 .lede-em { font-style: italic; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOTION AND SURFACE — four effects, landed from lab/magic-ui-maximal.
+   Ideas from Magic UI, none of its code: no Motion, no library, no dependency.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── The front-door headline's aurora ───────────────────────────────────────
+   ONE SPAN ACROSS THE PHRASE, not a word. "designer & builder" is one claim
+   and highlighting half of it emphasised the ordinary half. The ampersand
+   binds a unit; "products and workflows" keeps its "and" because that is a
+   list of two separate things, and the different conjunction is doing work.
+
+   The gradient runs the length of the phrase rather than restarting per word.
+   Verified two ways: getClientRects() returns ONE rect at 1440 and at 380, so
+   there is no fragment boundary to restart at, and box-decoration-break
+   computes to `slice` so even a wrap would paint as though unbroken. Sampling
+   the rendered ink, per-word mean hue runs 210.0 -> 204.8 -> 202.1 — three
+   ordered bands, which a per-word restart could not produce.
+
+   background-size 300% means the phrase shows a THIRD of one cycle, so this
+   reads as the whole phrase shifting together rather than a wave travelling
+   along it. That is the effect as shipped; 150% would give a visible wave. */
+.aurora-word {
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(135deg, var(--aurora-1), var(--aurora-2), var(--aurora-3),
+                                var(--aurora-4), var(--aurora-1));
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: aurora 10s linear infinite;
+}
+@keyframes aurora {
+  from { background-position: 0% center; }
+  to   { background-position: 300% center; }
+}
+
+/* ── The front door's dot field ─────────────────────────────────────────────
+   FOUR DECLARATIONS AND ZERO DOM NODES. Magic UI renders one <motion.circle>
+   per dot, which over this pane is 74 x 63 = 4,662 elements — for reference the
+   whole front door carries 34 typed ones, and building them measured 40.6ms.
+   A repeating radial-gradient is the same picture for nothing.
+
+   0.12 rather than the 0.20 first drawn: at 20% the field competed with the
+   sampler cards below it. */
+.dot-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle at 1px 1px, var(--dot-ink) 1px, transparent 0);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(460px circle at 50% 42%, #000, transparent);
+  mask-image: radial-gradient(460px circle at 50% 42%, #000, transparent);
+}
+
+/* ── The shimmer on chips and download pills ────────────────────────────────
+   A rotating conic gradient behind an opaque backdrop, so what shows is a rim
+   about 0.7px wide — NARROWER THAN THE 2px RAIL BAR rule 6 already permits.
+   The declaration is a background; the rendered result is an edge, which is
+   what --accent-rim exists to say.
+
+   REPLACED THE BORDER BEAM, which failed on a pill for a geometric reason: its
+   offset-path ties the beam's radius to the beam's WIDTH, and a 9999px pill's
+   true radius is half its height. A conic gradient does not care about corner
+   radius at all.
+
+   THE BACKDROP MUST BE OPAQUE. --layer-1 is rgb(255 255 255 / 0.04) and a
+   translucent backdrop cannot mask the spark — it bled through the middle of
+   the chip and read as a green flare rather than a rim. #1c1c1c is --layer-1
+   FLATTENED over the ground, and that swap is invisible: every chip on every
+   surface composites over rgb(19,19,19), measured, and a pixel diff of
+   translucent against opaque came back 0 differing pixels. The cost is future
+   rather than present — a chip placed on some other surface would no longer
+   pick it up.
+
+   NO transform-gpu. Magic UI ships it and it leaves matrix(1,0,0,1,0,0) on the
+   element permanently, which is the identity transform that makes an element a
+   containing block for position:fixed descendants — the bug that broke the
+   lightbox. It is a compositing hint, not a requirement, and the effect runs
+   without it. */
+.chip { isolation: isolate; }
+.shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: -30;
+  filter: blur(2px);
+  overflow: visible;
+  container-type: size;   /* without this the 100cqh below resolves to 0 */
+}
+.shimmer-spark {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: 1;
+  height: 100cqh;
+  animation: shimmer-slide 3s ease-in-out infinite alternate;
+}
+.shimmer-spark::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  z-index: -30;
+  background: conic-gradient(from 225deg, transparent 0, rgb(var(--accent-rim)) 90deg, transparent 90deg);
+  animation: shimmer-spin 6s infinite linear;
+}
+.shimmer-backdrop {
+  position: absolute;
+  inset: 0.05em;
+  z-index: -20;
+  border-radius: inherit;
+  background: var(--layer-1-flat);
+}
+.shimmer-highlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 -8px 10px var(--highlight-inset);
+  transition: box-shadow 0.3s ease-in-out;
+}
+.chip:hover .shimmer-highlight { box-shadow: inset 0 -6px 10px var(--highlight-inset-strong); }
+.chip:active .shimmer-highlight { box-shadow: inset 0 -10px 10px var(--highlight-inset-strong); }
+@keyframes shimmer-slide { to { transform: translate(calc(100cqw - 100%), 0); } }
+@keyframes shimmer-spin {
+  0%       { transform: rotate(0deg); }
+  15%, 35% { transform: rotate(90deg); }
+  65%, 85% { transform: rotate(270deg); }
+  100%     { transform: rotate(360deg); }
+}
+
+/* ── The résumé writing itself out ──────────────────────────────────────────
+   THE SAME SWEEP THAT ALREADY SHIPPED, widened. Same data-resolved attribute,
+   same rAF scroll sweep, same drain queue — what changed is that the title,
+   location, section headings and tools bands now opt in, and that the words
+   inside prose write rather than the block fading.
+
+   THE STAGGER RULE INVERTS AT WORD SCALE. Between elements the gap must exceed
+   the duration it separates or arrivals overlap into one wash — 90ms against a
+   520ms entrance put six rows in flight, which is why the old timeline was
+   hard to read as a sequence. Between WORDS you want that overlap: a word
+   fades over 260ms and the next starts 26ms later, so ten are in flight and
+   the leading edge sweeps the line. Gap above duration would read as a
+   stutter. 26ms also keeps the reader ahead — a 20-word bullet's edge crosses
+   in ~520ms.
+
+   OPACITY ONLY, so there is no layout shift. Spans are laid out at final size
+   on the first frame and spaces stay as text nodes between them. Measured on
+   and off, mid-write and settled: pane height 2887 in all four, every bullet
+   box and band height identical. The words are invisible, not absent. */
+@media (prefers-reduced-motion: no-preference) {
+  .pane-title[data-resolved],
+  .pane-meta[data-resolved],
+  .resume-heading[data-resolved],
+  .resume-band[data-resolved] {
+    transition: opacity 240ms var(--motion-block-in-ease),
+                transform 240ms var(--motion-block-in-ease);
+  }
+  .pane-title[data-resolved="false"],
+  .pane-meta[data-resolved="false"],
+  .resume-heading[data-resolved="false"],
+  .resume-band[data-resolved="false"] {
+    opacity: 0;
+    transform: translateY(var(--space-8));
+  }
+  .word { opacity: 0; }
+  [data-resolved="true"] .word {
+    animation: word-in 260ms var(--motion-block-in-ease) forwards;
+    animation-delay: calc(var(--i) * 26ms);
+  }
+  /* The body does not fade as a block here — its words carry the arrival.
+     Without this the bullets would fade in twice. */
+  .resume-row[data-resolved="false"] .resume-row-body { opacity: 1; transform: none; }
+}
+@keyframes word-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Reduced motion for the four ────────────────────────────────────────────
+   The résumé's sequence needs nothing here — its hidden state lives inside
+   @media (prefers-reduced-motion: no-preference), so under reduce the elements
+   are never hidden and the effect returns before attaching an observer. That
+   is the pattern; the two perpetual animations below could not use it because
+   they animate a painted state rather than hide one, so they are switched off
+   explicitly.
+
+   THE AURORA FALLS BACK TO INK, not to a frozen gradient. A paused gradient
+   would leave the phrase in whatever colour the first frame happened to be —
+   which on this palette is a pink no other text uses. Under reduce it is
+   simply text-primary, like the words either side of it. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-word {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: rgb(var(--bureau-text-primary));
+    color: rgb(var(--bureau-text-primary));
+  }
+  .shimmer-spark,
+  .shimmer-spark::before { animation: none; }
+  .shimmer-highlight { transition: none; }
+}
