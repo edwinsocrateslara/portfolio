@@ -1,7 +1,7 @@
 "use client"
 
-import { ResumeTerminal } from "@/components/lab/resume-terminal"
 import { Shimmer } from "@/components/lab/shimmer"
+import { useLabFlag } from "@/components/lab/use-lab-flag"
 import { Fragment, useEffect, useRef } from "react"
 import { Download } from "lucide-react"
 import { DOCS } from "@/lib/constants"
@@ -127,6 +127,11 @@ export function ResumePane({ resume }: { resume: Resume }) {
   // inside @media (prefers-reduced-motion: no-preference) keyed on
   // data-resolved, so under reduced motion the rows are simply never hidden,
   // and there is no frame where they paint at rest and then jump away.
+  // LAB — null is the shipped behaviour and nothing below changes. "full" and
+  // "slow" widen WHAT sequences and lengthen the gap BETWEEN arrivals; they do
+  // not add a second sequencer. See the note above the stagger constant.
+  const labSeq = useLabFlag("seq")
+
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
@@ -135,7 +140,19 @@ export function ResumePane({ resume }: { resume: Resume }) {
     const scroller = root.closest<HTMLElement>(".pane-scroll")
     if (!scroller) return
 
-    const pending = Array.from(root.querySelectorAll<HTMLElement>(".resume-row"))
+    // LAB: "full"/"slow" sequence every opted-in element, not only the rows.
+    // The elements carry data-resolved either way; with the lab off the extra
+    // ones are simply never queried and never hidden.
+    const stagger = labSeq === "slow" ? 420 : labSeq === "full" ? 220 : ROW_STAGGER_MS
+    const selector = labSeq ? "[data-resolved]" : ".resume-row"
+
+    // Flipping the switch re-runs this effect, so reset first — otherwise the
+    // second run finds everything already resolved and there is nothing to
+    // watch. This is the one thing the shipped path never has to do.
+    const all = Array.from(root.querySelectorAll<HTMLElement>("[data-resolved]"))
+    for (const el of all) el.dataset.resolved = "false"
+
+    const pending = Array.from(root.querySelectorAll<HTMLElement>(selector))
     const queue: HTMLElement[] = []
     let timer: number | undefined
     let frame = 0
@@ -145,7 +162,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       const next = queue.shift()
       if (!next) return
       next.dataset.resolved = "true"
-      if (queue.length) timer = window.setTimeout(drain, ROW_STAGGER_MS)
+      if (queue.length) timer = window.setTimeout(drain, stagger)
     }
 
     const sweep = () => {
@@ -184,12 +201,12 @@ export function ResumePane({ resume }: { resume: Resume }) {
       if (frame) cancelAnimationFrame(frame)
       if (timer !== undefined) window.clearTimeout(timer)
     }
-  }, [])
+  }, [labSeq])
 
   return (
     <div className="resume" ref={rootRef}>
       <div className="deck-head">
-        <h1 className="type-page pane-title">Resume</h1>
+        <h1 className="type-page pane-title" data-resolved="false">Resume</h1>
         {/* Same control as the deck's, and the same reasoning: .chip is the
             system's pill, so a second inline one would be a second place for
             the border, fill and hover to drift.
@@ -203,15 +220,12 @@ export function ResumePane({ resume }: { resume: Resume }) {
         </a>
       </div>
 
-      <p className="type-label pane-meta">Toronto, Canada</p>
+      <p className="type-label pane-meta" data-resolved="false">Toronto, Canada</p>
 
       <hr className="resume-rule" />
 
       <section className="resume-section">
-        {/* LAB — the résumé as shell output, above the record it describes.
-            Inert unless html[data-lab-terminal]. */}
-        <ResumeTerminal resume={resume} />
-        <h2 className="type-section resume-heading">Tools</h2>
+        <h2 className="type-section resume-heading" data-resolved="false">Tools</h2>
         {/* Six labelled bands in source order, two columns, set in type. Not
             logos: fifty-five brand marks would be the only uncontrolled colour
             on the site, and check-design rule 6 exists to stop exactly that.
@@ -236,7 +250,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
             and nothing else. */}
         <div className="resume-bands">
           {resume.skills.map((band) => (
-            <div key={band.label} className="resume-band">
+            <div key={band.label} className="resume-band" data-resolved="false">
               <p className="type-label resume-band-label">{band.label}</p>
               <p className="type-value resume-band-items">
                 {band.items.map((item, i) => (
@@ -254,7 +268,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       <hr className="resume-rule" />
 
       <section className="resume-section">
-        <h2 className="type-section resume-heading">Experience</h2>
+        <h2 className="type-section resume-heading" data-resolved="false">Experience</h2>
         <div className="resume-spine">
           {resume.roles.map((role) => {
             const [start, end] = dateEnds(role.dates)
@@ -286,7 +300,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       </section>
 
       <section className="resume-section">
-        <h2 className="type-section resume-heading">Education</h2>
+        <h2 className="type-section resume-heading" data-resolved="false">Education</h2>
         {/* Same spine, same columns, one difference: the node is a ring rather
             than a filled mark. A degree is not an event on the same axis as a
             job, and the source carries no dates for these — so the date column

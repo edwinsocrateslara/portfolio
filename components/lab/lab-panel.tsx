@@ -8,14 +8,14 @@ import { useEffect, useState } from "react"
  *
  * State lives in the URL as well as on the element, so a setting survives a
  * reload and can be linked: ?aurora=loop&dots=20&shimmer=on&terminal=on */
-const KEYS = ["aurora", "dots", "shimmer", "terminal"] as const
+const KEYS = ["aurora", "dots", "shimmer", "seq"] as const
 type Key = (typeof KEYS)[number]
 
 const OPTIONS: Record<Key, { label: string; values: (string | null)[] }> = {
   aurora:   { label: "aurora",   values: [null, "loop", "once"] },
   dots:     { label: "dots",     values: [null, "12", "20", "32"] },
   shimmer:  { label: "shimmer",  values: [null, "on"] },
-  terminal: { label: "terminal", values: [null, "on"] },
+  seq:      { label: "sequence", values: [null, "full", "slow"] },
 }
 
 function apply(k: Key, v: string | null) {
@@ -31,7 +31,7 @@ function apply(k: Key, v: string | null) {
 
 export function LabPanel() {
   const [state, setState] = useState<Record<Key, string | null>>({
-    aurora: null, dots: null, shimmer: null, terminal: null,
+    aurora: null, dots: null, shimmer: null, seq: null,
   })
 
   // Read the URL once on mount and push it onto <html>.

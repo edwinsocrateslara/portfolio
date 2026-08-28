@@ -118,41 +118,42 @@ html[data-lab-shimmer="on"] .lab-shimmer-host:active .lab-shimmer-hl {
   100% { transform: translateZ(0) rotate(360deg); }
 }
 
-/* ── 4 · TERMINAL on the résumé ─────────────────────────────────────────── */
-.lab-terminal { display: none; }
-html[data-lab-terminal="on"] .lab-terminal {
-  display: block;
-  border: 1px solid var(--hairline);
-  border-radius: 12px;
-  background: #0b0b0b;
-  overflow: hidden;
-  max-width: 720px;
-  margin-bottom: var(--space-section);
+/* ── 4 · SEQUENCE — the résumé arriving in order, no frame around it ─────
+   THIS IS NOT A SECOND SEQUENCER. It extends the one that already ships: the
+   same data-resolved attribute, the same rAF scroll sweep, the same drain
+   queue. What changes is WHAT is in the queue and HOW FAR APART the arrivals
+   are. See the note in resume-pane.tsx.
+
+   Why the shipped version is hard to see, measured from its own numbers: a
+   row's entrance runs 240ms for the spine, then the node at +240, then the
+   dates and body at +280 — about 520ms end to end. The stagger between rows
+   is 90ms. So six rows are always mid-animation at once and the whole thing
+   reads as one wash rather than as a sequence. Widening the gap to 220ms
+   (full) or 420ms (slow) is the entire difference; nothing about the
+   animation itself changed.
+
+   REDUCED MOTION IS HANDLED THE SAME WAY THE SHIPPED TIMELINE HANDLES IT, and
+   deliberately so: the hidden state lives INSIDE
+   @media (prefers-reduced-motion: no-preference), so under reduce these
+   elements are never hidden in the first place. There is no frame where they
+   paint at rest and then jump away, and the effect returns before attaching
+   anything — it reads the media query synchronously, above. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-lab-seq] .pane-title[data-resolved],
+  html[data-lab-seq] .pane-meta[data-resolved],
+  html[data-lab-seq] .resume-heading[data-resolved],
+  html[data-lab-seq] .resume-band[data-resolved] {
+    transition: opacity 240ms var(--motion-block-in-ease),
+                transform 240ms var(--motion-block-in-ease);
+  }
+  html[data-lab-seq] .pane-title[data-resolved="false"],
+  html[data-lab-seq] .pane-meta[data-resolved="false"],
+  html[data-lab-seq] .resume-heading[data-resolved="false"],
+  html[data-lab-seq] .resume-band[data-resolved="false"] {
+    opacity: 0;
+    transform: translateY(var(--space-8));
+  }
 }
-.lab-term-bar {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px; border-bottom: 1px solid var(--hairline); background: #151515;
-}
-.lab-term-dot { width: 12px; height: 12px; border-radius: 9999px; }
-.lab-term-body { padding: 16px 18px 20px; }
-.lab-term-line {
-  font-family: var(--ff-plex-mono); font-size: 12px; line-height: 20px;
-  color: rgb(var(--bureau-text-secondary));
-  opacity: 0; animation: lab-term-in 0.28s ease-out forwards;
-  animation-delay: calc(0.9s + var(--i) * 0.16s);
-}
-.lab-term-tick { color: rgb(var(--bureau-accent)); }
-.lab-term-info { color: #6aa6ff; }
-.lab-term-prompt {
-  font-family: var(--ff-plex-mono); font-size: 12px; line-height: 20px;
-  color: rgb(var(--bureau-text-primary));
-  overflow: hidden; white-space: nowrap;
-  border-right: 2px solid rgb(var(--bureau-accent));
-  width: 0; animation: lab-term-type 0.9s steps(28, end) forwards, lab-term-caret 0.7s step-end infinite;
-}
-@keyframes lab-term-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
-@keyframes lab-term-type { to { width: 27ch; } }
-@keyframes lab-term-caret { 50% { border-color: transparent; } }
 
 /* ── The panel ──────────────────────────────────────────────────────────── */
 .lab-panel {
