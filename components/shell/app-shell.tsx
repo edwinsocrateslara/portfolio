@@ -364,35 +364,57 @@ export function AppShell({
   // on viewport width changes that rewrap the field, and on font load. Those
   // are invisible to a value-keyed effect and would leave the reserve stale.
   const paneRef = useRef<HTMLElement>(null)
-  const dockRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const pane = paneRef.current
-    if (!pane) return
-    const dock = dockRef.current
-    if (!dock) {
-      // The deck and vibe-coding panes share .pane-scroll but have no
-      // composer, so they must not reserve room for one. Without this they
-      // fell through to the fallback and carried 80px of dead space at the
-      // bottom — invisible on a scrolling pane until you reach the end of it.
-      pane.style.setProperty("--dock-h", "0px")
+  // The observer and the element it publishes to, remembered so the callback
+  // ref below can tear both down when the dock unmounts.
+  const dockObserverRef = useRef<ResizeObserver | null>(null)
+  const dockPaneRef = useRef<HTMLElement | null>(null)
+
+  // A CALLBACK REF, NOT AN EFFECT, and that distinction is the bug this fixes.
+  //
+  // This was a useEffect keyed on [pane]. `pane` was a proxy for "does a dock
+  // exist", and a bad one: isFrontDoor is `pane === "chat" && thread === HOME
+  // && messages.length === 0`, so the front door and every reveal are the SAME
+  // pane value. The effect ran twice on the front door with dockRef null, took
+  // the early return, and never ran again — so when a reveal mounted its dock,
+  // nothing measured it and the reserved space stayed at whatever the front
+  // door had written. Measured: 35px of chips under the dock at 1440, 39px at
+  // 380. A callback ref fires on the node mounting and unmounting, which is the
+  // event the dependency array was trying to approximate.
+  //
+  // It also cannot churn. React calls this only when the node identity changes,
+  // so a streamed answer — hundreds of renders with the dock mounted throughout
+  // — calls it zero times. That was M6's original complaint and it stays fixed.
+  const dockRef = useCallback((node: HTMLDivElement | null) => {
+    dockObserverRef.current?.disconnect()
+    dockObserverRef.current = null
+
+    if (!node) {
+      // Unmounted. REMOVE rather than zero: .pane-scroll's padding reads
+      // `var(--dock-h, var(--space-80))`, so an explicit "0px" defeats a
+      // working fallback and leaves the last message under a dock that is no
+      // longer there to justify it. Removing hands the decision back to CSS.
+      dockPaneRef.current?.style.removeProperty("--dock-h")
+      dockPaneRef.current = null
       return
     }
+
+    // paneRef first, then the node's own ancestor. Refs attach bottom-up, so
+    // on the first commit this callback can run before <main ref={paneRef}>
+    // has been assigned — which would be the same early-return-with-no-retry
+    // shape as the bug above.
+    const pane = paneRef.current ?? node.closest<HTMLElement>(".pane")
+    if (!pane) return
+    dockPaneRef.current = pane
+
     // Border box, not contentRect: contentRect excludes the dock's own padding,
     // which would mean re-stating --space-20 here as a number and keeping two
     // copies in step. The rendered height already knows it.
     const ro = new ResizeObserver(() => {
-      pane.style.setProperty("--dock-h", `${Math.ceil(dock.getBoundingClientRect().height)}px`)
+      pane.style.setProperty("--dock-h", `${Math.ceil(node.getBoundingClientRect().height)}px`)
     })
-    ro.observe(dock)
-    return () => ro.disconnect()
-    // WHAT ACTUALLY CHANGES THE ANSWER: which pane is mounted, and whether that
-    // pane has a composer. Both are decided by `pane`. With no array at all the
-    // observer was disconnected and rebuilt on EVERY render — including on
-    // every token of a streamed answer, which is the one interaction where
-    // rebuilding an observer and forcing a layout read is least welcome.
-    // The observer handles height changes after that; it does not need React
-    // to re-subscribe it to notice one.
-  }, [pane])
+    ro.observe(node)
+    dockObserverRef.current = ro
+  }, [])
 
   // Follow-up chips inside a reveal. A chip naming another project switches to
   // that project's thread (dispatch decides); a general question answers here.
