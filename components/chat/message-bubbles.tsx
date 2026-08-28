@@ -4,8 +4,10 @@ import Image from "next/image"
 import { NewTabMark } from "@/components/ui/new-tab-mark"
 import { Sparkle } from "@/components/ui/sparkle"
 import { useRef, useState } from "react"
+import { ArrowDownToLine } from "lucide-react"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { renderInline } from "@/lib/inline-markdown"
+import { ICON_STROKE } from "@/lib/icons"
 import { DOCS, type DocKey } from "@/lib/constants"
 import { IMAGE_SIZES_MEASURE, CARD_WIDTH, CALLOUT_WIDTH } from "@/lib/layout"
 import { ImageLightbox } from "@/components/chat/image-lightbox"
@@ -477,12 +479,26 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       <span className="type-label" style={{ color: "rgb(var(--bureau-text-primary))" }}>
         {local ? (
           <>
-            {/* aria-hidden: as text this was being announced as a character.
-                The announcement beside it says what the control does, and it
-                does NOT say "opens in a new tab" — a download reassigns
-                nothing, and a false announcement is worse than none. Same
-                reasoning as MailMark's. */}
-            <span aria-hidden="true">↓</span>
+            {/* A REAL ICON, not the typed U+2193 this was. As a text character
+                it inherited whatever font-size and weight its context set —
+                here .type-label's 12/600 mono, rendering 8.4x15px — so it
+                could not be sized or weighted with the other marks, and it
+                sat at a font weight where they sit at a stroke. That is the
+                same failure new-tab-mark.tsx documents for the typed arrow it
+                replaced; this was the last one left.
+
+                Same glyph as the download pills, which is the point: the site
+                had two different download marks, a stroked icon on the pills
+                and a character on this card. Not the same SIZE, and that is
+                also the point — .doc-mark is 16 because this sits beside the
+                card's 16px title, where the pill's .chip-icon is 12 because it
+                sits inside a 12px label. Same rule, two neighbours.
+
+                aria-hidden: the announcement beside it says what the control
+                does, and it does NOT say "opens in a new tab" — a download
+                reassigns nothing, and a false announcement is worse than
+                none. Same reasoning as MailMark's. */}
+            <ArrowDownToLine className="doc-mark" aria-hidden="true" strokeWidth={ICON_STROKE} />
             <span className="sr-only"> (downloads the file)</span>
           </>
         ) : (

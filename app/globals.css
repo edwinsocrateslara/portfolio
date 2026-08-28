@@ -511,7 +511,7 @@
      size is an aesthetic call. This change is the first; re-picking the glyph
      against a 40px thumbnail is the second, and it is worth doing — beside a
      40px picture a 24px mark is lighter than it was beside a 32px one. */
-  --rail-doc-glyph: var(--space-24);
+  --rail-doc-glyph: var(--icon-rail);
   /* A leading icon inside a .chip. Same 16 as the rail's nav icons and for the
      same reason, but its own name: a chip is not a rail row, and one may move
      without the other. */
@@ -520,7 +520,43 @@
      label and is structural, this TRAILS one and modifies it. At 12 it matches
      the label's own size and reads as part of the text run rather than as a
      second icon competing with the one on the left. */
-  --link-arrow-size: var(--space-12);
+  /* ── Icon sizes ───────────────────────────────────────────────────────
+     Four sizes, each produced by a rule rather than picked, and every one a
+     token: the rail's 24 used to be Lucide's default `size` prop — right, and
+     unstated, so a library change would have resized the rail silently.
+
+     TWO RULES, and which applies depends on whether the mark has type beside
+     it. They agree at 16 and at 24, which is why this is one ramp and not two.
+
+     BESIDE TYPE → 1.4× the CAP HEIGHT of the visible neighbour. An icon next
+     to words should answer to the height of the letters, not to the font size:
+
+       12px label  →  cap 8.2 (mono) / 8.6 (Archivo)  ×1.4  →  12
+       16px title  →  cap 11.0                        ×1.4  →  16
+
+     "The visible neighbour" is load-bearing and was got wrong once: the
+     doc-link card's mark was sized against the 12px span it lives in, and that
+     span holds nothing but the screen-reader announcement. See .link-ext.
+
+     STANDALONE → HALF ITS HIT TARGET, on the 4px grid. A control with no text
+     beside it has no cap to answer to; what it has is the box you click:
+
+       send button    34  →  16
+       lightbox ctrl  40  →  20
+       rail contact   44  →  20
+       rail doc row   48  →  24
+
+     MEASURED, NOT ASSERTED: every one of those already sat at 45–50% of its
+     target before the rule was written down, so this names what the site was
+     doing rather than imposing something on it. The one exception was the
+     lightbox at 18 — see the note on .lightbox-icon.
+
+     Both rules land on the 4px grid at every step, which is the argument for
+     1.4 and 1/2 over neighbouring ratios. */
+  --icon-inline:  var(--space-12);   /* a mark inside 12px type: the pill arrows   */
+  --icon-mark:    var(--space-16);   /* beside a 16px title, or in prose; and SEND */
+  --icon-control: var(--space-20);   /* a standalone control in a 40–44px target   */
+  --icon-rail:    var(--space-24);   /* rail document rows: the icon IS the column */
 
   /* The left edge every rail row aligns to — the list's padding, the 2px
      active bar, and the row's own padding. Written as the composition so a
@@ -1032,6 +1068,10 @@ body {
    coloured on the row below rather than here; this rule is what is left that
    is common to every rail glyph. */
 .rail-icon {
+  /* 24 was Lucide's default `size` prop — correct, and unstated. Now a token,
+     so a library default cannot resize the rail without anyone deciding to. */
+  width: var(--icon-rail);
+  height: var(--icon-rail);
   flex: none;
 }
 /* A document row's icon IS its left column, rather than a small glyph with a
@@ -1042,12 +1082,16 @@ body {
    reads as one object. The consequence is that `active` no longer steps the
    glyph — the accent bar and the layer-1 fill carry that state alone. */
 .rail-doc .rail-icon {
-  width: var(--rail-doc-glyph);
-  height: var(--rail-doc-glyph);
+  /* No width/height here. It used to restate --rail-doc-glyph, which every
+     .rail-icon on the site matched anyway — every one of them is inside a
+     .rail-doc — so this override silently shadowed the ramp token above and
+     the ramp's 24 had no live effect. --rail-doc-glyph now composes FROM
+     --icon-rail, so the ramp is the source and the column arithmetic below
+     still reads a name that says what it is measuring. */
   /* LEFT-aligned in the column, not centred. Centring split the 8px remainder
      either side and pushed the glyph to 26, four past the line every row above
      it starts on. The whole remainder goes to the right instead: the glyph
-     starts at 22 and the column is still 32 wide, so the labels keep the 62px
+     starts at 22 and the column is still 40 wide, so the labels keep the 62px
      edge they share with the project rows. Composed from the two tokens, so
      changing either keeps both alignments rather than silently losing one. */
   margin-right: calc(var(--rail-doc-col) - var(--rail-doc-glyph));
@@ -1242,8 +1286,11 @@ body {
    rather than a control of its own, and the 24 the document rows take would
    out-weigh the brand it sits beside. */
 .rail-contact-icon {
-  width: var(--brand-mark-size);
-  height: var(--brand-mark-size);
+  /* 20, up from the 16 it shared with the brand mark. These are standalone —
+     MailMark/NewTabMark are rendered with glyph={false} beside them, so there
+     is no visible label and no cap height to relate to. */
+  width: var(--icon-control);
+  height: var(--icon-control);
   flex: none;
 }
 /* The external arrow is gone from these two. .link-ext still styles every
@@ -1259,13 +1306,60 @@ body {
 .link-ext {
   color: rgb(var(--bureau-text-muted));
   flex: none;
-  width: var(--link-arrow-size);
-  height: var(--link-arrow-size);
+  /* 16, EVERYWHERE. This was sized by context — 12 by default, 16 in prose —
+     and the measurement behind the default was wrong. The default was taken
+     against the 12px .type-label span the mark lives in on a doc-link card,
+     and that span contains nothing a reader can see: it holds the "(opens in
+     a new tab)" announcement and this icon. The type actually beside the mark
+     is the card's 16px title, whose cap is 11.0px; 1.4× that is 15.4 → 16.
+     One size, because there turned out to be one situation and not two. */
+  width: var(--icon-mark);
+  height: var(--icon-mark);
   /* It used to be a text character, so it inherited font-size and rendered at
      four different sizes across four call sites. A fixed box ends that. */
   display: inline-block;
   vertical-align: -1px;
 }
+/* Lightbox controls — close, previous, next. 20: half of the 40px button they
+   sit in, the same rule the rail's contacts and the SEND glyph already obeyed.
+
+   They were 18, and 18 was the only size on the site that no rule produced. It
+   arrived as a `size={18}` literal on the close button; the chevrons were 20,
+   which was right, and unifying the three DOWN to 18 spread the leftover
+   instead of replacing it. Deleting it takes the ramp from five sizes to four.
+
+   Stroke moves with the size: at 20 a constant 2 would paint 1.67px, heavier
+   than every other mark on the site, so these take ICON_STROKE_CONTROL and
+   hold 1.5px — the same ink they had at 18. */
+.lightbox-icon {
+  width: var(--icon-control);
+  height: var(--icon-control);
+  flex: none;
+}
+
+/* The trailing mark on a doc-link card, whichever glyph it is: a download
+   arrow when the url is local, an external arrow when it is not. ONE SIZE for
+   the two, because it is one slot — the card's right gutter, beside a 16px
+   title — and the glyph varies with the url, not with the design.
+
+   It used .chip-icon, which is 12 and correct where it belongs: inside a pill,
+   in the cap band of a 12px label. Sharing one class across a pill and a card
+   gutter made the same card show a 12px mark or a 16px mark depending on
+   whether the file was hosted here. */
+.doc-mark {
+  width: var(--icon-mark);
+  height: var(--icon-mark);
+  flex: none;
+}
+
+/* The SEND glyph. 16 rather than the `h-4 w-4` Tailwind literal it was —
+   the same 16px, arriving from the token layer instead of Tailwind's scale. */
+.send-icon {
+  width: var(--icon-mark);
+  height: var(--icon-mark);
+  flex: none;
+}
+
 a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
 /* ── Typing indicator ─────────────────────────────────────────────
@@ -2387,8 +2481,14 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    the same reasoning, as the rail's nav icons: Lucide's 24 default would
    out-weigh the word beside it. */
 .chip-icon {
-  width: var(--chip-icon-size);
-  height: var(--chip-icon-size);
+  /* 12. It sits INSIDE the pill's label — .type-action at 12px, cap 8.2px — so
+     the cap rule governs and gives 12 at 1.46×. Re-tested at 16 against the
+     proposal to give every download mark one size: 16 is 1.94× cap and breaks
+     the cap band top and bottom, reading as an object beside the words rather
+     than a mark on them. The card gutter's 16 and this 12 are the same rule
+     answering two different neighbours — see .doc-mark. */
+  width: var(--icon-inline);
+  height: var(--icon-inline);
   flex: none;
 }
 

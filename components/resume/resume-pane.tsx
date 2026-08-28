@@ -3,7 +3,8 @@
 import { Shimmer } from "@/components/chat/shimmer"
 import { Words, wordCount } from "@/components/chat/words"
 import { Fragment, useEffect, useRef } from "react"
-import { Download } from "lucide-react"
+import { ArrowDownToLine } from "lucide-react"
+import { ICON_STROKE } from "@/lib/icons"
 import { DOCS } from "@/lib/constants"
 import type { Resume, ResumeRole } from "@/lib/resume"
 
@@ -214,7 +215,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
             the border, fill and hover to drift.
             `download`, no target — it says "Download PDF" and now does that. */}
         <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
-          <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
+          <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
           Download PDF
           {/* The shimmer on a download pill. */}
           <Shimmer />

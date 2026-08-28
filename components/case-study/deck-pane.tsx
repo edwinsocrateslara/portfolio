@@ -1,7 +1,8 @@
 "use client"
 
 import { Shimmer } from "@/components/chat/shimmer"
-import { Download } from "lucide-react"
+import { ArrowDownToLine } from "lucide-react"
+import { ICON_STROKE } from "@/lib/icons"
 import { meridianDeck } from "@/lib/case-study-deck"
 import { SlideGrid } from "@/components/case-study/slide-grid"
 
@@ -29,7 +30,7 @@ export function DeckPane() {
             save rather than navigate; the visible text is the accessible name,
             so there is no second string to drift. */}
         <a className="chip type-action deck-download" href={meridianDeck.pdf} download>
-          <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
+          <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
           Download PDF
           {/* The shimmer on a download pill. */}
           <Shimmer />

@@ -4,6 +4,7 @@ import Image from "next/image"
 import { createPortal } from "react-dom"
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { ICON_STROKE_CONTROL } from "@/lib/icons"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 interface LightboxImage {
@@ -192,7 +193,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
               right: "var(--space-12)",
             }}
           >
-            <X size={18} />
+            <X className="lightbox-icon" aria-hidden="true" strokeWidth={ICON_STROKE_CONTROL} />
           </button>
 
           {hasMultiple && (
@@ -211,7 +212,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
                   top: "calc(50% - 20px)",
                 }}
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft className="lightbox-icon" aria-hidden="true" strokeWidth={ICON_STROKE_CONTROL} />
               </button>
               <button
                 type="button"
@@ -225,7 +226,7 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
                   top: "calc(50% - 20px)",
                 }}
               >
-                <ChevronRight size={20} />
+                <ChevronRight className="lightbox-icon" aria-hidden="true" strokeWidth={ICON_STROKE_CONTROL} />
               </button>
             </>
           )}

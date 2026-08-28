@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useRef, useEffect, useState } from "react"
-import { ArrowUp } from "lucide-react"
+import { Send } from "lucide-react"
+import { ICON_STROKE } from "@/lib/icons"
 import { cn } from "@/lib/utils"
 
 interface ChatInputProps {
@@ -163,7 +164,7 @@ export function ChatInput({
             }}
           />
         ) : (
-          <ArrowUp className="h-4 w-4" aria-hidden="true" />
+          <Send className="send-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
         )}
       </button>
     </div>

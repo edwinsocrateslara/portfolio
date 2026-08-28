@@ -1,3 +1,4 @@
+import { ICON_STROKE } from "./icons"
 /* ── Inline markdown, and why this escapes first ──────────────────────────
  * This builds an HTML string, and model output reaches it: app-shell commits
  * an API answer as `kind: "text"` and it renders through here, streaming and
@@ -57,12 +58,13 @@ export function renderInline(p: string): string {
         `<a href="${href}" target="_blank" rel="noopener noreferrer"` +
         ' style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">' +
         label +
-        // The same ArrowUpRight the rail uses, inlined as markup because this
-        // branch builds an HTML string and cannot render a component.
-        // Path data from lucide-react v0.544 arrow-up-right.
+        // THE SAME GLYPH NewTabMark RENDERS, inlined as markup because this branch
+        // builds an HTML string and cannot render a component. The two are one mark
+        // in two forms and MUST be changed together — path data and stroke both.
+        // Path data from lucide-react v0.544 move-up-right; stroke from the token.
         '<svg class="link-ext" aria-hidden="true" viewBox="0 0 24 24" fill="none"' +
-        ' stroke="currentColor" stroke-width="2" stroke-linecap="round"' +
-        ' stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>' +
+        ` stroke="currentColor" stroke-width="${ICON_STROKE}" stroke-linecap="round"` +
+        ' stroke-linejoin="round"><path d="M13 5H19V11"/><path d="M19 5L5 19"/></svg>' +
         '<span class="sr-only"> (opens in a new tab)</span></a>'
       )
     })

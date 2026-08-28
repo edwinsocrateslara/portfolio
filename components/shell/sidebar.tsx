@@ -6,7 +6,8 @@ import { Sparkle } from "@/components/ui/sparkle"
 // Layers, not Layers3: Layers3 is a deprecated alias in v0.544 and resolves to
 // the same component (verified: Layers3 === Layers). Importing the live name.
 // BriefcaseBusiness and CodeXml left with the section-header glyphs.
-import { Layers, FileUser, UserRound, Mail, Linkedin } from "lucide-react"
+import { Layers, FileText, UserRound, Mail, Linkedin } from "lucide-react"
+import { ICON_STROKE_CONTROL, ICON_STROKE_RAIL } from "@/lib/icons"
 import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
 import { projects } from "@/lib/projects"
 import type { Project } from "@/lib/projects"
@@ -33,17 +34,6 @@ import { vibeProjects } from "@/lib/vibe-projects"
 
 export type Pane = "chat" | "deck" | "about" | "resume"
 
-// The document glyphs' stroke. Lucide expresses stroke-width in viewBox units,
-// so the painted weight moves with the rendered size: at the old 32px this 1.25
-// landed at 1.67 device px, and at today's 24px glyph it paints 1.25.
-//
-// ITS ORIGINAL REASON IS GONE. It was picked to sit level with the 16px
-// section-header marks above it, and those marks have been deleted — there is
-// nothing left in the rail to weigh it against. It is kept at 1.25 because the
-// glyph also went primary in the same change, and a heavier stroke on top of a
-// lighter colour would have moved two variables at once. Worth re-picking by
-// eye against the rail as it now stands.
-const DOC_ICON_STROKE = 1.25
 
 interface SidebarProps {
   activeSlug: string | null
@@ -249,7 +239,7 @@ export function Sidebar({
                 as thick — at 2 the document marks out-weighed the section
                 header above them, which inverts the hierarchy. See
                 DOC_ICON_STROKE. */}
-            <Layers className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
+            <Layers className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
             <span className="type-action rail-doc-label">Case Study</span>
           </button>
 
@@ -265,7 +255,7 @@ export function Sidebar({
             aria-current={activePane === "resume" ? "true" : undefined}
             onClick={pick(onSelectResume)}
           >
-            <FileUser className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
+            <FileText className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
             <span className="type-action rail-doc-label">Resume</span>
           </button>
 
@@ -280,7 +270,7 @@ export function Sidebar({
             aria-current={activePane === "about" ? "true" : undefined}
             onClick={pick(onSelectAbout)}
           >
-            <UserRound className="rail-icon" aria-hidden="true" strokeWidth={DOC_ICON_STROKE} />
+            <UserRound className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
             <span className="type-action rail-doc-label">About</span>
           </button>
         </div>
@@ -300,7 +290,7 @@ export function Sidebar({
           href={`mailto:${CONTACT_EMAIL}`}
           style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
-          <Mail className="rail-contact-icon" aria-hidden="true" strokeWidth={2} />
+          <Mail className="rail-contact-icon" aria-hidden="true" strokeWidth={ICON_STROKE_CONTROL} />
           <span className="sr-only">Email</span>
           <MailMark glyph={false} />
         </a>
@@ -311,7 +301,7 @@ export function Sidebar({
           rel="noopener noreferrer"
           style={{ color: "rgb(var(--bureau-text-secondary))" }}
         >
-          <Linkedin className="rail-contact-icon" aria-hidden="true" strokeWidth={2} />
+          <Linkedin className="rail-contact-icon" aria-hidden="true" strokeWidth={ICON_STROKE_CONTROL} />
           <span className="sr-only">LinkedIn</span>
           {/* NO VISIBLE ARROW any more — but glyph={false} rather than dropping
               the mark altogether, because the ANNOUNCEMENT is not the part
