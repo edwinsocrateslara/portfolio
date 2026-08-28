@@ -559,11 +559,22 @@ export function AppShell({
                       animationDelay: delay(60),
                     }}
                   >
-                    {/* LAB: one word wrapped so the aurora has something to
-                        clip to. The span is inert unless html[data-lab-aurora]
-                        is set, and the text is unchanged either way. */}
-                    I&apos;m Edwin, AI <span className="aurora-word">designer</span> &amp;
-                    builder making useful products and workflows.
+                    {/* LAB: the aurora spans the PHRASE, not a word. One span
+                        across "designer & builder" so the gradient runs the
+                        length of it — background-clip:text on a single inline
+                        box paints one continuous ramp, and box-decoration-break
+                        defaults to `slice`, so even a line break keeps it
+                        continuous rather than restarting per fragment.
+
+                        "products and workflows" keeps its "and" on purpose: an
+                        ampersand binds a unit, "and" separates a list of two.
+                        The different conjunction is doing work.
+
+                        Inert unless html[data-lab-aurora]; the text is
+                        unchanged either way. */}
+                    I&apos;m Edwin, AI{" "}
+                    <span className="aurora-word">designer &amp; builder</span> making
+                    useful products and workflows.
                   </h1>
 
                   <div
