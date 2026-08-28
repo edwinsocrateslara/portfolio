@@ -704,24 +704,63 @@ level fits:
 `within`, for optical cases where 8px is visibly too loose. `--space-44`
 exists for one reason — the touch-target floor below.
 
+### An icon-only control's glyph is half its target
+
+**Half the short side of the hit target, rounded to the 4px grid.** That is the
+whole rule, and it predicts a size for any control this system has not built
+yet: give it a target, halve it, land on the grid.
+
+| control | target | half | glyph |
+|---|---|---|---|
+| SEND | 34×34 | 17 | 16 |
+| lightbox close, chevrons | 40×40 | 20 | 20 |
+| rail contact links | 44×44 | 22 | 20 |
+| rail document rows | 247×48 | 24 | 24 |
+
+**It was derived, not decided.** Every one of those already sat at 45–50% of
+its target before the rule was written down — it names what the system was
+already doing. The single exception was the lightbox at 18, and 18 turned out
+to be a `size={18}` literal that no rule had ever produced. Writing the rule
+down is what made that visible; four controls agreeing and one not is a
+finding, where five arbitrary numbers are just five numbers.
+
+**"Icon-only" is the precondition, and it is doing work.** A mark with type
+beside it answers to the cap height instead — see [Icons](#icons). The rail's
+brand mark is the case that shows the boundary: it is a 16px sparkle in a 72px
+row, which is 22% and nowhere near half, and that is correct, because it is not
+an icon-only control. It sits beside a wordmark, and against that wordmark's
+cap it is 1.43×. Applying the target rule there would give 36 and be absurd.
+
+Two rules, and which applies is decided by one question: is there type beside
+this mark?
+
 ### Touch targets
 
 Most controls in this system are **42px tall**, not 44. That is deliberate and
 it is not an oversight to be "fixed" by a later audit.
 
 42 is the chip's own arithmetic: 8px padding + 24px line-height + 8px padding
-+ 2×1px border. Prompt chips are 42. **Every row in the rail is 56** — project
-rows because they carry a 32px thumbnail, document rows because their icon is
-also 32px, which is what puts every row label on the same 62px left edge. Doc
-rows were 42 while their icon was 16. **This used to be derived from the chat
-input's 66px height, and no longer is** — the field is 50px now, and a claim
-that one number explains both would be false.
++ 2×1px border. Prompt chips are 42.
+
+**The rail's rows are not one height, and the shared left edge does not come
+from their height.** Measured: project rows are **56** and carry a 40px
+thumbnail; document rows are **48** and carry a 24px glyph. What aligns them is
+the COLUMN, not the row — both reserve 40px starting at x=22, so both end at 62
+and every label starts at 70. Doc rows were 42 while their icon was 16.
+
+*(An earlier version of this paragraph said every row was 56, the thumbnail 32
+and the doc icon "also 32". All three were stale; the numbers above are
+measured off the rendered rail.)*
+
+**Row height used to be derived from the chat input's 66px height, and no
+longer is** — the field is 50px now, and a claim that one number explains both
+would be false.
 
 WCAG **2.5.8 (AA)** requires 24×24 and every control clears it. **2.5.5 (AAA)**
 asks for 44×44, and this system takes the AA floor plus the density in exchange
 — a portfolio read on a laptop is not a phone keypad.
 
-**Three exceptions at `--space-44`.** Two are on mobile and are navigation: the
+**Four exceptions at `--space-44`.** Two are on mobile and are navigation: the
 menu toggle and the brand mark. On a phone the rail is hidden behind the sheet,
 so these are the only way *out* of a view and the only way *home*. A control
 that is the sole route somewhere does not get to be 18px because the rest of
@@ -739,10 +778,16 @@ belongs in one place: **12/18 + 12 = 44 · 14/21 + 12 = 47 · 16/24 + 12 = 50.**
 The earlier claim that chips "were 42 at body type" described a state with
 `--space-8` padding that had already been replaced when it was written.
 
-**The rail's contact links are 26px** — `--space-4` above and below a 12px
-label on 18px leading. That clears 2.5.8's 24×24 AA floor and does not reach
-2.5.5's 44. They were 18px before the CONTACT block was built, which failed AA
-outright, on the one row a recruiter on a phone is actually trying to hit.
+**The rail's contact links are 44×44** — a fourth `--space-44` exception, and
+the only one that is not navigation. They are icon-only, so there is no label
+to set the height and the target has to be stated outright. They were 18px
+before the CONTACT block was built, which failed 2.5.8 outright on the one row
+a recruiter on a phone is actually trying to hit; a later pass took them to
+44, which clears 2.5.5 as well.
+
+*(This paragraph said 26px, built from `--space-4` and a 12px label. That
+described a state that no longer ships — the links are icon-only now and the
+box is 44.)*
 
 The third `--space-44` exception is **SEND**, which is 34×34 painted and 44×44
 to the pointer. It is
@@ -1128,6 +1173,94 @@ now sit near the top. It reads because the header is inside a bordered card
 with a thumbnail and a mono eyebrow and the tagline is loose body text below
 it — but they are the same type step, and if that card is ever restyled this is
 the pairing to check.
+
+## Icons
+
+Four sizes — 12, 16, 20, 24 — and two rules that produce them. Which rule
+applies depends on one question: is there type beside this mark?
+
+### Beside type → 1.4× the cap height of the visible neighbour
+
+An icon next to words answers to the height of the letters, not to the font
+size. Two live cases, and both land on the 4px grid with no rounding tension,
+which is the argument for 1.4 over a neighbouring ratio:
+
+| neighbour | cap | ×1.4 | icon | measured |
+|---|---|---|---|---|
+| 12px label — the download pills | 8.2 mono / 8.6 Archivo | 11.5–12.0 | **12** | 1.46× |
+| 16px title — doc-link cards, prose, SEND | 11.0 | 15.4 | **16** | 1.46× |
+
+**"Visible neighbour" is load-bearing, and getting it wrong is what produced
+the one real error here.** The doc-link card's trailing mark was sized at 12
+because the span it lives in is `.type-label` at 12px — but that span holds
+nothing a reader can see. It contains the screen-reader announcement and the
+icon. The type actually beside the mark is the card's 16px title, and against
+that the 12px mark was 1.09× cap: a speck in a 58px card. Sizing a mark against
+its *wrapper* rather than against the *type a reader sees* is the mistake to
+watch for; it is invisible in source and obvious on screen.
+
+### Standalone → half its hit target
+
+A control with no text beside it has no cap to answer to. What it has is the
+box you click, and half of it — on the grid — is the glyph. That rule is stated
+in full under Spacing, because it is a rule about targets rather than about
+icons and it predicts sizes for controls that do not exist yet: see
+[An icon-only control's glyph is half its target](#an-icon-only-controls-glyph-is-half-its-target).
+It gives **16** (a 34px SEND), **20** (a 40px lightbox button, a 44px contact
+link) and **24** (a 48px rail row).
+
+The two rules agree at 16 and at 24, which is why this is one ramp and not two.
+
+### 18 is gone, and it is the reason to have a rule at all
+
+The lightbox controls were 18. No rule produced that number: it arrived as a
+`size={18}` literal on the close button, the chevrons were 20, and unifying the
+three *down* to 18 spread the leftover instead of replacing it. Half of a 40px
+button is 20. Deleting 18 takes the ramp from five sizes to four.
+
+The rail's 24 was the same shape of problem, caught earlier: it was Lucide's
+default `size` prop — right, and unstated, so a library change would have
+resized the rail silently. Half of a 48px row is 24. It is now a decision that
+happens to agree with the default.
+
+### Stroke: constant ratio to 16, constant ink above it
+
+`stroke-width` is in the viewBox's user units, not pixels, and a Lucide glyph's
+viewBox is 24 units. So a *constant* stroke already holds *relative* weight
+constant — the mark keeps the same density as the letters at any size. That is
+the right target while an icon is competing with letterforms.
+
+Above 16 it stops being right. The marks up there are large because of the box
+they sit in, not because they matter more, and a constant 2 would give the
+site's heaviest ink to its least important mark. So above 16 the target
+switches to absolute ink, held at 1.5px.
+
+| size | stroke | ink | target |
+|---|---|---|---|
+| 12 | 2 | 1.00 | 1:12 ratio |
+| 16 | 2 | 1.33 | 1:12 ratio |
+| 20 | 1.8 | 1.50 | 1.5px ink |
+| 24 | 1.5 | 1.50 | 1.5px ink |
+
+The rail's previous 1.25 painted 1.25px — *lighter* than a 16px mark beside it,
+which made the largest glyph on the site also the faintest.
+
+Sizes are CSS tokens and strokes are TypeScript constants, and the split is
+mechanical rather than a preference: Lucide takes `strokeWidth` as a number
+prop, which a custom property cannot reach.
+
+### The one exception: the sparkle
+
+Its **size** is on the ramp at both call sites — 16 for the brand mark, 24 for
+the typing indicator. Its **stroke** is 8.33 in a 100-unit viewBox, which is
+the same 1:12 ratio expressed in its own coordinate space, so at 16 it paints
+1.33px and agrees with everything else. At 24 it paints 2.00px where the rule
+asks for 1.50.
+
+It is left alone deliberately. The path and its stroke are a trace of a Lottie
+source, documented in `docs/provenance/typing-indicator/`; re-picking the
+stroke would make it no longer a trace. Recorded as an exception rather than
+assumed to be fine.
 
 ## Chat column alignment
 
