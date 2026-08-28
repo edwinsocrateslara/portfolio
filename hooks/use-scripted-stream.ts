@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import type { StructuredMessage } from "@/components/chat/message-bubbles"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
@@ -54,45 +54,92 @@ const EMPTY: StructuredMessage[] = []
 export function useScriptedStream() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [threads, setThreads] = useState<Record<string, StructuredMessage[]>>({})
-  const [typingThread, setTypingThread] = useState<string | null>(null)
-  const [pending, setPending] = useState<{ thread: string; blocks: MessageBlock[] } | null>(null)
+  // KEYED BY THREAD, all three. `pending` used to be a single slot carrying a
+  // thread id, which routed blocks correctly and lost them: the drain loop
+  // wrote the remainder back after every block, so a reveal starting in thread
+  // B while A slept between blocks was overwritten when A woke. B was then
+  // blank for the rest of the session, because openProjectThread marks a slug
+  // revealed BEFORE enqueueing and never re-enqueues.
+  //
+  // A run token per thread is the other half, and per-thread keying alone does
+  // NOT replace it: a closure that captured its blocks before reset() ran will
+  // still write them back afterwards, resurrecting a thread the visitor
+  // explicitly cleared. The token is re-read after every sleep, so a queue
+  // that was replaced or reset while a closure slept is abandoned instead.
+  const [typing, setTyping] = useState<Record<string, boolean>>({})
+  const [pending, setPending] = useState<Record<string, MessageBlock[]>>({})
+  const runRef = useRef<Record<string, number>>({})
+  // Set synchronously, unlike `typing`, so two effect passes in one tick cannot
+  // both start a drain for the same thread before the state lands.
+  const drainingRef = useRef<Record<string, boolean>>({})
 
   useEffect(() => {
-    if (!pending || pending.blocks.length === 0 || typingThread) return
-    const { thread, blocks } = pending
-
     const materialise = (block: MessageBlock): StructuredMessage =>
       ({ id: generateMessageId(), role: "assistant", ...block }) as StructuredMessage
 
-    if (prefersReducedMotion) {
-      setThreads((prev) => ({
-        ...prev,
-        [thread]: [...(prev[thread] ?? []), ...blocks.map(materialise)],
-      }))
-      setPending(null)
-      return
+    // Every thread with work drains independently. One shared "is anything
+    // typing" gate would have made B wait out A's fifteen-block reveal, which
+    // is not lost work but is still one thread interfering with another.
+    for (const thread of Object.keys(pending)) {
+      const blocks = pending[thread]
+      if (!blocks || blocks.length === 0) continue
+      if (drainingRef.current[thread]) continue
+
+      if (prefersReducedMotion) {
+        setThreads((prev) => ({
+          ...prev,
+          [thread]: [...(prev[thread] ?? []), ...blocks.map(materialise)],
+        }))
+        setPending((prev) => {
+          const next = { ...prev }
+          delete next[thread]
+          return next
+        })
+        continue
+      }
+
+      drainingRef.current[thread] = true
+      const run = runRef.current[thread] ?? 0
+
+      void (async () => {
+        setTyping((prev) => ({ ...prev, [thread]: true }))
+        await new Promise((r) => setTimeout(r, getTypingDelay()))
+
+        // Stale: the queue was replaced or reset while this closure slept.
+        // Drop the block rather than append it, and do not write anything back.
+        if ((runRef.current[thread] ?? 0) !== run) {
+          drainingRef.current[thread] = false
+          setTyping((prev) => ({ ...prev, [thread]: false }))
+          return
+        }
+
+        const [next, ...rest] = blocks
+        setThreads((prev) => ({
+          ...prev,
+          [thread]: [...(prev[thread] ?? []), materialise(next)],
+        }))
+        setPending((prev) => {
+          // Checked again inside the updater: reset() can land between the
+          // guard above and this write.
+          if ((runRef.current[thread] ?? 0) !== run) return prev
+          const out = { ...prev }
+          if (rest.length) out[thread] = rest
+          else delete out[thread]
+          return out
+        })
+        drainingRef.current[thread] = false
+        setTyping((prev) => ({ ...prev, [thread]: false }))
+      })()
     }
-
-    const processNext = async () => {
-      setTypingThread(thread)
-      await new Promise((r) => setTimeout(r, getTypingDelay()))
-
-      const [next, ...rest] = blocks
-      setThreads((prev) => ({
-        ...prev,
-        [thread]: [...(prev[thread] ?? []), materialise(next)],
-      }))
-      setPending(rest.length ? { thread, blocks: rest } : null)
-      setTypingThread(null)
-    }
-
-    processNext()
-  }, [pending, typingThread, prefersReducedMotion])
+  }, [pending, prefersReducedMotion])
 
   // Replace the pending queue — matches the traditional flow's existing
   // "replace, don't append" semantics (a new turn always sets a fresh queue).
   const enqueue = useCallback((blocks: MessageBlock[], thread: string = HOME_THREAD) => {
-    setPending({ thread, blocks })
+    // Bump first: a closure sleeping on this thread's previous queue must not
+    // write its remainder back over the queue replacing it.
+    runRef.current[thread] = (runRef.current[thread] ?? 0) + 1
+    setPending((prev) => ({ ...prev, [thread]: blocks }))
   }, [])
 
   // Append a message immediately, bypassing the queue — for user messages,
@@ -107,27 +154,35 @@ export function useScriptedStream() {
   /** Clear one thread, or every thread when called with no argument. */
   const reset = useCallback((thread?: string) => {
     if (thread === undefined) {
+      for (const t of Object.keys(runRef.current)) {
+        runRef.current[t] = (runRef.current[t] ?? 0) + 1
+      }
       setThreads({})
-      setPending(null)
-      setTypingThread(null)
+      setPending({})
+      setTyping({})
       return
     }
+    // Bumping the token is what actually cancels: clearing `pending` alone
+    // leaves any closure already asleep on this thread free to write its
+    // remainder back and resurrect a transcript the visitor just cleared.
+    runRef.current[thread] = (runRef.current[thread] ?? 0) + 1
     setThreads((prev) => ({ ...prev, [thread]: [] }))
     // Only cancel an in-flight reveal if it belongs to the thread being
     // cleared. Killing the queue outright would strand a project mid-stream
     // while still counting it as revealed.
-    setPending((prev) => (prev && prev.thread === thread ? null : prev))
-    setTypingThread((prev) => (prev === thread ? null : prev))
+    setPending((prev) => {
+      const next = { ...prev }
+      delete next[thread]
+      return next
+    })
+    setTyping((prev) => ({ ...prev, [thread]: false }))
   }, [])
 
   const messagesOf = useCallback(
     (thread: string) => threads[thread] ?? EMPTY,
     [threads]
   )
-  const isTypingIn = useCallback(
-    (thread: string) => typingThread === thread,
-    [typingThread]
-  )
+  const isTypingIn = useCallback((thread: string) => !!typing[thread], [typing])
 
   // `messages` / `isTyping` / `hasMessages` used to sit here as a
   // single-thread convenience API for the review route, which read HOME_THREAD

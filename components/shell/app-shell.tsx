@@ -94,6 +94,10 @@ export function AppShell({
   // Which thread the in-flight API turn belongs to. The live partial renders
   // only in that thread, and the finished answer is committed there.
   const [apiThread, setApiThread] = useState<string>(HOME_THREAD)
+  // Synchronous, unlike `status`, which does not flip to "submitted" until
+  // after sendMessage's microtask. Two dispatches in one tick would both see
+  // an idle status and both send.
+  const apiInFlightRef = useRef(false)
   // Track current project being discussed (to avoid repeating scripted reveals)
   const [currentProjectSlug, setCurrentProjectSlug] = useState<string | null>(null)
 
@@ -103,8 +107,22 @@ export function AppShell({
   })
 
   const isApiLoading = status === "streaming" || status === "submitted"
-  // Only the thread that asked is busy. Another thread stays interactive.
-  const activeBusy = isTypingIn(activeThread) || (isApiLoading && apiThread === activeThread)
+  // ONE API TURN AT A TIME, ACROSS EVERY THREAD, and that is a correction
+  // rather than a restriction. This used to read
+  // `isApiLoading && apiThread === activeThread`, with the comment "Only the
+  // thread that asked is busy. Another thread stays interactive." — which
+  // invited a second turn into a channel that cannot hold two. There is one
+  // useChat list, one status, one apiHistoryCount and one apiThread; a second
+  // send replaced the first thread's history, and when the first answer
+  // arrived the commit effect sliced it at the SECOND thread's offset and
+  // appended it to the SECOND thread's transcript.
+  //
+  // Scripted reveals are still per-thread and still concurrent — that is what
+  // isTypingIn(activeThread) reads, and the queue behind it is keyed by thread
+  // now. Only the network turn is serialised, because only the network turn
+  // has one channel.
+  const apiBusy = isApiLoading
+  const activeBusy = isTypingIn(activeThread) || apiBusy
 
   // ── Scroll ──────────────────────────────────────────────────────
   // Each thread remembers where it was left. Restoring is a scrollTop write
@@ -212,9 +230,14 @@ export function AppShell({
       setCurrentProjectSlug(slug)
       switchThread(slug)
       if (revealedRef.current.has(slug)) return
-      revealedRef.current.add(slug)
       const { response } = buildResponse("", { preloadedSlug: slug })
-      if (response) queueScriptedMessages(response, slug)
+      // Marked revealed only once the reveal is actually queued. Adding the
+      // slug first meant a reveal that was subsequently lost could never be
+      // re-enqueued — the thread stayed blank for the rest of the session with
+      // nothing left to retry it.
+      if (!response) return
+      queueScriptedMessages(response, slug)
+      revealedRef.current.add(slug)
     },
     [switchThread, queueScriptedMessages]
   )
@@ -255,6 +278,12 @@ export function AppShell({
 
       // Fall through to the API (which refuses anything not in its reference
       // document) rather than leaving the turn silently unanswered.
+      //
+      // GUARDED, because handleSend is not the only way in: a follow-up chip
+      // calls dispatch directly, so the composer being disabled is not enough
+      // on its own. Refusing here keeps the single channel single.
+      if (apiInFlightRef.current) return
+      apiInFlightRef.current = true
       setApiThread(from)
       setUseApiMode(true)
       const history = buildApiHistory(from)
@@ -291,7 +320,23 @@ export function AppShell({
     setUseApiMode(false)
     setApiHistoryCount(0)
     setApiMessages([])
+    apiInFlightRef.current = false
   }, [isApiLoading, useApiMode, apiMessages, apiHistoryCount, apiThread, appendImmediate, setApiMessages])
+
+  // The in-flight flag must survive a turn that produces nothing, or the
+  // single channel latches shut for the session. The commit effect above
+  // releases it on success and cannot release it on failure: it returns early
+  // when there are no answers, which is also the shape of the window between
+  // setUseApiMode(true) and sendMessage actually firing.
+  //
+  // NOT a fix for H5 (silent failures) — there is still no visible error state
+  // or retry, and that is out of scope here. This only stops the guard added
+  // for H2 from turning a failed request into a dead composer.
+  useEffect(() => {
+    if (status !== "error") return
+    apiInFlightRef.current = false
+    setUseApiMode(false)
+  }, [status])
 
   // Handle user input
   const handleSend = useCallback(() => {
