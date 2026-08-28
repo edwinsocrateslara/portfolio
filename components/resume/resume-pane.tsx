@@ -1,5 +1,7 @@
 "use client"
 
+import { Shimmer } from "@/components/chat/shimmer"
+import { Words, wordCount } from "@/components/chat/words"
 import { Fragment, useEffect, useRef } from "react"
 import { Download } from "lucide-react"
 import { DOCS } from "@/lib/constants"
@@ -27,7 +29,13 @@ import type { Resume, ResumeRole } from "@/lib/resume"
 // .resume-row-line / -node / -body); this is only the cadence between rows,
 // which has to be JS because it schedules the attribute flips. Its one home is
 // here — nothing in the stylesheet knows about it.
-const ROW_STAGGER_MS = 90
+// 240, not the 90 this shipped at. THE GAP HAS TO EXCEED THE DURATION IT
+// SEPARATES or the arrivals overlap into one wash: a row's entrance runs 240ms
+// for the spine, the node at +240 and the dates and body at +280 — about 520ms
+// end to end — so at 90ms six rows were always mid-animation and the sequence
+// read as a single fade. That rule INVERTS inside an element, where the words
+// want to overlap; see .word in globals.css.
+const ROW_STAGGER_MS = 240
 
 /** How far up the scroller the arrival line sits, as a fraction of its height
  *  measured from the bottom: 0.15 puts the line at 85%. A row resolves when
@@ -73,11 +81,21 @@ function RoleBody({ role }: { role: ResumeRole }) {
               is what separates it from the inventory it sits near. */}
           {group.label && <p className="type-attribute resume-group-label">{group.label}</p>}
           <ul className="resume-bullets">
-            {group.bullets.map((bullet) => (
-              <li key={bullet} className="type-body resume-bullet">
-                {bullet}
-              </li>
-            ))}
+            {/* LAB — the counter continues across the group so four bullets in
+                one role cascade instead of all writing at once. Plain text
+                under every other mode; the spans only ever change opacity. */}
+            {(() => {
+              let n = 0
+              return group.bullets.map((bullet) => {
+                const at = n
+                n += wordCount(bullet)
+                return (
+                  <li key={bullet} className="type-body resume-bullet">
+                    <Words text={bullet} offset={at} />
+                  </li>
+                )
+              })
+            })()}
           </ul>
         </div>
       ))}
@@ -133,7 +151,10 @@ export function ResumePane({ resume }: { resume: Resume }) {
     const scroller = root.closest<HTMLElement>(".pane-scroll")
     if (!scroller) return
 
-    const pending = Array.from(root.querySelectorAll<HTMLElement>(".resume-row"))
+    // EVERY opted-in element, not only the rows: the page title, the location,
+    // the three section headings and the six tools bands carry data-resolved
+    // too, so the pane composes itself top-down rather than only its entries.
+    const pending = Array.from(root.querySelectorAll<HTMLElement>("[data-resolved]"))
     const queue: HTMLElement[] = []
     let timer: number | undefined
     let frame = 0
@@ -187,7 +208,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
   return (
     <div className="resume" ref={rootRef}>
       <div className="deck-head">
-        <h1 className="type-page pane-title">Resume</h1>
+        <h1 className="type-page pane-title" data-resolved="false">Resume</h1>
         {/* Same control as the deck's, and the same reasoning: .chip is the
             system's pill, so a second inline one would be a second place for
             the border, fill and hover to drift.
@@ -195,15 +216,17 @@ export function ResumePane({ resume }: { resume: Resume }) {
         <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
           <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
           Download PDF
+          {/* The shimmer on a download pill. */}
+          <Shimmer />
         </a>
       </div>
 
-      <p className="type-label pane-meta">Toronto, Canada</p>
+      <p className="type-label pane-meta" data-resolved="false"><Words text="Toronto, Canada" /></p>
 
       <hr className="resume-rule" />
 
       <section className="resume-section">
-        <h2 className="type-section resume-heading">Tools</h2>
+        <h2 className="type-section resume-heading" data-resolved="false">Tools</h2>
         {/* Six labelled bands in source order, two columns, set in type. Not
             logos: fifty-five brand marks would be the only uncontrolled colour
             on the site, and check-design rule 6 exists to stop exactly that.
@@ -228,13 +251,24 @@ export function ResumePane({ resume }: { resume: Resume }) {
             and nothing else. */}
         <div className="resume-bands">
           {resume.skills.map((band) => (
-            <div key={band.label} className="resume-band">
+            <div key={band.label} className="resume-band" data-resolved="false">
               <p className="type-label resume-band-label">{band.label}</p>
               <p className="type-value resume-band-items">
+                {/* LAB — the unit here is the TERM, not the word. Splitting on
+                    spaces would break "Supabase / PostgreSQL" and "WCAG 2.2 AA
+                    auditing and remediation" into pieces that are not things.
+                    The items are already separate in the source, so an
+                    inventory enumerates itself one entry at a time. */}
                 {band.items.map((item, i) => (
                   <Fragment key={item}>
-                    {i > 0 && <span className="resume-band-sep">{"\u00A0\u00B7 "}</span>}
-                    {joinSlashes(item)}
+                    {i > 0 && (
+                      <span className="resume-band-sep word" style={{ "--i": i } as React.CSSProperties}>
+                        {"\u00A0\u00B7 "}
+                      </span>
+                    )}
+                    <span className="word" style={{ "--i": i } as React.CSSProperties}>
+                      {joinSlashes(item)}
+                    </span>
                   </Fragment>
                 ))}
               </p>
@@ -246,7 +280,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       <hr className="resume-rule" />
 
       <section className="resume-section">
-        <h2 className="type-section resume-heading">Experience</h2>
+        <h2 className="type-section resume-heading" data-resolved="false">Experience</h2>
         <div className="resume-spine">
           {resume.roles.map((role) => {
             const [start, end] = dateEnds(role.dates)
@@ -278,7 +312,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
       </section>
 
       <section className="resume-section">
-        <h2 className="type-section resume-heading">Education</h2>
+        <h2 className="type-section resume-heading" data-resolved="false">Education</h2>
         {/* Same spine, same columns, one difference: the node is a ring rather
             than a filled mark. A degree is not an event on the same axis as a
             job, and the source carries no dates for these — so the date column

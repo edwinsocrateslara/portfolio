@@ -527,6 +527,8 @@ export function AppShell({
           </div>
         ) : isFrontDoor ? (
           <div className="pane-front">
+            {/* Four declarations and no DOM nodes; see .dot-field. */}
+            <div className="dot-field" aria-hidden="true" />
             <div className="hero-band" data-hero-col="stack">
                   {/* .type-display — the top of the ladder, at 50/58.
                       It was 28/42 and occupied 2.34% of a 1440x1000 viewport
@@ -555,8 +557,22 @@ export function AppShell({
                       animationDelay: delay(60),
                     }}
                   >
-                    I&apos;m Edwin, AI designer &amp; builder making useful
-                    products and workflows.
+                    {/* LAB: the aurora spans the PHRASE, not a word. One span
+                        across "designer & builder" so the gradient runs the
+                        length of it — background-clip:text on a single inline
+                        box paints one continuous ramp, and box-decoration-break
+                        defaults to `slice`, so even a line break keeps it
+                        continuous rather than restarting per fragment.
+
+                        "products and workflows" keeps its "and" on purpose: an
+                        ampersand binds a unit, "and" separates a list of two.
+                        The different conjunction is doing work.
+
+                        The gradient is continuous along the phrase rather
+                        than restarting per word — measured, see .aurora-word. */}
+                    I&apos;m Edwin, AI{" "}
+                    <span className="aurora-word">designer &amp; builder</span> making
+                    useful products and workflows.
                   </h1>
 
                   <div

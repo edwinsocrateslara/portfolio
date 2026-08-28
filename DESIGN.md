@@ -134,6 +134,65 @@ for AI-native craft cannot wear it.
 - the textarea caret
 - the SEND fill, once there is something to send
 - the IMPACT left rule and its square marker
+- **the shimmer's rim on a chip or download pill**, via `--accent-rim`
+
+### The masked rim, and the second narrowing of rule 6
+
+The shimmer paints a conic gradient in the accent and then covers all but a rim
+of it with an opaque backdrop inset by `0.05em`. **The visible result is about
+0.7px wide — narrower than the 2px rail bar the rule already permits.** The
+declaration is a background; the render is an edge.
+
+Rule 6 now recognises that structurally, never by class name, on three
+conditions — each a property of what a masked rim *is*:
+
+1. CSS, not JSX. A component cannot mint one inline.
+2. The value is a gradient using **`--accent-rim`**, never `--bureau-accent`
+   directly. Same mechanism as `--hero-glow`: naming the token is a declaration
+   of intent that a grep can check, and tuning a rim can never move the accent
+   that marks controls.
+3. The same block carries a **negative z-index**. A rim sits behind the thing
+   that masks it; a surface does not.
+
+`check-design.mjs` proves this is a narrowing rather than a hole the same way it
+proves the wash's: four near-miss fixtures, each dropping one condition, all of
+which must still fire.
+
+**What it still lets through, said plainly rather than discovered later:** a
+grep cannot measure how much of the gradient the backdrop actually covers. Any
+negative-z-index gradient declared through `--accent-rim` passes — including one
+nothing masks. The rule narrows *who* may paint an accent, not *how much* shows.
+That is the same limitation the wash exception carries, and the same answer: the
+token makes it a reviewed decision rather than an available one.
+
+### The inset highlight needed no rule change
+
+`box-shadow: inset 0 -8px 10px` on a shimmer control was raw hex — `#ffffff1f`
+and `#ffffff3f`. That is not a rule problem, it is a missing token. Two more
+rungs on the white-alpha family (`--layer-1` 0.04, `--layer-2` 0.07, `--hairline`
+0.14, `--hairline-strong` 0.23) now carry it:
+
+| token | value |
+|---|---|
+| `--highlight-inset` | `rgb(255 255 255 / 0.12)` |
+| `--highlight-inset-strong` | `rgb(255 255 255 / 0.25)` |
+
+0.25 is close to `--hairline-strong`'s 0.23 and is **not** it. A hairline is an
+edge; this is a wash inside a box. Pointing one at the other would rebuild the
+coincidence this system keeps removing.
+
+**It is a surface treatment nothing else on the site has.** Chips and download
+pills now carry an inset highlight and no other control does. That is a real
+inconsistency and it is the price of the effect, recorded here rather than
+found later.
+
+### Four chromatic colours arrived
+
+The aurora on the front-door headline is the only chromatic thing in an
+otherwise achromatic system: `--aurora-1` through `--aurora-4`
+(`#ff0080`, `#7928ca`, `#0070f3`, `#38bdf8`). They are tokenised rather than
+inlined precisely so a later audit sees them in the palette instead of buried in
+a keyframe.
 
 ### Why a stroke passes rule 6
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { Shimmer } from "@/components/chat/shimmer"
 import { Download } from "lucide-react"
 import { meridianDeck } from "@/lib/case-study-deck"
 import { SlideGrid } from "@/components/case-study/slide-grid"
@@ -30,6 +31,8 @@ export function DeckPane() {
         <a className="chip type-action deck-download" href={meridianDeck.pdf} download>
           <Download className="chip-icon" aria-hidden="true" strokeWidth={2} />
           Download PDF
+          {/* The shimmer on a download pill. */}
+          <Shimmer />
         </a>
       </div>
 
