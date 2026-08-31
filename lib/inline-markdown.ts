@@ -54,18 +54,38 @@ export function renderInline(p: string): string {
       // that one entity to test the protocol, then use the escaped form in the
       // attribute — testing the escaped string would reject valid query urls.
       if (!isSafeHref(href.replace(/&amp;/g, "&"))) return label
+
+      // MAILTO IS NOT A NEW TAB, and this branch used to say it was. Every
+      // markdown link got target="_blank", rel="noopener noreferrer" and an
+      // announcement reading "(opens in a new tab)" — on a protocol that opens
+      // no tab and hands off to whatever handles mail.
+      //
+      // components/ui/new-tab-mark.tsx has stated the rule since it was
+      // written: "a mailto does not open a tab... The new-tab wording would be
+      // false, and a false announcement is worse than none." The rail obeys it
+      // through MailMark. This renderer did not, because it had no mailto
+      // branch — and nothing had hit it, since no source had ever contained a
+      // markdown mailto. The error state is the first.
+      //
+      // target and rel come off with the wording. A mailto with target="_blank"
+      // leaves an empty tab behind in some browsers, which is the visible half
+      // of the same mistake.
+      const isMail = href.replace(/&amp;/g, "&").trim().toLowerCase().startsWith("mailto:")
       return (
-        `<a href="${href}" target="_blank" rel="noopener noreferrer"` +
+        `<a href="${href}"${isMail ? "" : ' target="_blank" rel="noopener noreferrer"'}` +
         ' style="color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px">' +
         label +
-        // THE SAME GLYPH NewTabMark RENDERS, inlined as markup because this branch
-        // builds an HTML string and cannot render a component. The two are one mark
-        // in two forms and MUST be changed together — path data and stroke both.
-        // Path data from lucide-react v0.544 move-up-right; stroke from the token.
+        // THE SAME GLYPH NewTabMark AND MailMark RENDER, inlined as markup because
+        // this branch builds an HTML string and cannot render a component. All
+        // three are one mark and MUST be changed together — path data and stroke
+        // both. Path data from lucide-react v0.544 move-up-right; stroke from the
+        // token. MailMark deliberately shares this glyph rather than using an
+        // envelope: "same glyph, different truth" — what differs is the sentence
+        // beneath it, not the drawing.
         '<svg class="link-ext" aria-hidden="true" viewBox="0 0 24 24" fill="none"' +
         ` stroke="currentColor" stroke-width="${ICON_STROKE}" stroke-linecap="round"` +
         ' stroke-linejoin="round"><path d="M13 5H19V11"/><path d="M19 5L5 19"/></svg>' +
-        '<span class="sr-only"> (opens in a new tab)</span></a>'
+        `<span class="sr-only"> (opens ${isMail ? "your email app" : "in a new tab"})</span></a>`
       )
     })
 }

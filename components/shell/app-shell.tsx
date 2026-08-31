@@ -303,6 +303,14 @@ export function AppShell({
   // single shared list and would leak across threads.
   useEffect(() => {
     if (isApiLoading || !useApiMode) return
+    // A FAILED STREAM COMMITS NOTHING. `error` is one of the states that makes
+    // isApiLoading false, so without this a stream that emitted text and then
+    // died would append that half-answer — and the error block below would land
+    // underneath it, telling the visitor their message was not sent directly
+    // beneath a partial reply to it. The text is dropped rather than shown,
+    // because a truncated answer about someone's career is worse than none: it
+    // reads as a complete thought that happens to stop.
+    if (status === "error") return
     const fresh = apiMessages.slice(apiHistoryCount)
     const answers = fresh.filter((m) => m.role === "assistant")
     if (answers.length === 0) return
@@ -321,7 +329,7 @@ export function AppShell({
     setApiHistoryCount(0)
     setApiMessages([])
     apiInFlightRef.current = false
-  }, [isApiLoading, useApiMode, apiMessages, apiHistoryCount, apiThread, appendImmediate, setApiMessages])
+  }, [isApiLoading, useApiMode, status, apiMessages, apiHistoryCount, apiThread, appendImmediate, setApiMessages])
 
   // The in-flight flag must survive a turn that produces nothing, or the
   // single channel latches shut for the session. The commit effect above
@@ -329,14 +337,46 @@ export function AppShell({
   // when there are no answers, which is also the shape of the window between
   // setUseApiMode(true) and sendMessage actually firing.
   //
-  // NOT a fix for H5 (silent failures) — there is still no visible error state
-  // or retry, and that is out of scope here. This only stops the guard added
-  // for H2 from turning a failed request into a dead composer.
+  // It also says so. A failure used to render NOTHING: the question stayed in
+  // the transcript, the indicator stopped, and no answer ever arrived —
+  // indistinguishable from being ignored.
+  //
+  // A PLAIN TEXT BLOCK, NOT A NEW MESSAGE KIND. It goes through TextBubble like
+  // every other answer, so the announcement, the reduced-motion behaviour and
+  // the styling are not merely similar to the other blocks, they are the same
+  // code. A dedicated kind would be a second path that could drift from them.
+  //
+  // THE QUESTION STAYS ABOVE IT. The visitor asked; the record shows it.
   useEffect(() => {
     if (status !== "error") return
+    appendImmediate(
+      {
+        id: `error-${Date.now()}`,
+        role: "assistant",
+        kind: "text",
+        // ⚠ "WASN'T SENT" IS ACCURATE FOR ONE OF FOUR FAILURES, AND THAT IS A
+        // DECISION RATHER THAN AN OVERSIGHT. This branch catches: a fetch that
+        // never left (offline, DNS, server down) — where it is true; a route
+        // that threw before streaming; an error inside the stream, which is how
+        // a bad API key or an Anthropic 429/5xx arrives, since /api/chat
+        // returns HTTP 200 and surfaces the failure in the body; and the 30s
+        // maxDuration cutting a long answer. In the last three the message was
+        // sent and something after that broke.
+        //
+        // Edwin read that and chose this wording anyway: what a visitor can act
+        // on is the same either way, and "wasn't sent" says plainly that the
+        // failure is ours. Do not "correct" it to something hedged without
+        // asking him.
+        text:
+          "Something went wrong and your message wasn't sent. Try again, or " +
+          "email Edwin directly at " +
+          "[edwinsocrateslara@gmail.com](mailto:edwinsocrateslara@gmail.com).",
+      } as StructuredMessage,
+      apiThread
+    )
     apiInFlightRef.current = false
     setUseApiMode(false)
-  }, [status])
+  }, [status, apiThread, appendImmediate])
 
   // Handle user input
   const handleSend = useCallback(() => {

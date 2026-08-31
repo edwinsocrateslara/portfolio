@@ -67,10 +67,28 @@ const CASES = [
     mustNotContain: ["**"],
   },
   {
-    name: "mailto link",
+    // MAILTO IS NOT A NEW TAB. This case asserted only the href, so it passed
+    // both before and after the renderer learned the difference — which is the
+    // shape of a case that looks like coverage and is not. It now pins the
+    // three things that were wrong: the announcement said "in a new tab" on a
+    // protocol that opens none, and target/rel were applied to a link that
+    // navigates nothing. new-tab-mark.tsx has stated that rule the whole time.
+    name: "mailto link — hands off to mail, does not open a tab",
     input: "[mail](mailto:a@b.com)",
-    mustContain: ['<a href="mailto:a@b.com"'],
-    mustNotContain: [],
+    mustContain: [
+      '<a href="mailto:a@b.com"',
+      "(opens your email app)",
+      "mail",
+    ],
+    mustNotContain: ['target="_blank"', "rel=", "(opens in a new tab)"],
+  },
+  {
+    // The other half, so a fix to one cannot quietly become a fix to both: an
+    // http link must KEEP the new-tab treatment.
+    name: "http link keeps the new-tab treatment",
+    input: "[site](https://example.com)",
+    mustContain: ['target="_blank"', 'rel="noopener noreferrer"', "(opens in a new tab)"],
+    mustNotContain: ["(opens your email app)"],
   },
   {
     name: "relative link",
