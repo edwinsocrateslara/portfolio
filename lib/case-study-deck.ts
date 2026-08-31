@@ -13,6 +13,8 @@
 // bank. The site names this work Meridian throughout. Both are correct; see
 // lib/sources/README.md and the relationship line in lib/sources/voice.md.
 
+import { DOCS } from "./constants"
+
 export interface DeckSlide {
   url: string
   alt: string
@@ -27,7 +29,8 @@ export interface CaseStudyDeck {
       Project's client/railSubtitle. */
   client: string
   subject: string
-  /** Served from public/, downloadable. */
+  /** Served from public/, downloadable. Sourced from DOCS rather than written
+      here — see the note on the value below. */
   pdf: string
   slides: DeckSlide[]
 }
@@ -37,7 +40,17 @@ export const meridianDeck: CaseStudyDeck = {
   title: "Meridian Mobile Banking",
   client: "Meridian",
   subject: "Mobile Banking",
-  pdf: "/meridian-case-study.pdf",
+  // ONE PATH, ONE PLACE. This used to restate "/meridian-case-study.pdf",
+  // which DOCS["meridian-case-study"].url already said — the same file named
+  // in two files with nothing keeping them in step.
+  //
+  // The asymmetry was what made it worth removing rather than guarding:
+  // check:docs imports DOCS and asserts the file exists. It has never read
+  // this file. Rename or move that PDF, update DOCS, and the gate goes green
+  // while the deck pane's Download button 404s — the one path not covered is
+  // the one that breaks. Reading it from DOCS deletes the duplication instead
+  // of adding a second thing to check.
+  pdf: DOCS["meridian-case-study"].url,
   slides: [
     {
       url: "/case-study/meridian/slide-01.webp",
