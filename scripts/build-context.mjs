@@ -1,6 +1,7 @@
-// Generates two sections of lib/edwin-context.md:
+// Generates three sections of lib/edwin-context.md:
 //   - Projects, from lib/projects.ts
 //   - Case Study Deck, from lib/sources/meridian-case-study.txt
+//   - In His Own Words, from lib/sources/voice.md
 //
 // That section used to be hand-written prose paraphrasing data that already
 // exists verbatim in projects.ts. It drifted: it re-attributed the Meridian
@@ -12,15 +13,42 @@
 //   node scripts/build-context.mjs           rewrite the section
 //   node scripts/build-context.mjs --check   fail if it is out of date
 //
-// Only the region between the GENERATED markers is touched. The biography
-// (from resume.txt) and the voice sections (from voice.md, verbatim-checked
-// by check-voice.mjs) stay hand-written.
+// Only the regions between the GENERATED markers are touched. The biography,
+// hand-copied from resume.txt, stays hand-written and is the last section of
+// this file that nothing checks.
+//
+// THE VOICE SECTIONS USED TO BE HAND-WRITTEN TOO, and the note here said they
+// were "verbatim-checked by check-voice.mjs". THAT WAS FALSE. check-voice.mjs
+// reads voice.md, voice-answers.ts, currently-reading.ts and about-pane.tsx —
+// it has never opened lib/edwin-context.md. Seventeen sections of Edwin's own
+// writing sat in the model's reference document with nothing comparing them to
+// their source, and the decision to leave them that way rested on a protection
+// that did not exist. They had not drifted; there was simply nothing to stop
+// them. Generating them made an empty diff, which is the evidence that the
+// copy was faithful up to the moment it stopped needing to be.
 import { readFileSync, writeFileSync } from "fs"
 
 const CONTEXT = "lib/edwin-context.md"
 const PROJECTS = "lib/projects.ts"
 const BEGIN = "<!-- BEGIN GENERATED: projects (scripts/build-context.mjs) -->"
 const END = "<!-- END GENERATED: projects -->"
+
+const VOICE_TXT = "lib/sources/voice.md"
+const VOICE_BEGIN = "<!-- BEGIN GENERATED: voice (scripts/build-context.mjs) -->"
+const VOICE_END = "<!-- END GENERATED: voice -->"
+
+// Sections of voice.md that are NOT part of In His Own Words, each because it
+// is already quoted somewhere else in edwin-context.md and stating it twice
+// would put the same sentence in front of the model in two registers:
+//
+//   Intro             -> § Who Edwin Is quotes it as the headline.
+//   Outside work      -> § Outside Work quotes it in full.
+//   Currently reading -> the same § Outside Work quote carries the books.
+//
+// This is a list of exclusions rather than a list of inclusions on purpose: a
+// new section added to voice.md should appear in the prompt by default. Having
+// to remember to opt it in is how a source and its copy drift.
+const VOICE_EXCLUDE = new Set(["Intro", "Outside work", "Currently reading"])
 
 const DECK_TXT = "lib/sources/meridian-case-study.txt"
 const DECK_BEGIN = "<!-- BEGIN GENERATED: deck (scripts/build-context.mjs) -->"
@@ -146,6 +174,64 @@ function buildDeck() {
   return `${header}\n${body}\n\n${DECK_END}`
 }
 
+// § In His Own Words, from voice.md's ## sections in source order.
+//
+// The section headings become #### subheadings unchanged, so the two files can
+// be read side by side. voice.md separates sections with a `---` rule and
+// carries an HTML comment of editor notes at the top; neither belongs in a
+// system prompt, and both are stripped. Nothing else is touched — no word is
+// altered, reordered or removed, which is checkable precisely because this is
+// generated rather than transcribed.
+function buildVoice() {
+  const raw = readFileSync(VOICE_TXT, "utf8")
+
+  // Split on the headings rather than regex-matching each section whole: a
+  // lazy [\s\S]*? across a 165-line file is the kind of pattern that quietly
+  // stops matching when someone adds a `##` inside a paragraph.
+  const lines = raw.split("\n")
+  const heads = []
+  lines.forEach((line, i) => {
+    const m = /^## (.+)$/.exec(line)
+    if (m) heads.push({ title: m[1].trim(), at: i })
+  })
+  if (!heads.length) {
+    console.error(`No "## " sections found in ${VOICE_TXT}.`)
+    process.exit(1)
+  }
+
+  const sections = []
+  heads.forEach((h, i) => {
+    if (VOICE_EXCLUDE.has(h.title)) return
+    const end = i + 1 < heads.length ? heads[i + 1].at : lines.length
+    const body = lines
+      .slice(h.at + 1, end)
+      .join("\n")
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/^\s*---\s*$/gm, "")
+      .trim()
+    if (!body) return
+    sections.push(`#### ${h.title}\n\n${body}`)
+  })
+
+  const header = [
+    VOICE_BEGIN,
+    "",
+    "### In His Own Words",
+    "",
+    "The section below is Edwin's own writing, from lib/sources/voice.md. Quote or",
+    "draw from it directly when answering questions about how he works, what he",
+    "values, or what he is looking for. It is the only permitted basis for those",
+    "answers.",
+    "",
+  ].join("\n")
+
+  // Two blank lines between sections, matching the spacing the hand-written
+  // block used. That is not cosmetic here: it is what makes the first
+  // generated output byte-identical to what it replaced, which is the only
+  // evidence available that the copy had not drifted.
+  return `${header}\n${sections.join("\n\n\n")}\n\n${VOICE_END}`
+}
+
 const file = readFileSync(CONTEXT, "utf8")
 function splice(source, begin, end, generated, label) {
   const start = source.indexOf(begin)
@@ -171,6 +257,7 @@ function splice(source, begin, end, generated, label) {
 let next = file
 next = splice(next, BEGIN, END, build(), "projects")
 next = splice(next, DECK_BEGIN, DECK_END, buildDeck(), "deck")
+next = splice(next, VOICE_BEGIN, VOICE_END, buildVoice(), "voice")
 
 if (!process.argv.includes("--check")) {
   if (next === file) {

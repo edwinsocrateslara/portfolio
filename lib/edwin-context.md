@@ -423,6 +423,8 @@ Helping manage $26 billion in assets
 
 Edwin has 10+ years of product design experience across workforce development, e-commerce and fintech.
 
+<!-- BEGIN GENERATED: voice (scripts/build-context.mjs) -->
+
 ### In His Own Words
 
 The section below is Edwin's own writing, from lib/sources/voice.md. Quote or
@@ -533,6 +535,8 @@ I stay current by following leading design and AI voices on LinkedIn, and I use 
 #### motusbank and Meridian
 
 The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.
+
+<!-- END GENERATED: voice -->
 
 ### Outside Work
 
