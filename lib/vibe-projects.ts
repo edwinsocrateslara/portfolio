@@ -47,10 +47,6 @@ export const vibeProjects: Project[] = [
           // dropped here because no other entry carries an engagement type.
           role: "Lead Product Designer",
           status: "wip",
-          // Deliberately empty, like the seven that leave it so. Nothing renders
-          // tags — verified, zero consumers outside the data file — so filling
-          // it would store data no surface displays.
-          tags: [],
           // The dashboard in a laptop mockup, square, matching how the seven
           // frame theirs — they are device mockups on a dark ground too, which
           // is what makes this sit in the sampler beside them rather than

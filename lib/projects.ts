@@ -29,7 +29,6 @@ export interface Project {
   // Lead, a few blocks apart in the same conversation.
   role: string
   status: "live" | "wip"
-  tags: string[]
   previewImage: ProjectImage
   images: ProjectImage[]
 
@@ -62,7 +61,6 @@ export const projects: Project[] = [
       "I'm building a business-to-business and business-to-government AI-powered workforce development platform, featuring an AI coach that will assist users navigate the job search process and provide career coaching.",
     role: "Lead Product Designer",
     status: "wip",
-    tags: ["AI", "design systems", "workforce", "B2B"],
     // ALL THREE IMAGES WERE REPLACED, AND ALL THREE ALT STRINGS WENT WITH
     // THEM. The previous set showed a dark Career Explorer chat and a dark job
     // detail; these show the light career-paths graph and the light role
@@ -112,7 +110,6 @@ export const projects: Project[] = [
       "I led the end-to-end redesign of Meridian Credit Union apps which now serves over 370,000 customers and supports over $26 billion in managed assets.",
     role: "Senior Product Designer",
     status: "live",
-    tags: ["mobile", "fintech", "redesign", "design systems"],
     previewImage: {
       url: "/framer/retail-banking/preview-image.png",
       alt:
@@ -167,7 +164,6 @@ export const projects: Project[] = [
       "I helped build and release the MVP for a crypto investing platform on the App Store.",
     role: "Lead Product Designer",
     status: "live",
-    tags: ["AI", "mobile", "fintech", "MVP", "crypto"],
     previewImage: {
       url: "/framer/ai-investing/preview-image.png",
       alt:
@@ -216,7 +212,6 @@ export const projects: Project[] = [
     tagline: "I led the end-to-end design of a live-selling and auction experience.",
     role: "Lead Product Designer",
     status: "live",
-    tags: ["live commerce", "mobile", "real-time", "e-commerce"],
     previewImage: {
       url: "/framer/live-selling/preview-image.png",
       alt:
@@ -268,7 +263,6 @@ export const projects: Project[] = [
       "I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.",
     role: "Product Designer",
     status: "live",
-    tags: ["automotive", "web", "e-commerce", "conversion"],
     previewImage: {
       url: "/framer/car-comparison/preview-image.png",
       alt:
@@ -317,7 +311,6 @@ export const projects: Project[] = [
       "I designed an e-commerce experience that integrated NTWRK into Complex.com's brand post-acquisition.",
     role: "Lead Product Designer",
     status: "live",
-    tags: ["e-commerce", "mobile", "social commerce", "acquisition integration"],
     previewImage: {
       url: "/framer/ecommerce/preview-image.png",
       alt:
@@ -357,7 +350,6 @@ export const projects: Project[] = [
     tagline: "I created the primary tool for sellers to manage products on Complex NTWRK.",
     role: "Lead Product Designer",
     status: "live",
-    tags: ["B2B", "dashboard", "product management", "e-commerce"],
     previewImage: {
       url: "/framer/product-management/preview-image.png",
       alt:

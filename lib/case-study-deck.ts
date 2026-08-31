@@ -1,6 +1,6 @@
 // The Meridian case study deck.
 //
-// Deliberately NOT a Project. It has no client, role, status, tags, or
+// Deliberately NOT a Project. It has no client, role, status, or
 // challenge/at-stake/decision — forcing it into that type would mean a pile of
 // optional fields that every real project leaves empty. A dormant second
 // variant on Project once demonstrated that shape problem and was deleted for
