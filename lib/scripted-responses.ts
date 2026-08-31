@@ -343,9 +343,11 @@ export function buildResponse(
   }
 
   // Outside work. SCRIPTED_TOPICS "downtime"
-  // Verbatim from lib/sources/voice.md. Do not paraphrase:
-  // this is the only place the site says anything about Edwin personally,
-  // and the wording is his.
+  // Verbatim from lib/sources/voice.md, INLINE. Do not paraphrase: this is the
+  // only place the site says anything about Edwin personally, and the wording
+  // is his. check-voice.mjs asserts the literal below against the source — the
+  // word INLINE is what tells it this is a pasted string rather than one read
+  // through voiceAnswerById, which the deck answer above uses instead.
   if (
     t.includes("downtime") ||
     t.includes("hobb") ||
