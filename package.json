@@ -10,14 +10,15 @@
     "check:voice": "node scripts/check-voice.mjs",
     "build:context": "node --experimental-strip-types scripts/build-context.mjs",
     "check:context": "node --experimental-strip-types scripts/build-context.mjs --check",
-    "check:sources": "npm run check:voice && npm run check:context && npm run check:docs && npm run check:render && npm run check:intent && npm run check:alt",
+    "check:sources": "npm run check:voice && npm run check:context && npm run check:docs && npm run check:render && npm run check:intent && npm run check:alt && npm run check:numbers",
     "check:design": "node scripts/check-design.mjs && node scripts/check-fallback.mjs",
     "check:chips": "node --experimental-strip-types scripts/check-chips.mjs",
     "clean": "node scripts/clean.mjs",
     "check:docs": "node --experimental-strip-types scripts/check-docs.mjs",
     "check:render": "node --import ./scripts/ts-extensionless.mjs scripts/check-render.mjs",
     "check:intent": "node --import ./scripts/ts-extensionless.mjs scripts/check-intent.mjs",
-    "check:alt": "node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs"
+    "check:alt": "node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs",
+    "check:numbers": "node scripts/check-numbers.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
