@@ -1,8 +1,7 @@
 export interface ProjectImage {
   url: string
-  // `alt` has NO SOURCE. framer-export.json carries image URLs with no alt
-  // text, and it is written from looking at the images rather than derived
-  // from anything in lib/sources/. Declared in REPO_AUTHORED_FIELDS below.
+  // `alt` is written here, from looking at the images. There is nothing
+  // upstream to derive it from and nothing to check it against.
   // It is for screen readers and is deliberately excluded from the generated
   // section of lib/edwin-context.md, so the chat never quotes it back.
   alt: string
@@ -11,37 +10,23 @@ export interface ProjectImage {
 export interface Project {
   slug: string
   client: string
-  // `projectTitle` has NO SOURCE. framer-export.json carries only the client
-  // name per row, and resume.txt names employers rather than projects, so
-  // these seven strings are repo-authored labels. Kept deliberately (a case
-  // study needs a title) but declared here and in REPO_AUTHORED_FIELDS below
-  // so an audit finds them already accounted for instead of flagging them as
-  // invented. Same pattern as the `role` override.
+  // `projectTitle` is the case study's own name, authored here. It is not an
+  // employer and not a client — resume.txt names employers, `client` names
+  // clients, and neither is a title for the work.
   projectTitle: string
-  // `railSubtitle` has NO SOURCE in framer-export.json either — that export is
-  // the CMS collection only, and these are the short labels from the project
-  // CARDS on the Framer site's static pages, which no CMS export reaches (see
-  // "What framer-export.json does not cover" in lib/sources/README.md).
-  // Transcribed from the live site rather than invented, but still
-  // repo-authored, so declared in REPO_AUTHORED_FIELDS below.
+  // `railSubtitle` is the short label for the sidebar rail, authored here.
   //
-  // Used by the sidebar rail ONLY. `projectTitle` remains the project's name
-  // everywhere else — the chat project-header card and the generated Projects
+  // Used by the rail ONLY. `projectTitle` remains the project's name
+  // everywhere else — the chat's project card and the generated Projects
   // section of edwin-context.md. Do not substitute one for the other.
   railSubtitle: string
   tagline: string
-  // `role` is sourced from lib/sources/resume.txt, kept in agreement with
-  // LinkedIn — NOT from framer-export.json. The export says "Lead product
-  // designer" on every row, and it is wrong for two of the seven in two
-  // different directions:
+  // `role` follows lib/sources/resume.txt, kept in agreement with LinkedIn. It
+  // is the one field on Project sourced outside this file.
   //
-  //   Meridian (retail-banking)   -> Senior Product Designer
-  //   Volkswagen (car-comparison) -> Product Designer
-  //
-  // Volkswagen is the subtle one: the work falls inside the Dec 2015-May 2019
-  // contracting block, so its title follows that period rather than the
-  // seniority of the surrounding permanent roles. See lib/sources/README.md.
-  // Do not "correct" either back to the export in a future audit.
+  // `roleDescription` opens by restating the title, so the two have to agree.
+  // They have disagreed before — a card reading Senior above a body reading
+  // Lead, a few blocks apart in the same conversation.
   role: string
   status: "live" | "wip"
   tags: string[]
@@ -56,10 +41,16 @@ export interface Project {
   decision?: string
 }
 
-// Fields on Project that are not traceable to anything in lib/sources/.
-// scripts/build-context.mjs reads this to annotate the generated section, so
-// the provenance gap travels with the output instead of living only here.
-export const REPO_AUTHORED_FIELDS = ["projectTitle", "railSubtitle", "alt"] as const
+// The one field on Project sourced outside this file. scripts/build-context.mjs
+// reads it to annotate the generated section, so the sourcing travels with the
+// output instead of living only here.
+//
+// It was REPO_AUTHORED_FIELDS, listing the three fields that did not trace to
+// the Framer CMS export. Once that export went, "does not trace to
+// lib/sources/" became true of nearly every field on this type, and a list of
+// three read as if the rest were sourced. Inverted rather than extended: one
+// name, and it is accurate.
+export const SOURCED_FIELDS = { role: "lib/sources/resume.txt" } as const
 
 export const projects: Project[] = [
   {
@@ -103,9 +94,11 @@ export const projects: Project[] = [
         alt: "",
       },
     ],
-    // Framer's Formatted Text 3 is empty ("<p><br></p>") and Formatted Text 2
-    // has no "What was at stake" / "Why I made this decision" clauses for
-    // this row — no challenge/atStake/decision content exists in the export.
+    // ⚠ PLACEHOLDER, AND IT SHIPS. "work in progress; coming soon." renders as
+    // the impacts block on the live reveal — `impacts?.length` is 1, so the
+    // section is drawn with that as its content rather than skipped. This is
+    // the only placeholder string in the project copy. It needs writing, or
+    // the field needs deleting so the block is omitted like Coinley's.
     impacts: ["work in progress; coming soon."],
     roleDescription:
       "Lead product designer.\n\nCurrent focus:\n- conducting user research to uncover issues faced by new job-seekers, individuals undergoing career transitions, and fresh grads;\n- understanding how AI can coach individuals to obtain better outcomes in cold outreaches; improved resumes; better accountability, etc.\n- creating and designing the AI coach and deploying to clients;\n- creating an AI-compatible design system using design tokens and Shadcn, for use in AI development tools, such as V0, Lovable, and Claude Code.",
@@ -152,20 +145,12 @@ export const projects: Project[] = [
           "Cheque deposit with camera capture, and the price-matching feature: receipt scanning onboarding with partner retailers, and a receipts list tracking submitted purchases.",
       },
     ],
-    // Typo corrections against framer-export.json, same pattern as the `role`
-    // override: "Users reviews" -> "User reviews", and a stray "and" removed
-    // from "poor user experience, and UI, and lack of key features".
     challenge:
       "User reviews for the Meridian app cited poor user experience, UI, and lack of key features, such as investing and borrowing/credit cards. Without a major redesign, Meridian would lose users to competitors with better digital experiences.",
     impacts: [
       "Within the first month of launch, the redesigned app received overwhelming positive user reviews in the app store.",
       "Meridian Credit Union adopted the new design across its entire ecosystem.",
     ],
-    // Opening title OVERRIDDEN from the Framer export's "Lead product
-    // designer" to match `role` above, which is sourced from resume.txt and
-    // agrees with LinkedIn. The export says "Lead" on every row; leaving it
-    // here contradicted the role field a few blocks up the same conversation.
-    // Do not revert to the export in a future audit — see lib/sources/README.md.
     roleDescription:
       "Senior product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
     atStake:
@@ -212,9 +197,10 @@ export const projects: Project[] = [
     ],
     challenge:
       "Traditional investing platforms overwhelm beginners with complex interfaces and workflows. We wanted to make investing accessible through conversational AI.",
-    // Framer's Formatted Text 2 header here is "KEY LEARNINGS", not "KEY
-    // IMPACTS" — per the settled mapping, learnings content isn't relabeled
-    // into impacts. No impacts field is populated for this row.
+    // No impacts for this row. What exists for this project is learnings, and
+    // learnings are not impacts — an impact is an outcome the work produced,
+    // and relabelling one as the other would put a claim on the page that
+    // nobody made. The block is absent rather than filled.
     roleDescription:
       "Lead Product Designer. I designed a chat-based interface for users to receive investment advice.",
     atStake:
@@ -313,19 +299,12 @@ export const projects: Project[] = [
     challenge:
       "VW didn't have a comparison tool and recognized that a comparison tool is a big part of the purchase process. VW wanted to meet the needs of potential buyers, but also wanted to create a tool that would help potential buyers move down the sales funnel (e.g. either visiting a dealership or building a vehicle online).",
     impacts: [
-      // Typo correction against the export: "Since it's launch" -> "Since its
-      // launch" (possessive, not a contraction).
       "Since its launch, the tool serves over 112,000 customers across Canada on a monthly basis.",
     ],
-    // Same override as Meridian, to "Product designer" — the Dec 2015–May 2019
-    // contracting period that covers this work is Product Designer on both the
-    // résumé and LinkedIn, not Senior and not the export's "Lead".
     roleDescription:
       "Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.",
     atStake:
       "VW stakeholders wanted a tool that only compared Volkswagen vehicles against each other. However, most of VW's competitors had comparison tools that let users compare vehicles across brands. Restricting the tool to VW-only vehicles would've made the tool less useful for potential buyers and create a missed opportunity to showcase how VW vehicles outperform competitors.",
-    // Typo correction against the export: "these design decision" ->
-    // "these design decisions".
     decision:
       "I pushed to include other brands but designed the comparison experience to favour and upsell VW throughout. The first vehicle loaded in the tool is always a VW vehicle. I integrated VW-specific marketing content (like videos showcasing brake assist technology) and visual call-outs that highlighted VW advantages. I made these design decisions to create an experience that would give users the utility they expected while upselling VW at every touchpoint.",
   },
@@ -367,10 +346,6 @@ export const projects: Project[] = [
       "Lead Product Designer. I designed a mobile-first shopping experience that leveraged Complex.com's social media presence to introduce users to NTWRK's e-commerce platform.",
     atStake:
       "Complex users came for media content, not shopping. If we pushed them through a traditional homepage-to-shop flow, they'd ignore it. We risked launching a shop that existing Complex users would never discover or use.",
-    // Typo corrections against the export, which had "not on on Complex.com's
-    // homepage" and repeated the "When users clicked through from Instagram or
-    // TikTok," clause twice. Both fixed here rather than carried verbatim.
-    // clause are duplicated in Framer's own text — see migration report.
     decision:
       "I led the integration strategy by auditing both Complex.com and NTWRK's e-commerce platform, mapping information architecture concepts, and designing how the platforms could merge visually. Because Complex's audience lives mostly on social media and not on Complex.com's homepage, I decided to design mobile-first product pages optimized for sharing on social media. When users clicked through from Instagram or TikTok, they'd land on pages that felt native to mobile, giving them a seamless shopping experience while subtly establishing Complex as a shopping destination.",
   },
@@ -410,9 +385,6 @@ export const projects: Project[] = [
           "Shipping label creation with package template, weight, dimensions and carrier rate options.",
       },
     ],
-    // Typo correction against the export: the mid-sentence "and Sellers were
-    // expected" is lowercased. The two sentence-initial "Sellers" are correct
-    // and left alone.
     challenge:
       "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
     impacts: [

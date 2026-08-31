@@ -45,7 +45,7 @@ if (imports) {
   process.exit(1)
 }
 
-const { projects, REPO_AUTHORED_FIELDS } = await import("../lib/projects.ts")
+const { projects, SOURCED_FIELDS } = await import("../lib/projects.ts")
 
 const STATUS_LABEL = { live: "Live", wip: "Work in progress" }
 
@@ -96,8 +96,9 @@ function build() {
     "by hand: run the script. Every string below is the project data verbatim,",
     "so it cannot drift from what the site renders.",
     "",
-    `Not traceable to lib/sources/: ${REPO_AUTHORED_FIELDS.join(", ")}. See the`,
-    "comment on that field in lib/projects.ts.",
+    "Project copy is authored in lib/projects.ts and is the source of truth",
+    `for it. ${Object.entries(SOURCED_FIELDS).map(([f, src]) => `\`${f}\` follows ${src}`).join("; ")}.`,
+    "`alt` is written for screen readers and is excluded from this section.",
     "",
   ].join("\n")
 

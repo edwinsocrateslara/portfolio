@@ -1,16 +1,14 @@
 # Voice: Edwin's own words
 
 Source file. Everything here is written by Edwin. Anything the chat says
-that isn't traceable to this file, framer-export.json, or resume.txt is
-not permitted.
+that isn't traceable to this file or resume.txt is not permitted.
 
 <!--
   Operational notes for anyone editing downstream files:
 
-  This file covers what the other two sources can't — design philosophy,
-  process, opinions, working preferences, and the Framer site's static
-  page copy, which lives outside the CMS and so never appears in
-  framer-export.json (see README.md).
+  This file covers what resume.txt can't — design philosophy, process,
+  opinions, working preferences, and the old Framer site's static page
+  copy.
 
   Everything below is VERBATIM. Do not paraphrase it in
   lib/edwin-context.md or lib/scripted-responses.ts. Scripted answers are

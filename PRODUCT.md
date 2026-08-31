@@ -100,10 +100,10 @@ context but has no way to ask for one. So it is supplied, not discovered.
 
 Real, in the repository:
 
-- `lib/sources/framer-export.json` — case-study copy for all seven projects,
-  the CMS export the site's project copy derives from.
+- `lib/projects.ts` — case-study copy for all seven projects, authored and
+  corrected in the repo.
 - `lib/sources/resume.txt` — employment history, dates, education.
-- `lib/sources/voice.md` — the designer's own writing, 17 sections.
+- `lib/sources/voice.md` — the designer's own writing, 20 sections.
 - `lib/sources/meridian-case-study.txt` — the deck's verbatim text.
 - `public/framer/<slug>/` — 32 real project screenshots with written alt text.
 - `public/meridian-case-study.pdf` — the real 21-slide deck.

@@ -81,8 +81,9 @@ Generated from lib/projects.ts by scripts/build-context.mjs. Do not edit
 by hand: run the script. Every string below is the project data verbatim,
 so it cannot drift from what the site renders.
 
-Not traceable to lib/sources/: projectTitle, railSubtitle, alt. See the
-comment on that field in lib/projects.ts.
+Project copy is authored in lib/projects.ts and is the source of truth
+for it. `role` follows lib/sources/resume.txt.
+`alt` is written for screen readers and is excluded from this section.
 
 ### FutureFit AI — AI Workforce Development Platform
 - **Slug:** ai-workforce-development

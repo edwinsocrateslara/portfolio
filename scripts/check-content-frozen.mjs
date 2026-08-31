@@ -14,11 +14,11 @@
 //
 // It was written for the experiment/impeccable branch. A visual experiment is
 // allowed to rewrite presentation; it is not allowed to touch the files that
-// encode where copy comes from. Those carry a sourcing contract with
-// documented overrides — role titles that disagree with framer-export.json on
-// purpose, six typo corrections, alt text declared as repo-authored, a
-// generated system-prompt section — and none of that survives being
-// "improved" by a tool reasoning about visual quality.
+// encode where copy comes from. Those carry a sourcing contract — project copy
+// authored in lib/projects.ts and corrected there, one role field following
+// resume.txt, alt text written for screen readers, a generated system-prompt
+// section — and none of that survives being "improved" by a tool reasoning
+// about visual quality.
 //
 // Why this and not the tool's own ignore config: `detector.ignoreFiles` in
 // .impeccable/config.json suppresses FINDINGS. It does not restrict WRITES.

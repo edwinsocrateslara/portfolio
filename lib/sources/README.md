@@ -1,31 +1,27 @@
 # Sources
 
-Everything in `lib/edwin-context.md` (the `/api/chat` system prompt) and
-`lib/scripted-responses.ts` must be traceable to one of the files in
-this directory. Anything that isn't has no basis and should be removed
-rather than reworded.
+**A file in this directory is read by code.** `resume.txt` is parsed into the
+Résumé pane by `lib/resume.ts`. `voice.md` is asserted character-for-character
+by `npm run check:voice`. `meridian-case-study.txt` is generated into the
+system prompt by `scripts/build-context.mjs`. Editing one changes the site or
+fails a build; that is what makes it a source.
 
-| File | Covers |
-|---|---|
-| `framer-export.json` | Case-study copy for the seven portfolio projects |
-| `resume.txt` | Biography — roles, dates, employers, education, skills |
-| `voice.md` | Edwin's own writing for anything the others don't cover |
-| `meridian-case-study.txt` | Verbatim text of the 21-slide Meridian case study deck |
+Anything the chat says about Edwin's biography, his own words, or the deck must
+be traceable to one of them. Project case-study copy is NOT sourced here — it
+is authored in `lib/projects.ts`, which is its source of truth.
 
-## What `framer-export.json` does *not* cover
+| File | Covers | Read by |
+|---|---|---|
+| `resume.txt` | Biography — roles, dates, employers, education, skills | `lib/resume.ts` |
+| `voice.md` | Edwin's own writing for anything the others don't cover | `scripts/check-voice.mjs` |
+| `meridian-case-study.txt` | Verbatim text of the 21-slide Meridian deck | `scripts/build-context.mjs` |
 
-**It is an export of the "Portfolio Projects" CMS collection only — not
-the Framer site's complete copy.**
-
-Framer's static page content lives outside the CMS and no export can
-reach it. At minimum the live site also has an **About section** with a
-hero line, a personal paragraph, and two photos, none of which appear in
-this file.
-
-So the absence of a line from `framer-export.json` does **not** prove it
-was invented. A future audit should treat this file as authoritative for
-project case-study copy and silent about everything else. Static page
-copy belongs in `voice.md`, transcribed from the live site.
+`framer-export.json` used to sit here. It was a snapshot of the Framer CMS at
+migration and nothing ever read it; the copy was authored and corrected in
+`lib/projects.ts`, which outranks it. It has been deleted — git history holds
+it. The corrections it once justified are not indexed anywhere, deliberately:
+a list of deviations from a file that no longer exists has nothing to be a
+deviation from.
 
 ## What is generated, and what is checked
 
@@ -50,65 +46,6 @@ re-attributed the Meridian app's userbase to the institution's totals,
 merged Coinley's decision text into its challenge, and reintroduced an
 "App Store" specificity that had already been removed from
 `lib/projects.ts` once. Generating it removes the possibility.
-
-## Titles: the résumé and LinkedIn are the authority, not the export
-
-`lib/projects.ts` deviates from `framer-export.json` in exactly two ways, both
-documented: **role titles** (below) and **source typos** (the section after).
-Nothing else differs — verified by checking every string in `projects.ts` for
-verbatim containment in the export.
-
-`framer-export.json` says **"Lead product designer" on every row**. It is
-wrong for two of the seven, and it is wrong in two different directions,
-so this is not a single find-and-replace.
-
-`lib/projects.ts` sources `role` from `resume.txt`, which is kept in
-agreement with LinkedIn. Where the two disagree with the export, they win:
-
-| Project | Export says | Actual | Why |
-|---|---|---|---|
-| Meridian (`retail-banking`) | Lead product designer | **Senior Product Designer** | Résumé and LinkedIn agree |
-| Volkswagen (`car-comparison`) | Lead product designer | **Product Designer** | Falls in the Dec 2015–May 2019 contracting period, which LinkedIn lists as Product Designer |
-
-The Volkswagen case is the subtle one: the work sits inside the
-contracting block, so its title follows that period rather than the
-seniority of the surrounding permanent roles. `resume.txt` lists that
-block as Product Designer for the same reason.
-
-**Two fields carry a title, and both had to be corrected.** `role` is the
-structured field; `roleDescription` is export prose that *opens* with a
-title ("Lead product designer. I created…"). Fixing only `role` left the
-two contradicting each other a few blocks apart in the same conversation —
-the card said Senior, the body said Lead. Both are now overridden, and
-both carry a comment at the field so an audit does not revert them to the
-export.
-
-## Typo corrections against the export
-
-`framer-export.json` remains the source for case-study copy. It is also the
-CMS's raw output, defects included, and `lib/projects.ts` now carries
-documented corrections for six of them. Each is commented at the field, the
-same way the title overrides are, so an audit finds them accounted for rather
-than flagging them as invented — and so nobody "restores" them from the
-export.
-
-| Project | Export says | Corrected to |
-|---|---|---|
-| Meridian | "**Users** reviews for the Meridian app" | "**User** reviews" |
-| Meridian | "poor user experience, **and** UI, and lack of key features" | "poor user experience, UI, and lack of key features" |
-| Volkswagen | "Since **it's** launch" | "Since **its** launch" |
-| Volkswagen | "these design **decision**" | "these design **decisions**" |
-| Complex NTWRK (seller dashboard) | "and **S**ellers were expected" | "and **s**ellers were expected" (mid-sentence) |
-| Complex NTWRK (e-commerce) | "not **on on** Complex.com's homepage", and the "When users clicked through from Instagram or TikTok," clause repeated twice | both fixed |
-
-These are spelling, grammar and duplication only. No claim, number or
-emphasis is changed by any of them.
-
-`projectTitle` is the other declared gap: the seven values are
-repo-authored and trace to nothing in this directory. They are listed in
-`REPO_AUTHORED_FIELDS` in `lib/projects.ts`, which the generator reads and
-notes in its output, so an audit finds them already accounted for rather
-than flagging them as invented.
 
 ## `meridian-case-study.txt`, and the motusbank / Meridian split
 
@@ -170,7 +107,7 @@ absorbed silently.
 | Path | Commits | Why |
 |---|---|---|
 | `voice.md` | `0abd941`, `33bfb11` | Two currently-reading books added for the About page. Downtime line rewritten — Edwin's own words, replacing the previous sentence rather than adding to it. |
-| `resume.txt` | `0d01aca` | Bullets restored. The file had flattened the source document's bullets into prose and the structure did not survive: sentence counts disagreed with the document on three of six roles. Titles unchanged — the contracting period stays Product Designer, per the table above. |
+| `resume.txt` | `0d01aca` | Bullets restored. The file had flattened the source document's bullets into prose and the structure did not survive: sentence counts disagreed with the document on three of six roles. Titles unchanged. |
 | `edwin-context.md` | `33bfb11` | The § Outside Work quote follows `voice.md`. Hand-maintained: it sits outside both generated blocks, so `build:context` does not touch it. |
 | `scripted-responses.ts` | `8104dc2`, `33bfb11` | Vibe-project slug resolution; the downtime answer follows `voice.md`. |
 | `voice-answers.ts` | `0abd941` | Currently-reading entries, so the About page and the chat cannot disagree about what Edwin is reading. |
@@ -183,3 +120,14 @@ drift. The repo has the right pattern for it — the deck response uses
 `voiceAnswerById()` precisely so the gate catches it — but moving the
 downtime answer into `VOICE_ANSWERS` changes its chip routing, so it is a
 separate decision rather than a silent fix.
+
+## Source-layer edit: removing the export
+
+`voice.md` changed when `framer-export.json` was deleted. Its opening rule
+named the export as one of three permitted sources, and its editor notes
+pointed at it for the static-page gap. Both now name `resume.txt` only.
+
+It is recorded here for the same reason the table above exists: `voice.md` is
+frozen, so an edit to it is a decision rather than something a merge absorbs.
+No sentence Edwin wrote was touched — only the two operational notes about
+where copy may come from.
