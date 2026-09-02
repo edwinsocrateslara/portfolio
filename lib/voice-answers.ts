@@ -231,8 +231,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "five-years",
     triggers: ["five years", "5 years", "long term", "career goal", "see yourself"],
-    chip: "Where do you see yourself in five years?",
-    placement: "rotation",
+    noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "In five years, I hope I'm still learning and pushing myself to understand what's possible with AI. I'm really focused on learning how to harness these tools to create better products and services, and I see that as an ongoing journey.",
       "I'd also love to be teaching and sharing what I've learned, building tools and resources that support the broader community, while helping organizations create products where AI is at the core of the experience.",
@@ -263,7 +262,8 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "engineers",
     triggers: ["handoff", "hand off", "engineer", "feasibility"],
-    noChip: "typed-question coverage, not offered.",
+    chip: "How do you hand off work to engineers?",
+    placement: "rotation",
     paragraphs: [
       "My process is increasingly code-first. I run the production codebase locally and use Claude Code to understand where a feature lives, trace the existing components and dependencies, and check feasibility while I'm still designing.",
       "That means I can answer questions earlier: What already exists? What would need to change? What are the technical constraints? How much of this can I prototype myself? I use that context to scope the feature before investing heavily in a design direction, then work with engineering on anything that needs deeper technical input.",
