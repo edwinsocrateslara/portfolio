@@ -62,9 +62,15 @@ const { frontDoorChips, rotationPool, routable } = await import("../lib/chips.ts
 // is fingerprinted by calling buildResponse with a bare trigger the branch
 // itself declares — comparing against a copy of the expected prose here
 // would duplicate content this repo deliberately keeps in one place.
+//
+// `stakeholder` was here and is not any more. That branch was retired: the
+// triggers `stakeholder` and `pushback` now reach the difficult-stakeholders
+// VOICE_ANSWERS entry, which is Edwin's own wording and is checked against
+// voice.md. Leaving the probe behind made the self-test fail correctly —
+// probing "stakeholder" classified as voice:difficult-stakeholders, which is
+// the new truth — so the probe had to go with the branch it fingerprinted.
 const SCRIPTED_PROBES = {
   "walk-through": "walk me through",
-  stakeholder: "stakeholder",
   downtime: "downtime",
   resume: "resume",
   deck: "the deck",

@@ -55,14 +55,16 @@ export const SCRIPTED_TOPICS: ScriptedTopic[] = [
     chipOrder: 1,
   },
   {
-    id: "stakeholder",
-    chip: "How do you handle pushback on a design decision?",
-    placement: "rotation",
-  },
-  {
+    // RETIRED as a scripted answer; the id stays only in this note. It held two
+    // inline paragraphs — a Meridian one and a Volkswagen one — that were never
+    // in voice.md and so were never checked against anything. The triggers
+    // `stakeholder` and `pushback` now belong to the difficult-stakeholders
+    // VOICE_ANSWERS entry, which tells the Volkswagen story in Edwin's own
+    // words and IS checked. It sat above matchVoiceAnswer in the chain, so
+    // while it existed no voice answer could ever claim those words.
     id: "downtime",
-    chip: "What do you do outside of work?",
-    placement: "rotation",
+    noChip:
+      "typed-question coverage, not offered. The About page carries this, and a chip asking after someone's hobbies is not what the front door is for.",
   },
   {
     id: "project-reveal",
@@ -292,40 +294,10 @@ export function buildResponse(
   // that used to wrap them ("a risk the stakeholder hasn't articulated yet",
   // the closing pattern statement) was invented and has been removed; any
   // generalised philosophy belongs in lib/sources/voice.md first.
-  // SCRIPTED_TOPICS "stakeholder"
-  if (t.includes("stakeholder") || t.includes("pushback")) {
-    return {
-      response: [
-        {
-          kind: "text",
-          text: "At **Meridian**, stakeholders wanted to keep the conservative look and feel of the old app. I pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
-        },
-        {
-          kind: "text",
-          text: 'At **VW**, stakeholders wanted a tool that only compared Volkswagen vehicles against each other. I pushed to include other brands — restricting it to VW-only would have made the tool less useful for potential buyers — but designed the comparison experience to favour and upsell VW throughout.',
-        },
-        {
-          kind: "followups",
-          chips: rotationFor(SURFACE.stakeholder, 2, ["stakeholder"]).map((c) => ({
-            text: c.label,
-          })),
-        },
-      ],
-      projectSlug: null,
-    }
-  }
-
-  // The former "design systems + AI" answer lived here. It asserted a
-  // philosophy that appears in no source file ("Figma-first systems that
-  // ship as screenshots let AI-produced UI drift", "engineers ship
-  // faster"). Deleted rather than reworded; the sourced answer to this
-  // question is the composed design-with-ai entry in voice-answers.ts.
-
-  // Everything Edwin has written about how he works, verbatim from
-  // lib/sources/voice.md via the VOICE_ANSWERS table. Placed after the
-  // project matchers so a question naming a project still gets the case
-  // study, and before the location matcher so its broader triggers don't
-  // swallow these. `npm run check:voice` asserts the copy stays verbatim.
+  // The stakeholder/pushback branch that stood here is gone. See the note in
+  // SCRIPTED_TOPICS: those triggers now reach difficult-stakeholders in
+  // VOICE_ANSWERS, which is Edwin's wording and is checked against voice.md.
+  // A scripted branch above matchVoiceAnswer would still intercept them.
   const voice = matchVoiceAnswer(t)
   if (voice) {
     return {
@@ -363,7 +335,7 @@ export function buildResponse(
       response: [
         {
           kind: "text",
-          text: "In my downtime, I'm usually bouldering or running races, camping and hiking with my ten-year-old Alaskan Malamute. I'm always reading; my recent reads include: Meditations by Marcus Aurelius, The Personal MBA by Josh Kaufman, and How to Win Friends and Influence People by Dale Carnegie.",
+          text: "In my downtime, I'm usually bouldering or running races, camping and hiking with my ten-year-old Alaskan Malamute.",
         },
         {
           kind: "followups",
