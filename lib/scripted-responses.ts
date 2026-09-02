@@ -140,6 +140,22 @@ export function buildResponse(
     preloadedSlug ||
     (wantsDeck
       ? null
+      : // FIRST IN THE CHAIN, and the position is the whole point. The test
+        // below matches "futurefit", so placed after it "the futurefit ideas
+        // dashboard" would open the WORK project. Placed here, the tool's own
+        // name wins and a bare "futurefit" still reaches the work project.
+        //
+        // "ideas" alone is far too broad — it appears in "AI chips and
+        // prompts", "adjacent opportunities", "the idea was well received".
+        // "dashboard" alone collides with the seller dashboard. "internal
+        // tool" is left OUT deliberately: "what internal tools do you use"
+        // would open this reveal instead of the tools answer, and it names a
+        // category rather than a product.
+        t.includes("ideas dashboard") ||
+        t.includes("feedback synthesis") ||
+        t.includes("product operations") ||
+        t.includes("weekly feedback")
+      ? "futurefit-ideas-dashboard"
       : t.includes("meridian")
       ? "retail-banking"
       : t.includes("futurefit") || t.includes("workforce")

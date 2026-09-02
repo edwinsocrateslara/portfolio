@@ -74,6 +74,14 @@ if (imports) {
 }
 
 const { projects, SOURCED_FIELDS } = await import("../lib/projects.ts")
+// THE VIBE PROJECT IS IN THE DOCUMENT TOO. It was not, and nothing said why:
+// this mapped `projects` while the rail, the matcher and allProjects have
+// always carried eight. The model could be asked about the Ideas Dashboard —
+// the proudest answer describes it at length — and had no project entry to
+// answer from. Reading allProjects fixes an omission rather than widening a
+// boundary.
+const { vibeProjects } = await import("../lib/vibe-projects.ts")
+const allProjects = [...projects, ...vibeProjects]
 
 const STATUS_LABEL = { live: "Live", wip: "Work in progress" }
 
@@ -130,7 +138,7 @@ function build() {
     "",
   ].join("\n")
 
-  const body = projects.map(section).join("\n\n---\n\n")
+  const body = allProjects.map(section).join("\n\n---\n\n")
   return `${header}\n${body}\n\n${END}`
 }
 
@@ -264,6 +272,6 @@ if (!process.argv.includes("--check")) {
     console.log(`no change — ${CONTEXT} already up to date`)
   } else {
     writeFileSync(CONTEXT, next)
-    console.log(`wrote ${projects.length} project sections + the deck to ${CONTEXT}`)
+    console.log(`wrote ${allProjects.length} project sections + the deck to ${CONTEXT}`)
   }
 }

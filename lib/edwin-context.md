@@ -232,6 +232,33 @@ I created the primary tool for sellers to manage products on Complex NTWRK.
 
 We needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.
 
+---
+
+### Ideas Dashboard — Ideas Dashboard, built at FutureFit AI
+- **Slug:** futurefit-ideas-dashboard
+- **Status:** Work in progress
+- **Role:** Lead Product Designer
+
+I built an internal tool that reads everything customers and staff have said about the product and, once a week, puts 10 things at the top of the list with a written reason attached to each. It exists because feedback was arriving faster than anyone could read it, so decisions about what to build next were being made without most of it.
+
+**Key impacts:**
+- **STACK** — Next.js, Supabase, Claude, and the APIs of the feedback board and the engineering tracker
+- **CADENCE** — collects Monday, ranks 15 minutes later, retries Tuesday if Monday failed, checks ticket status daily
+- **CORPUS** — 457 feedback posts, ~300 sent per run
+- **OUTPUT** — 10 ranked per week, 66 synthesis runs logged in production
+- **SHIPPED** — 14 items accepted into tickets, closed back on the original post
+- **BUILT** — 14 weeks, sole author, 34 migrations, 25 API routes
+
+**My role:** Lead product designer. I was the only person on it, and built it end to end over 14 weeks. I later rebuilt a redacted version so the work could be shown outside the company.
+
+**What was at stake:** 457 feedback posts had accumulated across 4 boards and nobody was working through them. The volume made starting feel impossible, so prioritisation defaulted to whatever was loudest: the highest vote count, the most persistent internal advocate, the account that escalated most visibly. Each is a proxy for importance rather than a measure of it.
+
+**Why I made those decisions:** I ranked on strategic fit, not demand: 3 votes can outrank 30 if one maps to a live commitment. Model output and human judgement sit in separate columns; every model field has a manual override, and the weekly run rewrites only its own. A rationale freezes on acceptance, so a shipped ticket still explains why it was chosen. The last 4 weeks of overrides feed into the next run, deliberately scoped to influence the ordering of the 10 rather than which items qualify — so consistent disagreement is learned from without letting it quietly pull selection away from the strategy documents.
+
+**The challenge:** Feedback reaches the boards 3 ways. Most is posted straight to them — running lists where customers and staff file requests and vote on each other's, of which the tool reads 4, one per product area. Some arrives through a bot in the company chat, so anyone can file something without leaving the conversation they had it in. The rest comes from recorded customer calls, which a meeting-notes service transcribes and tags by type — pain point, unmet need, feature request, competitive mention; what it finds there is filed as an ordinary board post, so something said out loud lands in the same pile as something typed. Everything converges before the tool sees it, and the tool reads one place.
+Once a week a scheduled job collects everything new and copies it into the tool's own database, so nothing downstream depends on any of those services being reachable. It then sends the pooled items — ~300 of the 457 — to a language model, along with the company's 5 current strategy documents and a reference describing the platform's own architecture, and asks for 10. The strategy documents are what an item has to earn its place against; the architecture reference is what lets the model tell a contained change from one that touches everything. If the model returns anything that doesn't match the expected shape, the run is rejected and logged rather than saved.
+People review the 10. Every field the model set can be overridden by hand, and accepting an item creates a ticket in the engineering tracker. A daily check watches that ticket, and when it ships the tool closes the original post — so the person who asked for it hears back.
+
 <!-- END GENERATED: projects -->
 
 <!-- BEGIN GENERATED: deck (scripts/build-context.mjs) -->
@@ -531,7 +558,7 @@ I saw an opportunity to create a system that could bring that feedback together 
 
 I took on the project independently and designed and built it end to end over 14 weeks.
 
-I built an internal tool that brings customer and staff feedback from multiple sources into one place and uses AI to evaluate it against the company's current strategy and technical architecture.
+I built an internal tool, the Ideas Dashboard, that brings customer and staff feedback from multiple sources into one place and uses AI to evaluate it against the company's current strategy and technical architecture.
 
 The system produces 2 streams of work each week.
 

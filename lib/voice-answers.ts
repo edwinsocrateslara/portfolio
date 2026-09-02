@@ -152,7 +152,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
       "At FutureFit AI, customer and staff feedback was coming in faster than the team could realistically review it. Feedback was spread across product boards, internal conversations, and customer calls, which meant decisions about what to build next were often being made without considering most of that context.",
       "I saw an opportunity to create a system that could bring that feedback together and give the team a more consistent, evidence-based way to decide what was worth working on.",
       "I took on the project independently and designed and built it end to end over 14 weeks.",
-      "I built an internal tool that brings customer and staff feedback from multiple sources into one place and uses AI to evaluate it against the company's current strategy and technical architecture.",
+      "I built an internal tool, the Ideas Dashboard, that brings customer and staff feedback from multiple sources into one place and uses AI to evaluate it against the company's current strategy and technical architecture.",
       "The system produces 2 streams of work each week.",
       "The first is a Top 10, where ideas have to qualify against our strategy before being ranked based on things like strategic fit, urgency, and specificity. This means an idea with 3 votes can outrank one with 30 if it better supports an active company priority.",
       "The second is Quick Wins, smaller opportunities that have a clear solution, are technically bounded, and can deliver value without competing with the Top 10.",

@@ -29,14 +29,23 @@ import type { Project } from "./projects"
 export const vibeProjects: Project[] = [
         {
           slug: "futurefit-ideas-dashboard",
-          client: "FutureFit AI",
-          projectTitle: "Weekly Feedback Synthesis",
+          // ⚠ THIS IS NOT A CLIENT, AND THAT IS DELIBERATE. `client` is what the
+          // rail renders as a row's top line, and this row needed to stop
+          // saying "FutureFit AI" — two rows said it, and a visitor had to
+          // read the subtitles to tell the work project from the tool. They
+          // are different products, so the rail now names the product.
+          //
+          // The employer has not been lost: it is in `projectTitle`, which the
+          // API context line reads, and the role line in the reveal says it
+          // outright. Do not "correct" this back to a company name.
+          client: "Ideas Dashboard",
+          projectTitle: "Ideas Dashboard, built at FutureFit AI",
           // Names the DOMAIN, like the seven — Retail Banking, AI Investing,
           // Live Selling. "Feedback Synthesis" named the mechanism, which no
           // other row does, and it read as a second title rather than as the
           // line that tells rows apart. projectTitle stays "Weekly Feedback
           // Synthesis": the mechanism is the right name for the thing itself.
-          railSubtitle: "Product Prioritization",
+          railSubtitle: "Product Operations",
           // WHAT IT IS. Two sentences, no jargon, no company-specific nouns —
           // a visitor who has never heard of FutureFit understands it. The
           // terms are defined later, in the pipeline, as they appear.
