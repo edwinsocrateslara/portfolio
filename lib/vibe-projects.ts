@@ -168,7 +168,7 @@ export const vibeProjects: Project[] = [
           impacts: [
             "**STACK** — Next.js, Supabase, Claude, and the APIs of the feedback board and the engineering tracker",
             "**CADENCE** — collects Monday, ranks 15 minutes later, retries Tuesday if Monday failed, checks ticket status daily",
-            "**CORPUS** — 457 feedback items, ~300 sent per run",
+            "**CORPUS** — 457 feedback posts, ~300 sent per run",
             "**OUTPUT** — 10 ranked per week, 66 synthesis runs logged in production",
             "**SHIPPED** — 14 items accepted into tickets, closed back on the original post",
             "**BUILT** — 14 weeks, sole author, 34 migrations, 25 API routes",

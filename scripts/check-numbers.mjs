@@ -78,6 +78,76 @@ const EXCEPTIONS = {
     "lib/projects.ts has no entry that could state it.",
 }
 
+// ── NAMED FACTS ──────────────────────────────────────────────────────────
+// Four figures the FIGURE pattern above cannot see, and will never be able to.
+//
+// WHY THEY ARE HERE RATHER THAN IN THE REGEX. 457, 300, 10 and 14 are bare
+// integers. Nothing about their shape distinguishes them from the 38
+// participants, 690 records and 153 conversations in the design-process
+// answer, the 5 and 10 day bands in the sizing system, or the 9/10 in core
+// skills. Widening the pattern to catch bare integers would fire on all of
+// those, and a gate that cries wolf on ordinary prose is one people learn to
+// skip. Normalising the spelled-out numbers to digits did not help either —
+// it was tried, and made no difference, because the problem is shape rather
+// than spelling.
+//
+// WHAT THEY GUARD. The FutureFit ideas dashboard is described twice: as a case
+// study in lib/vibe-projects.ts, and in Edwin's own voice in the proudest
+// answer. The two were written months apart, and either could be rewritten
+// alone — which is the actual risk here, not a typo.
+//
+// EACH ENTRY STATES ITS FACT IN WORDS, and names the phrase each file must
+// carry, because the bare figure is not enough on its own: "14" appears in the
+// vibe file twice for two different facts — 14 weeks to build, and 14 items
+// accepted into tickets. A check on the number alone would pass while the
+// sentence it belongs to disappeared.
+//
+// If a fact genuinely changes, change it in both files and update the phrase
+// here. If one of these projects stops being described twice, delete the entry
+// rather than loosening it.
+//
+// WHAT IT DOES NOT ASSERT, stated so nobody assumes more of it than it does:
+// that the file states the fact ONCE, or in a particular field. `457 feedback
+// posts` appears twice in the vibe file — the CORPUS impact and the atStake —
+// and removing either alone leaves the fact stated, so the check passes. That
+// is correct by its own contract, and it was found by trying to break it: the
+// first attempt to prove this gate fires did not fire, because deleting one of
+// two statements had not actually removed the fact.
+const NAMED_FACTS = [
+  {
+    figure: "457",
+    fact: "feedback posts in the corpus",
+    states: {
+      "lib/sources/voice.md": "457 feedback posts",
+      "lib/vibe-projects.ts": "457 feedback posts",
+    },
+  },
+  {
+    figure: "300",
+    fact: "posts sent to the model in each weekly run",
+    states: {
+      "lib/sources/voice.md": "roughly 300 evaluated",
+      "lib/vibe-projects.ts": "~300 sent per run",
+    },
+  },
+  {
+    figure: "10",
+    fact: "items ranked and surfaced each week",
+    states: {
+      "lib/sources/voice.md": "10 strategic priorities",
+      "lib/vibe-projects.ts": "10 ranked per week",
+    },
+  },
+  {
+    figure: "14",
+    fact: "weeks to design and build it",
+    states: {
+      "lib/sources/voice.md": "over 14 weeks",
+      "lib/vibe-projects.ts": "14 weeks, sole author",
+    },
+  },
+]
+
 const stripLineComments = (s, marker) =>
   s.split("\n").filter((l) => !l.trim().startsWith(marker)).join("\n")
 
@@ -122,6 +192,23 @@ for (const [file, extract] of Object.entries(SOURCES)) {
   counts.push({ file, n: found.size, excused })
 }
 
+// ── the named facts, checked by phrase rather than by pattern ────────────
+const named = { checked: 0, files: new Set() }
+for (const { figure, fact, states } of NAMED_FACTS) {
+  for (const [file, phrase] of Object.entries(states)) {
+    named.checked++
+    named.files.add(file)
+    if (readFileSync(file, "utf8").includes(phrase)) continue
+    problems.push(
+      `${file} no longer states the ${figure} — ${fact}\n` +
+      `      expected the phrase: ${JSON.stringify(phrase)}\n` +
+      `      The same fact is stated in ${Object.keys(states).filter((f) => f !== file).join(", ")}.\n` +
+      `      If it changed, change it in both and update NAMED_FACTS. If this\n` +
+      `      project is no longer described twice, delete the entry.`
+    )
+  }
+}
+
 if (problems.length) {
   console.error(`\ncheck:numbers — ${problems.length} problem(s)\n`)
   for (const p of problems) console.error(`  x ${p}`)
@@ -129,6 +216,10 @@ if (problems.length) {
   process.exit(1)
 }
 console.log("check:numbers — PASS")
+console.log(
+  `  ${NAMED_FACTS.length} named fact(s), ${named.checked} statement(s) across ` +
+  `${named.files.size} file(s): ${NAMED_FACTS.map((n) => n.figure).join(", ")}`
+)
 for (const { file, n, excused } of counts) {
   const note = n === 0 ? "  ← states none" : excused ? `  (${excused} excepted)` : ""
   console.log(`  ${String(n).padStart(2)} figure(s)  ${file}${note}`)
