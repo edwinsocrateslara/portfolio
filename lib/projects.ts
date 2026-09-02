@@ -242,7 +242,7 @@ export const projects: Project[] = [
     challenge:
       "Users were window-shopping but not buying. Engagement was low and watch-time was short. We needed to create a feature that would increase user engagement and revenue on the platform.",
     impacts: [
-      "Within its first year of launch: auctions made up 63% of revenue, with a quarterly growth rate of 23%",
+      "Within its first year of launch: auctions made up 63% of company revenue, with a quarterly growth rate of 23%",
       "over 2,269+ auction shows conducted, 59,000+ items featured",
       "172% increase in chat messages per show",
       "5 minute increase in average watch time.",

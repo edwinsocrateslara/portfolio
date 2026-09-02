@@ -152,7 +152,7 @@ I helped build and release the MVP for a crypto investing platform on the App St
 I led the end-to-end design of a live-selling and auction experience.
 
 **Key impacts:**
-- Within its first year of launch: auctions made up 63% of revenue, with a quarterly growth rate of 23%
+- Within its first year of launch: auctions made up 63% of company revenue, with a quarterly growth rate of 23%
 - over 2,269+ auction shows conducted, 59,000+ items featured
 - 172% increase in chat messages per show
 - 5 minute increase in average watch time.
