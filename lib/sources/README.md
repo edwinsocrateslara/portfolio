@@ -23,6 +23,56 @@ it. The corrections it once justified are not indexed anywhere, deliberately:
 a list of deviations from a file that no longer exists has nothing to be a
 deviation from.
 
+## Numbers are written as digits
+
+**A count is a numeral, never a word.** "3 votes", not "three votes". "14
+weeks", not "fourteen weeks". "10 things at the top of the list", not "ten".
+
+THE REASON IS SCANNING, NOT STYLE. A portfolio is read the way a resume is
+read — swept for the thing the reader came for. A numeral survives that sweep
+and a word does not: "63%" and "457" catch an eye moving down a page, and
+"sixty-three percent" reads as prose to be skipped. It is the same argument as
+the type ramp's, one layer down.
+
+It also makes a figure CHECKABLE. `check:numbers` finds figures by pattern; a
+spelled-out number is invisible to it, so a word is a claim no gate can see.
+
+### What the rule does NOT cover
+
+A rule that does not name its own boundaries gets applied wrongly by whoever
+reads it next. Three exclusions, all deliberate:
+
+**Ordinals stay words.** "the first year", "its first month", "my first step".
+"1st year" is worse to read and no easier to scan, and most of the "first"s in
+this repo are not numbers at all — `mobile-first`, `code-first`, `AI-first`,
+`first-click testing`. Converting those produces nonsense.
+
+**"One" as a pronoun stays a word.** "one of my strengths", "one thing I
+uncovered", "one with navigation labels and one without", "3 votes can outrank
+30 if one maps to a live commitment", "the tool reads 4, one per product area".
+None of these is a count; "1 of my strengths" is wrong rather than ugly. The
+test: if it could be replaced by "a" or "the one", it is not a number.
+
+**Units stay words.** "$26 billion in managed assets". `billion` is a unit like
+`%` or `M`, and expanding it gives "$26,000,000,000", which nobody wants to
+read. The digits before it are what the rule is about, and they already are
+digits.
+
+### Where it applies
+
+Everything a visitor can read: `voice.md`, `resume.txt`, and the content fields
+of `lib/projects.ts`, `lib/vibe-projects.ts`, `lib/case-study-deck.ts` and
+`lib/scripted-responses.ts` — including `alt` text, which is content a screen
+reader reads out.
+
+NOT code comments. Those are prose for whoever is editing the file, and this
+document has no opinion about how they are written.
+
+Applied across the content layer in one pass: 38 conversions, 11 pronouns and
+24 ordinals left alone, and one compound — "ten-year-old" — which became
+"10-year-old" because the digits scan and the hyphen already carries the
+grammar.
+
 ## What is generated, and what is checked
 
 `lib/edwin-context.md` is the `/api/chat` system prompt. Two of its

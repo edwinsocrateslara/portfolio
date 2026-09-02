@@ -99,7 +99,7 @@ export function AboutPane() {
             the source fails the build. It used to be unguarded. */}
         <p className="type-name about-lede">
           In my downtime, I&apos;m usually bouldering or running races, camping
-          and hiking with my ten-year-old Alaskan Malamute.
+          and hiking with my 10-year-old Alaskan Malamute.
         </p>
 
         <hr className="about-rule" />

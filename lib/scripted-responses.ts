@@ -289,7 +289,7 @@ export function buildResponse(
       response: [
         {
           kind: "text",
-          text: "In my downtime, I'm usually bouldering or running races, camping and hiking with my ten-year-old Alaskan Malamute.",
+          text: "In my downtime, I'm usually bouldering or running races, camping and hiking with my 10-year-old Alaskan Malamute.",
         },
         {
           kind: "followups",

@@ -124,7 +124,7 @@ export const projects: Project[] = [
       {
         url: "/framer/retail-banking/image-2.jpg",
         alt:
-          "Bill payment flow across three screens: the biller list, the payment form with Now, Later and Ongoing scheduling options, and the confirmation.",
+          "Bill payment flow across 3 screens: the biller list, the payment form with Now, Later and Ongoing scheduling options, and the confirmation.",
       },
       {
         url: "/framer/retail-banking/image-3.jpg",
@@ -149,7 +149,7 @@ export const projects: Project[] = [
       "Meridian Credit Union adopted the new design across its entire ecosystem.",
     ],
     roleDescription:
-      "Senior product designer. I created a new design system and pushed for two controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
+      "Senior product designer. I created a new design system and pushed for 2 controversial additions: a price-matching feature and animations on positive actions like deposits and bill payments.",
     atStake:
       "Stakeholders wanted to keep the conservative look and feel of the old app, but we ran the risk of losing users due to a poor app experience.",
     decision:
@@ -173,12 +173,12 @@ export const projects: Project[] = [
       {
         url: "/framer/ai-investing/image-1.png",
         alt:
-          "Wallet home listing four cryptocurrency holdings under a combined total, each with its dollar value and quantity.",
+          "Wallet home listing 4 cryptocurrency holdings under a combined total, each with its dollar value and quantity.",
       },
       {
         url: "/framer/ai-investing/image-2.png",
         alt:
-          "Conversational investing across three screens: asking the assistant to check finances, typing a reply, and placing a $5,250 investment in IOTA after the assistant offers to send an analysis.",
+          "Conversational investing across 3 screens: asking the assistant to check finances, typing a reply, and placing a $5,250 investment in IOTA after the assistant offers to send an analysis.",
       },
       {
         url: "/framer/ai-investing/image-3.png",
@@ -272,7 +272,7 @@ export const projects: Project[] = [
       {
         url: "/framer/car-comparison/image-1.png",
         alt:
-          "Comparison tool at the start, with a Volkswagen preselected in the first slot and two empty slots inviting the shopper to add vehicles.",
+          "Comparison tool at the start, with a Volkswagen preselected in the first slot and 2 empty slots inviting the shopper to add vehicles.",
       },
       {
         url: "/framer/car-comparison/image-2.png",
@@ -329,9 +329,9 @@ export const projects: Project[] = [
       },
     ],
     challenge:
-      "After acquiring Complex, NTWRK needed to merge two platforms: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops. The goal was to create a unified media and shopping experience where music fans could browse Complex content and purchase both exclusive drops and evergreen merch.",
+      "After acquiring Complex, NTWRK needed to merge 2 platforms: Complex's massive media reach and NTWRK's exclusive access to celebrities, brands, and limited drops. The goal was to create a unified media and shopping experience where music fans could browse Complex content and purchase both exclusive drops and evergreen merch.",
     impacts: [
-      "launched with over 50 brands on day one",
+      "launched with over 50 brands on day 1",
       "currently receive approximately 1M monthly users",
       "supporting over $100M in revenue",
     ],
@@ -353,7 +353,7 @@ export const projects: Project[] = [
     previewImage: {
       url: "/framer/product-management/preview-image.png",
       alt:
-        "Seller dashboard product catalogue as a table of sneakers with price, quantity, category, handling time, shipping profile and created date, one row selected.",
+        "Seller dashboard product catalogue as a table of sneakers with price, quantity, category, handling time, shipping profile and created date, 1 row selected.",
     },
     images: [
       {
@@ -369,7 +369,7 @@ export const projects: Project[] = [
       {
         url: "/framer/product-management/image-3.png",
         alt:
-          "Product creation form with title, price and description fields, an image uploader showing two images added, and a shipping profile selector.",
+          "Product creation form with title, price and description fields, an image uploader showing 2 images added, and a shipping profile selector.",
       },
       {
         url: "/framer/product-management/image-4.png",
@@ -378,7 +378,7 @@ export const projects: Project[] = [
       },
     ],
     challenge:
-      "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
+      "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between 2 systems, which was confusing and inefficient, and sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
     impacts: [
       "Within the first year of launch: 400+ sellers use Seller Dashboard;",
       "Seller Dashboard manages 210,000+ products;",

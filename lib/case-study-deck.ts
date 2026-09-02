@@ -58,11 +58,11 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-02.webp",
-      alt: "Background slide introducing the Meridian project, with two screens from the redesigned app: an accounts list and an empty-state prompt to add a first e-Transfer contact.",
+      alt: "Background slide introducing the Meridian project, with 2 screens from the redesigned app: an accounts list and an empty-state prompt to add a first e-Transfer contact.",
     },
     {
       url: "/case-study/meridian/slide-03.webp",
-      alt: "Team slide listing an Area VP, senior and product managers, and five developers, beside the product designer contributions: research and workshops, user stories, wireframes and information architecture, UI, reviews, prototypes, user testing and developer handoff.",
+      alt: "Team slide listing an Area VP, senior and product managers, and 5 developers, beside the product designer contributions: research and workshops, user stories, wireframes and information architecture, UI, reviews, prototypes, user testing and developer handoff.",
     },
     {
       url: "/case-study/meridian/slide-04.webp",
@@ -70,11 +70,11 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-05.webp",
-      alt: "Four screens of the old Meridian app annotated in red, marking confusing navigation, no way back, information overload, and key products missing from the side menu.",
+      alt: "4 screens of the old Meridian app annotated in red, marking confusing navigation, no way back, information overload, and key products missing from the side menu.",
     },
     {
       url: "/case-study/meridian/slide-06.webp",
-      alt: "Three more old-app screens annotated in red, marking poor wayfinding, confusing verbiage, and weak hierarchy in the settings list.",
+      alt: "3 more old-app screens annotated in red, marking poor wayfinding, confusing verbiage, and weak hierarchy in the settings list.",
     },
     {
       url: "/case-study/meridian/slide-07.webp",
@@ -90,7 +90,7 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-10.webp",
-      alt: "Three redesigned confirmation screens, each with an illustrated character and a prompt asking what the customer wants to do next.",
+      alt: "3 redesigned confirmation screens, each with an illustrated character and a prompt asking what the customer wants to do next.",
     },
     {
       url: "/case-study/meridian/slide-11.webp",
@@ -118,15 +118,15 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-17.webp",
-      alt: "User testing feedback listing six changes made in response, including moving remote cheque deposit into its own section, updating confusing iconography, and repositioning the amount field.",
+      alt: "User testing feedback listing 6 changes made in response, including moving remote cheque deposit into its own section, updating confusing iconography, and repositioning the amount field.",
     },
     {
       url: "/case-study/meridian/slide-18.webp",
-      alt: "Screenshot feedback from the beta, four TestFlight panels each pairing a tester's annotated screenshot with their written comment.",
+      alt: "Screenshot feedback from the beta, 4 TestFlight panels each pairing a tester's annotated screenshot with their written comment.",
     },
     {
       url: "/case-study/meridian/slide-19.webp",
-      alt: "App Store reviews after launch, four and five star ratings praising the redesign, several with developer replies.",
+      alt: "App Store reviews after launch, 4 and 5 star ratings praising the redesign, several with developer replies.",
     },
     {
       url: "/case-study/meridian/slide-20.webp",

@@ -37,11 +37,11 @@ Today, I work in AI, designing products focused on workforce development and hel
 
 ## Design process
 
-I work in four loose stages: discover, define, validate, and deliver. The AI coach work I did at FutureFit AI shows this process at a smaller scale, but it can adapt depending on the project.
+I work in 4 loose stages: discover, define, validate, and deliver. The AI coach work I did at FutureFit AI shows this process at a smaller scale, but it can adapt depending on the project.
 
-FutureFit AI helps people find jobs, training programs, and new career paths. We were adding our AI coach, Miles, to three areas of the product: the homepage, job details, and career details.
+FutureFit AI helps people find jobs, training programs, and new career paths. We were adding our AI coach, Miles, to 3 areas of the product: the homepage, job details, and career details.
 
-The challenge was deciding which suggested prompts would be most useful across three different user types: active job seekers, career changers, and people just starting their careers.
+The challenge was deciding which suggested prompts would be most useful across 3 different user types: active job seekers, career changers, and people just starting their careers.
 
 My role was to determine which AI prompts should appear on each page, how they should be worded, and validate that people would actually use them.
 
@@ -65,7 +65,7 @@ From there, I narrowed the options and built prototypes directly in the producti
 
 **Validate**
 
-I tested the prototypes with 38 participants across our three user types.
+I tested the prototypes with 38 participants across our 3 user types.
 
 On the homepage, job details, and career details, I measured which AI chips people clicked first and which they said they'd be most likely to use.
 
@@ -121,9 +121,9 @@ I took on the project independently and designed and built it end to end over 14
 
 I built an internal tool that brings customer and staff feedback from multiple sources into one place and uses AI to evaluate it against the company's current strategy and technical architecture.
 
-The system produces two streams of work each week.
+The system produces 2 streams of work each week.
 
-The first is a Top 10, where ideas have to qualify against our strategy before being ranked based on things like strategic fit, urgency, and specificity. This means an idea with three votes can outrank one with thirty if it better supports an active company priority.
+The first is a Top 10, where ideas have to qualify against our strategy before being ranked based on things like strategic fit, urgency, and specificity. This means an idea with 3 votes can outrank one with 30 if it better supports an active company priority.
 
 The second is Quick Wins, smaller opportunities that have a clear solution, are technically bounded, and can deliver value without competing with the Top 10.
 
@@ -131,7 +131,7 @@ I also designed human oversight into the system. The model explains its reasonin
 
 I built the system using Next.js, Supabase, Claude, and API integrations with our feedback and engineering tools. When an idea is accepted, it can become an engineering ticket, the system tracks its status, and once it ships, the original feedback can be closed so the person who requested it hears back.
 
-The tool now works across a corpus of 457 feedback items, with roughly 300 evaluated during each weekly run and 10 strategic priorities surfaced for review alongside a separate stream of Quick Wins.
+The tool now works across a corpus of 457 feedback posts, with roughly 300 evaluated during each weekly run and 10 strategic priorities surfaced for review alongside a separate stream of Quick Wins.
 
 More importantly, it introduced a new way for the team to align on what to work on. Instead of prioritization being based on whichever feedback people happened to see or remember, we now have a shared process that connects customer and staff feedback to company strategy, technical feasibility, and opportunities the team can actually act on.
 
@@ -191,9 +191,9 @@ I track active and future projects in a shared spreadsheet, including priority, 
 
 I also proactively share progress and changes, so Product, Engineering, and other stakeholders know what's in progress, what's coming next, and where timelines or priorities have shifted.
 
-## Where I see myself in five years
+## Where I see myself in 5 years
 
-In five years, I hope I'm still learning and pushing myself to understand what's possible with AI. I'm really focused on learning how to harness these tools to create better products and services, and I see that as an ongoing journey.
+In 5 years, I hope I'm still learning and pushing myself to understand what's possible with AI. I'm really focused on learning how to harness these tools to create better products and services, and I see that as an ongoing journey.
 
 I'd also love to be teaching and sharing what I've learned, building tools and resources that support the broader community, while helping organizations create products where AI is at the core of the experience.
 
@@ -219,7 +219,7 @@ Lower-priority actions were moved to less prominent areas or outside the core au
 
 Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
 
-The experience also increased chat messages per show by 172% and average watch time by five minutes, directly improving the engagement metrics we had prioritized the interface around.
+The experience also increased chat messages per show by 172% and average watch time by 5 minutes, directly improving the engagement metrics we had prioritized the interface around.
 
 ## What I'm looking for in my next role
 
@@ -227,7 +227,7 @@ I want to work on AI-first products and have the freedom to help build the AI wo
 
 I'm looking for high autonomy within a collaborative team. I'm especially interested in new workflows where I can work directly in the codebase, move ideas from prototype to production quickly, ship frequently, and iterate on what works.
 
-I'm drawn to two kinds of problems. The first is high-urgency problems, where there's a real cost to not finding a solution quickly, such as finding work, accessing financial support.
+I'm drawn to 2 kinds of problems. The first is high-urgency problems, where there's a real cost to not finding a solution quickly, such as finding work, accessing financial support.
 
 The second is overlooked everyday problems: recurring frustrations that people have simply learned to live with. For example, climbers wear climbing shoes barefoot, so odor is a common problem, but there are few solutions designed specifically around that behavior. Something as simple as a foot powder or shoe treatment that fits naturally into their existing routine could solve it. I like finding those kinds of latent needs, where the value of the solution feels obvious once you see it.
 
@@ -273,7 +273,7 @@ I try to anticipate where someone is likely to go after completing a task. Rathe
 
 **4-point grid systems**
 
-I like using a system where spacing, sizing, and other measurements follow multiples of four. It creates consistency across the UI and makes components easier to scale and maintain.
+I like using a system where spacing, sizing, and other measurements follow multiples of 4. It creates consistency across the UI and makes components easier to scale and maintain.
 
 ## A disagreement with a teammate
 
@@ -363,7 +363,7 @@ We were able to preserve how customers naturally shop for vehicles while still k
 
 I'm motivated by finding problems where I can create something that has a strong impact.
 
-I'm drawn to two kinds of problems. The first is high-urgency problems, where there's a real cost to not finding a solution quickly, such as finding work or accessing financial support.
+I'm drawn to 2 kinds of problems. The first is high-urgency problems, where there's a real cost to not finding a solution quickly, such as finding work or accessing financial support.
 
 The second is overlooked everyday problems: recurring frustrations that people have simply learned to live with. For example, climbers wear climbing shoes barefoot, so odor is a common problem, but there are few solutions designed specifically around that behavior. Something as simple as a foot powder or shoe treatment that fits naturally into their existing routine could solve it.
 
@@ -371,7 +371,7 @@ I like uncovering those kinds of latent needs and building solutions where the v
 
 ## Outside work
 
-In my downtime, I'm usually bouldering or running races, camping and hiking with my ten-year-old Alaskan Malamute.
+In my downtime, I'm usually bouldering or running races, camping and hiking with my 10-year-old Alaskan Malamute.
 
 ## Currently reading
 
@@ -387,7 +387,7 @@ I'd make it easier to run and monitor multiple terminals at once, with flexible 
 
 ## Core design skills
 
-I'd say my three strongest areas are uncovering latent needs, gathering context and working cross-functionally, and technical execution.
+I'd say my 3 strongest areas are uncovering latent needs, gathering context and working cross-functionally, and technical execution.
 
 **Uncovering latent needs (9/10)**
 
@@ -405,7 +405,7 @@ I've become increasingly technical as a designer. I can work directly in codebas
 
 I try to handle conflict or disagreement directly and early. My first step is usually to speak with the person involved, understand their perspective, explain mine, and try to find common ground. Most disagreements can be resolved that way. If we genuinely can't resolve something ourselves, or it's an issue I feel strongly about, I'll ask my manager for perspective before deciding whether it needs to be escalated.
 
-One example was when someone made changes to my design work without discussing them with me first. I spoke with them directly and explained that my concern wasn't simply that the design had changed—it was that making changes without context could affect work already in flight, introduce inconsistencies, or create confusion for others working from those designs.
+1 example was when someone made changes to my design work without discussing them with me first. I spoke with them directly and explained that my concern wasn't simply that the design had changed—it was that making changes without context could affect work already in flight, introduce inconsistencies, or create confusion for others working from those designs.
 
 They understood my perspective and acknowledged that it should have been handled differently. We resolved it quickly and moved forward.
 
