@@ -63,16 +63,19 @@ const DATA = ["lib/projects.ts", "lib/vibe-projects.ts"]
 
 // Figures that legitimately have no counterpart in the project data. Each needs
 // a reason, because an exceptions map without one is an ignore list.
+//
+// IT HOLDS ONE ENTRY, and that is worth knowing rather than hiding. It briefly
+// held two: resume.txt rounded projects.ts's 106,372 to 106,000, and the pair
+// was written down here instead of reconciled. Edwin's ruling was that the two
+// files should agree rather than that the disagreement should be documented,
+// so the figure was fixed and the entry deleted. If this map ever grows a
+// second entry, ask the same question first — an exception is a last resort,
+// not a place to file a mismatch.
 const EXCEPTIONS = {
   "50,000":
     "Super.com's credit-building cashback card, in resume.txt. Super.com is an " +
     "Additional Role rather than one of the seven portfolio projects, so " +
     "lib/projects.ts has no entry that could state it.",
-  "106,000":
-    "resume.txt rounds. lib/projects.ts states \"106,372+ orders fulfilled\" for " +
-    "the seller dashboard. Rounding on a resume is ordinary, and the pair is " +
-    "written down here so it stays a decision rather than becoming a drift " +
-    "nobody noticed. If the resume is ever restated exactly, delete this line.",
 }
 
 const stripLineComments = (s, marker) =>

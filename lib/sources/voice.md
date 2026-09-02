@@ -199,7 +199,7 @@ I prioritized every element against those goals. Research showed that product de
 
 Lower-priority actions were moved to less prominent areas or outside the core auction interface. I used user testing and existing data to support these trade-offs with stakeholders.
 
-Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59K+ items.
+Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
 
 The experience also increased chat messages per show by 172% and average watch time by five minutes, directly improving the engagement metrics we had prioritized the interface around.
 

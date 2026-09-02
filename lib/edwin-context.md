@@ -14,7 +14,8 @@ He is based in Toronto, Ontario, Canada.
 
 - **Email:** edwinsocrateslara@gmail.com
 - **LinkedIn:** linkedin.com/in/edwinsocrateslara
-- **Portfolio:** edwinsocrates.com
+- **Portfolio:** this site. Do not refer a visitor elsewhere to see the work —
+  they are already on it.
 
 ## Tools & Methodologies
 
@@ -152,7 +153,7 @@ I led the end-to-end design of a live-selling and auction experience.
 
 **Key impacts:**
 - Within its first year of launch: auctions made up 63% of revenue, with a quarterly growth rate of 23%
-- over 2,269+ auction shows conducted, 59K+ items featured
+- over 2,269+ auction shows conducted, 59,000+ items featured
 - 172% increase in chat messages per show
 - 5 minute increase in average watch time.
 
@@ -216,8 +217,8 @@ I designed an e-commerce experience that integrated NTWRK into Complex.com's bra
 I created the primary tool for sellers to manage products on Complex NTWRK.
 
 **Key impacts:**
-- Within the first year of launch: nearly 400 sellers use Seller Dashboard;
-- Seller Dashboard manages 210K+ products;
+- Within the first year of launch: 400+ sellers use Seller Dashboard;
+- Seller Dashboard manages 210,000+ products;
 - 106,372+ orders fulfilled;
 - $10,500,000+ revenue generated
 
@@ -616,7 +617,7 @@ I prioritized every element against those goals. Research showed that product de
 
 Lower-priority actions were moved to less prominent areas or outside the core auction interface. I used user testing and existing data to support these trade-offs with stakeholders.
 
-Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59K+ items.
+Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
 
 The experience also increased chat messages per show by 172% and average watch time by five minutes, directly improving the engagement metrics we had prioritized the interface around.
 
@@ -910,5 +911,6 @@ Currently Lead Product Designer at FutureFit AI. Best reached by email.
 ### Contact
 
 - **Email:** edwinsocrateslara@gmail.com
-- **Portfolio:** edwinsocrates.com
 - **LinkedIn:** linkedin.com/in/edwinsocrateslara
+- **Portfolio:** this site. Do not refer a visitor elsewhere to see the work —
+  they are already on it.

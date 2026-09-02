@@ -315,7 +315,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
       "I needed to determine what information and actions were critical during a fast-moving auction and create a hierarchy that made it easy for people to understand the product and bid quickly.",
       "I prioritized every element against those goals. Research showed that product details, especially size, were critical, so they stayed prominent alongside price and the countdown. Bidding was the primary action, so I placed it within easy thumb reach and optimized it for speed.",
       "Lower-priority actions were moved to less prominent areas or outside the core auction interface. I used user testing and existing data to support these trade-offs with stakeholders.",
-      "Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59K+ items.",
+      "Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.",
       "The experience also increased chat messages per show by 172% and average watch time by five minutes, directly improving the engagement metrics we had prioritized the interface around.",
     ],
   },

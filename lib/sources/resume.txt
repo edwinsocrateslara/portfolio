@@ -2,7 +2,6 @@ EDWIN SOCRATES LARA
 
 edwinsocrateslara@gmail.com
 linkedin.com/in/edwinsocrateslara
-www.edwinsocrates.com
 
 
 PROFESSIONAL SUMMARY
@@ -96,8 +95,8 @@ Apr 2022 – Oct 2025
   172% increase in chat messages per show, and 5-minute increase in average
   show watch time.
 - Designed and iterated the Seller Dashboard, a critical product management
-  and order fulfillment tool utilized by 400+ sellers to process 106,000+
-  orders, generating over $10.5 million in total revenue.
+  and order fulfillment tool utilized by 400+ sellers to process
+  106,372+ orders, generating over $10,500,000+ in total revenue.
 - Led the end-to-end design integration during acquisition of Complex, merging
   e-commerce and media into a unified platform.
 

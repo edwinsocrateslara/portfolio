@@ -243,7 +243,7 @@ export const projects: Project[] = [
       "Users were window-shopping but not buying. Engagement was low and watch-time was short. We needed to create a feature that would increase user engagement and revenue on the platform.",
     impacts: [
       "Within its first year of launch: auctions made up 63% of revenue, with a quarterly growth rate of 23%",
-      "over 2,269+ auction shows conducted, 59K+ items featured",
+      "over 2,269+ auction shows conducted, 59,000+ items featured",
       "172% increase in chat messages per show",
       "5 minute increase in average watch time.",
     ],
@@ -380,8 +380,8 @@ export const projects: Project[] = [
     challenge:
       "Sellers had to link Shopify stores to the Complex NTWRK platform, which created constant problems, such as inventory uploaded improperly and inaccurate product count data. Sellers had to navigate between two systems, which was confusing and inefficient, and sellers were expected to be familiar with Shopify, which was often not the case.\n\nWe needed a custom product management tool that worked with Complex NTWRK’s unique features, while feeling familiar to users coming from other platforms.",
     impacts: [
-      "Within the first year of launch: nearly 400 sellers use Seller Dashboard;",
-      "Seller Dashboard manages 210K+ products;",
+      "Within the first year of launch: 400+ sellers use Seller Dashboard;",
+      "Seller Dashboard manages 210,000+ products;",
       "106,372+ orders fulfilled;",
       "$10,500,000+ revenue generated",
     ],
