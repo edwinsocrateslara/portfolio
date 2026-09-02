@@ -1,94 +1,122 @@
-// Rule: a number the chat states must also be a number the project data states.
+// Rule: a figure the site states must be the figure the project data states.
 //
-// ── WHY THIS EXISTS ──────────────────────────────────────────────────────
-// lib/scripted-responses.ts emits fifteen prose strings. Fourteen of them are
-// authored inline with no upstream — they are navigational copy ("Which one
-// catches your interest?"), not Edwin's voice, and moving them into voice.md
-// would be filing them under the wrong thing. So they cannot be verbatim-
-// checked the way voice-answers.ts is.
+// ── WHAT THIS GUARDS, AND WHY IT MOVED ───────────────────────────────────
+// It began pointed at ONE string — the walk-through answer in
+// scripted-responses.ts, which restated four of lib/projects.ts's outcome
+// figures in prose. That answer is gone: the portfolio is the walk through,
+// and a paragraph summarising seven projects duplicated a rail that already
+// lists all of them.
 //
-// But four of them carry FIGURES, and those figures are also stated in
-// lib/projects.ts:
+// Deleting the gate with it would have been wrong. The duplication MOVED, it
+// did not disappear. Mapped across the repo, the six figures are stated in
+// seven files, and the gates tie them into three closed loops:
 //
-//   370,000   Meridian customers        walk-through answer + retail-banking tagline
-//   112,000   Volkswagen customers      walk-through answer + car-comparison impacts
-//        63   % of NTWRK revenue        walk-through answer + live-selling impacts
-//       100   $M e-commerce revenue     walk-through answer + ecommerce impacts
+//   A  projects.ts ──check:context──► edwin-context.md § Projects
+//   B  voice.md    ──check:voice────► voice-answers.ts
+//                  ──check:context──► edwin-context.md § In His Own Words
+//   C  meridian-case-study.txt ──check:context──► edwin-context.md § Deck
 //
-// That is the same fact in two files with nothing keeping them in step, and it
-// is the walk-through answer — the FIRST front-door chip, the most-read content
-// on the site. Change an impact in projects.ts and the reveal says one number
-// while the chat's summary says another, in the same conversation.
+// Every copy inside edwin-context.md sits in a generated block, so the system
+// prompt cannot drift. But NOTHING CONNECTED LOOP A TO LOOP B. projects.ts
+// says 63%, voice.md says 63%, and no gate compared them; the old gate was the
+// only thread between the two, and it ran through the file being emptied.
 //
-// ── WHAT IT ASSERTS, AND WHAT IT DELIBERATELY DOES NOT ───────────────────
-// It asserts the NUMBER, not the prose. There is no claim here that the
-// sentences are traceable to anything; they are not, and a gate that implied
-// otherwise would be worse than none. What is checkable is narrow and worth
-// checking: every numeral the chat says out loud also appears in the project
-// data it is summarising.
+// So this now reads the three places a figure is WRITTEN BY HAND and asserts
+// each against the project data:
 //
-// SCOPED TO THE EMITTED TEXT. Only `text:` string literals are read — the
-// things that become a bubble or a chip label. Comments, trigger lists, slice
-// indices, timing constants and every other numeral in the file are invisible
-// to it, because none of them is something a visitor reads.
+//   lib/sources/voice.md         Edwin's own words. The SOURCE, not
+//                                voice-answers.ts — checking the derived copy
+//                                would leave the original unguarded, and the
+//                                source is where an edit actually happens.
+//   lib/scripted-responses.ts    the emitted `text:` literals.
+//   lib/sources/resume.txt       states five of the six and NO gate read it.
+//                                It is also the file that becomes the PDF a
+//                                recruiter sees, and its wording had already
+//                                started to diverge — "63% of company revenue"
+//                                against projects.ts's "63% of revenue".
 //
-// NO ALLOWLIST, on purpose. A number in the chat's prose that is NOT in the
-// project data is either a typo or a claim with no evidence behind it, and
-// both are things to look at rather than to register. If a legitimate one ever
-// appears the failure explains the choice; adding an escape hatch before there
-// is anything to escape is how a gate becomes decorative.
+// lib/case-study-deck.ts is deliberately NOT read. Its 370,000 is alt text
+// transcribed from a slide image; the deck is a historical record of what was
+// presented, not a live claim about today.
+//
+// ── WHAT COUNTS AS A FIGURE ──────────────────────────────────────────────
+// A number with a THOUSANDS SEPARATOR or a trailing PERCENT. That filter is
+// the whole reason this can read prose files without crying wolf: it skips the
+// 690 records, 153 conversations and 38 participants in the design-process
+// answer, "WCAG 2.2 AA", the 9/10 ratings in core skills, every date, and every
+// day-count in the sizing system — none of which is a project outcome.
+//
+// It also skips "59K+", which IS one. A K-suffixed figure has neither mark.
+// Stated rather than hidden: widening the pattern to catch it would also catch
+// prose that has nothing to do with outcomes, and one missed figure is a better
+// trade than a gate people learn to ignore.
+//
+// ── THE COUNT PER FILE IS PART OF THE REPORT ─────────────────────────────
+// A file that contributes zero figures is PRINTED as zero rather than passing
+// silently. This repo has found five gates that reported PASS while guarding
+// nothing; the count is what makes that visible the day it happens.
 //
 //   node scripts/check-numbers.mjs
 import { readFileSync } from "fs"
 
-const SPEAKER = "lib/scripted-responses.ts"
 const DATA = ["lib/projects.ts", "lib/vibe-projects.ts"]
 
-const stripComments = (s) =>
-  s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "")
-
-// The emitted prose: `text: "…"`. Template literals and computed values are
-// not matched and not asserted — a number built at runtime is not a literal
-// somebody typed, and this checks what was typed.
-const said = stripComments(readFileSync(SPEAKER, "utf8"))
-const strings = [...said.matchAll(/text:\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1])
-
-const data = DATA.map((f) => readFileSync(f, "utf8")).join("\n")
-
-// A figure is a run of digits with optional thousands separators. The trailing
-// %, +, M or K and a leading $ are carried into the report so a human reads
-// "$100M" rather than "100", but the COMPARISON is on the digits: projects.ts
-// writes "$100M in revenue" where the chat writes "~$100M+", and the unit is
-// the same fact wearing different punctuation.
-const FIGURE = /(\$?)(\d[\d,]*(?:\.\d+)?)\s*(%|M\b|K\b)?(\+)?/g
-
-const found = new Map() // digits -> { shown, contexts: [] }
-for (const s of strings) {
-  FIGURE.lastIndex = 0
-  let m
-  while ((m = FIGURE.exec(s)) !== null) {
-    const [, dollar, digits, unit, plus] = m
-    const shown = `${dollar}${digits}${unit ?? ""}${plus ?? ""}`
-    const entry = found.get(digits) ?? { shown, contexts: [] }
-    entry.contexts.push(s.slice(Math.max(0, m.index - 40), m.index + 26).replace(/\s+/g, " "))
-    found.set(digits, entry)
-  }
+// Figures that legitimately have no counterpart in the project data. Each needs
+// a reason, because an exceptions map without one is an ignore list.
+const EXCEPTIONS = {
+  "50,000":
+    "Super.com's credit-building cashback card, in resume.txt. Super.com is an " +
+    "Additional Role rather than one of the seven portfolio projects, so " +
+    "lib/projects.ts has no entry that could state it.",
+  "106,000":
+    "resume.txt rounds. lib/projects.ts states \"106,372+ orders fulfilled\" for " +
+    "the seller dashboard. Rounding on a resume is ordinary, and the pair is " +
+    "written down here so it stays a decision rather than becoming a drift " +
+    "nobody noticed. If the resume is ever restated exactly, delete this line.",
 }
 
-// Bounded on both sides so "100" does not match inside "1000" or "100,000".
-const statedInData = (digits) =>
-  new RegExp(`(?<![\\d,.])${digits.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d,])`).test(data)
+const stripLineComments = (s, marker) =>
+  s.split("\n").filter((l) => !l.trim().startsWith(marker)).join("\n")
+
+/** Where the prose is, per file. Reading a whole .ts would pick up code. */
+const SOURCES = {
+  "lib/sources/voice.md": (s) => s,
+  "lib/sources/resume.txt": (s) => stripLineComments(s, "#"),
+  "lib/scripted-responses.ts": (s) =>
+    [...stripLineComments(s.replace(/\/\*[\s\S]*?\*\//g, ""), "//")
+      .matchAll(/text:\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]).join("\n"),
+}
+
+// A thousands separator, or a trailing percent. See the note above.
+const FIGURE = /\d[\d,]*(?:\.\d+)?%|\d{1,3}(?:,\d{3})+/g
+
+const data = DATA.map((f) => readFileSync(f, "utf8")).join("\n")
+const inData = (core) =>
+  new RegExp(`(?<![\\d,.])${core.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d,])`).test(data)
 
 const problems = []
-for (const [digits, { shown, contexts }] of found) {
-  if (statedInData(digits)) continue
-  problems.push(
-    `${shown} is said by the chat and is not in the project data\n` +
-    `      …${contexts[0]}…\n` +
-    `      Either the figure changed in ${DATA[0]} and this sentence did not\n` +
-    `      follow it, or the chat is stating a number nothing backs. If it is\n` +
-    `      genuinely not a project figure, that is the thing to look at.`
-  )
+const counts = []
+for (const [file, extract] of Object.entries(SOURCES)) {
+  const text = extract(readFileSync(file, "utf8"))
+  const found = new Map()
+  for (const m of text.matchAll(FIGURE)) {
+    if (!found.has(m[0])) {
+      found.set(m[0], text.slice(Math.max(0, m.index - 44), m.index + 20).replace(/\s+/g, " "))
+    }
+  }
+  let excused = 0
+  for (const [fig, context] of found) {
+    if (EXCEPTIONS[fig]) { excused++; continue }
+    if (inData(fig.replace(/%$/, ""))) continue
+    problems.push(
+      `${fig} in ${file} is not in the project data\n` +
+      `      …${context}…\n` +
+      `      Either the figure changed in ${DATA[0]} and this did not follow it,\n` +
+      `      or it is a claim nothing backs. If it genuinely has no project\n` +
+      `      counterpart, add it to EXCEPTIONS with the reason.`
+    )
+  }
+  counts.push({ file, n: found.size, excused })
 }
 
 if (problems.length) {
@@ -97,8 +125,8 @@ if (problems.length) {
   console.error("")
   process.exit(1)
 }
-const list = [...found.values()].map((v) => v.shown).join(", ")
-console.log(
-  `check:numbers — PASS, ${found.size} figure(s) in ${strings.length} emitted string(s) ` +
-  `all stated in the project data: ${list}`
-)
+console.log("check:numbers — PASS")
+for (const { file, n, excused } of counts) {
+  const note = n === 0 ? "  ← states none" : excused ? `  (${excused} excepted)` : ""
+  console.log(`  ${String(n).padStart(2)} figure(s)  ${file}${note}`)
+}

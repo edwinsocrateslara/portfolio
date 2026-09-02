@@ -35,25 +35,8 @@ const SURFACE = {
   downtime: 11,
 } as const
 
-// The one place project chips earn a slot. Everywhere else they duplicate the
-// rail; here the answer has just narrated all seven and "which one?" is the
-// actual next step. Labels are matched by TEXT, not by the slug they carry —
-// "How did the live-selling work?" used to sit here with a hyphen while the
-// matcher tests "live selling" with a space, so it resolved only because the
-// slug bypassed the text match and broke the moment anyone typed it.
-const PROJECT_HANDOFF_CHIPS = [
-  { text: "Tell me about FutureFit AI", slug: "ai-workforce-development" },
-  { text: "Show me the Meridian redesign", slug: "retail-banking" },
-  { text: "How did the live selling work?", slug: "live-selling" },
-]
 
 export const SCRIPTED_TOPICS: ScriptedTopic[] = [
-  {
-    id: "walk-through",
-    chip: "Walk me through your work",
-    placement: "front-door",
-    chipOrder: 1,
-  },
   {
     // RETIRED as a scripted answer; the id stays only in this note. It held two
     // inline paragraphs — a Meridian one and a Volkswagen one — that were never
@@ -221,51 +204,22 @@ export function buildResponse(
   }
 
   // "Walk me through your work" - overview of all projects.
-  // SCRIPTED_TOPICS "walk-through"
-  if (
-    t.includes("walk me through") ||
-    t.includes("show me your work") ||
-    t.includes("your projects") ||
-    t.includes("portfolio")
-  ) {
-    return {
-      response: [
-        {
-          kind: "text",
-          text: "I'll give you the highlights — seven projects across AI, fintech, e-commerce, and automotive.",
-        },
-        {
-          kind: "text",
-          text: "**Most recent:** I'm currently at **FutureFit AI**, designing an AI career coach for job-seekers. Before that, I was at **Complex NTWRK**. I also helped build and release the MVP for **Coinley AI**, a crypto investing platform on the App Store.",
-        },
-        {
-          kind: "text",
-          text: "**Fintech:** Led the end-to-end redesign of **Meridian Credit Union's** mobile apps — 370,000+ customers, overwhelmingly positive app store reviews after launch.",
-        },
-        {
-          kind: "text",
-          text: "**E-commerce:** At **Complex NTWRK**, I designed their live-selling and auction experience (63% of revenue in year one), plus the seller dashboard and the e-commerce integration post-acquisition (~$100M+ revenue).",
-        },
-        {
-          kind: "text",
-          text: "**Automotive:** Built a cross-brand car comparison tool for **Volkswagen** that serves 112,000+ customers across Canada on a monthly basis.",
-        },
-        {
-          kind: "followups",
-          text: "Which one catches your interest?",
-          chips: PROJECT_HANDOFF_CHIPS,
-        },
-      ],
-      projectSlug: null, // Overview, not a specific project
-    }
-  }
-
-  // NOTE: there is deliberately no scripted answer for "how do you design
-  // with AI" / design-process questions. The previous one asserted a design
-  // philosophy with no basis in any source file. Until Edwin writes it in
-  // lib/sources/voice.md, these fall through to the API, whose system prompt
-  // refuses anything not in the reference document.
-
+  // THE WALK-THROUGH ANSWER IS GONE, and so are the three project chips it
+  // ended with — "Tell me about FutureFit AI", "Show me the Meridian
+  // redesign", "How did the live selling work?". They were defined once and
+  // emitted from one place, this branch, so they left with it.
+  //
+  // The reason was already written down, on project-reveal's noChip note,
+  // before there were chips to apply it to: "Seven rail rows and three sampler
+  // cards already point at the projects. A chip naming one duplicates the rail
+  // and spends a slot the chat could use on something only the chat answers."
+  // The walk-through answer was a fourth copy of that navigation, and the
+  // first thing a visitor was offered.
+  //
+  // "walk me through", "show me your work", "your projects" and "portfolio"
+  // now fall to the model, which answers them from the generated Projects
+  // section — seven projects with their figures, where this covered four in
+  // prose. Verified against the live endpoint before removing this.
   // Resume. SCRIPTED_TOPICS "resume"
   if (t.includes("resume") || t.includes("résumé") || t.includes("cv")) {
     return {

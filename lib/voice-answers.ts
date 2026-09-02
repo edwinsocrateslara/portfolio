@@ -83,7 +83,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
     triggers: ["ai tools", "ai in your workflow", "ai workflow", "agentic", "use ai in your"],
     chip: "How do you use AI in your workflow?",
     placement: "front-door",
-    chipOrder: 4,
+    chipOrder: 3,
     paragraphs: [
       "**Planning and problem solving**",
       "I use AI as a thinking partner when working through ambiguous or complex problems. That might mean breaking down a large product initiative, exploring different approaches, planning a prototype or internal tool, or working through technical constraints and implementation decisions before I start building.",
@@ -127,7 +127,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
     triggers: ["about yourself", "your background", "how did you get into", "career path"],
     chip: "Tell me about your background",
     placement: "front-door",
-    chipOrder: 2,
+    chipOrder: 1,
     paragraphs: [
       "My name is Edwin, and my path into product design started somewhat indirectly. I began in advertising, where I found myself drawn to the graphic design side of the program. That interest led me to study graphic design, where I got to explore visual design more deeply. From there, I completed a postgraduate program in interactive design, which introduced me to user experience design and ultimately set me on the path I'm on today.",
       "I got my start professionally at a small web and app design studio before moving into fintech, where I worked on digital products for several major Canadian financial institutions, including Bank of Montreal, Meridian Credit Union, and Toronto-Dominion Bank.",
@@ -157,7 +157,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "challenging-project",
     triggers: ["challenging project", "hardest project", "difficult project", "toughest"],
-    chip: "What's the most challenging project you've worked on?",
+    chip: "Tell me about a challenging project.",
     placement: "rotation",
     paragraphs: [
       "While working on Volkswagen's vehicle comparison tool, leadership wanted customers to compare VW models only with other VW vehicles.",
@@ -210,7 +210,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
     triggers: ["next role", "looking for in", "ideal role", "what kind of role", "new role", "hiring"],
     chip: "What are you looking for in your next role?",
     placement: "front-door",
-    chipOrder: 3,
+    chipOrder: 2,
     paragraphs: [
       "I want to work on AI-first products and have the freedom to help build the AI workflows, tools, and infrastructure that support how the organization works.",
       "I'm looking for high autonomy within a collaborative team. I'm especially interested in new workflows where I can work directly in the codebase, move ideas from prototype to production quickly, ship frequently, and iterate on what works.",

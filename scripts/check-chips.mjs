@@ -69,8 +69,10 @@ const { frontDoorChips, rotationPool, routable } = await import("../lib/chips.ts
 // voice.md. Leaving the probe behind made the self-test fail correctly —
 // probing "stakeholder" classified as voice:difficult-stakeholders, which is
 // the new truth — so the probe had to go with the branch it fingerprinted.
+// `walk-through` was here too, and went the same way as `stakeholder`: the
+// branch it fingerprinted no longer exists, so the probe would classify
+// "walk me through" as an API fallthrough and fail the self-test correctly.
 const SCRIPTED_PROBES = {
-  "walk-through": "walk me through",
   downtime: "downtime",
   resume: "resume",
   deck: "the deck",
