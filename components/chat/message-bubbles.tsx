@@ -432,13 +432,43 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
       {local && (
         <span
           className="type-label"
+          // ARIA-HIDDEN, and the line below is why. The card's accessible name
+          // is built from its contents, and it read "PDF Edwin Socrates Lara —
+          // Resume 2026 PDF (downloads the file)" — read from the accessibility
+          // tree, not inferred from the JSX. The format is announced twice
+          // because it is PRINTED twice: this badge, and the muted line under
+          // the title. A sighted reader takes both in as one thing; a screen
+          // reader says it twice.
+          //
+          // Same shape as the deck grid's "Open slide 3 of 21: Team slide…" and
+          // the same resolution: the visible thing stays, the duplicate
+          // announcement goes. The badge is the redundant one because the line
+          // below is real text in the reading order, where this is a graphic
+          // device that happens to be made of letters.
+          aria-hidden="true"
           style={{
             // 34 -> 32 to land on the grid; the glyph also grew 8px -> 12px.
-            width: "var(--space-32)",
-            height: "var(--space-32)",
+            //
+            // THEN 32 -> 40. At 32 the ink ran 25.2px wide — 3 mono glyphs at
+            // 7.2 advance plus 3 x 1.2 tracking — inside a 32px box with a 1px
+            // border, which is 2.4px of air per side. That is a box drawn
+            // AROUND the letters rather than one containing them. 40 gives 6.4
+            // and stays on the 4px grid.
+            //
+            // THERE IS NO `padding` HERE TO INCREASE. The box is a fixed square
+            // that flex-centres its text, so its only lever is size against the
+            // type step. Said out loud because "add some padding" is the
+            // obvious instruction and it would do nothing.
+            width: "var(--space-40)",
+            height: "var(--space-40)",
             flexShrink: 0,
             border: "1px solid var(--hairline-strong)",
-            borderRadius: "var(--bureau-radius-media)",
+            // --bureau-radius-thumb, NOT a smaller --bureau-radius-media. That
+            // 8px token has 3 other consumers — .about-slot, the image bubble
+            // and the 21 deck thumbnails — so editing it would have rounded the
+            // photographs differently. 4px already exists as its own step, so
+            // this points at a different token instead of changing a shared one.
+            borderRadius: "var(--bureau-radius-thumb)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

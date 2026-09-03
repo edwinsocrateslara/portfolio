@@ -316,8 +316,24 @@ export function buildResponse(
     return {
       response: [
         {
+          // REPO-AUTHORED, and the only place this sequence exists. Checked
+          // before changing it: no INLINE verbatim declaration, so check:voice
+          // does not assert it; no figures, so check:numbers has nothing to
+          // hold; check:context does not read this file. Grepping the run and
+          // every adjacent pair of names returns this line and nothing else.
+          // edwin-context.md:33 lists the contracting sub-clients — a different
+          // list, generated from resume.txt, answering a different question.
+          //
+          // VOLKSWAGEN IS A CLIENT AND THE OTHER FIVE ARE EMPLOYERS.
+          // resume.txt files it under Contracting, and the previous version of
+          // this sentence carried that — "the contracting years including
+          // Volkswagen". Flattening it into the run is a deliberate
+          // simplification for a one-line chat answer, and it agrees with the
+          // rail, which already shows VOLKSWAGEN / Car Comparison as a peer
+          // card beside the rest. Written down so the distinction is not lost
+          // by accident the next time somebody reconciles the two.
           kind: "text",
-          text: "My résumé — Complex NTWRK, Super.com, Backbase, Meridian, the contracting years including Volkswagen, and now FutureFit AI.",
+          text: "Here's my résumé, covering my work across Complex NTWRK, Super.com, Backbase, Meridian, Volkswagen, and most recently FutureFit AI.",
         },
         { kind: "doc-link", docKey: "resume" },
         {

@@ -29,6 +29,14 @@ export const DOCS = {
     // than assumed: check:docs fails if formats[0].url and url disagree. Two
     // ways to say which file is the default is two things to keep in
     // agreement by hand, and this is the cheap way out of it.
+    //
+    // WHY THE PDF AND NOT THE DOCX, reviewed and confirmed rather than
+    // inherited. A PDF renders identically on every machine, opens without an
+    // application, and cannot repaginate on somebody else's setup — a résumé
+    // that reflows in a stranger's Word is a résumé they read in a layout
+    // nobody designed. The DOCX depends on the recipient having Word and is
+    // offered for the case that wants it, which is editing rather than
+    // reading. Recorded so this is not reopened as an open question.
     url: "/edwin-lara-resume-2026.pdf",
     formats: [
       { ext: "pdf", label: "PDF", url: "/edwin-lara-resume-2026.pdf" },
