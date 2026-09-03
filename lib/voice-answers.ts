@@ -471,7 +471,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "salary",
-    triggers: ["salary", "compensation", "notice period", "how much notice", "start date", "when can you start", "availability", "day rate", "your rate", "hourly rate", "pay expectations", "pay range", "what do you charge"],
+    triggers: ["salary", "compensation", "notice period", "how much notice", "start date", "when can you start", "availability", "are you available", "when are you available", "currently available", "day rate", "your rate", "hourly rate", "pay expectations", "pay range", "what do you charge"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "I'm available to start immediately. My salary expectations are flexible and depend on the overall opportunity, including the scope of the role, nature of the work, location, equity, benefits, and total compensation package.",
