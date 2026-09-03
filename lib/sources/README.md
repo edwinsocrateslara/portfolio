@@ -73,6 +73,86 @@ Applied across the content layer in one pass: 38 conversions, 11 pronouns and
 "10-year-old" because the digits scan and the hyphen already carries the
 grammar.
 
+## Alt text describes the frame
+
+**Alt says what is in the image, not what the thing in it does.** "Product
+catalogue table with bulk actions for delete, duplicate, edit and filter" — not
+"the seller's inventory management tool".
+
+THE TEST: if the sentence would still be true of a DIFFERENT screenshot of the
+same product, it is describing the product and not the frame. It has to fail
+that test to be alt text.
+
+**Every alt stands alone.** No "the same…", no "3 more…", no reference to an
+image before or after it, and no assumed reading order. The lightbox opens at
+any index and a screen reader hears one image at a time — an alt that depends
+on its neighbour is unresolvable by the person it was written for.
+
+**Describe, don't interpret — and don't drop the frame's own headline fact.**
+Elements, arrangement, the words on screen, colour where it distinguishes
+something. Not intent ("2 empty slots inviting the shopper to…"), not behaviour
+a still cannot show ("showing how the layout reflows"), not mood.
+
+The second half of that is the one that was actually being broken. A slide
+headed "BETA TEST WITH 546 USERS" whose alt describes only the panels below the
+headline has left out the single thing the slide exists to say. If a figure or a
+sentence IS the content of the frame, the alt carries it. Transcribing what a
+slide or a review says is description, not interpretation — the words are in the
+frame.
+
+**32 words or fewer.** There is no minimum. A title card holding 2 words earns a
+10-word alt and padding it to a house length is worse than brevity. The ceiling
+exists because a 37-word single sentence with 9 comma-separated items is a list
+you lose your place in when it is read aloud.
+
+**Neutral register for UI and slides; first person for photographs of Edwin.**
+Screens and slides have no person in them and take a noun phrase. The About
+photographs are the stated exception and read "Me part-way up an indoor
+bouldering wall", because a third-person description of Edwin on Edwin's own
+site reads as though somebody else wrote it. The pane around them is already in
+his voice.
+
+**Don't duplicate a visible caption.** The About photographs are the only images
+on the site with one. The caption is for everybody; the alt is for someone who
+cannot see the frame. If the caption says "10-year-old Alaskan Malamute", the
+alt says what the dog is doing and where, and says the breed and the age
+nowhere.
+
+**Counts are digits.** See "Numbers are written as digits" above — the same
+rule, the same exclusions. It already names `alt` as in scope.
+
+**Every alt ends in a full stop.** All 50 written before this rule existed
+already did; it is written down so the fifty-first does too.
+
+### What the rule does NOT cover
+
+**Decorative images have no alt, and that is a claim rather than an omission.**
+A thumbnail beside its own visible title is announced twice if it has one.
+`previewImage` in `lib/projects.ts` and `lib/vibe-projects.ts` is decorative by
+decision — both renderers hard-code `alt=""` and say why — so the field CANNOT
+carry alt: `PreviewImage` has no `alt` property and writing one is a TypeScript
+error rather than a lint finding. Six descriptions, roughly 140 words, were
+written for it and rendered nowhere before that change.
+
+**`aria-label` on a control that wraps an image is not alt.** The deck grid's
+button announces "Open slide 3 of 21" and appends the slide's alt. That prefix
+is the component's copy, and a consumer that prefixes alt must not repeat a word
+the alt already owns — which is a change to the component, never to the alt.
+
+**Not code comments, and not visible captions.** A caption is governed by the
+numerals rule like any other visible copy, but its length and register are a
+design decision and this document has no opinion about them.
+
+**Not accuracy.** `npm run check:alt` can refuse alt that is absent, padded,
+cross-referential or wrongly prefixed. It cannot compare a string to a `.webp`,
+so an alt that confidently describes the wrong screenshot passes every check
+there is. That one is read by a person or it is not read at all.
+
+Applied across the set in one pass: 61 image entries, 50 written. 6 preview
+strings deleted with the type change, 6 alts reworked, 2 given the fact their
+frame leads with, and 1 corrected — it called a marketing site rendered on a
+phone "the mobile app".
+
 ## What is generated, and what is checked
 
 `lib/edwin-context.md` is the `/api/chat` system prompt. Two of its

@@ -98,7 +98,7 @@ export const vibeProjects: Project[] = [
           // seven use — the role IS the name here, and it does not collide
           // with dashboard.webp beside it, which is the 16:9 reveal image of
           // the same screen.
-          previewImage: { url: "/framer/futurefit-ideas-dashboard/preview-image.webp", alt: "" },
+          previewImage: { url: "/framer/futurefit-ideas-dashboard/preview-image.webp" },
           // Slot order here is DECLARATION order, not render order — the vibe
           // flow places them; see lib/project-flow.ts.
           //

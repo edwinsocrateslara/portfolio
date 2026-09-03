@@ -1,10 +1,38 @@
 export interface ProjectImage {
   url: string
   // `alt` is written here, from looking at the images. There is nothing
-  // upstream to derive it from and nothing to check it against.
+  // upstream to derive it from and nothing to check it against by machine —
+  // see "Alt text describes the frame" in lib/sources/README.md for the rule
+  // it is written to, and `npm run check:alt` for the part of that rule a
+  // program can hold.
+  //
   // It is for screen readers and is deliberately excluded from the generated
   // section of lib/edwin-context.md, so the chat never quotes it back.
   alt: string
+}
+
+/** A rail and sampler thumbnail. NO `alt`, and that is the whole point of the
+ *  type existing.
+ *
+ *  ── WHY THIS IS NOT A ProjectImage ────────────────────────────────────────
+ *  These thumbnails are DECORATIVE, decided twice and written down twice:
+ *  sidebar.tsx and project-sampler.tsx both hard-code `alt=""`, and the
+ *  sampler's comment gives the reason — "the client and subtitle below name
+ *  the project, so alt="" keeps a screen reader from hearing it three times".
+ *  scripts/check-alt.mjs exempts the field on the same grounds.
+ *
+ *  It was `ProjectImage` anyway, so `alt` was required, so six projects
+ *  carried 19-29 word descriptions of their thumbnails. Roughly 140 words,
+ *  reviewed and maintained, read by nothing — both call sites ignore the field
+ *  entirely. Two comments and a gate exemption all said "decorative" while the
+ *  data said otherwise, and nothing could tell.
+ *
+ *  A TYPE IS THE RIGHT INSTRUMENT HERE. Writing alt on a preview is now a
+ *  compile error rather than a lint finding, and `tsc` is a better gate than
+ *  check:alt: it cannot be skipped, it names the line, and it runs on every
+ *  build already. */
+export interface PreviewImage {
+  url: string
 }
 
 export interface Project {
@@ -43,7 +71,7 @@ export interface Project {
   // Lead, a few blocks apart in the same conversation.
   role: string
   status: "live" | "wip"
-  previewImage: ProjectImage
+  previewImage: PreviewImage
   images: ProjectImage[]
 
   /** Headed prose sections, in render order. OPTIONAL and read by ONE flow.
@@ -118,7 +146,6 @@ export const projects: Project[] = [
     // figures.
     previewImage: {
       url: "/framer/ai-workforce-development/preview-image.webp",
-      alt: "",
     },
     images: [
       {
@@ -150,8 +177,6 @@ export const projects: Project[] = [
     status: "live",
     previewImage: {
       url: "/framer/retail-banking/preview-image.png",
-      alt:
-        "Accounts screen showing Deposits tab with a total balance and a chequing account, over the bank's multi-coloured arc graphic.",
     },
     images: [
       {
@@ -204,8 +229,6 @@ export const projects: Project[] = [
     status: "live",
     previewImage: {
       url: "/framer/ai-investing/preview-image.png",
-      alt:
-        "Crypto wallet totalling just over $20,000, with separate Bitcoin, Dash, Ethereum and Litecoin holdings showing dollar value and coin amount.",
     },
     images: [
       {
@@ -226,7 +249,7 @@ export const projects: Project[] = [
       {
         url: "/framer/ai-investing/image-4.png",
         alt:
-          "Marketing site and mobile app side by side, headlined \"A personal broker for cryptocurrency\" with an App Store download link and a preview of the chat interface.",
+          "The marketing site on a laptop and the same site on a phone, headlined \"A personal broker for cryptocurrency\", with an App Store link and screenshots of the chat.",
       },
     ],
     challenge:
@@ -252,8 +275,6 @@ export const projects: Project[] = [
     status: "live",
     previewImage: {
       url: "/framer/live-selling/preview-image.png",
-      alt:
-        "Live auction stream with a seller presenting sneakers, viewer comments scrolling over the video, and a bid panel showing the current price, a 30-second countdown and a bid button.",
     },
     images: [
       {
@@ -303,14 +324,12 @@ export const projects: Project[] = [
     status: "live",
     previewImage: {
       url: "/framer/car-comparison/preview-image.png",
-      alt:
-        "Vehicle comparison tool with a suggested Volkswagen Beetle in the first slot, a Mazda in the second, an empty third slot, and a Compare Vehicles button.",
     },
     images: [
       {
         url: "/framer/car-comparison/image-1.png",
         alt:
-          "Comparison tool at the start, with a Volkswagen preselected in the first slot and 2 empty slots inviting the shopper to add vehicles.",
+          "Comparison tool at the start, with a 2022 VW Beetle preselected in the first slot, 2 empty slots, and a Compare Vehicles button.",
       },
       {
         url: "/framer/car-comparison/image-2.png",
@@ -351,19 +370,17 @@ export const projects: Project[] = [
     status: "live",
     previewImage: {
       url: "/framer/ecommerce/preview-image.png",
-      alt:
-        "Product page for a Malbon x New Balance jacket, with collection description, size selector, price, and add to bag and Apple Pay buttons.",
     },
     images: [
       {
         url: "/framer/ecommerce/image-1.png",
         alt:
-          "Shopping grid of the collection with filters and sort, alongside the same product page rendered on mobile.",
+          "Shopping grid of the Malbon x New Balance collection with filters and sort, beside a phone showing the jacket's product page.",
       },
       {
         url: "/framer/ecommerce/image-2.png",
         alt:
-          "The same product page on desktop and phone, showing how the layout reflows between them.",
+          "The Malbon x New Balance jacket's product page on desktop and phone, with its description, size selector, price and Apple Pay button.",
       },
     ],
     challenge:
@@ -390,8 +407,6 @@ export const projects: Project[] = [
     status: "live",
     previewImage: {
       url: "/framer/product-management/preview-image.png",
-      alt:
-        "Seller dashboard product catalogue as a table of sneakers with price, quantity, category, handling time, shipping profile and created date, 1 row selected.",
     },
     images: [
       {

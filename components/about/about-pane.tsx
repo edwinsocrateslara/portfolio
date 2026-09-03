@@ -40,7 +40,13 @@ const SQUARE_RATIO = "1 / 1"
 // with the file if the file moves to another slot. Omitted means centred.
 const PHOTOS = {
   portrait: { src: "/about/malamute.webp", alt: "" },
-  bouldering: { src: null as string | null, alt: "" },
+  // 1:1 SOURCE IN A 1:1 FRAME, so `cover` trims nothing and there is no
+  // `position` to pick — unlike `race` below, which is 3:4 in the same square.
+  // 3024x3024 iPhone original, downscaled to 1200 and encoded webp q82, which
+  // is the same recipe as the two beside it. EXIF was stripped at encode
+  // (`cwebp -metadata none`) and verified: the file is a single VP8 chunk. The
+  // source carried GPS.
+  bouldering: { src: "/about/bouldering.webp" as string | null, alt: "" },
   // 3:4 source in a 1:1 frame, so cover trims 25.2% of the height. Centred it
   // took 12.6% off each edge and cut the shoes; bottom-aligned it takes the
   // whole 25.2% off the top, which the frame can afford — the subject's head
@@ -126,8 +132,14 @@ export function AboutPane() {
             ratio={PORTRAIT_RATIO}
             sizes="(max-width: 900px) 100vw, 392px"
           />
+          {/* DIGITS, per the numerals rule in lib/sources/README.md — which
+              names this exact compound as its worked example. It read
+              "Ten-year-old" here while line 102 above, voice.md and the
+              generated prompt all read "10-year-old". check:alt does not look
+              at captions and check:numbers cannot see a bare integer, so it
+              shipped unseen. */}
           <figcaption className="type-label about-caption">
-            Ten-year-old Alaskan Malamute
+            10-year-old Alaskan Malamute
           </figcaption>
         </figure>
 

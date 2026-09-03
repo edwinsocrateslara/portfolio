@@ -7,7 +7,34 @@
 // it. This is a document, so it gets a document's type.
 //
 // `alt` here is repo-authored, like the alt on Project images: the source PDF
-// carries no alt text. It was written from viewing each rendered slide.
+// carries no alt text. It was written from viewing each rendered slide, to the
+// rule in lib/sources/README.md § "Alt text describes the frame".
+//
+// ── PERSONAL DATA VISIBLE IN THE SLIDES: RULED ON, RECORDED, CLOSED ───────
+//
+// An audit of all 21 rendered slides raised three of these. All three were
+// ruled on by Edwin and NONE of them is a defect. They are written down here
+// so the next audit finds the ruling instead of re-raising the finding — which
+// is the whole reason this file carries comments at all.
+//
+// NO IMAGE IN THIS DECK IS TO BE EDITED. Nothing blurred, nothing redacted,
+// nothing cropped. The deck ships exactly as the company cleared it for
+// publication, and a well-meant redaction would be a portfolio piece that no
+// longer matches the artefact it claims to be.
+//
+//   SLIDE 18 (slide-19.webp) — 4 tester email addresses are legible in the
+//   TestFlight panels. RULED: the deck was cleared for publication by
+//   Meridian with those panels in it. It ships as-is, deliberately. This is
+//   not an oversight and not a thing to fix later.
+//
+//   SLIDE 05 (slide-05.webp) — the side menu shows a name and the account
+//   number 1000114239. RULED: confirmed dummy data. The balances are $0.00
+//   and the last-login date reads "January 1st 0001"; it is a test account.
+//
+//   (The third was public/framer/product-management/image-2.png, outside this
+//   file — an order detail showing a customer name, email, phone and address.
+//   RULED: confirmed dummy data. Noted here because the audit that found it
+//   found these two in the same pass.)
 //
 // The deck names the product "motusbank", Meridian Credit Union's digital-only
 // bank. The site names this work Meridian throughout. Both are correct; see
@@ -58,15 +85,15 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-02.webp",
-      alt: "Background slide introducing the Meridian project, with 2 screens from the redesigned app: an accounts list and an empty-state prompt to add a first e-Transfer contact.",
+      alt: "Background slide: motusbank is Meridian's digital bank for younger customers. Beside it, 2 screens from the redesigned app — an accounts list and a prompt to add a first e-Transfer contact.",
     },
     {
       url: "/case-study/meridian/slide-03.webp",
-      alt: "Team slide listing an Area VP, senior and product managers, and 5 developers, beside the product designer contributions: research and workshops, user stories, wireframes and information architecture, UI, reviews, prototypes, user testing and developer handoff.",
+      alt: "Team slide: an Area VP, senior and product managers, and 5 developers. Beside them the product designer's contributions, from research and user stories through wireframes, IA and UI to testing and handoff.",
     },
     {
       url: "/case-study/meridian/slide-04.webp",
-      alt: "Old-design findings from tellers and earlier surveys: broken navigation, confusing flows, an unappealing interface, missing investing and credit products, and no Face ID login. Beside them, a photo of a Meridian branch with a living plant wall.",
+      alt: "Old-design findings from tellers and earlier surveys: broken navigation, confusing flows, an unappealing interface, missing investing and credit products, no Face ID. Beside them, a Meridian branch with a living plant wall.",
     },
     {
       url: "/case-study/meridian/slide-05.webp",
@@ -74,7 +101,7 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-06.webp",
-      alt: "3 more old-app screens annotated in red, marking poor wayfinding, confusing verbiage, and weak hierarchy in the settings list.",
+      alt: "3 old-app screens annotated in red: poor wayfinding on the e-Transfer request, confusing verbiage on cheque deposit, and weak hierarchy in the settings list.",
     },
     {
       url: "/case-study/meridian/slide-07.webp",
@@ -122,7 +149,7 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-18.webp",
-      alt: "Screenshot feedback from the beta, 4 TestFlight panels each pairing a tester's annotated screenshot with their written comment.",
+      alt: "Beta test with 546 users. 4 TestFlight screenshot-feedback panels, each pairing a tester's annotated screenshot with their written comment.",
     },
     {
       url: "/case-study/meridian/slide-19.webp",
