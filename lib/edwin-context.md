@@ -949,13 +949,13 @@ Increasingly, I'm also implementing accessibility improvements myself. I've ship
 
 #### SideBar
 
-SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers activate the network they already have, rather than telling them to go build a new one.
+SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers turn the network they already have into real opportunities, instead of asking them to build one from scratch.
 
-Most people looking for work know more useful people than they think they do, and the hard part isn't the list — it's writing the message. SideBar works out who is worth reaching and drafts the outreach, so the step that usually stalls is the step that's already done.
+Most job seekers already know people who can help. The hard part is knowing who to reach out to and what to say. SideBar identifies the most relevant connections and drafts personalized outreach, removing the friction that often stops people from taking action.
 
-In testing, 90% reached outreach, 80% would send the AI-drafted message, and 73% of participants with prior coaching experience preferred it to a human counselor.
+In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and 75% said they were likely to use the coach again.
 
-The Christensen Institute selected it for its Prosocial Possibilities research cohort, which studies how technology can strengthen social connection and expand access to opportunity.
+The Christensen Institute selected SideBar for its Prosocial Possibilities research cohort, which explores how technology can strengthen social connection and expand access to opportunity.
 
 
 #### motusbank and Meridian

@@ -488,40 +488,55 @@ I follow WCAG standards and build accessibility requirements into the design sys
 Increasingly, I'm also implementing accessibility improvements myself. I've shipped ARIA and other accessibility improvements directly into the production codebase, which allows me to identify issues, fix them, and validate the implementation.
 
 <!--
-  ⚠ PARAGRAPH 2 IS NOT IN EDWIN'S WORDS YET. "Most people looking for work
-  know more useful people than they think they do, and the hard part isn't
-  the list — it's writing the message" was drafted for him, approved to
-  stand for now, and is to be rewritten in his own words. It is marked
-  here so it does not quietly become canon by sitting in a file whose
-  first line says everything in it is his. Every other paragraph in this
-  section is his, from the résumé bullet.
+  PROVENANCE OF THE FIGURES, recorded here rather than in the prose. The
+  numbers below are the Christensen Institute's, from its Prosocial
+  Possibilities report on SideBar. Their Appendix B gives the underlying study
+  as FutureFit AI's pilot: focus group data, 20 users and 20 respondents,
+  against roughly 3,000 platform users over the pilot period.
 
-  PROVENANCE OF THE THREE FIGURES, recorded here rather than in the prose.
-  90%, 80% and 73% are quoted as the Christensen Institute published them,
-  bare. Their report's Appendix B gives the underlying study as FutureFit
-  AI's pilot: focus group data, 20 users and 20 respondents, against
-  roughly 3,000 platform users over the pilot period.
+  The denominator is DELIBERATELY not in the answer. Quoting someone else's
+  published research means quoting it as published; adding an n they chose to
+  omit would be reporting their study differently from how they reported it.
+  Anyone who needs the base has it here.
 
-  The denominator is DELIBERATELY not in the answer. Quoting someone
-  else's published research means quoting it as published; adding an n
-  they chose to omit would be reporting their study differently from how
-  they reported it. Anyone who needs the base has it here.
+  ⚠ A 73% WAS DROPPED AS UNSOURCEABLE. An earlier version of this section, and
+  the résumé bullet it came from, read "73% with prior coaching experience
+  preferred it to a human counselor". The published report contains no 73% and
+  no percentage at all for preferring SideBar to a human counselor — that
+  finding exists there only as 2 participant quotes, with no figure attached.
+  It is not restorable from an older draft; it was never in the source.
 
-  check:numbers holds all three: each is excused from the project-data
-  comparison (SideBar has no lib/projects.ts entry that could state it)
-  and asserted by phrase against lib/sources/resume.txt instead, so the
-  two places that state them cannot drift apart.
+  WHAT THE REPORT DOES PUBLISH, so a future edit can check itself against the
+  list rather than against memory:
+
+      90%  reached the outreach message stage
+      75%  updated a connection to "Scheduled" and clicked Help me prep
+      45%  updated a connection to "Met" and clicked Debrief
+      80%  would send the drafted message as-is or with only minor edits
+      75%  likely to use it again — 45% very likely plus 30% likely
+
+  The 75% in the prose below is the USE-AGAIN figure, not the Scheduled one;
+  they coincide at 75 and are different findings. The 80% carries "as-is or
+  with minor edits" because that qualifier is what makes it the finding it is.
+
+  check:numbers holds all 3: each is excused from the project-data comparison
+  (SideBar has no lib/projects.ts entry that could state it) and asserted by
+  phrase instead, so the places that state them cannot drift apart.
+
+  ⚠ lib/sources/resume.txt STILL CARRIES THE 73%, in its SideBar bullet. That
+  is a known divergence awaiting a separate decision, not an oversight, and
+  check:numbers pins both strings so neither moves further while it is open.
 -->
 
 ## SideBar
 
-SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers activate the network they already have, rather than telling them to go build a new one.
+SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers turn the network they already have into real opportunities, instead of asking them to build one from scratch.
 
-Most people looking for work know more useful people than they think they do, and the hard part isn't the list — it's writing the message. SideBar works out who is worth reaching and drafts the outreach, so the step that usually stalls is the step that's already done.
+Most job seekers already know people who can help. The hard part is knowing who to reach out to and what to say. SideBar identifies the most relevant connections and drafts personalized outreach, removing the friction that often stops people from taking action.
 
-In testing, 90% reached outreach, 80% would send the AI-drafted message, and 73% of participants with prior coaching experience preferred it to a human counselor.
+In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and 75% said they were likely to use the coach again.
 
-The Christensen Institute selected it for its Prosocial Possibilities research cohort, which studies how technology can strengthen social connection and expand access to opportunity.
+The Christensen Institute selected SideBar for its Prosocial Possibilities research cohort, which explores how technology can strengthen social connection and expand access to opportunity.
 
 ## motusbank and Meridian
 
