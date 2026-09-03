@@ -543,8 +543,10 @@ Increasingly, I'm also implementing accessibility improvements myself. I've ship
 
   THE COHORT IS OF PROVIDERS, NOT PRODUCTS. The report: "Our cohort of 10
   edtech providers received training from our team." The Institute selected
-  FutureFit AI; SideBar is what FutureFit piloted. The prose said "selected
-  SideBar" and now says what happened.
+  FutureFit AI; SideBar is what FutureFit piloted. The prose said "The
+  Christensen Institute selected SideBar", which named the wrong party, and now
+  says what happened. lib/sources/resume.txt carries the same correction in
+  résumé register.
 
   check:numbers holds all 3: each is excused from the project-data comparison
   (SideBar has no lib/projects.ts entry that could state it) and asserted by
@@ -565,7 +567,7 @@ Most job seekers already know people who can help. The hard part is knowing who 
 
 In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again.
 
-The Christensen Institute selected FutureFit AI for its Prosocial Possibilities research cohort, 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity. SideBar was what we piloted.
+SideBar was our pilot for the Christensen Institute's Prosocial Possibilities research cohort, which selected FutureFit AI as one of 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity.
 
 ## motusbank and Meridian
 

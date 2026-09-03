@@ -92,7 +92,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
       "SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers turn the network they already have into real opportunities, instead of asking them to build one from scratch.",
       "Most job seekers already know people who can help. The hard part is knowing who to reach out to and what to say. SideBar identifies the most relevant connections and drafts personalized outreach, removing the friction that often stops people from taking action.",
       "In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again.",
-      "The Christensen Institute selected FutureFit AI for its Prosocial Possibilities research cohort, 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity. SideBar was what we piloted.",
+      "SideBar was our pilot for the Christensen Institute's Prosocial Possibilities research cohort, which selected FutureFit AI as one of 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity.",
     ],
   },
   {

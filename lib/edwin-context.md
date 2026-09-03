@@ -955,7 +955,7 @@ Most job seekers already know people who can help. The hard part is knowing who 
 
 In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again.
 
-The Christensen Institute selected FutureFit AI for its Prosocial Possibilities research cohort, 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity. SideBar was what we piloted.
+SideBar was our pilot for the Christensen Institute's Prosocial Possibilities research cohort, which selected FutureFit AI as one of 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity.
 
 
 #### motusbank and Meridian
