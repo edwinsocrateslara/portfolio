@@ -109,6 +109,43 @@ function projectStream(p: (typeof projects)[0]): MessageBlock[] {
 
 // Build response based on user input
 // Returns { response, projectSlug } where projectSlug is the new project being discussed
+/** Is this paragraph a technical inventory rather than a sentence?
+ *
+ *  MONO IS FOR A LIST OF THINGS THAT EXIST. Not a sentence about things, and
+ *  not a number you are arguing for. That boundary is what stops a third
+ *  consumer arriving by accident: the Design tools answer names the same
+ *  software in prose and stays prose, because it is a person talking about a
+ *  workflow; the Core design skills answer carries 9/10 ratings and stays
+ *  prose, because a rating is a claim being defended. An inventory reports.
+ *
+ *  THE SEPARATOR IS THE DECLARATION. There was no need for a marker in the
+ *  source: `·` appears nowhere else in voice.md — nor in projects.ts or
+ *  resume.txt — so a middot-separated run already says what it is, and
+ *  voice.md stays prose a person can read. An index list on the answer was the
+ *  alternative and was rejected for being position-derived: that is the bug
+ *  just removed from the vibe reveal's image placement, where adding a
+ *  sentence silently moved a screenshot.
+ *
+ *  BOTH HALVES OF THE TEST MATTER. "Contains a middot" alone is too loose, and
+ *  "contains no period" is too strict — Next.js, CLAUDE.md and Git/GitHub all
+ *  carry one. Not ending on a sentence period is what separates an inventory
+ *  from prose that happens to list.
+ *
+ *  ⚠ THE HONEST RISK: a middot used mid-sentence in a paragraph that does not
+ *  end in a period would silently render mono. Nothing prevents that; it is
+ *  narrow rather than impossible, and it is written down here so the next
+ *  person adding a `·` to prose knows what they are stepping on.
+ *
+ *  NOT A NEW MESSAGE KIND. TextBubble has taken `mono` since it was written —
+ *  it switches to .type-value, mono 12/18 at weight 400 in secondary, which is
+ *  the same Data voice the resume's tools bands and the vibe spec table
+ *  already use. Nothing had ever set it. A dedicated kind would have been a
+ *  second render path that could drift from the first, for a difference that
+ *  is a voice rather than a bubble. */
+function isTermList(text: string): boolean {
+  return text.includes(" · ") && !text.trimEnd().endsWith(".")
+}
+
 export function buildResponse(
   text: string,
   options?: { preloadedSlug?: string; currentProjectSlug?: string | null }
@@ -272,7 +309,11 @@ export function buildResponse(
   if (voice) {
     return {
       response: [
-        ...voice.paragraphs.map((text) => ({ kind: "text" as const, text })),
+        ...voice.paragraphs.map((text) => ({
+          kind: "text" as const,
+          text,
+          mono: isTermList(text),
+        })),
         {
           kind: "followups",
           chips: rotationFor(SURFACE.voice, 2, [voice.id]).map((c) => ({
