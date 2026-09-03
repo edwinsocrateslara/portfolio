@@ -8,6 +8,33 @@
 // Order matters: the first entry whose trigger substring appears in the
 // user's lowercased question wins, so narrower topics come before broader
 // ones.
+//
+// ── A TRIGGER'S COST SCALES WITH ITS ANSWER'S LENGTH ─────────────────────
+// A loose trigger on a one-paragraph answer is free. A loose trigger on a
+// thirteen-paragraph answer is a wall, and it takes the question away from
+// the model, which could have answered the part that was actually asked.
+//
+// The case that produced this rule: `strength` matched "what's one of your
+// strengths" and played all 13 blocks of Strengths and weaknesses, opening on
+// the weakness. Asked the same question, the model answered with one strength,
+// the Volkswagen example behind it, and the 9/10 rating from Core design
+// skills — drawing on two sections a single scripted answer cannot combine.
+//
+// SO: A PARTIAL QUESTION IS THE MODEL'S TO ANSWER. Triggers should match the
+// question the answer actually answers, not any sentence the topic appears in.
+// "how do you handle pushback" is not "how do you work with difficult
+// stakeholders"; "who were the stakeholders on Meridian" is not either.
+//
+// THE TRADE IS DELIBERATE AND WORTH STATING: a narrowed trigger means a
+// partial question gets the model's third-person paraphrase instead of Edwin's
+// verbatim words. That is the right trade when the alternative is a wall of
+// blocks answering a question nobody asked.
+//
+// IT DOES NOT APPLY EVERYWHERE. `salary` is deliberately WIDE — it is one
+// paragraph, so there is no wall to hit, and it is the most consequential
+// sentence on the site: a paraphrase could imply a number the document does
+// not contain. `motusbank` is wide for the same reason, being a one-line
+// naming clarification. Short answers should be easy to reach.
 
 export interface VoiceAnswer {
   id: string
@@ -80,7 +107,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "ai-tools",
-    triggers: ["ai tools", "ai in your workflow", "ai workflow", "agentic", "use ai in your"],
+    triggers: ["ai tools", "ai in your workflow", "ai workflow", "use ai in your"],
     chip: "How do you use AI in your workflow?",
     placement: "front-door",
     chipOrder: 3,
@@ -169,7 +196,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "challenging-project",
-    triggers: ["challenging project", "hardest project", "difficult project", "toughest"],
+    triggers: ["challenging project", "hardest project", "difficult project", "toughest project"],
     chip: "Tell me about a challenging project.",
     placement: "rotation",
     paragraphs: [
@@ -185,7 +212,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "strengths-weaknesses",
-    triggers: ["strength", "weakness", "weaknesses"],
+    triggers: ["strengths and weaknesses", "strengths & weaknesses", "weaknesses and strengths", "strengths and weakness"],
     chip: "What are your strengths and weaknesses?",
     placement: "rotation",
     paragraphs: [
@@ -320,7 +347,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "tradeoffs",
-    triggers: ["tradeoff", "trade-off", "constraint", "compromise"],
+    triggers: ["tradeoff", "trade-off", "competing priorities", "user needs and business"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "I prioritize around the primary user and business goal, then use research and data to decide what deserves focus and what can be reduced, moved, or removed.",
@@ -334,7 +361,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "difficult-stakeholders",
-    triggers: ["stakeholder", "pushback", "difficult client"],
+    triggers: ["difficult stakeholder", "difficult client", "handle stakeholders", "stakeholder pushback", "pushback on a design"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "My general approach is to find middle ground. I try to understand what the stakeholder is ultimately trying to achieve, and find an approach that addresses their concerns without compromising what I believe is best for the product.",
@@ -363,7 +390,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "ambiguous",
-    triggers: ["ambiguous", "open-ended", "not well defined", "vague brief"],
+    triggers: ["ambiguous problem", "ambiguous or open", "open-ended problem", "not well defined", "vague brief", "approach ambiguity"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "I use my discover, define, validate, and deliver framework to bring structure to ambiguous problems.",
@@ -433,7 +460,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "day-to-day",
-    triggers: ["day to day", "day-to-day", "typical day", "your day"],
+    triggers: ["day to day", "day-to-day", "typical day", "your day like", "your day look"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "My day-to-day work is a mix of design, research, collaboration, and increasingly technical work.",
@@ -444,7 +471,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "salary",
-    triggers: ["salary", "compensation", "notice period", "start date", "availability"],
+    triggers: ["salary", "compensation", "notice period", "how much notice", "start date", "when can you start", "availability", "day rate", "your rate", "hourly rate", "pay expectations", "pay range", "what do you charge"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
       "I'm available to start immediately. My salary expectations are flexible and depend on the overall opportunity, including the scope of the role, nature of the work, location, equity, benefits, and total compensation package.",
@@ -452,7 +479,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   },
   {
     id: "tools",
-    triggers: ["what tools", "which tools", "figma", "your stack", "software do you"],
+    triggers: ["what tools", "which tools", "your stack", "software do you"],
     chip: "What tools do you use?",
     placement: "rotation",
     paragraphs: [
