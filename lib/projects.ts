@@ -32,6 +32,30 @@ export interface Project {
   previewImage: ProjectImage
   images: ProjectImage[]
 
+  /** Headed prose sections, in render order. OPTIONAL and read by ONE flow.
+   *
+   *  WHEN A SECTION EARNS ITS WAY IN. The five copy fields below are the
+   *  vocabulary of a design case study: a challenge, what was at stake, the
+   *  decision, the impact. A section belongs here only when the entry is not
+   *  that shape — when it is describing a system rather than arguing a design
+   *  decision, and the reader needs the parts in an order the five fields
+   *  cannot express.
+   *
+   *  It is NOT where prose goes when a field feels full. Adding a section
+   *  because `challenge` got long is how a shared vocabulary turns into a free
+   *  text area, and the seven projects would stop being comparable to each
+   *  other. Today exactly one entry uses it; if a second wants it, the
+   *  question to ask first is whether the five fields really failed.
+   *
+   *  `image` entries carry an index into `images`, and they sit in the
+   *  paragraph list at the point they should render. Placement is DATA rather
+   *  than logic on purpose: the vibe flow used to derive it from paragraph
+   *  counts, which meant adding a sentence silently moved a screenshot. */
+  sections?: {
+    heading?: string
+    paragraphs: (string | { image: number })[]
+  }[]
+
   // Traditional case-study fields — used by all 7 projects.
   challenge?: string
   impacts?: string[]

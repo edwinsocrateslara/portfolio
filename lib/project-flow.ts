@@ -17,9 +17,24 @@ import type { MessageBlock } from "@/hooks/use-scripted-stream"
 // remember to set, and no state where the flow has zero users while the code
 // stays alive.
 //
-// It also adds NO fields to Project. The two flows read the same six copy
-// fields and differ only in order and in the words above each section — which
-// is the whole claim: the shape is in the content and its order.
+// It USED TO add no fields to Project, and the claim was that the shape lived
+// entirely in the content and its order — same six copy fields, different
+// sequence, different words above each section. That held while the vibe entry
+// was a case study told in a different order.
+//
+// It stopped holding when the entry became a build log. A design case study
+// argues one decision: challenge, what was at stake, the call, the outcome.
+// This one describes a system with parts, and the parts have to arrive in an
+// order — where feedback comes from, what happens weekly, what comes out, who
+// overrides it, how it reaches a ticket. That is seven sections against five
+// fields, and packing them in would have meant one field carrying three
+// headings' worth of prose with the render splitting it back apart on
+// whitespace. The fields were the wrong vocabulary, not too few.
+//
+// So `sections` exists, it is optional, and exactly one entry uses it. The rule
+// for when a second may is on the field itself in lib/projects.ts: only when
+// the entry is describing a system rather than arguing a decision. Not when a
+// field feels full.
 function isVibe(p: Project): boolean {
   return vibeProjects.some((v) => v.slug === p.slug)
 }
@@ -71,49 +86,35 @@ export function buildProjectBodyBlocks(p: Project): MessageBlock[] {
   if (isVibe(p)) {
     const out: MessageBlock[] = []
     if (p.tagline) out.push({ kind: "text", text: p.tagline, lede: true })
-    if (all[0]) out.push({ kind: "image", image: all[0], group: all, groupIndex: 0 })
-    if (p.roleDescription) {
-      out.push({ kind: "section-heading", text: "My role" })
-      out.push({ kind: "text", text: p.roleDescription })
-    }
-    if (p.challenge) {
-      out.push({ kind: "section-heading", text: "The pipeline" })
-      // Split on the FIRST newline only, so the source screenshots sit against
-      // the paragraph that describes the sources, and everything after stays
-      // one block. Deliberately not split on every newline and indexed: that
-      // would make image placement depend on the copy having exactly three
-      // paragraphs, and adding a sentence later would silently move them.
-      // Splitting once is stable however the tail grows.
-      const nl = p.challenge.indexOf("\n")
-      const sources = nl === -1 ? p.challenge : p.challenge.slice(0, nl)
-      const rest = nl === -1 ? "" : p.challenge.slice(nl + 1)
-      out.push({ kind: "text", text: sources })
-      // Upstream then downstream, matching the sentence order above: the
-      // transcripts are a tributary, the board post is where the three sources
-      // converge — which is the clause that paragraph lands on.
-      if (all[2]) out.push({ kind: "image", image: all[2], group: all, groupIndex: 2 })
-      if (all[1]) out.push({ kind: "image", image: all[1], group: all, groupIndex: 1 })
-      if (rest) out.push({ kind: "text", text: rest })
-      // The architecture diagram, LAST in the section rather than beside the
-      // sources. It depicts the whole tool — the accept route, the status
-      // poll, the close-out and the dashboard are all on it — and those are
-      // this paragraph, not the first one. Put against the sources it would
-      // illustrate a third of itself; put here it summarises everything just
-      // described. Three images in one section, but not three in a row: two
-      // full paragraphs separate this from the pair above.
-      if (all[3]) out.push({ kind: "image", image: all[3], group: all, groupIndex: 3 })
-    }
-    if (p.decision) {
-      out.push({ kind: "section-heading", text: "The calls" })
-      out.push({ kind: "text", text: p.decision })
+    // Sections carry everything between the lede and the spec table, in the
+    // order they are written. An `{ image: n }` entry renders images[n] at the
+    // point it sits in the paragraph list — placement is data, so adding a
+    // sentence cannot move a screenshot.
+    for (const sec of p.sections ?? []) {
+      if (sec.heading) out.push({ kind: "section-heading", text: sec.heading })
+      for (const part of sec.paragraphs) {
+        if (typeof part === "string") {
+          out.push({ kind: "text", text: part })
+          continue
+        }
+        const img = all[part.image]
+        if (img) out.push({ kind: "image", image: img, group: all, groupIndex: part.image })
+      }
+      // MY ROLE sits after the first section rather than in it. The role line
+      // is sourced from roleDescription, which the generated system prompt also
+      // reads — putting the words in `sections` too would be a second copy of
+      // one sentence.
+      if (!sec.heading && p.roleDescription) {
+        out.push({ kind: "section-heading", text: "My role" })
+        out.push({ kind: "text", text: p.roleDescription })
+      }
     }
     if (p.impacts?.length) {
       out.push({ kind: "section-heading", text: "Stack and numbers" })
-      // A SPEC TABLE, not a mono paragraph. The same six strings, verbatim —
-      // SpecBubble splits `**LABEL** — 457 feedback items` into its three
-      // columns at render time, so the source stays exactly as written. The
-      // Meridian flow's `kind: "impact"` is untouched: that block is a claim
-      // about outcomes and keeps the accent card.
+      // A SPEC TABLE, not a mono paragraph. SpecBubble splits
+      // `**LABEL** — value` into its columns at render time, so the source
+      // stays exactly as written. The Meridian flow's `kind: "impact"` is
+      // untouched: that block is a claim about outcomes and keeps its card.
       out.push({ kind: "spec", items: p.impacts })
     }
     out.push({ kind: "doc-link", docKey: "ideas-showcase" })

@@ -127,7 +127,7 @@ const NAMED_FACTS = [
     fact: "posts sent to the model in each weekly run",
     states: {
       "lib/sources/voice.md": "roughly 300 evaluated",
-      "lib/vibe-projects.ts": "~300 sent per run",
+      "lib/vibe-projects.ts": "~300 evaluated per run",
     },
   },
   {
@@ -135,7 +135,7 @@ const NAMED_FACTS = [
     fact: "items ranked and surfaced each week",
     states: {
       "lib/sources/voice.md": "10 strategic priorities",
-      "lib/vibe-projects.ts": "10 ranked per week",
+      "lib/vibe-projects.ts": "10 strategic priorities per week",
     },
   },
   {
@@ -143,7 +143,7 @@ const NAMED_FACTS = [
     fact: "weeks to design and build it",
     states: {
       "lib/sources/voice.md": "over 14 weeks",
-      "lib/vibe-projects.ts": "14 weeks, sole author",
+      "lib/vibe-projects.ts": "14 weeks · sole contributor",
     },
   },
 ]

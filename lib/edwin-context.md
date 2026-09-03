@@ -234,7 +234,7 @@ We needed a custom product management tool that worked with Complex NTWRK’s un
 
 ---
 
-### Ideas Dashboard — Ideas Dashboard, built at FutureFit AI
+### Ideas Dashboard — built at FutureFit AI
 - **Slug:** futurefit-ideas-dashboard
 - **Status:** Work in progress
 - **Role:** Lead Product Designer
@@ -242,14 +242,14 @@ We needed a custom product management tool that worked with Complex NTWRK’s un
 I built an internal tool that reads everything customers and staff have said about the product and, once a week, puts 10 things at the top of the list with a written reason attached to each. It exists because feedback was arriving faster than anyone could read it, so decisions about what to build next were being made without most of it.
 
 **Key impacts:**
-- **STACK** — Next.js, Supabase, Claude, and the APIs of the feedback board and the engineering tracker
-- **CADENCE** — collects Monday, ranks 15 minutes later, retries Tuesday if Monday failed, checks ticket status daily
-- **CORPUS** — 457 feedback posts, ~300 sent per run
-- **OUTPUT** — 10 ranked per week, 66 synthesis runs logged in production
-- **SHIPPED** — 14 items accepted into tickets, closed back on the original post
-- **BUILT** — 14 weeks, sole author, 34 migrations, 25 API routes
+- **STACK** — Next.js · Supabase · Claude · Feedback APIs · Jira API
+- **CADENCE** — Weekly collection and synthesis · automatic retry on failure · daily Jira status checks
+- **CORPUS** — 457 feedback posts · ~300 evaluated per run
+- **OUTPUT** — 10 strategic priorities per week + Quick Wins
+- **PRODUCTION** — 66 synthesis runs logged
+- **BUILD** — 14 weeks · sole contributor · 34 migrations · 25 API routes
 
-**My role:** Lead product designer. I was the only person on it, and built it end to end over 14 weeks. I later rebuilt a redacted version so the work could be shown outside the company.
+**My role:** Lead Product Designer at FutureFit AI. I identified the opportunity and designed and built the tool end to end over 14 weeks as the sole contributor. I later rebuilt a redacted version so I could share the work publicly.
 
 **What was at stake:** 457 feedback posts had accumulated across 4 boards and nobody was working through them. The volume made starting feel impossible, so prioritisation defaulted to whatever was loudest: the highest vote count, the most persistent internal advocate, the account that escalated most visibly. Each is a proxy for importance rather than a measure of it.
 

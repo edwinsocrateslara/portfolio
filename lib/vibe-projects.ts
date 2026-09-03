@@ -39,16 +39,37 @@ export const vibeProjects: Project[] = [
           // API context line reads, and the role line in the reveal says it
           // outright. Do not "correct" this back to a company name.
           client: "Ideas Dashboard",
-          projectTitle: "Ideas Dashboard, built at FutureFit AI",
+          projectTitle: "built at FutureFit AI",
           // Names the DOMAIN, like the seven — Retail Banking, AI Investing,
           // Live Selling. "Feedback Synthesis" named the mechanism, which no
           // other row does, and it read as a second title rather than as the
-          // line that tells rows apart. projectTitle stays "Weekly Feedback
-          // Synthesis": the mechanism is the right name for the thing itself.
+          // line that tells rows apart.
+          //
+          // projectTitle no longer carries a name at all. Once `client` became
+          // "Ideas Dashboard" — the tool's real internal name — a projectTitle
+          // repeating it made the generated heading read "Ideas Dashboard —
+          // Ideas Dashboard, built at FutureFit AI". The fragment is what is
+          // left when the name moves up a line, and it reads correctly in both
+          // places that compose the two: the § heading in the system prompt and
+          // the API context line in app-shell.
           railSubtitle: "Product Operations",
-          // WHAT IT IS. Two sentences, no jargon, no company-specific nouns —
-          // a visitor who has never heard of FutureFit understands it. The
-          // terms are defined later, in the pipeline, as they appear.
+          // WHAT IT IS, in two sentences, before any machinery.
+          //
+          // THE NO-PROPER-NOUNS RULE HAS CHANGED, and this records what it is
+          // now rather than leaving behind a rule the copy no longer follows.
+          // The reveal names Slack, Clarify, Jira, Supabase and Claude, because
+          // the sections below describe a system and a system is made of named
+          // things — "a transcription service" is vaguer, not kinder.
+          //
+          // The employer appears ONCE, in the role line, because the reveal
+          // should say where it was built and that is the sentence whose job it
+          // is. It appears nowhere else in the prose.
+          //
+          // What still holds is the TEST, which was always about comprehension
+          // rather than vocabulary: the prose has to work for someone who has
+          // never heard of FutureFit. A third-party tool may be named because
+          // its role is explained where it appears — "Clarify transcribes those
+          // conversations". An internal noun may not.
           tagline:
             "I built an internal tool that reads everything customers and staff have said about the product and, once a week, puts 10 things at the top of the list with a written reason attached to each. It exists because feedback was arriving faster than anyone could read it, so decisions about what to build next were being made without most of it.",
           // Sourced from lib/sources/resume.txt, same as the seven — FutureFit
@@ -174,16 +195,90 @@ export const vibeProjects: Project[] = [
           // thing is built, not claims about what it achieved. This is also
           // where the tools are finally named, after the pipeline has
           // explained what each one does in plain words.
+          sections: [
+            {
+              // No heading. The lede's second half — why the tool exists — and
+              // then the tool itself, so "what is this" is answered before any
+              // of the machinery is described.
+              paragraphs: [
+                "Feedback was arriving faster than anyone could realistically review it, so decisions about what to build next were being made without considering most of it.",
+                { image: 0 },
+              ],
+            },
+            {
+              heading: "Where feedback comes from",
+              // The transcript screenshot sits against the paragraph about
+              // calls, and the board post after the convergence sentence —
+              // upstream, then where the three sources meet. That order is the
+              // paragraph order, which is the point of placing images as data.
+              paragraphs: [
+                "Feedback enters the system in 3 ways.",
+                "Most is submitted directly to 4 feedback boards, one for each product area. Staff can also submit feedback through a Slack bot, without leaving the conversation they're having.",
+                "The third source is recorded customer calls. Clarify transcribes those conversations and identifies pain points, unmet needs, feature requests, and competitive mentions. Those insights are automatically turned into feedback posts.",
+                { image: 2 },
+                "Everything eventually flows into the same place, giving the tool a single source to work from.",
+                { image: 1 },
+              ],
+            },
+            {
+              heading: "Weekly synthesis",
+              paragraphs: [
+                "Once a week, a scheduled job syncs new feedback into the tool's Supabase database, so the rest of the system isn't dependent on the source services being available.",
+                "It sends roughly 300 of 457 feedback posts to Claude alongside 5 current strategy documents and a reference describing the platform's technical architecture.",
+                "The strategy documents help determine whether an idea is relevant to current company priorities. The architecture reference helps Claude understand whether something is a contained change or a much larger technical undertaking.",
+              ],
+            },
+            {
+              heading: "Two streams of work",
+              paragraphs: [
+                "The system produces two outputs.",
+                "Top 10 surfaces the most important strategic opportunities. Ideas first have to qualify against company strategy and are then ranked based on strategic fit, urgency, and specificity.",
+                "Quick Wins identifies smaller opportunities with clear value that are technically bounded enough to be handled quickly.",
+              ],
+            },
+            {
+              heading: "Human oversight",
+              paragraphs: [
+                "The AI recommends; the team decides.",
+                "Model output and human decisions are stored separately, and every AI-generated field can be manually overridden.",
+                "When an item is accepted, its rationale is frozen so there's a permanent record of why it was chosen.",
+                "The system also looks at the previous 4 weeks of human overrides during future runs. Those decisions can influence the ordering of the Top 10, but they can't determine which ideas qualify. This allows the system to learn from consistent disagreement without drifting away from company strategy.",
+              ],
+            },
+            {
+              heading: "From feedback to shipped work",
+              // The architecture diagram lands AFTER the loop line, not in the
+              // sources section where it used to sit. The line above it states
+              // the whole loop in words; the diagram is the same loop drawn,
+              // and it depicts the accept route, the Jira poll and the
+              // close-out — which is this section rather than the first one.
+              paragraphs: [
+                "Accepting an idea automatically creates a Jira ticket and connects it back to the original feedback.",
+                "A scheduled job checks Jira daily. When the ticket moves to Done, the tool closes the original feedback post so the person who requested it can hear that it shipped.",
+                "This creates a continuous loop:",
+                "Feedback → synthesis → prioritization → human review → Jira → shipped → feedback closed",
+                { image: 3 },
+              ],
+            },
+            {
+              heading: "Impact",
+              paragraphs: [
+                "The tool introduced a new way for the team to align on what to work on.",
+                "Instead of relying on whichever feedback people happen to see or remember, the team has a shared system that connects customer and staff feedback with company strategy, technical context, and human judgment.",
+                "It also gives the team two ways to act: larger strategic opportunities through the Top 10 and smaller, immediately actionable opportunities through Quick Wins.",
+              ],
+            },
+          ],
           impacts: [
-            "**STACK** — Next.js, Supabase, Claude, and the APIs of the feedback board and the engineering tracker",
-            "**CADENCE** — collects Monday, ranks 15 minutes later, retries Tuesday if Monday failed, checks ticket status daily",
-            "**CORPUS** — 457 feedback posts, ~300 sent per run",
-            "**OUTPUT** — 10 ranked per week, 66 synthesis runs logged in production",
-            "**SHIPPED** — 14 items accepted into tickets, closed back on the original post",
-            "**BUILT** — 14 weeks, sole author, 34 migrations, 25 API routes",
+            "**STACK** — Next.js · Supabase · Claude · Feedback APIs · Jira API",
+            "**CADENCE** — Weekly collection and synthesis · automatic retry on failure · daily Jira status checks",
+            "**CORPUS** — 457 feedback posts · ~300 evaluated per run",
+            "**OUTPUT** — 10 strategic priorities per week + Quick Wins",
+            "**PRODUCTION** — 66 synthesis runs logged",
+            "**BUILD** — 14 weeks · sole contributor · 34 migrations · 25 API routes",
           ],
           roleDescription:
-            "Lead product designer. I was the only person on it, and built it end to end over 14 weeks. I later rebuilt a redacted version so the work could be shown outside the company.",
+            "Lead Product Designer at FutureFit AI. I identified the opportunity and designed and built the tool end to end over 14 weeks as the sole contributor. I later rebuilt a redacted version so I could share the work publicly.",
           // Deliberately unread by the vibe flow — see lib/project-flow.ts.
           // The reason the tool exists is the opening line's job in this
           // shape, and saying it twice would be saying it weakly. Kept rather
