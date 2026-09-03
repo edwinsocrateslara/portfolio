@@ -117,6 +117,25 @@
        thumb  4   the rail's 32px project frames, and only those — at that
                   size `media` is a quarter of the box and reads as a
                   squircle rather than a softened corner */
+  /* ── The floating panel ────────────────────────────────────────
+     Two values that exist for the résumé download menu, which is the
+     first thing on this site to float over its own content.
+
+     --panel-shadow says ABOVE rather than "a hole cut in the page".
+     The hairline alone does not carry that on a dark ground: at 14%
+     white it reads as an edge between two surfaces, not as one in
+     front of the other. It is the only shadow in the system, and it
+     stays that way until a second floating surface exists.
+
+     --menu-measure caps the panel's width. It is content-sized below
+     this; the cap is what stops a future format with a long name from
+     growing past the pane's own gutter. 260 rather than a --space-*
+     multiple because it is a MEASURE — the same kind of value as
+     --prose-measure, set by how wide a row of two short labels should
+     be allowed to get, not by the spacing grid. */
+  --panel-shadow: 0 12px 32px rgb(0 0 0 / 0.44);
+  --menu-measure: 260px;
+
   --bureau-radius-media: 8px;
   --bureau-radius-card: 12px;
   --bureau-radius-btn:  8px;
@@ -2798,3 +2817,94 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .shimmer-spark::before { animation: none; }
   .shimmer-highlight { transition: none; }
 }
+
+/* ── Résumé download menu ─────────────────────────────────────────
+   Three formats behind the résumé pane's pill. The behaviour, and why this
+   surface rather than the chat card, is in
+   components/resume/download-menu.tsx.
+
+   BORROWED, NOT INVENTED. The system had no floating panel before this, and
+   the temptation was to draw one. Everything here is a token that already
+   exists doing the same job elsewhere: --layer-1-flat is the opaque surface
+   the shimmer uses, --hairline is every border on the site, and
+   --bureau-radius-card is the radius of the doc-link card. The one new value
+   is the drop shadow, and it is new because nothing on this site has ever
+   floated over its own content before. */
+.download-menu {
+  position: relative;
+  /* The trigger is inline-flex; this wrapper must not add a line box of its
+     own or the pill drops off the head row's baseline. */
+  display: inline-flex;
+}
+
+/* The caret. 12 against the 16 of the arrow on the other side of the label —
+   the step below, because it modifies that arrow's action rather than naming
+   a second one. See the note at the call site. */
+.download-caret {
+  width: var(--icon-inline);
+  height: var(--icon-inline);
+  flex: none;
+  transition: transform 0.15s;
+}
+.download-trigger[aria-expanded="true"] .download-caret {
+  transform: rotate(180deg);
+}
+
+.download-panel {
+  position: absolute;
+  right: 0;
+  z-index: 40;
+  min-width: 100%;
+  /* Content-sized above the trigger's width, and capped so a future format
+     with a long name cannot push it past the pane's own gutter. */
+  width: max-content;
+  max-width: min(var(--menu-measure), calc(100vw - var(--space-32)));
+  padding: var(--space-8);
+  border: 1px solid var(--hairline);
+  border-radius: var(--bureau-radius-card);
+  /* OPAQUE. A translucent panel over the résumé's own type is unreadable —
+     the rows below show through the rows in front. --layer-1-flat is the
+     token that already exists for exactly this. */
+  background: var(--layer-1-flat);
+  /* The one new value in this block. A panel that floats over content needs
+     to read as ABOVE it rather than as a hole cut in it, and the hairline
+     alone does not say that on a dark ground. */
+  box-shadow: var(--panel-shadow);
+}
+/* DOWNWARD, ALWAYS. There is no upward variant, and download-menu.tsx carries
+   the measurements showing why the trigger can never sit low enough to need
+   one. --space-4 is the documented tight half-step: the panel should sit just
+   off the pill, not a full 8 away. */
+.download-panel { top: calc(100% + var(--space-4)); }
+
+.download-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-between);
+  /* A 42px ROW, MEASURED. 18px line box + --space-12 top and bottom. The
+     comment here first said 44 by arithmetic that included a border this row
+     does not have — which is the exact failure .chip's own comment warns
+     about two hundred lines up, where the stated number had been stale twice.
+     So it is the measured value, and the target is stated rather than
+     implied: 42 clears WCAG 2.5.8 AA's 24x24 outright. It does not reach
+     2.5.5 AAA's 44, and no --space-* token gets it there — 18 + 24 is 42 and
+     the next step up is 18 + 32. 42 is the height this system builds rows to
+     everywhere else, and matching it beats inventing an off-grid padding to
+     reach a number one row of one menu would hit alone. */
+  padding: var(--space-12);
+  border-radius: var(--bureau-radius-btn);
+  color: rgb(var(--bureau-text-secondary));
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+.download-item:hover,
+.download-item:focus-visible {
+  background: var(--layer-2);
+  color: rgb(var(--bureau-text-primary));
+}
+.download-item-label { white-space: nowrap; }
+/* DATA VOICE. The format's nature — Formatted, Editable, Plain text — is the
+   interface reporting rather than speaking, which is what .type-value is for.
+   The same rule that sets the résumé's six tool bands in mono. */
+.download-item-meta { white-space: nowrap; }

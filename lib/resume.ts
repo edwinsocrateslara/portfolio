@@ -53,6 +53,28 @@ export interface Resume {
   roles: ResumeRole[]
   education: ResumeEducation[]
   skills: ResumeSkillBand[]
+
+  // ── THREE FIELDS THE PANE DOES NOT RENDER, AND SHOULD NOT ──────────────
+  // resume-pane.tsx omits the contact block and the summary on purpose, and
+  // its comment says why: the rail footer already carries email and LinkedIn,
+  // and the summary is marketing register the roles do not need. That has not
+  // changed.
+  //
+  // A DOWNLOADED DOCUMENT IS A DIFFERENT ARTEFACT. It arrives with no rail
+  // beside it and no site around it. A résumé file with no name on it is not
+  // a stripped-down résumé, it is an anonymous one, and the summary is the
+  // first thing a recruiter reads. scripts/build-resume.mjs needs all three;
+  // the pane goes on ignoring them.
+  //
+  // Parsed rather than hardcoded in the generator for the reason everything
+  // else here is: resume.txt is the master, and a name typed a second place
+  // is a second place to change it.
+  /** The document's first heading — the all-caps name line. */
+  name: string
+  /** The lines under it: email, LinkedIn, domain. In source order. */
+  contact: string[]
+  /** PROFESSIONAL SUMMARY, unwrapped to one paragraph. */
+  summary: string
 }
 
 const SOURCE = join(process.cwd(), "lib", "sources", "resume.txt")
@@ -89,15 +111,21 @@ function parse(): Resume {
 
   const sections: Record<string, string[]> = {}
   let current: string | null = null
+  // The FIRST heading in the file is the name. Captured positionally rather
+  // than matched against a literal, so the one place the name is written stays
+  // one place — see `name` on the Resume interface.
+  let name = ""
   for (const line of raw.split("\n")) {
     const t = line.trim()
     if (t && HEADING.test(t) && t.split(" ").length <= 3) {
       current = t
+      if (!name) name = t
       sections[current] = []
       continue
     }
     if (current) sections[current].push(line)
   }
+  const contact = (sections[name] ?? []).map((l) => l.trim()).filter(Boolean)
 
   const blocks = (key: string) =>
     (sections[key] ?? [])
@@ -105,6 +133,8 @@ function parse(): Resume {
       .split(/\n\s*\n/)
       .map((b) => b.trim())
       .filter(Boolean)
+
+  const summary = unwrap(blocks("PROFESSIONAL SUMMARY").join(" "))
 
   // A ROLE STARTS AT ITS "Employer — Location" LINE, not at a block boundary.
   //
@@ -222,6 +252,13 @@ function parse(): Resume {
   // are floors, not exact counts — adding a role or a tool must not break the
   // build, but losing all of them must.
   const problems: string[] = []
+  // Floors for the three document-only fields. The pane would render fine
+  // without them, so nothing on screen would go wrong — the failure would be a
+  // downloaded résumé with no name on it, which is exactly the kind of defect
+  // that ships because nobody looks at the artefact after generating it.
+  if (!name) problems.push("no name heading — the first all-caps line is missing")
+  if (contact.length < 2) problems.push(`expected at least 2 contact lines, parsed ${contact.length}`)
+  if (summary.length < 80) problems.push(`PROFESSIONAL SUMMARY is ${summary.length} chars — did it parse?`)
   if (roles.length < 6) problems.push(`expected at least 6 roles, parsed ${roles.length}`)
   if (education.length < 3) problems.push(`expected at least 3 education entries, parsed ${education.length}`)
   // The skills floor is now three claims, not one count. A single
@@ -260,7 +297,7 @@ function parse(): Resume {
     )
   }
 
-  return { roles, education, skills }
+  return { roles, education, skills, name, contact, summary }
 }
 
 /** Parsed once per process. The source cannot change while the server runs. */

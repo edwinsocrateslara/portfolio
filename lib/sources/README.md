@@ -91,6 +91,27 @@ sections are no longer hand-written:
 
 `npm run check:sources` runs both. Add it to CI.
 
+### `resume.txt` has three generated artefacts, and they are NOT built by `npm run build`
+
+`public/edwin-lara-resume-2026.pdf`, `.docx` and `.md` are written from
+`resume.txt` by `npm run build:resume`. All three are committed.
+
+**After editing `resume.txt`, run `npm run build:resume`.** If you forget,
+`npm run check:docs` fails and names the file — every generated document
+carries a hash of the source it was built from, and the gate compares it
+against `resume.txt` on disk.
+
+It is a script rather than a build step because the PDF is printed by a
+real headless Chrome, and there is no browser on Vercel. That trade is
+argued in full at the top of `scripts/build-resume.mjs`; the short version
+is that generating at build time would make the files *fresh*, and the
+hash gate makes staleness *impossible to ship*, which is the stronger of
+the two and works on a machine with no Chrome.
+
+The PDF also needs the network, once, for the Archivo and IBM Plex Mono
+faces. A run without it fails loudly rather than writing a Helvetica
+résumé that looks nearly right.
+
 The Projects section was hand-written prose until it drifted: it
 re-attributed the Meridian app's userbase to the institution's totals,
 merged Coinley's decision text into its challenge, and reintroduced an

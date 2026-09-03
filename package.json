@@ -18,7 +18,8 @@
     "check:render": "node --import ./scripts/ts-extensionless.mjs scripts/check-render.mjs",
     "check:intent": "node --import ./scripts/ts-extensionless.mjs scripts/check-intent.mjs",
     "check:alt": "node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs",
-    "check:numbers": "node scripts/check-numbers.mjs"
+    "check:numbers": "node scripts/check-numbers.mjs",
+    "build:resume": "node --import ./scripts/ts-extensionless.mjs scripts/build-resume.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",

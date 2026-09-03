@@ -1,11 +1,12 @@
 "use client"
 
-import { Shimmer } from "@/components/chat/shimmer"
+import { DownloadMenu } from "@/components/resume/download-menu"
 import { Words, wordCount } from "@/components/chat/words"
 import { Fragment, useEffect, useRef } from "react"
 import { ArrowDownToLine } from "lucide-react"
+import { Shimmer } from "@/components/chat/shimmer"
 import { ICON_STROKE } from "@/lib/icons"
-import { DOCS } from "@/lib/constants"
+import { DOCS, docFormats } from "@/lib/constants"
 import type { Resume, ResumeRole } from "@/lib/resume"
 
 // The résumé as pane content. Everything here is PARSED, never retyped — the
@@ -206,20 +207,34 @@ export function ResumePane({ resume }: { resume: Resume }) {
     }
   }, [])
 
+  // ONE ENTRY OR THREE, DECIDED BY THE DATA. docFormats returns null for a
+  // document offered as a single file, and this falls back to the plain pill
+  // rather than rendering a menu with one row in it — a menu that opens onto
+  // a single choice is a worse control than a link.
+  const formats = docFormats("resume")
+
   return (
     <div className="resume" ref={rootRef}>
       <div className="deck-head">
         <h1 className="type-page pane-title" data-resolved="false">Resume</h1>
-        {/* Same control as the deck's, and the same reasoning: .chip is the
-            system's pill, so a second inline one would be a second place for
-            the border, fill and hover to drift.
-            `download`, no target — it says "Download PDF" and now does that. */}
-        <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
-          <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
-          Download PDF
-          {/* The shimmer on a download pill. */}
-          <Shimmer />
-        </a>
+        {/* THE LABEL DROPPED "PDF" WHEN THE MENU ARRIVED. It said "Download
+            PDF" and did exactly that; it now opens a choice of three, and a
+            pill naming one of them would be naming the default rather than
+            the action. The formats say their own names one row down.
+
+            Still .chip underneath — the system's pill, so the border, fill
+            and hover stay in one place. See components/resume/download-menu
+            .tsx for why this surface is the one that got the menu, and for
+            the keyboard contract. */}
+        {formats ? (
+          <DownloadMenu formats={formats} label="Download" />
+        ) : (
+          <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
+            <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
+            Download
+            <Shimmer />
+          </a>
+        )}
       </div>
 
       <p className="type-label pane-meta" data-resolved="false"><Words text="Toronto, Canada" /></p>

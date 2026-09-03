@@ -1,17 +1,40 @@
 export const DOCS = {
-  // ⚠ THE FILE AT THIS PATH IS A PLACEHOLDER, not the résumé. It is one page
-  // reading "PLACEHOLDER - NOT A RESUME", written so that if it ever reaches
-  // the live site it is unmistakably an error rather than somebody's career.
-  // Replace the FILE; this entry does not change when the real one lands.
+  // GENERATED, NOT AUTHORED. All three files are written by
+  // `npm run build:resume` from lib/sources/resume.txt, which is the master.
+  // Do not hand-edit them; the next regeneration discards the edit, and
+  // check:docs fails in the meantime because the stamp no longer matches.
+  //
+  // This entry replaced a one-page PDF reading "PLACEHOLDER - NOT A RESUME",
+  // which was accurate, documented, and shipping — the defect that made
+  // scripts/check-docs.mjs exist. It is now the same gate that guarantees the
+  // real files track the source.
   //
   // Local, so DocLinkBubble renders it as a download — that is derived from
-  // the url rather than declared, so pointing here was the whole change. The
-  // DocHub URL that used to live here is dead and was reachable three ways.
+  // the url rather than declared. The DocHub URL that used to live here is
+  // dead and was reachable three ways.
   resume: {
     key: "resume",
     label: "Edwin Socrates Lara — Resume 2026",
     description: "Product design resume",
+
+    // ── `url` IS STILL THE DOCUMENT, AND `formats` IS ADDITIVE ────────────
+    // Every existing reader of DOCS — DocLinkBubble, check:docs' existence
+    // pass, the résumé pane's pill — asks for `url` and gets one file. Adding
+    // a second field rather than replacing `url` with an array is what kept
+    // this change to one component: the chat card is unchanged, because a
+    // card in a transcript should hand you the document rather than ask you
+    // to choose.
+    //
+    // PDF IS FIRST BECAUSE IT IS THE DEFAULT, and that is asserted rather
+    // than assumed: check:docs fails if formats[0].url and url disagree. Two
+    // ways to say which file is the default is two things to keep in
+    // agreement by hand, and this is the cheap way out of it.
     url: "/edwin-lara-resume-2026.pdf",
+    formats: [
+      { ext: "pdf", label: "PDF", meta: "Formatted", url: "/edwin-lara-resume-2026.pdf" },
+      { ext: "docx", label: "Word", meta: "Editable", url: "/edwin-lara-resume-2026.docx" },
+      { ext: "md", label: "Markdown", meta: "Plain text", url: "/edwin-lara-resume-2026.md" },
+    ],
   },
   // Served from public/, not dochub. The deck is 21 slides and 7.2 MB; a
   // third-party viewer that could rot, rate-limit, or reflow it was doing no
@@ -47,3 +70,12 @@ export const DOCS = {
 } as const
 
 export type DocKey = keyof typeof DOCS
+
+/** One downloadable format of a document. Only `resume` has these today. */
+export type DocFormat = { ext: string; label: string; meta: string; url: string }
+
+/** The formats for a document, or null when it is offered as one file. */
+export function docFormats(key: DocKey): readonly DocFormat[] | null {
+  const doc = DOCS[key] as { formats?: readonly DocFormat[] }
+  return doc.formats ?? null
+}
