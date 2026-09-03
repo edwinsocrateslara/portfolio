@@ -662,7 +662,7 @@ I prioritized every element against those goals. Research showed that product de
 
 Lower-priority actions were moved to less prominent areas or outside the core auction interface. I used user testing and existing data to support these trade-offs with stakeholders.
 
-Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
+Within the first year, auctions accounted for 63% of company revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
 
 The experience also increased chat messages per show by 172% and average watch time by 5 minutes, directly improving the engagement metrics we had prioritized the interface around.
 
@@ -953,9 +953,9 @@ SideBar is an LLM-powered networking coach I built at FutureFit. It helps job se
 
 Most job seekers already know people who can help. The hard part is knowing who to reach out to and what to say. SideBar identifies the most relevant connections and drafts personalized outreach, removing the friction that often stops people from taking action.
 
-In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and 75% said they were likely to use the coach again.
+In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again.
 
-The Christensen Institute selected SideBar for its Prosocial Possibilities research cohort, which explores how technology can strengthen social connection and expand access to opportunity.
+The Christensen Institute selected FutureFit AI for its Prosocial Possibilities research cohort, 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity. SideBar was what we piloted.
 
 
 #### motusbank and Meridian

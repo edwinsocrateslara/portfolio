@@ -109,20 +109,10 @@ const EXCEPTIONS = {
     "80%":
       "SideBar user testing, published by the Christensen Institute. No " +
       "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
-    // 75%, AND IT REPLACED A 73% THAT WAS NEVER IN THE SOURCE. The Christensen
-    // Institute publishes no 73%, and no percentage at all for preferring
-    // SideBar to a human counselor — that finding appears in its report as 2
-    // participant quotes with no figure attached. This is the use-again figure,
-    // which the report does publish. Both files now state it; see the pair in
-    // NAMED_FACTS below.
-    "75%":
-      "SideBar user testing, published by the Christensen Institute. No " +
-      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
   },
   "lib/sources/voice.md": {
     "90%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
     "80%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
-    "75%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
   },
 }
 
@@ -234,25 +224,54 @@ const NAMED_FACTS = [
     },
   },
 
-  // ── BACK TO A PAIR, WHICH IS WHAT THE SPLIT WAS FOR ────────────────────
-  // This was briefly two single-file entries. voice.md had dropped "73% with
-  // prior coaching experience preferred it to a human counselor" — the
-  // Christensen Institute's report contains no such percentage, that finding
-  // appears there as 2 participant quotes with no figure — and put the
-  // report's use-again 75% in its place, while resume.txt still carried the
-  // 73%. Splitting held the disagreement instead of hiding it: each string
-  // pinned on its own so neither could drift while the question was open.
+  // ── A PIN ON A FIGURE THAT IS DELIBERATELY ABSENT ──────────────────────
+  // There is no percentage here, and that is what this entry guards. The
+  // use-again result reads "most said they were likely to use the coach
+  // again", which is the Christensen Institute's own "the majority".
   //
-  // The résumé bullet has now been corrected, so the two files agree again and
-  // this asserts agreement again rather than mere existence. Recorded because
-  // the split was the unusual state and somebody reading the history should
-  // know it was deliberate and temporary rather than a mistake being repaired.
+  // It briefly read 75%. That was OUR ARITHMETIC on the report's "45% said
+  // very likely and 30% said likely" — a total the Institute chose not to
+  // publish. Worse than harmless, because the report contains two other 75%s:
+  // FutureFit's own Scheduled/Help-me-prep figure, and Overgrad's
+  // counselor-brokered figure from a different pilot. A reader checking ours
+  // against the report would have found a 75% saying something else.
+  //
+  // A NAMED_FACTS ENTRY WITH NO DIGITS IN IT IS UNUSUAL AND INTENDED. The
+  // FIGURE pattern cannot see an absence, so nothing else in this file would
+  // notice "most" being helpfully upgraded back to a number. This is the only
+  // instrument that can, and it holds both files to the same wording.
   {
-    figure: "75%",
-    fact: "said they were likely to use the coach again",
+    figure: "most",
+    fact: "were likely to use the coach again — NO percentage, on purpose",
     states: {
-      "lib/sources/resume.txt": "75% said they were likely to use the coach again",
-      "lib/sources/voice.md": "75% said they were likely to use the coach again",
+      "lib/sources/resume.txt": "most said they were likely to use the coach again",
+      "lib/sources/voice.md": "most said they were likely to use the coach again",
+    },
+  },
+
+  // ── THE DENOMINATOR, NOT JUST THE DIGITS ───────────────────────────────
+  // 63% passed every check while three files disagreed about what it was a
+  // percentage OF: projects.ts and resume.txt said "of company revenue" and
+  // voice.md said "of platform revenue". The FIGURE pattern found "63%" in the
+  // project data and stopped there, which is all it can do — it matches
+  // numbers, and the number was never the thing that was wrong.
+  //
+  // THIS IS THE ANSWER TO "CAN NAMED_FACTS HOLD WORDING RATHER THAN DIGITS".
+  // It always could: `states` maps a file to a PHRASE, and the phrase can be
+  // as long as the claim needs. Nothing was stopping a denominator being
+  // pinned except that nobody had written one down.
+  //
+  // 4 files, including lib/projects.ts, which is normally the haystack rather
+  // than a source. The check reads whatever file it is given, so a data file
+  // can be held to its own wording too.
+  {
+    figure: "63%",
+    fact: "of company revenue, from auctions in the first year",
+    states: {
+      "lib/projects.ts": "63% of company revenue",
+      "lib/sources/resume.txt": "63% of company revenue",
+      "lib/sources/voice.md": "63% of company revenue",
+      "lib/voice-answers.ts": "63% of company revenue",
     },
   },
 ]

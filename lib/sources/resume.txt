@@ -94,7 +94,7 @@ Oct 2025 – Present
   through contextual prompts and AI actions.
 - SideBar: Built an LLM-powered networking coach that helps job seekers
   activate their existing networks. In testing, 90% reached outreach, 80% would
-  send the AI-drafted message as-is or with minor edits, and 75% said they were
+  send the AI-drafted message as-is or with minor edits, and most said they were
   likely to use the coach again. Selected by the Christensen Institute for its
   Prosocial Possibilities research cohort, studying how technology can
   strengthen social connection and expand access to opportunity.

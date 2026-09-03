@@ -217,7 +217,7 @@ I prioritized every element against those goals. Research showed that product de
 
 Lower-priority actions were moved to less prominent areas or outside the core auction interface. I used user testing and existing data to support these trade-offs with stakeholders.
 
-Within the first year, auctions accounted for 63% of platform revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
+Within the first year, auctions accounted for 63% of company revenue and grew 23% quarter over quarter. More than 2,269 auction shows were held, featuring 59,000+ items.
 
 The experience also increased chat messages per show by 172% and average watch time by 5 minutes, directly improving the engagement metrics we had prioritized the interface around.
 
@@ -499,12 +499,32 @@ Increasingly, I'm also implementing accessibility improvements myself. I've ship
   omit would be reporting their study differently from how they reported it.
   Anyone who needs the base has it here.
 
-  ⚠ A 73% WAS DROPPED AS UNSOURCEABLE. An earlier version of this section, and
-  the résumé bullet it came from, read "73% with prior coaching experience
-  preferred it to a human counselor". The published report contains no 73% and
-  no percentage at all for preferring SideBar to a human counselor — that
-  finding exists there only as 2 participant quotes, with no figure attached.
-  It is not restorable from an older draft; it was never in the source.
+  ⚠ TWO FIGURES HAVE BEEN REMOVED FROM THIS SECTION AS UNSUPPORTED. Neither is
+  restorable from an older draft. Both are listed with their reason so a future
+  edit does not reintroduce them from memory.
+
+  73% — "with prior coaching experience preferred it to a human counselor".
+  The report contains no 73%, and no percentage at all for preferring SideBar
+  to a human counselor. That finding exists there only as 2 participant quotes,
+  with no figure attached. It was never in the source.
+
+  75% — "said they were likely to use the coach again". This one was OUR
+  ARITHMETIC, not a misremembering: the report publishes "The majority of
+  participants stated they were likely to use the AI networking coach again:
+  45% said very likely and 30% said likely." 45 + 30 is 75, but the Institute
+  chose to publish the majority plus a breakdown rather than a total, and
+  quoting research as published means not doing their sums for them. The prose
+  now says "most", which is their word.
+
+  ⚠ AND THE REPORT CONTAINS TWO OTHER 75%s, which is why the arithmetic was
+  worse than harmless. FutureFit's own 75% is a different finding entirely —
+  "of participants updated their network connection's status to 'Scheduled'
+  and clicked on the 'Help me prep' action item". Overgrad's 75%, from a
+  different pilot, is "of students reported preferring the counselor-brokered
+  introduction model over cold outreach on LinkedIn or email" — which is the
+  closest thing in the whole report to the counselor claim removed above, and
+  it is not about SideBar. A reader checking our 75% against the report would
+  have found a 75% saying something else.
 
   WHAT THE REPORT DOES PUBLISH, so a future edit can check itself against the
   list rather than against memory:
@@ -515,9 +535,16 @@ Increasingly, I'm also implementing accessibility improvements myself. I've ship
       80%  would send the drafted message as-is or with only minor edits
       75%  likely to use it again — 45% very likely plus 30% likely
 
-  The 75% in the prose below is the USE-AGAIN figure, not the Scheduled one;
-  they coincide at 75 and are different findings. The 80% carries "as-is or
-  with minor edits" because that qualifier is what makes it the finding it is.
+  The prose below states the 90% and the 80% and nothing else. The 80% carries
+  "as-is or with minor edits" because that qualifier is what makes it the
+  finding it is rather than a boast. The two 75%s and the 45% are published but
+  unused here; the use-again result is carried as "most", which is the
+  report's own "the majority".
+
+  THE COHORT IS OF PROVIDERS, NOT PRODUCTS. The report: "Our cohort of 10
+  edtech providers received training from our team." The Institute selected
+  FutureFit AI; SideBar is what FutureFit piloted. The prose said "selected
+  SideBar" and now says what happened.
 
   check:numbers holds all 3: each is excused from the project-data comparison
   (SideBar has no lib/projects.ts entry that could state it) and asserted by
@@ -536,9 +563,9 @@ SideBar is an LLM-powered networking coach I built at FutureFit. It helps job se
 
 Most job seekers already know people who can help. The hard part is knowing who to reach out to and what to say. SideBar identifies the most relevant connections and drafts personalized outreach, removing the friction that often stops people from taking action.
 
-In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and 75% said they were likely to use the coach again.
+In testing, 90% of participants reached the outreach stage, 80% said they would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again.
 
-The Christensen Institute selected SideBar for its Prosocial Possibilities research cohort, which explores how technology can strengthen social connection and expand access to opportunity.
+The Christensen Institute selected FutureFit AI for its Prosocial Possibilities research cohort, 10 edtech providers exploring how technology can strengthen social connection and expand access to opportunity. SideBar was what we piloted.
 
 ## motusbank and Meridian
 
