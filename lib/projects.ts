@@ -21,8 +21,22 @@ export interface Project {
   // section of edwin-context.md. Do not substitute one for the other.
   railSubtitle: string
   tagline: string
-  // `role` follows lib/sources/resume.txt, kept in agreement with LinkedIn. It
-  // is the one field on Project sourced outside this file.
+  // `role` follows the EMPLOYMENT ROWS of lib/sources/resume.txt, kept in
+  // agreement with LinkedIn. It is the one field on Project sourced outside
+  // this file.
+  //
+  // ⚠ THE ROWS, NOT THE SUMMARY, AND ONE ROW DIVERGES ON PURPOSE. resume.txt's
+  // FutureFit row reads "Designer & AI Builder"; this file says "Lead Product
+  // Designer" for that project. Both are true and they answer different
+  // questions. The resume row is POSITIONING — what Edwin does, on the
+  // document whose job is positioning. This field is a RECORD of what he was
+  // hired as, and it renders in a rail beside six other roles that are all
+  // real titles, where a self-description would read as a different kind of
+  // thing.
+  //
+  // Written down because an undocumented split is indistinguishable from
+  // drift, and the next audit would reconcile it without knowing why. The
+  // matching note is at the FutureFit row in resume.txt.
   //
   // `roleDescription` opens by restating the title, so the two have to agree.
   // They have disagreed before — a card reading Senior above a body reading

@@ -72,9 +72,19 @@ export const vibeProjects: Project[] = [
           // conversations". An internal noun may not.
           tagline:
             "I built an internal tool that reads everything customers and staff have said about the product and, once a week, puts 10 things at the top of the list with a written reason attached to each. It exists because feedback was arriving faster than anyone could read it, so decisions about what to build next were being made without most of it.",
-          // Sourced from lib/sources/resume.txt, same as the seven — FutureFit
-          // AI, Lead Product Designer (Contract). The (Contract) suffix is
-          // dropped here because no other entry carries an engagement type.
+          // Same FutureFit engagement as the seven, and the same deliberate
+          // divergence from lib/sources/resume.txt. That row now reads
+          // "Designer & AI Builder" — it is positioning, on the document whose
+          // job is positioning. This field is a record of what he was hired
+          // as, and it renders in a sampler beside seven entries that all
+          // carry real titles. The reasoning is written out once, at `role` in
+          // lib/projects.ts; this is the same call, taken the same way.
+          //
+          // The résumé row also used to carry a "(Contract)" suffix, dropped
+          // here because no other entry names an engagement type. The row no
+          // longer carries it either, so there is nothing left to drop — kept
+          // in the record so a reader comparing the two files knows the
+          // shorter string was a decision before it was a coincidence.
           role: "Lead Product Designer",
           status: "wip",
           // The dashboard in a laptop mockup, square, matching how the seven

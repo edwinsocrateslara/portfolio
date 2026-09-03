@@ -71,11 +71,53 @@ const DATA = ["lib/projects.ts", "lib/vibe-projects.ts"]
 // so the figure was fixed and the entry deleted. If this map ever grows a
 // second entry, ask the same question first — an exception is a last resort,
 // not a place to file a mismatch.
+// ── EXCEPTIONS: KEYED BY FILE, THEN BY FIGURE ────────────────────────────
+// The file key is not decoration. Keyed by bare figure — which is how this
+// started — an entry excused that figure in EVERY source, forever: excusing
+// "90%" for the resume's SideBar bullet would have made 90% unassertable in
+// voice.md and scripted-responses.ts too, and nothing would ever have said so.
+// An excuse is earned in one place and should be spent in one place.
+//
+// AN EXCEPTION MEANS UNCHECKED, and that is the whole cost of using one. The
+// loop below `continue`s, so nothing at all holds the figure afterwards. That
+// is honest for Super.com's 50,000, which one file states and nothing else
+// can. It is NOT enough for a figure two files state — see the note above
+// NAMED_FACTS, and the SideBar entries there, which is where the assertion
+// these exceptions give up is put back.
 const EXCEPTIONS = {
-  "50,000":
-    "Super.com's credit-building cashback card, in resume.txt. Super.com is an " +
-    "Additional Role rather than one of the seven portfolio projects, so " +
-    "lib/projects.ts has no entry that could state it.",
+  "lib/sources/resume.txt": {
+    "50,000":
+      "Super.com's credit-building cashback card. Super.com is an Additional " +
+      "Role rather than one of the seven portfolio projects, so " +
+      "lib/projects.ts has no entry that could state it.",
+
+    // The three SideBar figures, all the same case: SideBar is described on
+    // the résumé and in voice.md and has no lib/projects.ts entry, so there
+    // is no project data to compare against. Each is paired with a
+    // NAMED_FACTS entry below, which asserts the two files agree.
+    //
+    // 80% IS HERE FOR A SECOND REASON WORTH RECORDING. Before the haystack
+    // stopped reading comments, this figure PASSED — `inData("80")` matched
+    // "the first 80 rows went" in a comment in lib/vibe-projects.ts about
+    // cropping a spreadsheet screenshot. A résumé claim about user testing
+    // was being verified by a note on image composition. It was the only
+    // figure in either source whose verdict the comment-stripping changed,
+    // and it needed exactly what the other two needed all along.
+    "90%":
+      "SideBar user testing, published by the Christensen Institute. No " +
+      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
+    "80%":
+      "SideBar user testing, published by the Christensen Institute. No " +
+      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
+    "73%":
+      "SideBar user testing, published by the Christensen Institute. No " +
+      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
+  },
+  "lib/sources/voice.md": {
+    "90%": "The same three figures, stated in Edwin's voice. See resume.txt above.",
+    "80%": "The same three figures, stated in Edwin's voice. See resume.txt above.",
+    "73%": "The same three figures, stated in Edwin's voice. See resume.txt above.",
+  },
 }
 
 // ── NAMED FACTS ──────────────────────────────────────────────────────────
@@ -146,6 +188,53 @@ const NAMED_FACTS = [
       "lib/vibe-projects.ts": "14 weeks · sole contributor",
     },
   },
+
+  // ── The three SideBar figures ──────────────────────────────────────────
+  // These are here for a DIFFERENT REASON from the four above. Those four are
+  // bare integers the FIGURE pattern cannot see. These three are percentages
+  // it sees perfectly well — they are here because they are EXCUSED from the
+  // pattern check, SideBar having no project entry to compare against, and an
+  // excuse on its own leaves a figure with nothing holding it at all.
+  //
+  // So the exception gives up one assertion and this gives back a stronger
+  // one: the résumé and voice.md must state the same number in the same
+  // sentence. That is the drift that could actually happen here — two
+  // descriptions of one study, written apart, either rewritable alone.
+  //
+  // THE PHRASES DIFFER BY FILE ON PURPOSE. The résumé compresses to "73% with
+  // prior coaching experience"; the voice section says "73% of participants
+  // with prior coaching experience", because it is a spoken sentence. Both are
+  // correct in their own register, so the check names each file's own wording
+  // rather than forcing one on both.
+  //
+  // If the Christensen Institute republishes different figures, change them in
+  // both files and update the phrases here. The provenance — Appendix B, focus
+  // group data, 20 users and 20 respondents against roughly 3,000 platform
+  // users — is recorded in the comment above ## SideBar in voice.md.
+  {
+    figure: "90%",
+    fact: "of SideBar testers reached outreach",
+    states: {
+      "lib/sources/resume.txt": "90% reached outreach",
+      "lib/sources/voice.md": "90% reached outreach",
+    },
+  },
+  {
+    figure: "80%",
+    fact: "would send the AI-drafted message",
+    states: {
+      "lib/sources/resume.txt": "80% would send the AI-drafted message",
+      "lib/sources/voice.md": "80% would send the AI-drafted message",
+    },
+  },
+  {
+    figure: "73%",
+    fact: "with prior coaching experience preferred it to a human counselor",
+    states: {
+      "lib/sources/resume.txt": "73% with prior coaching experience preferred it to a human counselor",
+      "lib/sources/voice.md": "73% of participants with prior coaching experience preferred it to a human counselor",
+    },
+  },
 ]
 
 const stripLineComments = (s, marker) =>
@@ -153,7 +242,7 @@ const stripLineComments = (s, marker) =>
 
 /** Where the prose is, per file. Reading a whole .ts would pick up code. */
 const SOURCES = {
-  "lib/sources/voice.md": (s) => s,
+  "lib/sources/voice.md": (s) => s.replace(/<!--[\s\S]*?-->/g, ""),
   "lib/sources/resume.txt": (s) => stripLineComments(s, "#"),
   "lib/scripted-responses.ts": (s) =>
     [...stripLineComments(s.replace(/\/\*[\s\S]*?\*\//g, ""), "//")
@@ -163,7 +252,24 @@ const SOURCES = {
 // A thousands separator, or a trailing percent. See the note above.
 const FIGURE = /\d[\d,]*(?:\.\d+)?%|\d{1,3}(?:,\d{3})+/g
 
-const data = DATA.map((f) => readFileSync(f, "utf8")).join("\n")
+// ── THE HAYSTACK IS CONTENT, NOT SOURCE ──────────────────────────────────
+// Comments are stripped before anything is compared against this. They used
+// not to be, and it was not a theoretical hole: "80%" on the résumé passed
+// because `(?<![\d,.])80(?![\d,])` matched "the first 80 rows went" in a
+// comment in lib/vibe-projects.ts about how a screenshot was cropped. A claim
+// about user testing was verified by a note on image composition.
+//
+// Any number written in a comment could do that — a pixel dimension, a line
+// number, a percentage in an explanation of why something was rejected. The
+// comparison is between what the site SAYS, so both sides read content only:
+// the SOURCES extractors above already do it, and this is the other half.
+const data = DATA.map((f) =>
+  readFileSync(f, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("//"))
+    .join("\n")
+).join("\n")
 const inData = (core) =>
   new RegExp(`(?<![\\d,.])${core.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d,])`).test(data)
 
@@ -179,7 +285,7 @@ for (const [file, extract] of Object.entries(SOURCES)) {
   }
   let excused = 0
   for (const [fig, context] of found) {
-    if (EXCEPTIONS[fig]) { excused++; continue }
+    if (EXCEPTIONS[file]?.[fig]) { excused++; continue }
     if (inData(fig.replace(/%$/, ""))) continue
     problems.push(
       `${fig} in ${file} is not in the project data\n` +
@@ -198,7 +304,17 @@ for (const { figure, fact, states } of NAMED_FACTS) {
   for (const [file, phrase] of Object.entries(states)) {
     named.checked++
     named.files.add(file)
-    if (readFileSync(file, "utf8").includes(phrase)) continue
+    // WHITESPACE-INSENSITIVE, and it has to be. lib/sources/resume.txt is
+    // hard-wrapped at ~80 columns, so a phrase of any length crosses a line
+    // break and a raw `includes` fails on a file that states the fact
+    // perfectly well. The first attempt at the SideBar entries failed exactly
+    // that way — "80% would send the AI-drafted message" is split across
+    // lines 96 and 97. Collapsing runs of whitespace on both sides compares
+    // the sentence rather than the wrapping, which is what was meant. It also
+    // means re-wrapping a paragraph cannot break this gate, and re-wrapping is
+    // not a content change.
+    const flat = (t) => t.replace(/\s+/g, " ")
+    if (flat(readFileSync(file, "utf8")).includes(flat(phrase))) continue
     problems.push(
       `${file} no longer states the ${figure} — ${fact}\n` +
       `      expected the phrase: ${JSON.stringify(phrase)}\n` +

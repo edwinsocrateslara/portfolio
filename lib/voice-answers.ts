@@ -73,6 +73,28 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
       "The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.",
     ],
   },
+  // PLACED HERE, ABOVE `mentoring`, AND THE ORDER IS LOAD-BEARING. That entry
+  // triggers on "coach", which is a substring of this entry's "networking
+  // coach" — appended at the end, "what is the networking coach" would have
+  // played the mentoring answer. The first matching trigger wins, so the
+  // narrower phrase has to be reachable first.
+  //
+  // All four triggers are proper nouns or two-word phrases that appear nowhere
+  // else in the matcher, so sitting this high costs nothing: none of them can
+  // be a substring of a question about something else. A bare "networking"
+  // would have taken "how do you feel about networking", which is the model's
+  // question to answer.
+  {
+    id: "sidebar",
+    triggers: ["sidebar", "networking coach", "christensen", "prosocial"],
+    noChip: "typed-question coverage, not offered.",
+    paragraphs: [
+      "SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers activate the network they already have, rather than telling them to go build a new one.",
+      "Most people looking for work know more useful people than they think they do, and the hard part isn't the list — it's writing the message. SideBar works out who is worth reaching and drafts the outreach, so the step that usually stalls is the step that's already done.",
+      "In testing, 90% reached outreach, 80% would send the AI-drafted message, and 73% of participants with prior coaching experience preferred it to a human counselor.",
+      "The Christensen Institute selected it for its Prosocial Possibilities research cohort, which studies how technology can strengthen social connection and expand access to opportunity.",
+    ],
+  },
   {
     id: "years",
     triggers: ["how many years", "years of experience", "how long have you been"],

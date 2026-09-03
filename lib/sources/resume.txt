@@ -2,29 +2,31 @@ EDWIN SOCRATES LARA
 
 edwinsocrateslara@gmail.com
 linkedin.com/in/edwinsocrateslara
+edwinsocrateslara.com
 
 
 PROFESSIONAL SUMMARY
 
-# THIS NAMES A PRACTICE, NOT A RANK, AND THAT IS THE POINT. It read "Highly
-# accomplished Senior Product Designer" — and "Senior" there meant experienced,
-# not a title, which a reader cannot tell apart from a claim about seniority.
-# The line below says what the work IS.
+# THIS NAMES A PRACTICE, NOT A RANK, AND THAT IS THE POINT. A summary that
+# names a rank cannot be told apart from a claim about seniority; this one says
+# what the work IS.
 #
 # IT DOES NOT CONFLICT WITH THE EMPLOYMENT ROWS AND MUST NOT BE "RECONCILED"
-# WITH THEM. Lead Product Designer at FutureFit AI is a record of what Edwin
-# was hired as; this is a description of what he does. A future audit finding
-# "summary says builder, row says Lead" has found the design, not a defect.
+# WITH THEM. The rows are a record of what Edwin was hired as; this is a
+# description of what he does. A future audit finding "summary says builder,
+# row says something else" has found the design, not a defect.
 #
-# "Highly accomplished" came off with the rank. With no title left in the
-# sentence it was the only seniority claim in it, doing the same job by
-# adjective — which is the ambiguity this change exists to remove.
-AI builder and designer with 10+ years of experience
-specialising in AI-driven user experiences, conversational design, and agentic
-workflows. Adept at translating complex business goals into intuitive, elegant,
-and high-impact user experiences driving digital innovation across workforce
-development, e-commerce and fintech. Deep expertise in user-centered design,
-developing robust design systems, and crafting scalable product strategies.
+# It has been through two forms. It read "Highly accomplished Senior Product
+# Designer", where "Senior" meant experienced rather than titled; that became
+# "AI builder and designer", and "Highly accomplished" came off with the rank,
+# being the only seniority claim left in the sentence. It now leads with the
+# same two words the FutureFit row uses, so the summary and the current role
+# describe the same practice.
+Designer & AI Builder with 10+ years of experience across fintech, e-commerce,
+and workforce development, focused on AI products, conversational interfaces,
+and agentic workflows. Works end to end from user research and prototyping
+through production code, designing and building products from early ideas to
+shipped experiences.
 
 
 SKILLS & METHODOLOGIES
@@ -72,18 +74,41 @@ WCAG 2.2 AA auditing and remediation, axe, Screen-reader semantics
 EXPERIENCE
 
 FutureFit AI — Toronto, Ontario
-Lead Product Designer (Contract)
+# TITLE, AND IT DIVERGES FROM lib/projects.ts DELIBERATELY. This row says
+# "Designer & AI Builder"; the project entries say "Lead Product Designer".
+# Both are true and they are answering different questions. This is
+# positioning — what Edwin does, on the document whose job is positioning. The
+# project field is a record of what he was hired as, and it renders in a rail
+# beside six other roles that are all real titles, where a self-description
+# would read as a different kind of thing. See the note on `role` in
+# lib/projects.ts, which records the same split from the other side.
+Designer & AI Builder
 Oct 2025 – Present
 
-- Building an AI-powered workforce development platform that helps businesses
-  and governments guide unemployed and underemployed people toward meaningful
-  opportunities.
-- Building data driven user-testing and research practices to deeply
-  understand B2G, B2B, and B2C users.
-- Designing chat driven UX and agentic AI experiences that enhance workforce
-  development.
-- Creating an AI-compatible design system using design tokens and Shadcn, for
-  use in AI development tools, such as V0, Lovable, and Claude Code.
+- Design and build AI products for a workforce platform serving businesses and
+  governments. Worked across research, product, design, AI prototyping, data
+  integrations, and production code.
+- Miles: Designed and shipped the core UX/UI for FutureFit's trained LLM,
+  including conversational flows for career exploration, job discovery, and
+  understanding fit for specific roles. Integrated Miles across the platform
+  through contextual prompts and AI actions.
+- SideBar: Built an LLM-powered networking coach that helps job seekers
+  activate their existing networks. In testing, 90% reached outreach, 80% would
+  send the AI-drafted message, and 73% with prior coaching experience preferred
+  it to a human counselor. Selected by the Christensen Institute for its
+  Prosocial Possibilities research cohort, studying how technology can
+  strengthen social connection and expand access to opportunity.
+- Ideas Dashboard: Designed and built an AI prioritization system that
+  evaluates customer feedback against company strategy and technical
+  architecture, surfacing 10 priorities each week and quick wins for the team
+  to build.
+- AI Evidence Layer: Built integrations across Canny, Clarify, and Heap using
+  Claude Code and LLMs to synthesize customer feedback, client conversations,
+  and behavioral data into evidence for product decisions.
+- Design System: Built an AI-compatible design system with design tokens and
+  shadcn/ui, enabling code-generation tools to assemble interfaces from
+  established components. Shipped WCAG, ARIA, and Cypress accessibility
+  improvements directly to production.
 
 
 Complex NTWRK — Toronto, Ontario
@@ -127,7 +152,7 @@ Meridian Credit Union — Toronto, Ontario
 Senior Product Designer
 May 2019 – Nov 2020
 
-- Led the redesign of the Meridian Credit Union mobile app for 370,000+ users,
+- Led the redesign of the Meridian Credit Union mobile app for 370,000+ customers,
   significantly enhancing usability, engagement and improving retention.
 - Established a comprehensive IA and design system to ensure a cohesive and
   user-friendly digital banking experience.

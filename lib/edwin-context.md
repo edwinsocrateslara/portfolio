@@ -4,9 +4,9 @@
 
 In his own words: "I'm Edwin, AI designer & builder making useful products and workflows."
 
-AI builder and designer with 10+ years of experience specialising in AI-driven user experiences, conversational design, and agentic workflows. Adept at translating complex business goals into intuitive, elegant, and high-impact user experiences across workforce development, e-commerce, and fintech. Deep expertise in user-centered design, robust design systems, and scalable product strategies.
+Designer & AI Builder with 10+ years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
 
-He is currently the lead product designer (contract) at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
+He is currently Designer & AI Builder at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
 
 He is based in Toronto, Ontario, Canada.
 
@@ -14,8 +14,8 @@ He is based in Toronto, Ontario, Canada.
 
 - **Email:** edwinsocrateslara@gmail.com
 - **LinkedIn:** linkedin.com/in/edwinsocrateslara
-- **Portfolio:** this site. Do not refer a visitor elsewhere to see the work —
-  they are already on it.
+- **Portfolio:** edwinsocrateslara.com — this site. Do not refer a visitor
+  elsewhere to see the work; they are already on it.
 
 ## Tools & Methodologies
 
@@ -25,7 +25,7 @@ He is based in Toronto, Ontario, Canada.
 
 ## Work History (Chronological)
 
-- **FutureFit AI** — Lead Product Designer (Contract), Oct 2025–Present
+- **FutureFit AI** — Designer & AI Builder, Oct 2025–Present
 - **Complex NTWRK** — Lead Product Designer, Apr 2022–Oct 2025
 - **Super.com** — Senior Product Designer, Nov 2021–Apr 2022
 - **Backbase** — Senior Product Designer, Nov 2020–Nov 2021
@@ -947,6 +947,17 @@ I follow WCAG standards and build accessibility requirements into the design sys
 Increasingly, I'm also implementing accessibility improvements myself. I've shipped ARIA and other accessibility improvements directly into the production codebase, which allows me to identify issues, fix them, and validate the implementation.
 
 
+#### SideBar
+
+SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers activate the network they already have, rather than telling them to go build a new one.
+
+Most people looking for work know more useful people than they think they do, and the hard part isn't the list — it's writing the message. SideBar works out who is worth reaching and drafts the outreach, so the step that usually stalls is the step that's already done.
+
+In testing, 90% reached outreach, 80% would send the AI-drafted message, and 73% of participants with prior coaching experience preferred it to a human counselor.
+
+The Christensen Institute selected it for its Prosocial Possibilities research cohort, which studies how technology can strengthen social connection and expand access to opportunity.
+
+
 #### motusbank and Meridian
 
 The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.
@@ -959,11 +970,11 @@ In his own words: "In my downtime, I'm usually bouldering or running races, camp
 
 ### Availability
 
-Currently Lead Product Designer at FutureFit AI. Best reached by email.
+Currently Designer & AI Builder at FutureFit AI. Best reached by email.
 
 ### Contact
 
 - **Email:** edwinsocrateslara@gmail.com
 - **LinkedIn:** linkedin.com/in/edwinsocrateslara
-- **Portfolio:** this site. Do not refer a visitor elsewhere to see the work —
-  they are already on it.
+- **Portfolio:** edwinsocrateslara.com — this site. Do not refer a visitor
+  elsewhere to see the work; they are already on it.

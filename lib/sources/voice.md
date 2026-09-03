@@ -487,6 +487,42 @@ I follow WCAG standards and build accessibility requirements into the design sys
 
 Increasingly, I'm also implementing accessibility improvements myself. I've shipped ARIA and other accessibility improvements directly into the production codebase, which allows me to identify issues, fix them, and validate the implementation.
 
+<!--
+  ⚠ PARAGRAPH 2 IS NOT IN EDWIN'S WORDS YET. "Most people looking for work
+  know more useful people than they think they do, and the hard part isn't
+  the list — it's writing the message" was drafted for him, approved to
+  stand for now, and is to be rewritten in his own words. It is marked
+  here so it does not quietly become canon by sitting in a file whose
+  first line says everything in it is his. Every other paragraph in this
+  section is his, from the résumé bullet.
+
+  PROVENANCE OF THE THREE FIGURES, recorded here rather than in the prose.
+  90%, 80% and 73% are quoted as the Christensen Institute published them,
+  bare. Their report's Appendix B gives the underlying study as FutureFit
+  AI's pilot: focus group data, 20 users and 20 respondents, against
+  roughly 3,000 platform users over the pilot period.
+
+  The denominator is DELIBERATELY not in the answer. Quoting someone
+  else's published research means quoting it as published; adding an n
+  they chose to omit would be reporting their study differently from how
+  they reported it. Anyone who needs the base has it here.
+
+  check:numbers holds all three: each is excused from the project-data
+  comparison (SideBar has no lib/projects.ts entry that could state it)
+  and asserted by phrase against lib/sources/resume.txt instead, so the
+  two places that state them cannot drift apart.
+-->
+
+## SideBar
+
+SideBar is an LLM-powered networking coach I built at FutureFit. It helps job seekers activate the network they already have, rather than telling them to go build a new one.
+
+Most people looking for work know more useful people than they think they do, and the hard part isn't the list — it's writing the message. SideBar works out who is worth reaching and drafts the outreach, so the step that usually stalls is the step that's already done.
+
+In testing, 90% reached outreach, 80% would send the AI-drafted message, and 73% of participants with prior coaching experience preferred it to a human counselor.
+
+The Christensen Institute selected it for its Prosocial Possibilities research cohort, which studies how technology can strengthen social connection and expand access to opportunity.
+
 ## motusbank and Meridian
 
 The deck refers to the product as motusbank, Meridian Credit Union's digital-only bank. I refer to this work as Meridian throughout.
