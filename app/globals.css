@@ -468,10 +468,51 @@
      not the indicator is animating, so mount and unmount cost the
      stream nothing. */
   --indicator-size: var(--space-24);
-  /* The brand mark. 16 against the 12px wordmark — one step up the raw scale,
-     so the mark leads the name slightly without competing with it. 12 would
-     read as a bullet, 24 (the indicator's size) would outweigh a short name. */
-  --brand-mark-size: var(--space-16);
+  /* ── The brand mark, at two widths, and they are two different marks ──
+     At 1440 the rail carries the sparkle ALONE, so no cap height governs it
+     and it is not sized against a neighbour. It is also not on the icon ramp,
+     and that is a decision with a reason: the ramp's top step is 24, and the
+     typing indicator is already a lime sparkle at 24. A 24px lime brand
+     sparkle would be the same shape, the same colour and the same size as the
+     indicator, in one view — the same object twice. 32 is the smallest step on
+     the 4px grid that separates them, and it is a sixth size that exists
+     because of a collision rather than because a rule produced it.
+
+     ── THE COLLISION IS ACCEPTED, NOT DESIGNED AROUND ────────────────────
+     Both marks are lime, both animate, and the styling is otherwise the same;
+     only the size differs. That is Edwin's call and it is a relationship
+     rather than an oversight: the sparkle is the site's mark, and when the
+     site is thinking a smaller one appears in the transcript. A version that
+     froze the brand to tell them apart was built and rejected.
+
+     So do NOT "fix" this by desaturating one, freezing one, or pulling them
+     further apart on size. If a future change makes them harder to tell
+     apart, the thing to protect is the 32/24 difference, not the sameness.
+
+     ON PHASE, because it is the obvious next question and the answer is not
+     the obvious one. They do not sync, and they do not drift either. Measured
+     off getAnimations(): the brand's animation starts once at load (startTime
+     465ms, unchanged for the session) while the indicator's startTime moves
+     every time it is sampled, because React rebuilds that element for every
+     block. Its currentTime never passed 700ms of a 1666.7ms cycle across
+     twelve samples — it is restarted from zero before it can finish a
+     revolution, and the offset between the two came back effectively random
+     (91°, 255°, 0°, 268°, 88°, 340°, …).
+
+     Arbitrary phase is RIGHT here and worth keeping: two identical marks
+     locked in step would read as one mechanism mirrored, which is the
+     mechanical reading this is not going for. The restart is a separate
+     matter — see the note on .indicator-arc.
+
+     At 380 the mark still sits beside "Edwin Lara" in the top bar, so it is a
+     different problem with a different answer and needs its own token —
+     otherwise the rail's 32 lands beside 12px type at 3.9× its cap. */
+  --brand-mark-size: var(--space-32);
+  /* The top bar's mark, beside .type-wordmark at 12px. UNCHANGED at 16 by this
+     pass, and flagged rather than fixed: 16 against a 12px cap of 8.2 is 1.95×
+     where the cap rule asks for 1.4× and would give 12. That miss predates the
+     brand work — see the note in DESIGN.md. */
+  --brand-mark-topbar: var(--space-16);
   /* --rail-icon-size is GONE. Its only readers were the WORK and VIBE CODING
      section headers, and those no longer carry a glyph; the document rows
      below always overrode it. A token whose every reader has been deleted is
@@ -1380,6 +1421,17 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   from { stroke-dashoffset: 0; }
   to   { stroke-dashoffset: -100; }
 }
+/* ⚠ THE INDICATOR NEVER COMPLETES A REVOLUTION, and this is not about the
+   duration. React rebuilds the typing indicator's element for every block that
+   arrives — 14 blocks in a reveal produced 14 distinct DOM nodes — so the CSS
+   animation is created fresh and restarted from zero each time. Measured off
+   getAnimations() across twelve samples during a reveal, its currentTime never
+   passed 700ms of this 1666.7ms cycle: blocks land every 400–900ms and the arc
+   is cut and reset before it gets round.
+   What ships is therefore the first ~40% of the sweep on a loop, not the sweep.
+   Fixing it means giving the indicator a stable identity across renders so
+   React keeps the node; it is NOT a timing change, and shortening the cycle
+   would only hide it. Left as found, recorded rather than assumed. */
 .indicator-arc { animation: indicator-arc var(--indicator-cycle) linear infinite; }
 .indicator-dot { animation: indicator-dot var(--indicator-cycle) linear infinite; }
 

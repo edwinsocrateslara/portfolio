@@ -165,9 +165,82 @@ export function AppShell({
     const prev = seenCountRef.current[activeThread]
     seenCountRef.current[activeThread] = n
     if (prev !== undefined && n > prev) {
-      el.scrollTo({ top: el.scrollHeight, behavior: prefersReducedMotion ? "auto" : "smooth" })
+      // INSTANT, ALWAYS. This was smooth, and smooth cannot work here: it is
+      // an animation toward a scrollHeight sampled when it starts, and the
+      // content is still growing while it runs. Traced during a reveal, the
+      // distance-to-bottom decayed 93 → 84 → 77 … → 47 and then STOPPED at
+      // exactly 47 — the animation reaching a target that was 47px stale,
+      // which is the typing indicator's own box (31px + the 16px column gap).
+      //
+      // Gating it on activeBusy did not help, and finding out why is what
+      // explains the whole bug: activeBusy flickers false between blocks, so
+      // the indicator is unmounted and remounted for every one (measured: 14
+      // blocks, 14 distinct DOM nodes). The effect therefore runs during the
+      // gap, sees "not busy", picks smooth, and measures a layout with no
+      // indicator in it.
+      //
+      // Instant also costs nothing that was worth having. A reveal is 13–15
+      // blocks arriving 400–900ms apart; each new block cancelled the previous
+      // animation, so the smoothness was never seen — the scroller simply
+      // spent the whole reveal in transit.
+      el.scrollTo({ top: el.scrollHeight, behavior: "auto" })
     }
-  }, [activeMessages.length, activeThread, prefersReducedMotion])
+  }, [activeMessages.length, activeThread])
+
+  // ── KEEP THE BOTTOM PINNED WHILE THE CONTENT IS STILL GROWING ────────────
+  //
+  // THE BUG THIS FIXES. The effect above fires on MESSAGE COUNT, and the last
+  // thing in the scroller is not a message — it is the typing indicator. React
+  // rebuilds that node on every block (measured: one new element per block,
+  // 14 blocks, 14 distinct nodes), so at the instant the effect reads
+  // scrollHeight the indicator's box is not in it. The scroller settled
+  // EXACTLY the indicator's own height plus the column gap above the bottom —
+  // 31 + 16 = 47px, identical at 1440 and 380 — and .pane-scroll's dock
+  // reservation leaves only 8px of clearance, so a 47px shortfall put the
+  // indicator 39px underneath the composer for the whole stream. The dock is
+  // rgb(bg / 0.72) with a blur over it, so it read as a smudge rather than as
+  // nothing, which is why it looked like a paint bug.
+  //
+  // It was never z-index. .pane-dock has `z-index: auto` and wins on paint
+  // order alone; raising or lowering anything would have changed nothing.
+  //
+  // WHY AN OBSERVER AND NOT ANOTHER DEPENDENCY. Adding activeBusy to the list
+  // above fixes this one symptom. It does not fix the general shape of the
+  // problem, which is that the scroller has to follow CONTENT HEIGHT and the
+  // effect above watches an array length. Images decode and grow their block
+  // after commit; a block can reflow. Any of those leaves the same gap for the
+  // same reason. So this watches the box.
+  //
+  // STICKY, NOT FORCED. It re-pins only when the reader is already within
+  // NEAR_BOTTOM of the end. Scroll up mid-stream and it lets go — a scroller
+  // that yanks itself down while you are reading is worse than a hidden
+  // indicator.
+  //
+  // NOT GATED ON activeBusy, deliberately. That was the first version and it
+  // was unreliable for the same reason the effect above was: activeBusy
+  // flickers false between blocks, so the observer was torn down and rebuilt
+  // once per block and was absent for exactly the moments that matter. One
+  // observer on one element, alive for the life of the thread, costs nothing
+  // measurable and has no gap to fall through.
+  useEffect(() => {
+    const el = paneScrollRef.current
+    if (!el) return
+    const content = el.firstElementChild
+    if (!content) return
+
+    const NEAR_BOTTOM = 120
+    const pin = () => {
+      const gap = el.scrollHeight - el.scrollTop - el.clientHeight
+      if (gap > 0 && gap <= NEAR_BOTTOM) el.scrollTop = el.scrollHeight
+    }
+    // `auto`, never smooth: this fires many times a second while blocks land,
+    // and each smooth call cancels the last one's animation, which is its own
+    // way of never arriving.
+    const ro = new ResizeObserver(pin)
+    ro.observe(content)
+    pin()
+    return () => ro.disconnect()
+  }, [activeThread])
 
   const switchThread = useCallback((next: string) => {
     const el = paneScrollRef.current
@@ -588,7 +661,7 @@ export function AppShell({
           .shell-topbar-subject is the element that gives, by ellipsis. */}
       <div className="shell-topbar">
         <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
-          <Sparkle size="var(--brand-mark-size)" />
+          <Sparkle size="var(--brand-mark-topbar)" />
           <span className="type-wordmark" style={{ color: "rgb(var(--bureau-text-primary))" }}>
             Edwin Lara
           </span>

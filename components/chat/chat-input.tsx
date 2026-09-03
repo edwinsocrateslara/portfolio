@@ -154,13 +154,26 @@ export function ChatInput({
             already varies with state, so a screen reader still hears "Send
             message" / "Sending" — the label was never what carried it. */}
         {isLoading ? (
+          // THE IN-FLIGHT DOT, and it is not a stop control. The button is
+          // disabled while this shows (canSubmit is false whenever isLoading
+          // is), the cursor is not-allowed and the accessible name is
+          // "Sending" — nothing here can be pressed.
+          //
+          // ACCENT, up from --bureau-text-muted. The accent already means two
+          // things on this surface and they are not in conflict: "working" in
+          // the transcript, where the typing indicator is an accent sparkle,
+          // and "armed" here, where a submittable button fills accent edge to
+          // edge. This dot is the first, and it cannot be mistaken for the
+          // second because the second is a 34px filled disc and this is an 8px
+          // dot on a transparent face inside a hairline border. The hue is
+          // shared; the amount of it is what separates the states.
           <span
             className="animate-bureau-pulse"
             style={{
               width: "var(--space-8)",
               height: "var(--space-8)",
               borderRadius: "var(--bureau-radius-chip)",
-              background: "rgb(var(--bureau-text-muted))",
+              background: "rgb(var(--bureau-accent))",
             }}
           />
         ) : (

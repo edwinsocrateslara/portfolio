@@ -177,15 +177,29 @@ export function Sidebar({
 
   return (
     <aside className="rail" data-open={open} aria-label="Site index">
-      {/* "Edwin Lara" at every width — one form, replacing both the rail's
-          "Edwin Socrates Lara" and the top bar's "Edwin". The full name still
-          stands on the résumé, the case-study header and the page title: it
-          has left the app chrome, not the site. */}
-      <button type="button" className="rail-brand" onClick={pick(onHome)}>
+      {/* THE MARK ALONE. The wordmark beside this was "Edwin Lara"; at 1440 the
+          rail now carries the sparkle and nothing else, in the accent.
+
+          THE NAME IS NOT GONE FROM THE APP — it stays in the mobile top bar,
+          where the rail is behind a sheet and this button is not on screen. So
+          the two are not the same control at two widths any more: the desktop
+          rail is a mark, the phone's top bar is a mark and a name.
+
+          THE ACCESSIBLE NAME IS NOT OPTIONAL AND CANNOT COME FROM THE CONTENT.
+          It used to: the button was named by the visible "Edwin Lara", and
+          Sparkle is aria-hidden at every call site. Removing the text would
+          have left a button with NO accessible name — announced as "button",
+          on the control that goes home. The aria-label carries it now, and it
+          says the name and the destination because the mark alone says
+          neither. */}
+      <button
+        type="button"
+        className="rail-brand"
+        onClick={pick(onHome)}
+        aria-label="Edwin Lara — home"
+        style={{ color: "rgb(var(--bureau-accent))" }}
+      >
         <Sparkle size="var(--brand-mark-size)" />
-        <span className="type-wordmark" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-          Edwin Lara
-        </span>
       </button>
 
       {/* The wrapper exists to carry the fade: a background painted on the
