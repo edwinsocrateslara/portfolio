@@ -2255,13 +2255,41 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .pane-scroll {
     padding: var(--space-20) var(--space-20) var(--dock-h, var(--space-80));
   }
-  /* Mobile order is SPINE order, and the mosaic linearises by hierarchy
-     rather than by position: portrait first, then the sentence, then the two
-     supports as full-width squares, then the reading ledger. The photo leads
-     because on a phone it is the fastest thing to read. */
+  /* ── MOBILE IS DOM ORDER: WORDS, THEN PHOTOGRAPHS ───────────────────────
+     No `order` on either child. The column falls in the order the markup is
+     written, which is also the order a screen reader has always heard and the
+     order the desktop row reads left to right. One sequence at every width,
+     and nothing to keep in agreement.
+
+     IT WAS THE OTHER WAY ROUND, and the argument for it is worth keeping
+     because it is a good one: on a phone a photograph is the fastest thing to
+     read, so leading with the mosaic gets something across before any prose is
+     parsed. `.about-spine { order: 2 }` and `.about-mosaic { order: 1 }` did
+     that.
+
+     WHAT OVERRULES IT IS THE CAPTION. "Bouldering · Race day" names two
+     activities that only the lede introduces — "In my downtime, I'm usually
+     bouldering or running races". Photographs-first put that caption 1,248px
+     ABOVE the sentence that explains it at 380, so the label arrived before the
+     thing it labels. That was not true when the order was chosen: the
+     bouldering slot was empty and the caption had one photograph under it.
+
+     THE COMMENT HERE ALSO DESCRIBED A LAYOUT THAT WAS NEVER BUILT. It claimed
+     the mosaic "linearises by hierarchy rather than by position: portrait
+     first, then the sentence, then the two supports, then the reading ledger"
+     — an interleave. The CSS moved the WHOLE mosaic ahead of the WHOLE spine;
+     measured at 380, the painted order was 3 photographs and both captions,
+     then the heading. Recorded because the next person to read "linearises by
+     hierarchy" would believe the interleave exists.
+
+     AND IT CLOSES A TRAP THAT HAD NOT SPRUNG. Visual order diverging from DOM
+     order is the 1.3.2 antipattern; it was harmless only because .about
+     contains zero focusable elements — checked on the running page, not
+     assumed. The first link added to this pane would have made it a real
+     focus-order bug. */
   .about { flex-direction: column; gap: var(--space-group); }
-  .about-spine { max-width: none; flex: none; order: 2; }
-  .about-mosaic { order: 1; flex-direction: column; width: 100%; max-width: none; margin-top: 0; }
+  .about-spine { max-width: none; flex: none; }
+  .about-mosaic { flex-direction: column; width: 100%; max-width: none; margin-top: 0; }
   .about-stack { flex-direction: column; }
   /* The résumé, same breakpoint and same reason as the mosaic: a 96px date
      column plus a 40px rail leaves ~200px of prose at 380, which is four
