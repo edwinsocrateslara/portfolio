@@ -225,18 +225,31 @@ export function buildDocx(resume, hash) {
   // ── experience ─────────────────────────────────────────────────────────
   body.push(heading("Experience"))
   for (const role of resume.roles) {
+    // TWO ROWS, TWO COLUMNS, matching the PDF: employer over title on the
+    // left, location over dates on the right. It was one row of "employer
+    // location <tab> dates" with the title alone on the line below — so the
+    // location read as part of the company name, and the title, which is the
+    // more important of the two left-hand strings, had no right-hand partner.
     body.push(
       para(
         [
           run(role.employer, { b: true, size: 21 }),
-          run(`  ${role.location}`, { size: 17, color: "5A5A5A" }),
           TAB,
-          run(role.dates, { size: 17, color: "5A5A5A" }),
+          run(role.location, { size: 17, color: "5A5A5A" }),
         ],
         { after: 20, before: 140, tabRight: RIGHT_TAB }
       )
     )
-    body.push(para([run(role.title, { i: true, color: "3C3C3C" })], { after: 80 }))
+    body.push(
+      para(
+        [
+          run(role.title, { i: true, color: "3C3C3C" }),
+          TAB,
+          run(role.dates, { size: 17, color: "5A5A5A" }),
+        ],
+        { after: 80, tabRight: RIGHT_TAB }
+      )
+    )
     for (const group of role.groups) {
       if (group.label) body.push(para([run(group.label, { b: true })], { after: 40, before: 60 }))
       for (const b of group.bullets) body.push(para([run(b)], { after: 40, bullet: true }))

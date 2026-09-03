@@ -99,21 +99,36 @@ const CSS = `
   .role { break-inside: avoid; page-break-inside: avoid; margin-top: 10pt; }
   .role:first-of-type { margin-top: 7pt; }
 
-  .role-head {
+  /* TWO ROWS, TWO COLUMNS. Employer over title on the left, location over
+     dates on the right — the pairing a reader scans, which is WHO and WHEN in
+     one glance rather than employer-and-place run together.
+
+     It used to be one row of "employer location …… dates" with the title
+     orphaned on a line of its own below. The title is the more important of
+     the two left-hand strings and it had no right-hand partner; the location
+     was glued to the employer with a space and read as part of the company
+     name. */
+  .role-row {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 10pt;
+    gap: 12pt;
   }
   .employer { font-size: 10.6pt; font-weight: 700; letter-spacing: -0.005em; }
-  .location { font-weight: 400; color: var(--ink-quiet); font-size: 8.4pt; }
+  .title { font-style: italic; color: var(--ink-soft); }
+
+  /* THE RIGHT COLUMN IS ONE COLUMN, so it is set in one face. Location was
+     8.4pt sans while dates were 7.8pt mono, which was invisible when they sat
+     on different lines with different neighbours and is not now that they are
+     stacked against the same edge. Both are data — a place and a span — and
+     the mono is what this system sets data in. */
+  .location,
   .dates {
     font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 7.8pt;
     color: var(--ink-quiet);
     white-space: nowrap;
   }
-  .title { font-style: italic; color: var(--ink-soft); margin-top: 0.5pt; }
 
   .group-label { font-weight: 600; margin-top: 5pt; }
 
@@ -166,11 +181,14 @@ export function buildPrintHtml(resume, hash) {
     .map(
       (r) => `
     <div class="role">
-      <div class="role-head">
-        <div><span class="employer">${esc(r.employer)}</span> <span class="location">${esc(r.location)}</span></div>
-        <div class="dates">${esc(r.dates)}</div>
+      <div class="role-row">
+        <span class="employer">${esc(r.employer)}</span>
+        <span class="location">${esc(r.location)}</span>
       </div>
-      <div class="title">${esc(r.title)}</div>
+      <div class="role-row">
+        <span class="title">${esc(r.title)}</span>
+        <span class="dates">${esc(r.dates)}</span>
+      </div>
       ${r.groups
         .map(
           (g) =>

@@ -59,6 +59,22 @@ export const sourceHash = () =>
 // The format someone pastes into a form, so it is deliberately plain: no
 // tables, no HTML, no reference links. The stamp is an HTML comment, which
 // every Markdown renderer drops and every text editor shows.
+//
+// THE ROLE HEADER IS NOT CHANGING WHEN THE OTHER TWO DO, and that is not an
+// omission. The PDF and the DOCX moved to two rows of two columns — employer
+// over title on the left, location over dates on the right. Markdown has no
+// columns and inventing one would mean a table, which is exactly what "no
+// tables" above rules out and which pastes badly into the forms this format
+// exists for.
+//
+// It does not need one: the PAIRING is already right, expressed with
+// separators instead of alignment.
+//
+//     ### FutureFit AI — Toronto, Ontario        <- employer + location
+//     **Designer & AI Builder** · Oct 2025 – Present   <- title + dates
+//
+// Two lines, the same two pairs, in the same order. Right-alignment is a
+// property of a page, and this format does not have one.
 function buildMarkdown(r, hash) {
   const out = []
   out.push(`<!-- resume-source-hash:${hash} -->`)
