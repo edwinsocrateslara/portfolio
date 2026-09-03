@@ -52,15 +52,22 @@
      ONLY at a negative z-index — see the narrowing in check-design.mjs. */
   --accent-rim: var(--bureau-accent);
 
-  /* THE AURORA'S FOUR STOPS. These are Magic UI's own defaults and they are
-     the only chromatic colours in this system — everything else is achromatic
-     plus one lime. Tokenised rather than inlined so that fact is visible in
-     the palette instead of buried in a gradient: four colours arrived, and a
-     later audit should be able to see them without reading a keyframe. */
-  --aurora-1: #ff0080;
-  --aurora-2: #7928ca;
-  --aurora-3: #0070f3;
-  --aurora-4: #38bdf8;
+  /* THE AURORA'S TWO STOPS, and they are the only chromatic colours in this
+     system — everything else is achromatic plus one lime. Tokenised rather
+     than inlined so that fact is visible in the palette instead of buried in a
+     gradient, and a later audit can see them without reading a keyframe.
+     Literal hex is correct HERE and only here: rule 4 exempts a custom
+     property defined in :root, which is what makes a token a token.
+     
+     IT WAS FOUR — #ff0080, #7928ca, #0070f3, #38bdf8, Magic UI's own defaults.
+     Two of those went below the contrast this headline needs: #7928ca measured
+     2.63:1 against --bureau-bg and #0070f3 4.08:1, so the phrase passed
+     through a stop that failed even 1.4.3's 3:1 large-text floor. Nothing
+     caught it, because contrast is not something check:design can compute from
+     source. Written down so the next palette is chosen against the background
+     rather than for its own sake. */
+  --aurora-1: #00ff87;
+  --aurora-2: #60efff;
 
   /* The dot field's ink. 0.12 also happens to equal --highlight-inset. It is
      NOT the same value: that is a wash inside a control and this is a mark on
@@ -2589,8 +2596,21 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    Verified two ways: getClientRects() returns ONE rect at 1440 and at 380, so
    there is no fragment boundary to restart at, and box-decoration-break
    computes to `slice` so even a wrap would paint as though unbroken. Sampling
-   the rendered ink, per-word mean hue runs 210.0 -> 204.8 -> 202.1 — three
-   ordered bands, which a per-word restart could not produce.
+   the rendered ink in thirds, mean hue runs 173.2 -> 182.4 -> 177.7 — three
+   DISTINCT bands, and that is what a per-word restart could not produce:
+   three boxes each showing the same slice of the same gradient would sample
+   the same mean three times.
+
+   Those numbers are not ordered, and that is the ramp rather than a fault.
+   The stop list runs c1 -> c2 -> c1, so hue rises and falls. It read
+   210.0 -> 204.8 -> 202.1 while the gradient was four one-way colours and the
+   comment said "ordered" on that basis; the evidence was always the DIFFERENCE
+   between bands, never their direction.
+
+   THE STOP LIST ENDS WHERE IT STARTS, and that repeat is load-bearing rather
+   than a typo: the animation runs background-position 0% -> 300% forever, so
+   the last stop has to equal the first or the loop shows a seam every 10s.
+   Two colours, three stops.
 
    background-size 300% means the phrase shows a THIRD of one cycle, so this
    reads as the whole phrase shifting together rather than a wave travelling
@@ -2598,8 +2618,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 .aurora-word {
   position: relative;
   display: inline-block;
-  background-image: linear-gradient(135deg, var(--aurora-1), var(--aurora-2), var(--aurora-3),
-                                var(--aurora-4), var(--aurora-1));
+  background-image: linear-gradient(135deg, var(--aurora-1), var(--aurora-2), var(--aurora-1));
   background-size: 300% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -2804,8 +2823,10 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
    THE AURORA FALLS BACK TO INK, not to a frozen gradient. A paused gradient
    would leave the phrase in whatever colour the first frame happened to be —
-   which on this palette is a pink no other text uses. Under reduce it is
-   simply text-primary, like the words either side of it. */
+   an arbitrary point on a two-colour ramp, and a chromatic one on a page where
+   nothing else is. Under reduce it is simply text-primary, like the words
+   either side of it. (It said "a pink no other text uses" while the first stop
+   was #ff0080; the argument survived the palette change, the example did not.) */
 @media (prefers-reduced-motion: reduce) {
   .aurora-word {
     animation: none;

@@ -230,13 +230,27 @@ pills now carry an inset highlight and no other control does. That is a real
 inconsistency and it is the price of the effect, recorded here rather than
 found later.
 
-### Four chromatic colours arrived
+### Two chromatic colours arrived
 
 The aurora on the front-door headline is the only chromatic thing in an
-otherwise achromatic system: `--aurora-1` through `--aurora-4`
-(`#ff0080`, `#7928ca`, `#0070f3`, `#38bdf8`). They are tokenised rather than
-inlined precisely so a later audit sees them in the palette instead of buried in
-a keyframe.
+otherwise achromatic system: `--aurora-1` and `--aurora-2` (`#00ff87`,
+`#60efff`). They are tokenised rather than inlined precisely so a later audit
+sees them in the palette instead of buried in a keyframe. Raw hex is correct at
+a `:root` token definition and nowhere else — rule 4 exempts exactly that case.
+
+**It was four, and two of them failed contrast.** The original set was Magic
+UI's defaults: `#ff0080`, `#7928ca`, `#0070f3`, `#38bdf8`. Measured against
+`--bureau-bg`, `#7928ca` is **2.63:1** and `#0070f3` is **4.08:1** — so the
+phrase ramped through a stop below 1.4.3's 3:1 floor for large text, and did it
+on the first sentence a visitor reads. The replacement runs **13.85:1** at one
+end and **13.53:1** at the other, with a minimum of **13.43:1** anywhere on the
+ramp.
+
+A GRADIENT HAS TO BE CHECKED ALONG ITS LENGTH, not at its stops. Luminance is
+not monotonic between two colours — one channel can fall while another rises —
+so the darkest point can sit in the interior. It does here: the minimum is at
+`t≈0.69`, below both endpoints. It is a 0.10 dip on a 13.4 floor and changes
+nothing, but the *shape* is the point, and `check:design` cannot compute it.
 
 ### Why a stroke passes rule 6
 
