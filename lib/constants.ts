@@ -31,9 +31,9 @@ export const DOCS = {
     // agreement by hand, and this is the cheap way out of it.
     url: "/edwin-lara-resume-2026.pdf",
     formats: [
-      { ext: "pdf", label: "PDF", meta: "Formatted", url: "/edwin-lara-resume-2026.pdf" },
-      { ext: "docx", label: "Word", meta: "Editable", url: "/edwin-lara-resume-2026.docx" },
-      { ext: "md", label: "Markdown", meta: "Plain text", url: "/edwin-lara-resume-2026.md" },
+      { ext: "pdf", label: "PDF", url: "/edwin-lara-resume-2026.pdf" },
+      { ext: "docx", label: "Word", url: "/edwin-lara-resume-2026.docx" },
+      { ext: "md", label: "Markdown", url: "/edwin-lara-resume-2026.md" },
     ],
   },
   // Served from public/, not dochub. The deck is 21 slides and 7.2 MB; a
@@ -71,8 +71,17 @@ export const DOCS = {
 
 export type DocKey = keyof typeof DOCS
 
-/** One downloadable format of a document. Only `resume` has these today. */
-export type DocFormat = { ext: string; label: string; meta: string; url: string }
+/** One downloadable format of a document. Only `resume` has these today.
+ *
+ *  IT CARRIED A `meta` FIELD — "Formatted", "Editable", "Plain text" — which
+ *  rendered as a mono sub-label on the right of each menu row. The row is the
+ *  format name alone now, so the field went with the span in the same change
+ *  rather than being left behind.
+ *
+ *  Same reasoning as `PreviewImage` in lib/projects.ts, one commit earlier: a
+ *  field nothing reads survives because nothing can tell it is unread. Those
+ *  six preview alt strings lasted weeks on exactly that. */
+export type DocFormat = { ext: string; label: string; url: string }
 
 /** The formats for a document, or null when it is offered as one file. */
 export function docFormats(key: DocKey): readonly DocFormat[] | null {

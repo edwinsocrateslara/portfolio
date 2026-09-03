@@ -2878,20 +2878,26 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 .download-panel { top: calc(100% + var(--space-4)); }
 
 .download-item {
+  /* ONE CHILD, so this is flex only to centre it vertically. It used to carry
+     `justify-content: space-between` and `align-items: baseline`, which
+     positioned a second span — a mono sub-label reading "Formatted" /
+     "Editable" / "Plain text" — against the right edge. Both properties went
+     with it rather than staying to describe a layout that no longer exists. */
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-between);
-  /* A 42px ROW, MEASURED. 18px line box + --space-12 top and bottom. The
-     comment here first said 44 by arithmetic that included a border this row
-     does not have — which is the exact failure .chip's own comment warns
-     about two hundred lines up, where the stated number had been stale twice.
-     So it is the measured value, and the target is stated rather than
-     implied: 42 clears WCAG 2.5.8 AA's 24x24 outright. It does not reach
-     2.5.5 AAA's 44, and no --space-* token gets it there — 18 + 24 is 42 and
-     the next step up is 18 + 32. 42 is the height this system builds rows to
-     everywhere else, and matching it beats inventing an off-grid padding to
-     reach a number one row of one menu would hit alone. */
+  align-items: center;
+  /* A 42px ROW, MEASURED. 18px line box + --space-12 top and bottom.
+     STILL 42 after the sub-label came out, and that is arithmetic rather than
+     luck: both spans were 12/18, so the one that left took width out of the
+     row and no height. Re-measured to confirm rather than assumed.
+     The comment here first said 44, by arithmetic that included a border this
+     row does not have — the exact failure .chip's own comment warns about two
+     hundred lines up, where the stated number had been stale twice. So it is
+     the measured value, and the target is stated rather than implied: 42
+     clears WCAG 2.5.8 AA's 24x24 outright. It does not reach 2.5.5 AAA's 44,
+     and no --space-* token gets it there — 18 + 24 is 42 and the next step up
+     is 18 + 32. 42 is the height this system builds rows to everywhere else,
+     and matching it beats inventing an off-grid padding to reach a number one
+     row of one menu would hit alone. */
   padding: var(--space-12);
   border-radius: var(--bureau-radius-btn);
   color: rgb(var(--bureau-text-secondary));
@@ -2904,7 +2910,3 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   color: rgb(var(--bureau-text-primary));
 }
 .download-item-label { white-space: nowrap; }
-/* DATA VOICE. The format's nature — Formatted, Editable, Plain text — is the
-   interface reporting rather than speaking, which is what .type-value is for.
-   The same rule that sets the résumé's six tool bands in mono. */
-.download-item-meta { white-space: nowrap; }

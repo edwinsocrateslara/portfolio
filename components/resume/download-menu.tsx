@@ -200,15 +200,19 @@ export function DownloadMenu({ formats, label }: { formats: readonly DocFormat[]
               className="download-item"
               href={f.url}
               download
-              // The row reads "PDF · Formatted" on screen, which is enough
-              // NEXT TO the pill that says Download. Read on its own by a
-              // screen reader it is not, so the accessible name says the whole
-              // action. Announced instead of the text, not as well as it.
+              // The row reads "PDF" on screen, which is enough NEXT TO a pill
+              // that says Download. Read on its own by a screen reader it is
+              // not, so the accessible name says the whole action.
+              //
+              // aria-label REPLACES the row's text rather than adding to it —
+              // Chrome reports the contents as `SUPERSEDED` in the
+              // accessibility tree. That is why removing the second span
+              // changed nothing a screen reader hears: `f.meta` was never in
+              // the accessible name to begin with.
               aria-label={`${label} as ${f.label}`}
               onClick={() => close(false)}
             >
               <span className="type-action download-item-label">{f.label}</span>
-              <span className="type-value download-item-meta">{f.meta}</span>
             </a>
           ))}
         </div>
