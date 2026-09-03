@@ -109,27 +109,20 @@ const EXCEPTIONS = {
     "80%":
       "SideBar user testing, published by the Christensen Institute. No " +
       "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
-    // ⚠ THIS FIGURE IS NOT IN THE PUBLISHED REPORT, and it is here rather than
-    // deleted because removing it from resume.txt is a separate decision that
-    // has not been taken. voice.md dropped it and put the report's use-again
-    // 75% in its place. The two files disagree ON PURPOSE, for now, and the
-    // NAMED_FACTS entries below pin both strings so neither drifts further
-    // while the question is open.
-    "73%":
-      "SideBar, resume.txt only. The Christensen Institute publishes no 73% " +
-      "and no percentage for preferring SideBar to a human counselor — that " +
-      "finding appears in the report as 2 participant quotes with no figure. " +
-      "Awaiting a decision on the résumé bullet; voice.md no longer states it.",
+    // 75%, AND IT REPLACED A 73% THAT WAS NEVER IN THE SOURCE. The Christensen
+    // Institute publishes no 73%, and no percentage at all for preferring
+    // SideBar to a human counselor — that finding appears in its report as 2
+    // participant quotes with no figure attached. This is the use-again figure,
+    // which the report does publish. Both files now state it; see the pair in
+    // NAMED_FACTS below.
+    "75%":
+      "SideBar user testing, published by the Christensen Institute. No " +
+      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
   },
   "lib/sources/voice.md": {
     "90%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
     "80%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
-    // 75%, NOT 73%, and the difference is the point. The Christensen Institute
-    // publishes no 73% and no percentage at all for preferring SideBar to a
-    // human counselor — that finding exists in the report only as 2 participant
-    // quotes. 75% is the use-again figure, which the report does publish.
-    // resume.txt still carries the 73%; see the note on its own entry.
-    "75%": "SideBar's use-again figure. No lib/projects.ts entry states it.",
+    "75%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
   },
 }
 
@@ -236,41 +229,30 @@ const NAMED_FACTS = [
     figure: "80%",
     fact: "would send the AI-drafted message as-is or with minor edits",
     states: {
-      "lib/sources/resume.txt": "80% would send the AI-drafted message",
+      "lib/sources/resume.txt": "80% would send the AI-drafted message as-is or with minor edits",
       "lib/sources/voice.md": "80% said they would send the AI-drafted message as-is or with minor edits",
     },
   },
 
-  // ── ONE CLAIM, TWO FILES, TWO DIFFERENT FIGURES ────────────────────────
-  // These two entries used to be one, asserting that resume.txt and voice.md
-  // agreed. They no longer do, and splitting them is how that disagreement
-  // gets HELD rather than hidden.
+  // ── BACK TO A PAIR, WHICH IS WHAT THE SPLIT WAS FOR ────────────────────
+  // This was briefly two single-file entries. voice.md had dropped "73% with
+  // prior coaching experience preferred it to a human counselor" — the
+  // Christensen Institute's report contains no such percentage, that finding
+  // appears there as 2 participant quotes with no figure — and put the
+  // report's use-again 75% in its place, while resume.txt still carried the
+  // 73%. Splitting held the disagreement instead of hiding it: each string
+  // pinned on its own so neither could drift while the question was open.
   //
-  // voice.md dropped "73% with prior coaching experience preferred it to a
-  // human counselor" because the Christensen Institute's report contains no
-  // such percentage — the finding is there as 2 participant quotes with no
-  // figure attached. In its place voice.md states the report's use-again
-  // figure, 75%.
-  //
-  // resume.txt still carries the 73%. Correcting it is a separate decision
-  // that has not been taken, so each string is pinned on its own: neither can
-  // drift further, and the moment resume.txt is rewritten this file fails and
-  // says which entry to fold back into one.
-  //
-  // A SINGLE-FILE ENTRY ASSERTS EXISTENCE, NOT AGREEMENT, which is weaker than
-  // the pair it replaced and is stated so nobody reads more into it.
+  // The résumé bullet has now been corrected, so the two files agree again and
+  // this asserts agreement again rather than mere existence. Recorded because
+  // the split was the unusual state and somebody reading the history should
+  // know it was deliberate and temporary rather than a mistake being repaired.
   {
     figure: "75%",
-    fact: "said they were likely to use the coach again — voice.md only",
+    fact: "said they were likely to use the coach again",
     states: {
+      "lib/sources/resume.txt": "75% said they were likely to use the coach again",
       "lib/sources/voice.md": "75% said they were likely to use the coach again",
-    },
-  },
-  {
-    figure: "73%",
-    fact: "preferring SideBar to a human counselor — resume.txt only, UNSOURCED",
-    states: {
-      "lib/sources/resume.txt": "73% with prior coaching experience preferred it to a human counselor",
     },
   },
 ]

@@ -523,9 +523,11 @@ Increasingly, I'm also implementing accessibility improvements myself. I've ship
   (SideBar has no lib/projects.ts entry that could state it) and asserted by
   phrase instead, so the places that state them cannot drift apart.
 
-  ⚠ lib/sources/resume.txt STILL CARRIES THE 73%, in its SideBar bullet. That
-  is a known divergence awaiting a separate decision, not an oversight, and
-  check:numbers pins both strings so neither moves further while it is open.
+  lib/sources/resume.txt states the same 3 figures in its SideBar bullet, and
+  the two agree. It briefly did not: the bullet kept the 73% for one commit
+  after this section dropped it, and check:numbers held the disagreement as 2
+  single-file entries rather than hiding it. The bullet has since been
+  corrected and those entries are a pair again.
 -->
 
 ## SideBar
