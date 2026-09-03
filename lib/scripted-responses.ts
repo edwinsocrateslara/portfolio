@@ -83,7 +83,11 @@ export const SCRIPTED_TOPICS: ScriptedTopic[] = [
  *  rotation indices resolve against. */
 export const allProjects = [...projects, ...vibeProjects]
 
-function projectStream(p: (typeof projects)[0]): MessageBlock[] {
+function projectStream(
+  p: (typeof projects)[0],
+  /** Answer ids already heard in this thread — see buildResponse. */
+  used: readonly string[] = []
+): MessageBlock[] {
   // Chips rotate per project rather than repeating one generic trio seven
   // times. A visitor who just read a case study has seen the work and is the
   // best candidate for the person questions, so the pool is all person
@@ -101,7 +105,7 @@ function projectStream(p: (typeof projects)[0]): MessageBlock[] {
       // NO HEADING. The chips are self-evidently questions and were being
       // introduced by a line that asked one; FollowupsBubble already drops the
       // gap above them when there is no text, so nothing is left hanging.
-      chips: rotationFor(index).map((c) => ({ text: c.label })),
+      chips: rotationFor(index, 3, used).map((c) => ({ text: c.label })),
     },
   ]
 }
@@ -148,10 +152,43 @@ function isTermList(text: string): boolean {
 
 export function buildResponse(
   text: string,
-  options?: { preloadedSlug?: string; currentProjectSlug?: string | null }
-): { response: MessageBlock[] | null; projectSlug: string | null } {
+  options?: {
+    preloadedSlug?: string
+    currentProjectSlug?: string | null
+    /** Answer ids already consumed in this thread, by tap OR by typing. They
+     *  are removed from the follow-up pool, so a chip is offered once per
+     *  conversation. See the note on `answerId` below for why consumption
+     *  rather than the tap is the event. */
+    usedAnswers?: readonly string[]
+  }
+): {
+  response: MessageBlock[] | null
+  projectSlug: string | null
+  /** WHICH ANSWER THIS WAS, when it was one of the identified ones.
+   *
+   *  It used to be thrown away, and two things had to reconstruct it from the
+   *  prose: check-chips.mjs matched `head.startsWith(paragraphs[0].slice(0,
+   *  120))`, and follow-up suppression would have had to do the same. A
+   *  120-character prefix comparison is a string-match hack standing in for an
+   *  identity the matcher already had in hand.
+   *
+   *  Returning it means the caller knows what was answered without inspecting
+   *  what was said. That is what makes suppress-on-consumption possible at
+   *  all: `dispatch` cannot tell a tap from a typed question — both arrive as
+   *  the same call — so the event has to be the answer resolving, not the
+   *  click. */
+  answerId: string | null
+} {
   const t = text.toLowerCase()
-  const { preloadedSlug, currentProjectSlug } = options || {}
+  const { preloadedSlug, currentProjectSlug, usedAnswers = [] } = options || {}
+  // Every follow-up row draws from the pool minus what this thread has already
+  // heard. rotationFor filters BEFORE slicing, so a freed slot is taken by the
+  // next available answer rather than shrinking the row — until the pool
+  // genuinely cannot fill it, at which point the row shrinks and then empties.
+  // An empty suggestion row is the correct end state: a visitor who has heard
+  // everything has plainly moved past needing prompts, and padding it with
+  // repeats is worse.
+  const spent = (...also: string[]) => [...usedAnswers, ...also]
 
   // The deck and the Meridian project are separate things that share a name.
   // Bare "meridian" means the project — that is the ruling, and the deck
@@ -214,11 +251,11 @@ export function buildResponse(
   if (matchSlug) {
     // If asking about the SAME project already being discussed, let Claude API handle it
     if (matchSlug === currentProjectSlug && !preloadedSlug) {
-      return { response: null, projectSlug: currentProjectSlug }
+      return { response: null, projectSlug: currentProjectSlug, answerId: null }
     }
     // New project or explicit preloaded slug - show scripted reveal
     const p = allProjects.find((x) => x.slug === matchSlug)
-    if (p) return { response: projectStream(p), projectSlug: matchSlug }
+    if (p) return { response: projectStream(p, usedAnswers), projectSlug: matchSlug, answerId: null }
   }
 
   // The case study deck. After the project matchers, per the ruling that the
@@ -249,10 +286,11 @@ export function buildResponse(
           // the shell — and it is redundant now that the rail's CASE STUDY row
           // opens the same deck as a pane swap.
           text: "Any slide opens full size.",
-          chips: rotationFor(SURFACE.deck, 2).map((c) => ({ text: c.label })),
+          chips: rotationFor(SURFACE.deck, 2, spent("deck")).map((c) => ({ text: c.label })),
         },
       ],
       projectSlug: null,
+      answerId: "deck",
     }
   }
 
@@ -290,10 +328,11 @@ export function buildResponse(
           // to DocHub, which is dead. What is left is the part that was doing
           // work: an offer to keep talking.
           text: "Happy to walk through any section in more detail.",
-          chips: rotationFor(SURFACE.resume, 2).map((c) => ({ text: c.label })),
+          chips: rotationFor(SURFACE.resume, 2, spent("resume")).map((c) => ({ text: c.label })),
         },
       ],
       projectSlug: null,
+      answerId: "resume",
     }
   }
 
@@ -316,12 +355,13 @@ export function buildResponse(
         })),
         {
           kind: "followups",
-          chips: rotationFor(SURFACE.voice, 2, [voice.id]).map((c) => ({
+          chips: rotationFor(SURFACE.voice, 2, spent(voice.id)).map((c) => ({
             text: c.label,
           })),
         },
       ],
       projectSlug: null,
+      answerId: voice.id,
     }
   }
 
@@ -350,12 +390,13 @@ export function buildResponse(
         },
         {
           kind: "followups",
-          chips: rotationFor(SURFACE.downtime, 2, ["downtime"]).map((c) => ({
+          chips: rotationFor(SURFACE.downtime, 2, spent("downtime")).map((c) => ({
             text: c.label,
           })),
         },
       ],
       projectSlug: null,
+      answerId: "downtime",
     }
   }
 
@@ -382,11 +423,12 @@ export function buildResponse(
         },
       ],
       projectSlug: null,
+      answerId: "location",
     }
   }
 
   // Return null to indicate we should use the real Claude API
-  return { response: null, projectSlug: currentProjectSlug || null }
+  return { response: null, projectSlug: currentProjectSlug || null, answerId: null }
 }
 
 export type { MessageBlock }

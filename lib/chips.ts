@@ -83,7 +83,7 @@ export function rotationPool(): ChipRoute[] {
 export function rotationFor(
   index: number,
   count = 3,
-  exclude: string[] = []
+  exclude: readonly string[] = []
 ): ChipRoute[] {
   // `exclude` is what an answer has already said. Without it a follow-up can
   // offer the question the visitor just asked: the voice surface and one

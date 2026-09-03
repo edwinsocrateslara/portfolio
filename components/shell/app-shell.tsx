@@ -70,6 +70,22 @@ export function AppShell({
   // layer and nothing here is written to storage.
   const [activeThread, setActiveThread] = useState<string>(HOME_THREAD)
   // Read inside callbacks so they don't have to re-create on every switch.
+  // Which answers each thread has already given, so a follow-up chip is not
+  // offered twice in one conversation.
+  //
+  // KEYED BY THREAD, which is what makes reset-per-reveal free rather than
+  // something to implement: every project owns an independent transcript, so
+  // opening a different reveal reads a different key and starts empty. A
+  // repeat there matters less because the context changed.
+  //
+  // A REF, NOT STATE. Nothing re-renders when it changes — the value is read
+  // at dispatch time, not during render — and the front door is statically
+  // prerendered from frontDoorChips(), which this never touches. It survives
+  // pane swaps for the same reason scrollPosRef does: AppShell is not
+  // unmounted by them. It does not survive a reload, and neither does the
+  // transcript, so the two agree.
+  const usedAnswersRef = useRef<Record<string, Set<string>>>({})
+
   const activeThreadRef = useRef(activeThread)
   activeThreadRef.current = activeThread
 
@@ -248,10 +264,22 @@ export function AppShell({
   const dispatch = useCallback(
     (text: string, opts?: { slug?: string }) => {
       const from = activeThreadRef.current
-      const { response, projectSlug } = buildResponse(text, {
+      const { response, projectSlug, answerId } = buildResponse(text, {
         preloadedSlug: opts?.slug,
         currentProjectSlug: from === HOME_THREAD ? null : from,
+        usedAnswers: [...(usedAnswersRef.current[from] ?? [])],
       })
+      // A CHIP IS OFFERED ONCE PER CONVERSATION. Record what was answered
+      // before anything else, so this turn's own answer is already spent when
+      // the NEXT turn builds its follow-up row.
+      //
+      // ON CONSUMPTION, NOT ON THE TAP, and that is the only version that
+      // works: dispatch cannot tell a tap from a typed question — both arrive
+      // as this same call — so the event has to be the answer resolving.
+      // Typing "what are your strengths and weaknesses" spends that chip too.
+      if (answerId) {
+        ;(usedAnswersRef.current[from] ??= new Set()).add(answerId)
+      }
 
       // A reveal for a DIFFERENT project belongs in that project's thread, so
       // switch instead of appending here. No user bubble is echoed: the target

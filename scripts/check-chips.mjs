@@ -81,13 +81,30 @@ const SCRIPTED_PROBES = {
 
 const firstText = (blocks) => (blocks?.find((b) => b.kind === "text")?.text ?? "").slice(0, 400)
 
+// buildResponse RETURNS THE ID NOW, so this asks rather than infers.
+//
+// It used to compare a 120-character prefix of the first text block against
+// each answer's first paragraph — a string match standing in for an identity
+// the matcher already had. That worked, and it was fragile in a way nothing
+// would have reported: two answers opening on the same clause, or an answer
+// whose first paragraph is shorter than the slice, and the comparison quietly
+// picks the wrong one or none. The prefix hack is gone.
+//
+// SCRIPTED_PROBES survives for the branches that have no id — the project
+// reveals return a slug rather than an answer id, and `walk-through`-style
+// branches are fingerprinted by prose because they are prose. Everything with
+// an id is now matched on the id.
 function classify(question) {
-  const { response, projectSlug } = buildResponse(question)
+  const { response, projectSlug, answerId } = buildResponse(question)
   if (!response) return { kind: "api", label: "falls through to the API" }
   if (projectSlug) return { kind: "project", id: projectSlug, label: `project:${projectSlug}` }
+  if (answerId) {
+    const voice = VOICE_ANSWERS.some((a) => a.id === answerId)
+    return voice
+      ? { kind: "voice", id: answerId, label: `voice:${answerId}` }
+      : { kind: "scripted", id: answerId, label: `scripted:${answerId}` }
+  }
   const head = firstText(response)
-  const voice = VOICE_ANSWERS.find((a) => head.startsWith(a.paragraphs[0].slice(0, 120)))
-  if (voice) return { kind: "voice", id: voice.id, label: `voice:${voice.id}` }
   for (const [id, probe] of Object.entries(SCRIPTED_PROBES)) {
     if (firstText(buildResponse(probe).response) === head) {
       return { kind: "scripted", id, label: `scripted:${id}` }
