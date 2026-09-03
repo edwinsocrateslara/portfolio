@@ -185,10 +185,22 @@ export const vibeProjects: Project[] = [
             // the first test of the rename rule — the files changed, so the
             // names did too, rather than the bytes moving under a URL that had
             // already been fetched.
-            { url: "/framer/futurefit-ideas-dashboard/dashboard.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/canny-board-post.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/clarify-meeting-notes.webp", alt: "" },
-            { url: "/framer/futurefit-ideas-dashboard/system-architecture.webp", alt: "" },
+            {
+              url: "/framer/futurefit-ideas-dashboard/dashboard.webp",
+              alt: "Weekly dashboard listing the top 10 ranked ideas, each with a score, a source and a written reason, above a quick-wins section.",
+            },
+            {
+              url: "/framer/futurefit-ideas-dashboard/canny-board-post.webp",
+              alt: "A Canny feedback post with its vote count, board, status and comment thread.",
+            },
+            {
+              url: "/framer/futurefit-ideas-dashboard/clarify-meeting-notes.webp",
+              alt: "Clarify transcript of a customer call, with the timestamped notes panel beside the meeting summary.",
+            },
+            {
+              url: "/framer/futurefit-ideas-dashboard/system-architecture.webp",
+              alt: "System diagram: Canny, Clarify and Heap feeding a scoring step, which writes the ranked weekly list.",
+            },
           ],
 
           // FIELD LENGTHS. Two fields here run past the longest of the seven

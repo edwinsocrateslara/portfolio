@@ -149,6 +149,12 @@ export const meridianDeck: CaseStudyDeck = {
     },
     {
       url: "/case-study/meridian/slide-18.webp",
+      // 546 is this slide's headline and the only figure on it, and it was
+      // missing from this string until an audit read the frame. It is stated
+      // in exactly 2 places on purpose — here, and verbatim in
+      // lib/sources/meridian-case-study.txt, which reaches the model. Adding
+      // it to the Meridian project copy was proposed and declined; the
+      // reasoning is at that entry in lib/projects.ts.
       alt: "Beta test with 546 users. 4 TestFlight screenshot-feedback panels, each pairing a tester's annotated screenshot with their written comment.",
     },
     {

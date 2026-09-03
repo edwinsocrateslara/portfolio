@@ -25,13 +25,23 @@ const SQUARE_RATIO = "1 / 1"
 // q82 — the largest either slot renders is 392x576 at 2x, so the extra pixels
 // only cost bytes. next/image resizes from here per request.
 //
-// TODO(edwin): the bouldering photograph, and alt text for all three. Alt text
-// is authored, never generated — same rule as the 32 project images.
+// ALT TEXT IS AUTHORED, never generated, and these three are written to
+// lib/sources/README.md § "Alt text describes the frame". They are the ONE
+// exception that section names: first person, because their subject is Edwin
+// and this pane is already in his voice. A third-person description of him on
+// his own site reads as though somebody else wrote it.
 //
-// ⚠ `alt: ""` is not a placeholder to a screen reader: it declares an image
-// DECORATIVE and hides it. That is false for these two — they are the only
-// human presence on the site — so the empty strings below are actively wrong,
-// not merely unfinished. One sentence each and they are right.
+// Each one is also the only place a caption sits beside an image, so none of
+// them repeats what the caption already says — the malamute's alt names
+// neither the breed nor the age.
+//
+// The bouldering alt was drafted at 72 words and cut to 32 rather than
+// exempted. What went: the clothing, the chalk, the named hold colours, the
+// volume, and the camera position — that last one replaced by "from this
+// angle", which delivers the consequence without the geometry. What was
+// protected: the face clause, and the ASYMMETRY of the arms. Compression
+// wanted "both arms overhead" and that is simply not what the photograph
+// shows.
 //
 // A slot with no src carries no <img> at all: a broken image is worse than an
 // honest empty frame, and the aspect ratio keeps the layout real meanwhile.
@@ -39,19 +49,29 @@ const SQUARE_RATIO = "1 / 1"
 // to the frame: it describes where that image's subject sits, so it travels
 // with the file if the file moves to another slot. Omitted means centred.
 const PHOTOS = {
-  portrait: { src: "/about/malamute.webp", alt: "" },
+  portrait: {
+    src: "/about/malamute.webp",
+    alt: "My dog standing at a bright window, looking out at a red-brick building and a tree, with his bed on the floor beside him.",
+  },
   // 1:1 SOURCE IN A 1:1 FRAME, so `cover` trims nothing and there is no
   // `position` to pick — unlike `race` below, which is 3:4 in the same square.
   // 3024x3024 iPhone original, downscaled to 1200 and encoded webp q82, which
   // is the same recipe as the two beside it. EXIF was stripped at encode
   // (`cwebp -metadata none`) and verified: the file is a single VP8 chunk. The
   // source carried GPS.
-  bouldering: { src: "/about/bouldering.webp" as string | null, alt: "" },
+  bouldering: {
+    src: "/about/bouldering.webp" as string | null,
+    alt: "Me part-way up an indoor bouldering wall, my face not visible from this angle. One hand high, the other lower, legs spread wide to 2 footholds. Grey panels, dozens of coloured holds.",
+  },
   // 3:4 source in a 1:1 frame, so cover trims 25.2% of the height. Centred it
   // took 12.6% off each edge and cut the shoes; bottom-aligned it takes the
   // whole 25.2% off the top, which the frame can afford — the subject's head
   // still clears the top edge, with less headroom rather than none.
-  race: { src: "/about/race-day.webp", alt: "", position: "50% 100%" },
+  race: {
+    src: "/about/race-day.webp",
+    alt: "Me walking through the finish area after a winter race, in a brown tracksuit with a bib and a medal, a water bottle in one hand, runners and a yellow banner behind me.",
+    position: "50% 100%",
+  },
 }
 
 function Slot({

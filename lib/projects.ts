@@ -171,6 +171,27 @@ export const projects: Project[] = [
     client: "Meridian",
     projectTitle: "Mobile Banking Redesign",
     railSubtitle: "Retail Banking",
+    // ── "BETA TEST WITH 546 USERS" IS DELIBERATELY NOT IN THIS ENTRY ───────
+    // It is a real figure from the deck — slide 18's headline — and it was
+    // proposed for this project's copy and DECLINED. Written here because
+    // this is where the next person would come to add it.
+    //
+    // It is already stated twice, and both statements reach a visitor. The
+    // deck source lib/sources/meridian-case-study.txt carries it verbatim, so
+    // scripts/build-context.mjs puts it in the model's prompt; and slide 18's
+    // alt in lib/case-study-deck.ts now carries it, so a screen-reader user
+    // gets it too. That gap in the alt was the actual defect, and it is fixed.
+    //
+    // A THIRD STATEMENT WOULD BUY NOTHING AND COST DRIFT. Three copies of one
+    // figure across three files is the exact shape NAMED_FACTS exists to
+    // catch — and check:numbers cannot even see this one: 546 is a bare
+    // integer, and the FIGURE pattern matches percentages and thousands
+    // separators only. It would need its own NAMED_FACTS entry to be held at
+    // all, for a fact nobody is currently missing.
+    //
+    // It is also a different KIND of claim from the two in the tagline below.
+    // 370,000 and $26 billion are the product's reach; 546 is the size of a
+    // test. Set beside them it reads as a smaller number of the same sort.
     tagline:
       "I led the end-to-end redesign of Meridian Credit Union apps which now serves over 370,000 customers and supports over $26 billion in managed assets.",
     role: "Senior Product Designer",
