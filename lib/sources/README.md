@@ -121,6 +121,30 @@ nowhere.
 **Counts are digits.** See "Numbers are written as digits" above — the same
 rule, the same exclusions. It already names `alt` as in scope.
 
+⚠ **AND A NUMBER IN AN ALT IS EVIDENCE, NOT JUST TEXT. READ THIS BEFORE YOU
+WRITE ONE.** `lib/projects.ts` and `lib/vibe-projects.ts` are the HAYSTACK
+`npm run check:numbers` asserts against: every figure in `voice.md`,
+`resume.txt` and `lib/scripted-responses.ts` passes by being found somewhere in
+those two files. Alt text is content in them, so a figure written into an alt
+becomes something that can BACK an unrelated claim elsewhere on the site.
+
+That is not hypothetical. The gate's haystack used to include code comments,
+and "80%" on the résumé passed for months because `80` appeared in a comment
+about cropping a screenshot — a user-testing claim verified by a note on image
+composition. Stripping comments closed that door; writing numbers into alt
+would open the same one from inside the room.
+
+The case that produced this note: `ai-workforce-development`'s role-detail
+screenshot shows `$100,000-$140,000`, `+14%`, `24,500+` and `3-5 Years` on four
+stat cards. Its alt names what each card measures and quotes none of them. It
+was the right call for a second reason too — generic labour-market data on a
+demo screen is not a claim this site makes — but the haystack is the reason it
+would still be the right call if it were.
+
+If a figure genuinely belongs in an alt, it belongs in `check:numbers` as well:
+an `EXCEPTIONS` entry with a written reason, or a `NAMED_FACTS` entry if two
+files state it. Never silently.
+
 **Every alt ends in a full stop.** All 50 written before this rule existed
 already did; it is written down so the fifty-first does too.
 

@@ -150,11 +150,22 @@ export const projects: Project[] = [
     images: [
       {
         url: "/framer/ai-workforce-development/career-paths-graph.webp",
-        alt: "",
+        alt: "Explore Career Paths: a search for software engineer, with a graph linking entry-level, mid-level and senior roles by orange entry points, green lateral moves and blue progression paths.",
       },
       {
         url: "/framer/ai-workforce-development/role-detail.webp",
-        alt: "",
+        // THE FOUR STAT CARDS ARE NAMED, NOT QUOTED, and that is deliberate
+        // twice over. They read $100,000-$140,000, +14%, 24,500+ and 3-5
+        // Years, all legible in the frame.
+        //
+        // They are not the frame's headline fact — generic labour-market data
+        // on a demo screen is not a claim this site makes, so clause 3 does
+        // not reach them.
+        //
+        // And this file is check:numbers' HAYSTACK. See the note at the alt
+        // rule in lib/sources/README.md: a figure written here becomes
+        // evidence that can back a figure in voice.md or resume.txt.
+        alt: "Software Engineer role detail: about, education, skill tags and a Coursera course, beside cards for median salary, annual growth rate, job openings and experience required.",
       },
     ],
     // ⚠ PLACEHOLDER, AND IT SHIPS. "work in progress; coming soon." renders as
