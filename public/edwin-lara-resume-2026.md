@@ -1,4 +1,4 @@
-<!-- resume-source-hash:7c460bdb7a7e9fe4 -->
+<!-- resume-source-hash:8bad622b9dd2ba5a -->
 <!-- Generated from lib/sources/resume.txt by scripts/build-resume.mjs. Do not edit. -->
 
 # EDWIN SOCRATES LARA
@@ -14,7 +14,7 @@ Designer & AI Builder with 10+ years of experience across fintech, e-commerce, a
 
 - Design and build AI products for a workforce platform serving businesses and governments. Worked across research, product, design, AI prototyping, data integrations, and production code.
 - **Miles:** Designed and shipped the core UX/UI for FutureFit's trained LLM, including conversational flows for career exploration, job discovery, and understanding fit for specific roles. Integrated Miles across the platform through contextual prompts and AI actions.
-- **SideBar:** Built an LLM-powered networking coach that helps job seekers activate their existing networks. In testing, 90% reached outreach, 80% would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again. Selected by the Christensen Institute for its Prosocial Possibilities research cohort, studying how technology can strengthen social connection and expand access to opportunity.
+- **SideBar:** Built an LLM-powered networking coach that helps job seekers activate their existing networks. In testing, 90% reached outreach, 80% would send the AI-drafted message as-is or with minor edits, and most said they were likely to use the coach again. Piloted for the Christensen Institute's Prosocial Possibilities research cohort, which selected FutureFit AI as one of 10 edtech providers studying how technology can strengthen social connection and expand access to opportunity.
 - **Ideas Dashboard:** Designed and built an AI prioritization system that evaluates customer feedback against company strategy and technical architecture, surfacing 10 priorities each week and quick wins for the team to build.
 - **AI Evidence Layer:** Built integrations across Canny, Clarify, and Heap using Claude Code and LLMs to synthesize customer feedback, client conversations, and behavioral data into evidence for product decisions.
 - **Design System:** Built an AI-compatible design system with design tokens and shadcn/ui, enabling code-generation tools to assemble interfaces from established components. Shipped WCAG, ARIA, and Cypress accessibility improvements directly to production.
