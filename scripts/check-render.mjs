@@ -12,7 +12,8 @@
 // hastily-added escaping.
 //
 //   node --import ./scripts/ts-extensionless.mjs scripts/check-render.mjs
-import { renderInline, isSafeHref } from "../lib/inline-markdown.ts"
+import { readFileSync } from "fs"
+import { renderInline, isSafeHref, CONTACT_EMAIL } from "../lib/inline-markdown.ts"
 
 const CASES = [
   // ── hostile ──────────────────────────────────────────────────────────────
@@ -96,6 +97,48 @@ const CASES = [
     mustContain: ['<a href="/case-study/meridian-deck"'],
     mustNotContain: [],
   },
+
+  // ── the contact address is always a link ─────────────────────────────────
+  // Asked "What's the best way to reach you?", a model answered "...by email at
+  // edwinsocrateslara@gmail.com" as plain prose, reproducibly. Nothing linked
+  // it, so it painted as inert text on the one question a recruiter is most
+  // likely to ask. The renderer now linkifies it; these hold that, and hold the
+  // two ways the fix could go wrong.
+  {
+    name: "bare contact address is linked",
+    input: "You can reach me at edwinsocrateslara@gmail.com.",
+    mustContain: ['<a href="mailto:edwinsocrateslara@gmail.com"', "(opens your email app)"],
+    mustNotContain: ['target="_blank"'],
+  },
+  {
+    name: "an already-linked address is not double-linked",
+    input: "He's at [edwinsocrateslara@gmail.com](mailto:edwinsocrateslara@gmail.com).",
+    mustContain: ['<a href="mailto:edwinsocrateslara@gmail.com"'],
+    // The signature of a double-link: the markdown survives inside the anchor,
+    // or a second anchor opens. Either means autolinkContact matched an
+    // occurrence that was already part of a link.
+    mustNotContain: ["](mailto:", "<a href=\"mailto:edwinsocrateslara@gmail.com\" style=\"color:rgb(var(--bureau-text-primary));text-decoration:underline;text-underline-offset:3px\"><a"],
+  },
+  {
+    name: "a link with different label text keeps its label",
+    input: "Write to [Edwin](mailto:edwinsocrateslara@gmail.com) about it.",
+    mustContain: ['<a href="mailto:edwinsocrateslara@gmail.com"', ">Edwin<"],
+    mustNotContain: ["](mailto:"],
+  },
+  {
+    name: "SOMEBODY ELSE'S address is never linked",
+    // A visitor types their own address and the model echoes it. Linkifying
+    // that would be a small injection surface for no benefit, so only Edwin's
+    // is ever matched.
+    input: "Sure, I'll reply to attacker@evil.example and to bob@example.com.",
+    mustNotContain: ["<a href=\"mailto:attacker@evil.example", "<a href=\"mailto:bob@example.com", "](mailto:"],
+  },
+  {
+    name: "the address is still escaped, not a markup hole",
+    input: "<img onerror=x> edwinsocrateslara@gmail.com",
+    mustContain: ['<a href="mailto:edwinsocrateslara@gmail.com"'],
+    mustNotContain: ["<img"],
+  },
 ]
 
 const problems = []
@@ -109,6 +152,29 @@ for (const c of CASES) {
   for (const good of c.mustContain ?? []) {
     if (!out.includes(good)) {
       problems.push(`${c.name}: output is missing ${JSON.stringify(good)}\n      ${out}`)
+    }
+  }
+}
+
+// ── THE CONSTANT MUST MATCH THE FALLBACK'S COPY ──────────────────────────
+// autolinkContact matches ONE literal string. If the address in the system
+// prompt's FALLBACK ever diverges from CONTACT_EMAIL, the autolinker silently
+// stops matching and the bare-address defect returns with nothing firing. This
+// is the cheapest possible guard against that: read the route as text and
+// assert the address it hard-codes is the one this renderer looks for.
+{
+  const route = readFileSync(new URL("../app/api/chat/route.ts", import.meta.url), "utf8")
+  const found = [...route.matchAll(/[\w.+-]+@[\w-]+\.[\w.]+/g)].map((m) => m[0])
+  const distinct = [...new Set(found)]
+  if (distinct.length === 0) {
+    problems.push("route.ts contains no email address — the FALLBACK lost its contact route")
+  }
+  for (const addr of distinct) {
+    if (addr !== CONTACT_EMAIL) {
+      problems.push(
+        `route.ts uses ${addr} but lib/inline-markdown.ts autolinks ${CONTACT_EMAIL} — ` +
+        `the autolinker would stop matching and bare addresses would render as inert text`
+      )
     }
   }
 }

@@ -46,8 +46,66 @@ export function isSafeHref(raw: string): boolean {
   }
 }
 
+/* ── The contact address is ALWAYS a link, and the model cannot be trusted
+ * to make it one ─────────────────────────────────────────────────────────
+ *
+ * THE DEFECT. Asked "What's the best way to reach you?", claude-haiku-4-5
+ * answered "The best way to reach me is by email at edwinsocrateslara@gmail
+ * .com." — reproducibly, both runs. Nothing in this renderer autolinked it, so
+ * it painted as inert text: no anchor, no mailto, nothing to click. The single
+ * highest-stakes question on a job-seeking portfolio, answered with an address
+ * a recruiter has to select and retype.
+ *
+ * It was not a one-model quirk. Across one captured run of 12 questions and 5
+ * models, 2 of 27 mentions were bare — one from haiku on an ORDINARY answer,
+ * one from opus-5 on a refusal. Re-run against the live prompt, haiku produced
+ * a bare address in 6 of 10 runs across three different questions.
+ *
+ * THE PROMPT ALONE CANNOT FIX THIS, which is why the fix is here as well as
+ * there. The system prompt now requires the markdown form wherever the address
+ * appears, and that lowers the rate. It cannot take it to zero: the FALLBACK
+ * has said "reproduce that line character for character" all along and models
+ * still paraphrased it. An instruction is a probability. This is not.
+ *
+ * ONLY THIS ONE ADDRESS, matched literally. A general email pattern would also
+ * linkify an address a VISITOR typed and the model echoed back, which is a
+ * small injection surface for no benefit. Edwin's is the only address that
+ * should ever appear, so it is the only one that is ever linked.
+ *
+ * AND IT MUST NOT DOUBLE-LINK. The address legitimately occurs twice inside an
+ * already-correct markdown link — once as the label, once inside the href — so
+ * an occurrence is skipped when it directly follows `mailto:` or sits in the
+ * `[addr](` position. check:render holds both directions.
+ *
+ * ⚠ THE ADDRESS IS WRITTEN IN THREE OTHER PLACES: the FALLBACK in
+ * app/api/chat/route.ts, the API error message in app-shell.tsx, and
+ * CONTACT_EMAIL in sidebar.tsx. If they ever disagree, this autolinker
+ * silently stops matching and the defect returns with no gate firing —
+ * so check:render asserts this constant against the FALLBACK's copy. */
+export const CONTACT_EMAIL = "edwinsocrateslara@gmail.com"
+
+function autolinkContact(s: string): string {
+  let out = ""
+  let i = 0
+  for (;;) {
+    const at = s.indexOf(CONTACT_EMAIL, i)
+    if (at === -1) return out + s.slice(i)
+    const before = s.slice(Math.max(0, at - 7), at)
+    const after = s.slice(at + CONTACT_EMAIL.length, at + CONTACT_EMAIL.length + 2)
+    const alreadyLinked = before.endsWith("mailto:") || (before.endsWith("[") && after === "](")
+    out +=
+      s.slice(i, at) +
+      (alreadyLinked ? CONTACT_EMAIL : `[${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})`)
+    i = at + CONTACT_EMAIL.length
+  }
+}
+
 export function renderInline(p: string): string {
-  return escapeHtml(p)
+  // autolinkContact runs on the ESCAPED string and BEFORE the two replacements,
+  // so anything it inserts goes through the same protocol allow-list and the
+  // same mailto branch as an address the model linked itself. It emits markdown,
+  // not markup, precisely so it cannot bypass them.
+  return autolinkContact(escapeHtml(p))
     .replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight:700">$1</strong>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label: string, href: string) => {
       // Escaping ran first, so `&` in a url is already `&amp;`. Decode only
