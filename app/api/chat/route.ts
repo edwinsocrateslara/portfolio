@@ -2,6 +2,7 @@ import { createAnthropic } from "@ai-sdk/anthropic"
 import { convertToModelMessages, streamText, type UIMessage } from "ai"
 import { readFileSync } from "fs"
 import { join } from "path"
+import { clientKey, LIMITS, parseChatRequest, rateLimit, readBody, RequestRejected } from "@/lib/chat-request"
 
 const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -98,18 +99,52 @@ the visitor has to retype. Do not add markdown anywhere else.
 ${edwinContext}
 </REFERENCE_DOCUMENT>`
 
+// ── ADMISSION BEFORE INFERENCE ────────────────────────────────────────────
+// Nothing reaches the model until it has been rebuilt from scratch by
+// lib/chat-request.ts. That file carries the reasoning; the short version is
+// that `const { messages }: { messages: UIMessage[] } = await req.json()` is a
+// type annotation, not a check, and this endpoint spends money on behalf of
+// whoever posts to it.
+//
+// The order matters and is deliberate: rate limit, then size, then shape. Each
+// step is cheaper than the one after it, so a hostile request is refused as
+// early as it can be — the byte cap runs before JSON.parse, and the shape
+// check before the ~64KB system prompt is assembled into a provider call.
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json()
+  let messages: UIMessage[]
+  try {
+    if (!rateLimit(await clientKey(req))) {
+      return new Response(JSON.stringify({ error: "Too many requests. Try again shortly." }), {
+        status: 429,
+        headers: { "content-type": "application/json", "retry-after": "30" },
+      })
+    }
+    messages = parseChatRequest(await readBody(req))
+  } catch (e) {
+    if (e instanceof RequestRejected) {
+      return new Response(JSON.stringify({ error: e.message }), {
+        status: e.status,
+        headers: { "content-type": "application/json" },
+      })
+    }
+    throw e
+  }
 
   const result = streamText({
     model: anthropic("claude-sonnet-4-6"),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     temperature: 0,
+    // A CEILING ON WHAT A REQUEST CAN COST TO ANSWER. maxDuration above bounds
+    // wall time and nothing bounded spend. The longest answer this site gives
+    // is a few hundred tokens and the fallback is two sentences.
+    maxOutputTokens: LIMITS.outputTokens,
     abortSignal: req.signal,
   })
 
   return result.toUIMessageStreamResponse({
+    // The SANITISED list, not the caller's. Echoing the original back would
+    // reintroduce whatever was stripped, one layer further along.
     originalMessages: messages,
   })
 }

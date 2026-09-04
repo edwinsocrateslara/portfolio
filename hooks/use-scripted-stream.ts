@@ -110,6 +110,19 @@ export function useScriptedStream() {
         if ((runRef.current[thread] ?? 0) !== run) {
           drainingRef.current[thread] = false
           setTyping((prev) => ({ ...prev, [thread]: false }))
+          // ── AND NUDGE THE EFFECT, WHICH IS THE WHOLE FIX ───────────────────
+          // Clearing the flag is not enough on its own. The effect that would
+          // drain the REPLACEMENT queue already ran, saw drainingRef set, and
+          // skipped. Its dependency is `pending`, whose identity was last
+          // changed by the enqueue that made this worker stale — and nothing
+          // changes it again, so nothing re-runs. The new queue sat undrained
+          // forever: a follow-up chip clicked during a reveal left the page
+          // apparently frozen.
+          //
+          // A shallow copy with identical contents is the smallest thing that
+          // re-runs the effect. It reads like a no-op and is not one: the
+          // dependency is the OBJECT, and this is a new object.
+          setPending((prev) => ({ ...prev }))
           return
         }
 

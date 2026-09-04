@@ -337,6 +337,34 @@ export function AppShell({
   const dispatch = useCallback(
     (text: string, opts?: { slug?: string }) => {
       const from = activeThreadRef.current
+
+      // ── BUSY IS CHECKED HERE, BEFORE ANYTHING IS RECORDED OR APPENDED ──────
+      // The composer is disabled while a turn is in flight, but the composer is
+      // not the only way in: a follow-up chip calls dispatch directly, and
+      // FollowupsBubble only disables chips that are NOT on the last assistant
+      // message. A chip on the last message stays live through a whole reveal.
+      //
+      // The guard used to sit further down, just above the API call, which left
+      // two ways to break the page with an ordinary fast click.
+      //
+      //   AN UNMATCHED CHIP DURING AN API TURN appended the user's bubble and
+      //   THEN hit the guard and returned. A visible question with no answer,
+      //   permanently.
+      //
+      //   A SCRIPTED CHIP DURING A SCRIPTED DRAIN replaced the queue and bumped
+      //   the run token. The effect saw drainingRef still set and skipped; the
+      //   sleeping worker woke, found a stale token, cleared the flag and
+      //   returned without writing. Nothing changed `pending` again, so nothing
+      //   re-ran the effect and the new queue was never drained — the page just
+      //   stopped. use-scripted-stream.ts now nudges itself out of that state
+      //   as well, because a guard here and a guard there protect different
+      //   callers and neither makes the other redundant.
+      //
+      // Per-thread for typing, global for the API: a reveal streaming in one
+      // project's thread must not block a question typed in another, but there
+      // is only one API channel.
+      if (isTypingIn(from) || apiInFlightRef.current) return
+
       const { response, projectSlug, answerId } = buildResponse(text, {
         preloadedSlug: opts?.slug,
         currentProjectSlug: from === HOME_THREAD ? null : from,
@@ -380,9 +408,10 @@ export function AppShell({
       // Fall through to the API (which refuses anything not in its reference
       // document) rather than leaving the turn silently unanswered.
       //
-      // GUARDED, because handleSend is not the only way in: a follow-up chip
-      // calls dispatch directly, so the composer being disabled is not enough
-      // on its own. Refusing here keeps the single channel single.
+      // STILL GUARDED, though the check at the top of dispatch has already run.
+      // Kept because this is the line that actually claims the single API
+      // channel, and an edit that moved or loosened the early return would
+      // otherwise silently allow two in-flight requests.
       if (apiInFlightRef.current) return
       apiInFlightRef.current = true
       setApiThread(from)
@@ -396,7 +425,20 @@ export function AppShell({
         sendMessage({ text })
       }, 0)
     },
-    [openProjectThread, appendImmediate, queueScriptedMessages, buildApiHistory, setApiMessages, sendMessage]
+    // isTypingIn IS A DEPENDENCY, not an omission that happens to work. It is a
+    // useCallback over `typing`, so it takes a new identity every time a thread
+    // starts or stops typing. Left out, dispatch would close over the first one
+    // and the busy guard above would read the state as it was at mount — which
+    // is never typing, which is the guard doing nothing.
+    [
+      openProjectThread,
+      appendImmediate,
+      queueScriptedMessages,
+      buildApiHistory,
+      setApiMessages,
+      sendMessage,
+      isTypingIn,
+    ]
   )
 
   // Commit a finished API answer into its thread, then clear the live channel.
