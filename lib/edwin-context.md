@@ -86,23 +86,24 @@ Project copy is authored in lib/projects.ts and is the source of truth
 for it. `role` follows lib/sources/resume.txt.
 `alt` is written for screen readers and is excluded from this section.
 
-### FutureFit AI — AI Workforce Development Platform
+### FutureFit AI — Career Path Visualization
 - **Slug:** ai-workforce-development
 - **Status:** Work in progress
 - **Role:** Lead Product Designer
 
-I'm building a business-to-business and business-to-government AI-powered workforce development platform, featuring an AI coach that will assist users navigate the job search process and provide career coaching.
+I design AI products for a workforce platform serving businesses and governments. Path Visualization shows how roles connect and where they can lead.
 
-**Key impacts:**
-- work in progress; coming soon.
+**My role:** Lead Product Designer. I designed Path Visualization end to end, including its production UI.
 
-**My role:** Lead product designer.
+**What was at stake:** FutureFit works with governments and workforce organizations that need to help people understand not just what jobs are available, but where those jobs can lead. Career pathways came up consistently in demos.
 
-Current focus:
-- conducting user research to uncover issues faced by new job-seekers, individuals undergoing career transitions, and fresh grads;
-- understanding how AI can coach individuals to obtain better outcomes in cold outreaches; improved resumes; better accountability, etc.
-- creating and designing the AI coach and deploying to clients;
-- creating an AI-compatible design system using design tokens and Shadcn, for use in AI development tools, such as V0, Lovable, and Claude Code.
+**Why I made those decisions:** The obvious search model was careers, since the product already organized around roughly 800 of them. I chose roles instead, giving us roughly 6,000 possible starting points. Careers made for a cleaner graph, but fewer meaningful connections. Roles were more complex, but that was where the useful relationships existed.
+
+For v1, I limited the graph to roles within a single career instead of showing every adjacent path. Showing more wasn't necessarily more useful. The goal was to make the next move easier to understand.
+
+**The challenge:** Jobseekers, students, and career switchers could find individual roles, but they couldn't see how those roles connected. The platform didn't show what could come next, which moves were lateral, or how someone might progress over time.
+
+We had career pages and job listings, but neither answered a more fundamental question: if I start here, where can I go next?
 
 ---
 

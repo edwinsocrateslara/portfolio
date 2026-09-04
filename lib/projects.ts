@@ -121,10 +121,10 @@ export const projects: Project[] = [
   {
     slug: "ai-workforce-development",
     client: "FutureFit AI",
-    projectTitle: "AI Workforce Development Platform",
+    projectTitle: "Career Path Visualization",
     railSubtitle: "AI Workforce Development",
     tagline:
-      "I'm building a business-to-business and business-to-government AI-powered workforce development platform, featuring an AI coach that will assist users navigate the job search process and provide career coaching.",
+      "I design AI products for a workforce platform serving businesses and governments. Path Visualization shows how roles connect and where they can lead.",
     role: "Lead Product Designer",
     status: "wip",
     // ALL THREE IMAGES WERE REPLACED, AND ALL THREE ALT STRINGS WENT WITH
@@ -163,14 +163,55 @@ export const projects: Project[] = [
         alt: "Software Engineer role detail: about, education, skill tags and a Coursera course, beside cards for median salary, annual growth rate, job openings and experience required.",
       },
     ],
-    // ⚠ PLACEHOLDER, AND IT SHIPS. "work in progress; coming soon." renders as
-    // the impacts block on the live reveal — `impacts?.length` is 1, so the
-    // section is drawn with that as its content rather than skipped. This is
-    // the only placeholder string in the project copy. It needs writing, or
-    // the field needs deleting so the block is omitted like Coinley's.
-    impacts: ["work in progress; coming soon."],
+    // ── THE SOURCE DOC'S NUMBERS ARE TARGETS. NONE OF THEM IS A RESULT. ──
+    //
+    // This entry is written from an internal one-pager that carries a metrics
+    // plan. Every figure in it was written BEFORE launch, and the doc's own
+    // headings say so — "Success (WIP)" and "Metrics (WIP)". They are listed
+    // here so a later edit checks itself against this note rather than against
+    // memory.
+    //
+    //   70%    TARGET — first-time jobseekers engaging at least once.
+    //   >= 4.0 TARGET — average satisfaction, via an in-product rating prompt.
+    //   16%    NOT THIS FEATURE'S NUMBER AT ALL. It is the platform-wide
+    //          career-path selection rate that already existed, recorded as
+    //          the baseline Path Visualization would be measured against.
+    //          Promoting it to an impact would credit the feature with the
+    //          number it was built to move — a different error from quoting a
+    //          target, and an easier one to make, because 16% already reads
+    //          like a result.
+    //
+    // The north-star metric carries no figure at all. It reads "meaningfully
+    // higher rate", which is a direction.
+    //
+    // THIS WOULD BE THE THIRD TIME. The 73% removed from voice.md was never in
+    // the Christensen report; the 75% was our own arithmetic across a report
+    // that publishes two other 75%s saying different things. Both are recorded
+    // at the accessibility answer in voice.md. A target promoted to a result is
+    // that same failure with a different source, and this source makes it
+    // easier: the numbers are specific, confident, and in a table.
+    //
+    // `impacts` IS ABSENT RATHER THAN EMPTY — the field is deleted, so
+    // buildProjectBodyBlocks omits the block the way it does for ai-investing.
+    // The placeholder that used to live here, "work in progress; coming soon.",
+    // was the only one on the site. It rendered rather than being skipped
+    // because impacts?.length was 1, so the reveal shipped for months with a
+    // Key impacts block whose content was an apology for itself.
+    //
+    // WHAT WOULD FILL IT: post-launch event data, pulled and cleared for
+    // publication. Adoption (unique users who ran a search) and interaction
+    // depth (sessions with 3+ role clicks) are the clean ones. A cohort
+    // comparison against the 16% baseline is NOT — it measures people who
+    // chose to use the feature against people who did not, so it reports
+    // self-selection as much as design.
+    challenge:
+      "Jobseekers, students, and career switchers could find individual roles, but they couldn't see how those roles connected. The platform didn't show what could come next, which moves were lateral, or how someone might progress over time.\n\nWe had career pages and job listings, but neither answered a more fundamental question: if I start here, where can I go next?",
+    atStake:
+      "FutureFit works with governments and workforce organizations that need to help people understand not just what jobs are available, but where those jobs can lead. Career pathways came up consistently in demos.",
+    decision:
+      "The obvious search model was careers, since the product already organized around roughly 800 of them. I chose roles instead, giving us roughly 6,000 possible starting points. Careers made for a cleaner graph, but fewer meaningful connections. Roles were more complex, but that was where the useful relationships existed.\n\nFor v1, I limited the graph to roles within a single career instead of showing every adjacent path. Showing more wasn't necessarily more useful. The goal was to make the next move easier to understand.",
     roleDescription:
-      "Lead product designer.\n\nCurrent focus:\n- conducting user research to uncover issues faced by new job-seekers, individuals undergoing career transitions, and fresh grads;\n- understanding how AI can coach individuals to obtain better outcomes in cold outreaches; improved resumes; better accountability, etc.\n- creating and designing the AI coach and deploying to clients;\n- creating an AI-compatible design system using design tokens and Shadcn, for use in AI development tools, such as V0, Lovable, and Claude Code.",
+      "Lead Product Designer. I designed Path Visualization end to end, including its production UI.",
   },
   {
     slug: "retail-banking",
