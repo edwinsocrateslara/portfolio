@@ -41,14 +41,38 @@ const VOICE_END = "<!-- END GENERATED: voice -->"
 // is already quoted somewhere else in edwin-context.md and stating it twice
 // would put the same sentence in front of the model in two registers:
 //
-//   Intro             -> § Who Edwin Is quotes it as the headline.
-//   Outside work      -> § Outside Work quotes it in full.
-//   Currently reading -> the same § Outside Work quote carries the books.
+//   Intro        -> § Who Edwin Is quotes it as the headline.
+//   Outside work -> § Outside Work quotes it in full.
 //
 // This is a list of exclusions rather than a list of inclusions on purpose: a
 // new section added to voice.md should appear in the prompt by default. Having
 // to remember to opt it in is how a source and its copy drift.
-const VOICE_EXCLUDE = new Set(["Intro", "Outside work", "Currently reading"])
+//
+// ── "CURRENTLY READING" WAS ON THIS LIST AND SHOULD NOT HAVE BEEN ─────────
+//
+// The line removed above read: "Currently reading -> the same § Outside Work
+// quote carries the books." It does not, and never did. § Outside Work is one
+// sentence about bouldering, running, camping and a Malamute. The authors'
+// names appeared ZERO times in the file this script generates.
+//
+// The visible consequence: the About page renders both books from
+// lib/currently-reading.ts, and a visitor who read them there and then asked
+// the chat "what are you reading?" was told "I don't know. That's not
+// something Edwin has covered." Two surfaces of the same site contradicting
+// each other about a fact Edwin maintains in two files.
+//
+// It was found by testing the chat, not by reading this comment — five models
+// all returned the FALLBACK for that question, correctly, because the content
+// genuinely was not there. The comment was the only thing claiming otherwise,
+// and a comment cannot be checked by a gate. That is the whole argument for
+// fixing the plumbing rather than fixing the sentence.
+//
+// COST, MEASURED: changing a book now fails check:context as well as
+// check:voice, so it costs one `npm run build:context`. That is not a step
+// anyone has to remember — the gate prints the command — and it is the same
+// command every other voice.md edit already requires. This section simply
+// stops being the one edit that was exempt.
+const VOICE_EXCLUDE = new Set(["Intro", "Outside work"])
 
 const DECK_TXT = "lib/sources/meridian-case-study.txt"
 const DECK_BEGIN = "<!-- BEGIN GENERATED: deck (scripts/build-context.mjs) -->"

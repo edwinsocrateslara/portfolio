@@ -836,6 +836,11 @@ The second is overlooked everyday problems: recurring frustrations that people h
 I like uncovering those kinds of latent needs and building solutions where the value feels obvious once you see it.
 
 
+#### Currently reading
+
+Right now I'm in the middle of Rock Climbing Technique: The Practical Guide to Movement Mastery by John Kettle, and Simple Numbers, Straight Talk, Big Profits! by Greg Crabtree.
+
+
 #### A product I admire
 
 A product I really admire is Terminal on Mac. I love how raw and simple it is. There's very little interface and no prescribed way of using it—it gives you direct access to your computer and, if you know how to use it, the flexibility to build almost anything.
