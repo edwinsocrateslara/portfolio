@@ -88,7 +88,7 @@ for it. `role` follows lib/sources/resume.txt.
 
 ### FutureFit AI — Career Path Visualization
 - **Slug:** ai-workforce-development
-- **Status:** Work in progress
+- **Status:** Live
 - **Role:** Lead Product Designer
 
 I design AI products for a workforce platform serving businesses and governments. Path Visualization shows how roles connect and where they can lead.

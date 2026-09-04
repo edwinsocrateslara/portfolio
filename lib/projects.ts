@@ -126,7 +126,21 @@ export const projects: Project[] = [
     tagline:
       "I design AI products for a workforce platform serving businesses and governments. Path Visualization shows how roles connect and where they can lead.",
     role: "Lead Product Designer",
-    status: "wip",
+    // "live" because it is. Path Visualization shipped to production on
+    // 2026-03-31; this said "wip" against copy written in the past tense about
+    // work that is out in the world.
+    //
+    // ⚠ AND IT IS NOT DEAD DATA, WHICH IS WHY THIS MATTERED. No component
+    // reads it — grepped across app, components, hooks and lib — so it looks
+    // inert. But scripts/build-context.mjs emits it into lib/edwin-context.md
+    // as "**Status:** Work in progress", and that file IS the chat's reference
+    // document. A visitor asking about this project was being told the work was
+    // unfinished, five months after it shipped.
+    //
+    // The lesson is the field's, not this project's: "nothing renders it" is
+    // not the same question as "nothing reads it". Check the generated context
+    // before calling a field unused.
+    status: "live",
     // ALL THREE IMAGES WERE REPLACED, AND ALL THREE ALT STRINGS WENT WITH
     // THEM. The previous set showed a dark Career Explorer chat and a dark job
     // detail; these show the light career-paths graph and the light role
