@@ -37,10 +37,32 @@ const ResumePane = dynamic(
   () => import("@/components/resume/resume-pane").then((m) => m.ResumePane),
   { ssr: false, loading: () => <div className="pane-scroll" /> }
 )
-import type { Resume } from "@/lib/resume"
+import type { ProjectIndexEntry } from "@/lib/project-index"
 import { Sparkle } from "@/components/ui/sparkle"
 import { HERO_MEASURE } from "@/lib/layout"
-import { buildResponse, allProjects } from "@/lib/scripted-responses"
+// ── THE ANSWER CONTENT IS LOADED ON DEMAND ──────────────────────────────
+// `buildResponse` reaches every voice answer, every project's reveal prose and
+// the deck's slide list — roughly 80KB of copy before minification. A visitor
+// who opens the front door and reads it needs none of that until they ask
+// something or click a row.
+//
+// So it is imported at the moment of the first interaction rather than at
+// module scope, and the promise is cached: `answerModule()` resolves instantly
+// on every call after the first, and the chunk is already in the browser cache
+// for the rest of the session.
+//
+// THE FIRST ANSWER PAYS FOR THE CHUNK, and it costs less than it looks. A
+// scripted answer already streams behind 400-900ms typing pauses, so the
+// fetch lands inside a delay the interface was going to take anyway.
+//
+// Identity — slug, client, projectTitle, role — does NOT come from here any
+// more; it arrives on `projectIndex`. That is what makes the split possible:
+// the two things the shell used this module for were content and identity, and
+// only one of them is needed before a click.
+type AnswerModule = typeof import("@/lib/scripted-responses")
+let answerModulePromise: Promise<AnswerModule> | null = null
+const answerModule = (): Promise<AnswerModule> =>
+  (answerModulePromise ??= import("@/lib/scripted-responses"))
 import {
   AssistantBubble,
   UserBubble,
@@ -68,13 +90,27 @@ function createTransport() {
 // so the deck route can render it too — see the note on `initialPane`.
 export function AppShell({
   initialPane = "chat",
-  resume,
+  projectIndex,
 }: {
   initialPane?: Pane
-  /** Parsed from lib/sources/resume.txt by a SERVER component and passed in.
-   *  It cannot be imported here: lib/resume.ts reads the file with `fs`, and
-   *  everything below this component is a client tree. */
-  resume: Resume
+  /** The 6 fields the rail, the sampler and the top bar need, DERIVED from
+   *  lib/projects.ts and lib/vibe-projects.ts by a server component.
+   *
+   *  ── WHY A PROP AND NOT AN IMPORT ────────────────────────────────────────
+   *  The rail imported the full modules, which are client-side, so every
+   *  visitor downloaded every project's tagline, challenge, atStake, decision,
+   *  impacts, roleDescription, sections and alt text in order to draw eight
+   *  rows of a thumbnail, a client name and a subtitle. The reveal prose is
+   *  what a visitor reads AFTER clicking a row.
+   *
+   *  NOT A SECOND SOURCE. See toProjectIndex in lib/project-index.ts: the
+   *  server maps the same Project objects, so there is no file to keep in
+   *  agreement and nothing is retyped.
+   *
+   *  The résumé used to be a prop here too and is not any more — the pane
+   *  fetches /api/resume, because a prop is serialised into the HTML of a page
+   *  most visitors never open that pane on. */
+  projectIndex: ProjectIndexEntry[]
 }) {
   const [input, setInput] = useState("")
   const prefersReducedMotion = usePrefersReducedMotion()
@@ -163,6 +199,13 @@ export function AppShell({
   // now. Only the network turn is serialised, because only the network turn
   // has one channel.
   const apiBusy = isApiLoading
+  // The rail renders WORK and VIBE CODING as two sections. Which is which comes
+  // from the server, on the entry — see `section` in lib/project-index.ts. The
+  // alternative was a slug list here, which is a second place to record the same
+  // fact and the one that goes stale.
+  const workIndex = projectIndex.filter((p) => p.section === "work")
+  const vibeIndex = projectIndex.filter((p) => p.section === "vibe")
+
   const activeBusy = isTypingIn(activeThread) || apiBusy
 
   // ── WHAT THE LIVE REGION SAYS, AND WHEN ─────────────────────────────────
@@ -319,7 +362,7 @@ export function AppShell({
       // was told nothing about what was being discussed. Every other lookup in
       // this component already uses allProjects; this one was the odd one out,
       // which is what made it a bug rather than a boundary.
-      const subject = thread === HOME_THREAD ? null : allProjects.find((x) => x.slug === thread)
+      const subject = thread === HOME_THREAD ? null : projectIndex.find((x) => x.slug === thread)
       if (subject) {
         history.push({
           id: `ctx-${subject.slug}`,
@@ -375,12 +418,18 @@ export function AppShell({
   // The reveal content comes from buildResponse(preloadedSlug), which returns
   // projectStream — the same single definition the typed and chip paths use.
   // Nothing about a project's reveal is described twice.
+  // ASYNC because the reveal content is a lazily-imported chunk now. The pane
+  // swap, the slug and the thread switch all happen SYNCHRONOUSLY above the
+  // await — so the rail highlights and the transcript appears on the click, and
+  // only the blocks wait on the module. Revisiting a thread never awaits
+  // anything: the early return is above the import too.
   const openProjectThread = useCallback(
-    (slug: string) => {
+    async (slug: string) => {
       setPane("chat")
       setCurrentProjectSlug(slug)
       switchThread(slug)
       if (revealedRef.current.has(slug)) return
+      const { buildResponse } = await answerModule()
       const { response } = buildResponse("", { preloadedSlug: slug })
       // Marked revealed only once the reveal is actually queued. Adding the
       // slug first meant a reveal that was subsequently lost could never be
@@ -397,7 +446,7 @@ export function AppShell({
   // follow-up chips, and the rail. One decision about which thread a turn
   // belongs to, made once.
   const dispatch = useCallback(
-    (text: string, opts?: { slug?: string }) => {
+    async (text: string, opts?: { slug?: string }) => {
       const from = activeThreadRef.current
 
       // ── BUSY IS CHECKED HERE, BEFORE ANYTHING IS RECORDED OR APPENDED ──────
@@ -427,6 +476,9 @@ export function AppShell({
       // is only one API channel.
       if (isTypingIn(from) || apiInFlightRef.current) return
 
+      // Awaited AFTER the busy guard, so a click during a reveal is refused
+      // without paying for a module fetch it will not use.
+      const { buildResponse } = await answerModule()
       const { response, projectSlug, answerId } = buildResponse(text, {
         preloadedSlug: opts?.slug,
         currentProjectSlug: from === HOME_THREAD ? null : from,
@@ -748,7 +800,7 @@ export function AppShell({
   // here, so the two cannot disagree about what "every project" means.
   const activeProject =
     pane === "chat" && currentProjectSlug
-      ? allProjects.find((p) => p.slug === currentProjectSlug)
+      ? projectIndex.find((p) => p.slug === currentProjectSlug)
       : undefined
 
   const isFrontDoor =
@@ -797,6 +849,8 @@ export function AppShell({
       </div>
 
       <Sidebar
+        work={workIndex}
+        vibe={vibeIndex}
         activeSlug={currentProjectSlug}
         activePane={pane}
         onProjectSelect={handleSidebarProject}
@@ -829,7 +883,7 @@ export function AppShell({
       <main className="pane" ref={paneRef}>
         {pane === "resume" ? (
           <div className="pane-scroll resume-glow">
-            <ResumePane resume={resume} />
+            <ResumePane />
           </div>
         ) : pane === "about" ? (
           <div className="pane-scroll about-glow">
@@ -959,6 +1013,7 @@ export function AppShell({
                 Still part of the landing state: goes when the conversation
                 starts, same as the headline. See the note on isFrontDoor. */}
             <ProjectSampler
+            items={projectIndex}
               className={fadeIn}
               animationDelay={delay(180)}
               onSelect={handleSidebarProject}

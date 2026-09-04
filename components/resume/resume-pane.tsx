@@ -2,7 +2,7 @@
 
 import { DownloadMenu } from "@/components/resume/download-menu"
 import { Words, wordCount } from "@/components/chat/words"
-import { Fragment, useEffect, useRef } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import { ArrowDownToLine } from "lucide-react"
 import { Shimmer } from "@/components/chat/shimmer"
 import { ICON_STROKE } from "@/lib/icons"
@@ -105,8 +105,45 @@ function RoleBody({ role }: { role: ResumeRole }) {
   )
 }
 
-export function ResumePane({ resume }: { resume: Resume }) {
+// ── THE RÉSUMÉ ARRIVES OVER THE WIRE, NOT AS A PROP ─────────────────────
+// It used to be parsed in app/page.tsx and passed down, which serialised the
+// whole thing into the home HTML for every visitor including the ones who
+// never open this pane. The pane's CODE was already split out behind
+// next/dynamic; its DATA was not, because a prop travels with the page rather
+// than with the component.
+//
+// /api/resume is force-static and immutable-cached, so this is a cache hit
+// after the first open in a session and a single small request before that.
+// The parse still happens in one place — that route imports lib/resume.ts.
+//
+// THREE STATES, ALL RENDERED. The pane has a real loading frame and a real
+// error frame rather than an empty box: a résumé that silently fails to arrive
+// looks identical to a résumé that is empty, and one of those is a bug the
+// visitor should be told about.
+export function ResumePane() {
+  const [resume, setResume] = useState<Resume | null>(null)
+  const [failed, setFailed] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    let live = true
+    fetch("/api/resume")
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
+      .then((data: Resume) => {
+        if (live) setResume(data)
+      })
+      .catch(() => {
+        if (live) setFailed(true)
+      })
+    // Guards a state write after the pane has been swapped away, which React
+    // warns about and which would also resurrect a pane the visitor has left.
+    return () => {
+      live = false
+    }
+  }, [])
 
   // ── The timeline entrance ──────────────────────────────────────────────
   // Rows resolve as their top crosses 85% of the scroller, one at a time in
@@ -212,6 +249,46 @@ export function ResumePane({ resume }: { resume: Resume }) {
   // rather than rendering a menu with one row in it — a menu that opens onto
   // a single choice is a worse control than a link.
   const formats = docFormats("resume")
+
+  // The two frames before the data lands. Both keep the pane's own heading, so
+  // the rail selection and the top bar stay truthful while the body is empty —
+  // and the sr-only status says which state it is, because a visitor using a
+  // screen reader gets no visual difference between "still loading" and "gave
+  // up".
+  if (!resume) {
+    return (
+      <div className="resume" ref={rootRef}>
+        <div className="deck-head">
+          <h1 className="type-page pane-title" data-resolved="false">Resume</h1>
+        </div>
+        <p className="type-label pane-meta" data-resolved="false">
+          {failed ? "Could not load" : "Loading"}
+        </p>
+        <div role="status" aria-live="polite" className="sr-only">
+          {failed ? "The résumé could not be loaded." : "Loading the résumé."}
+        </div>
+        {failed && (
+          <>
+            <hr className="resume-rule" />
+            <p className="type-body" style={{ color: "rgb(var(--bureau-text-secondary))" }}>
+              The résumé did not load. It is still available as a download, and the
+              file does not depend on this page.
+            </p>
+            {/* The downloads are the fallback, and they are the SAME artefacts
+                the pane describes — generated from the same source file — so
+                pointing at them is not a consolation prize. */}
+            <div style={{ marginTop: "var(--space-between)" }}>
+              <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
+                <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
+                Download
+                <Shimmer />
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="resume" ref={rootRef}>

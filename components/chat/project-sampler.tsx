@@ -1,7 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import { projects } from "@/lib/projects"
+// NO PROJECT IMPORT — the sampler shows a thumbnail, a client and a subtitle.
+// See lib/project-index.ts.
+import type { ProjectIndexEntry } from "@/lib/project-index"
 
 // Three of the seven, below the prompt chips on the front door. Proof, not
 // navigation — the rail is the index and already lists all seven, so this
@@ -13,16 +15,20 @@ import { projects } from "@/lib/projects"
 const SAMPLE_SLUGS = ["ai-workforce-development", "retail-banking", "live-selling"] as const
 
 export function ProjectSampler({
+  items,
   onSelect,
   className,
   animationDelay,
 }: {
+  /** Every project, in rail order. The sampler picks 3 by slug from this rather
+   *  than importing the modules — see lib/project-index.ts. */
+  items: ProjectIndexEntry[]
   onSelect: (slug: string) => void
   className?: string
   animationDelay?: string
 }) {
-  const sample = SAMPLE_SLUGS.map((slug) => projects.find((p) => p.slug === slug)).filter(
-    (p): p is (typeof projects)[number] => Boolean(p)
+  const sample = SAMPLE_SLUGS.map((slug) => items.find((p) => p.slug === slug)).filter(
+    (p): p is ProjectIndexEntry => Boolean(p)
   )
 
   return (

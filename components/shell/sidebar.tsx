@@ -9,9 +9,11 @@ import { Sparkle } from "@/components/ui/sparkle"
 import { Layers, FileText, UserRound, Mail, Linkedin } from "lucide-react"
 import { ICON_STROKE_CONTROL, ICON_STROKE_RAIL } from "@/lib/icons"
 import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
-import { projects } from "@/lib/projects"
-import type { Project } from "@/lib/projects"
-import { vibeProjects } from "@/lib/vibe-projects"
+// NO PROJECT IMPORT. The rail draws a thumbnail, a client name and a subtitle;
+// importing lib/projects.ts to do that pulled every reveal's prose and alt text
+// into the first load. The 6 fields it needs arrive as a prop, derived on the
+// server — see lib/project-index.ts.
+import type { ProjectIndexEntry } from "@/lib/project-index"
 
 // The persistent left rail. It is the site's index: every project is a row,
 // and clicking one streams that project's reveal into the chat. It replaces
@@ -36,6 +38,13 @@ export type Pane = "chat" | "deck" | "about" | "resume"
 
 
 interface SidebarProps {
+  /** WORK rows, in order. Derived on the server; see lib/project-index.ts. */
+  work: ProjectIndexEntry[]
+  /** VIBE CODING rows. Kept a separate list rather than a flag on the entries
+   *  because the rail renders them as two sections with their own headings, and
+   *  a partition here would be the rail re-deriving something the server
+   *  already knows. */
+  vibe: ProjectIndexEntry[]
   activeSlug: string | null
   activePane: Pane
   onProjectSelect: (slug: string) => void
@@ -62,7 +71,7 @@ function ProjectSection({
   pick,
 }: {
   heading: string
-  items: Project[]
+  items: ProjectIndexEntry[]
   activePane: Pane
   activeSlug: string | null
   onSelect: (slug: string) => void
@@ -143,6 +152,8 @@ function ProjectSection({
 }
 
 export function Sidebar({
+  work,
+  vibe,
   activeSlug,
   activePane,
   onProjectSelect,
@@ -216,7 +227,7 @@ export function Sidebar({
       <nav className="rail-scroll" ref={scrollRef} onScroll={measure} aria-label="Work and documents">
         <ProjectSection
           heading="Work"
-          items={projects}
+          items={work}
           activePane={activePane}
           activeSlug={activeSlug}
           onSelect={onProjectSelect}
@@ -234,10 +245,10 @@ export function Sidebar({
             The section is public now, so there is nothing to fold away, and
             what remains is the condition that was always the real one: render
             the heading only when there is something under it. */}
-        {vibeProjects.length > 0 && (
+        {vibe.length > 0 && (
           <ProjectSection
             heading="Vibe Coding"
-            items={vibeProjects}
+            items={vibe}
             activePane={activePane}
             activeSlug={activeSlug}
             onSelect={onProjectSelect}

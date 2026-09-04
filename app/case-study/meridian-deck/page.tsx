@@ -1,5 +1,7 @@
 import { AppShell } from "@/components/shell/app-shell"
-import { resume } from "@/lib/resume"
+import { projects } from "@/lib/projects"
+import { vibeProjects } from "@/lib/vibe-projects"
+import { toProjectIndex } from "@/lib/project-index"
 
 // A static segment, so it takes precedence over the [slug] route alongside
 // it. It exists for deep links — sharing the deck, or landing on it from the
@@ -15,6 +17,13 @@ export const metadata = {
     "The full case study deck for the Meridian mobile banking redesign: research, the old app, the redesign, testing, and impact.",
 }
 
+
+// DERIVED HERE, in a server component, and handed down as a prop. The full
+// project modules are imported on the server — where they cost nothing — and
+// only the 6 fields the rail needs cross into the client tree. See
+// lib/project-index.ts for why that is a mapping rather than a second file.
+const index = [...toProjectIndex(projects, "work"), ...toProjectIndex(vibeProjects, "vibe")]
+
 export default function MeridianDeckPage() {
-  return <AppShell initialPane="deck" resume={resume} />
+  return <AppShell initialPane="deck" projectIndex={index} />
 }
