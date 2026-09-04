@@ -131,6 +131,34 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
+    // ── THE MODEL ID IS CURRENT AND WAS VERIFIED, NOT ASSUMED ──────────────
+    //
+    // Checked against /v1/models with the deployment's own key: claude-sonnet-4-6
+    // resolves, and it answers this prompt correctly — an in-scope question from
+    // the document, and the FALLBACK returned byte-for-byte on an out-of-scope
+    // one, including the mailto link.
+    //
+    // claude-sonnet-5 IS AVAILABLE AND SWITCHING IS NOT A ONE-LINE CHANGE. Two
+    // things were measured before leaving this alone:
+    //
+    //   IT REJECTS `temperature`. The call below sets it to 0. Sonnet 5 returns
+    //   "`temperature` is deprecated for this model" — an error that arrives
+    //   INSIDE the stream, because this route returns 200 and surfaces failures
+    //   in the body. The visitor would get the generic error bubble and then
+    //   setUseApiMode(false) for the rest of the session. Changing the string
+    //   alone breaks every chat, and it breaks it in the shape that looks like
+    //   a spend cap rather than like a bad model id.
+    //
+    //   IT ANSWERS IN THE FIRST PERSON. Asked about the design process, 4.6
+    //   says "Edwin works in 4 loose stages"; 5 says "I work in 4 loose
+    //   stages". The scripted answers are first person, so 5 is arguably the
+    //   better match — but that is a change to the site's voice, decided
+    //   deliberately and checked against the scripted register, not a version
+    //   bump.
+    //
+    // So: an upgrade is a real piece of work — drop temperature, re-verify the
+    // fallback is still verbatim, and rule on the person. Not a maintenance
+    // edit.
     model: anthropic("claude-sonnet-4-6"),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
