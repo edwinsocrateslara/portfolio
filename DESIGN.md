@@ -566,8 +566,20 @@ The focus ring needs no handling: it is a `box-shadow`, so it follows
 
 ## The 4px rule
 
-Every spacing value, every element dimension, and every font size is a
-multiple of 4.
+Every spacing value and every element dimension is a multiple of 4.
+
+**Type sizes are NOT on this grid, and this section used to say they were.**
+It read "every spacing value, every element dimension, and every font size is a
+multiple of 4", and then treated `control` at 14/21 as the single exception to
+that. The canonical statement is in the type ramp below — *"Type sizes are not
+bound to the 4px grid and never have been — 14/21 and 20/30 both predate this
+ramp"* — and the two could not both be true. An audit found them describing
+incompatible systems, with no way to tell which was authoritative.
+
+This one deferred, because the ramp is where the argument lives: the ladder is
+geometric and binding it to a 4px lattice would force it back into the
+arithmetic ramp it replaced. `check:design` has always agreed with the ramp —
+its off-grid rules read lengths, not font sizes.
 
 **Line-height is the one derived value, and it is exempt.** It is 1.5× the
 font size at every step but one, which means it lands off the grid at most
@@ -591,11 +603,12 @@ was removed when its last user left, not because one user is too few. This one
 has a user, is exactly 1.5x, and carries no exception. It replaced a 28/48
 that would have been the first leading exception since the deletion above.
 
-**One type size is off the 4px grid: `control`, at 14/21.** It is the only
-one, and it is deliberate — a chip label wants to sit between the 12px label
-voice and the 16px body voice, because 12 reads small on a 44px target and 16
-reads like prose inside a pill. The leading is still the derived 1.5x; 21 is
-off-grid too, and line-height has never been asked to be on it.
+**`control` at 14/21 is off the type LADDER, which is a different claim.** It
+is not an exception to the 4px rule — no type size is on that grid — it is the
+one step that breaks the ramp's geometric progression. A chip label wants to
+sit between the 12px label voice and the 16px body voice, because 12 reads
+small on a 44px target and 16 reads like prose inside a pill. Its own section
+is below, under "The 14/21 step is off the ladder, and kept on purpose".
 
 Other exceptions to the 4px grid, all deliberate: **1px** hairlines — as a
 border, and equally as a `width` or a `height` where the hairline is drawn as
