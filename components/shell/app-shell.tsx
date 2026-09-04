@@ -40,29 +40,57 @@ const ResumePane = dynamic(
 import type { ProjectIndexEntry } from "@/lib/project-index"
 import { Sparkle } from "@/components/ui/sparkle"
 import { HERO_MEASURE } from "@/lib/layout"
-// ── THE ANSWER CONTENT IS LOADED ON DEMAND ──────────────────────────────
-// `buildResponse` reaches every voice answer, every project's reveal prose and
-// the deck's slide list — roughly 80KB of copy before minification. A visitor
-// who opens the front door and reads it needs none of that until they ask
-// something or click a row.
+// ── THE ANSWER CONTENT IS IMPORTED, NOT FETCHED ─────────────────────────
 //
-// So it is imported at the moment of the first interaction rather than at
-// module scope, and the promise is cached: `answerModule()` resolves instantly
-// on every call after the first, and the chunk is already in the browser cache
-// for the rest of the session.
+// This was `import()` behind a cached promise, awaited at the first
+// interaction, on the reasoning that a visitor who reads the front door and
+// leaves need not pay for ~80KB of answer copy. That reasoning was never
+// tested against a production build. When it was, it did not survive.
 //
-// THE FIRST ANSWER PAYS FOR THE CHUNK, and it costs less than it looks. A
-// scripted answer already streams behind 400-900ms typing pauses, so the
-// fetch lands inside a delay the interface was going to take anyway.
+// MEASURED, `next build` then `next start`, home route, gzip:
 //
-// Identity — slug, client, projectTitle, role — does NOT come from here any
-// more; it arrives on `projectIndex`. That is what makes the split possible:
-// the two things the shell used this module for were content and identity, and
-// only one of them is needed before a click.
-type AnswerModule = typeof import("@/lib/scripted-responses")
-let answerModulePromise: Promise<AnswerModule> | null = null
-const answerModule = (): Promise<AnswerModule> =>
-  (answerModulePromise ??= import("@/lib/scripted-responses"))
+//                              initial HTML   eager JS    first load
+//   with import()                6,280        339,612       345,892
+//   with this static import      6,258        339,148       345,406
+//                                                        ────────────
+//                                                        486 bytes LESS
+//
+// The lazy version was BIGGER. The answer module was in the first load either
+// way, and deferring it only added a chunk boundary and its registry entry.
+//
+// WHY IT WAS ALWAYS EAGER: lib/chips.ts imports SCRIPTED_TOPICS to derive the
+// front-door chips, and the chips are on the first paint. `import()` cannot
+// defer a module that a synchronous import already put in the entry graph —
+// it resolves from the registry and never touches the network. Verified by
+// cutting the network to zero after load and clicking a chip: the answer
+// streamed normally, with exactly one request for that chunk in the whole
+// session, during page load.
+//
+// AND THE FAILURE IT WOULD HAVE BOUGHT. Two halves, and they were established
+// differently — worth saying, because a comment that blurs the two is how the
+// claim above got made in the first place.
+//
+//   DRIVEN. With that chunk blocked, the page renders perfectly — hero, chips,
+//   sampler, rail, all server-rendered — and every chip is dead. Fifteen
+//   seconds of clicking changed nothing: no error, no spinner, no aria-live
+//   announcement, no thrown exception. A visitor cannot tell a dead page from
+//   a slow one, so they wait, and then they leave.
+//
+//   READ, not driven, because the boundary was inert and there was no real
+//   chunk fetch to fail. `dispatch` awaits the module before it appends the
+//   user's bubble, so a rejection returns having changed nothing on screen —
+//   the silent shape above. And `??=` caches the REJECTED promise, so every
+//   later click re-awaits the same rejection without a second network attempt.
+//   That one is plain operator semantics, not a guess.
+//
+// A site whose primary interaction is chat cannot hold that risk to save
+// nothing. It could not hold it to save 24KB either.
+//
+// Identity — slug, client, projectTitle, role — still does not come from here;
+// it arrives on `projectIndex`, and that split is worth keeping on its own
+// merits. It is what keeps the rail from importing every project's reveal
+// prose, which is a real saving and was measured as one.
+import { buildResponse } from "@/lib/scripted-responses"
 import {
   AssistantBubble,
   UserBubble,
@@ -418,18 +446,17 @@ export function AppShell({
   // The reveal content comes from buildResponse(preloadedSlug), which returns
   // projectStream — the same single definition the typed and chip paths use.
   // Nothing about a project's reveal is described twice.
-  // ASYNC because the reveal content is a lazily-imported chunk now. The pane
-  // swap, the slug and the thread switch all happen SYNCHRONOUSLY above the
-  // await — so the rail highlights and the transcript appears on the click, and
-  // only the blocks wait on the module. Revisiting a thread never awaits
-  // anything: the early return is above the import too.
+  // SYNCHRONOUS, and back to being so deliberately. While the reveal came from
+  // a lazily-imported chunk this was async, which meant a click could resolve
+  // in a later microtask than the one it was dispatched in. With the module
+  // imported directly there is nothing to wait for, and a click that cannot be
+  // deferred cannot be interleaved with another one.
   const openProjectThread = useCallback(
-    async (slug: string) => {
+    (slug: string) => {
       setPane("chat")
       setCurrentProjectSlug(slug)
       switchThread(slug)
       if (revealedRef.current.has(slug)) return
-      const { buildResponse } = await answerModule()
       const { response } = buildResponse("", { preloadedSlug: slug })
       // Marked revealed only once the reveal is actually queued. Adding the
       // slug first meant a reveal that was subsequently lost could never be
@@ -446,7 +473,7 @@ export function AppShell({
   // follow-up chips, and the rail. One decision about which thread a turn
   // belongs to, made once.
   const dispatch = useCallback(
-    async (text: string, opts?: { slug?: string }) => {
+    (text: string, opts?: { slug?: string }) => {
       const from = activeThreadRef.current
 
       // ── BUSY IS CHECKED HERE, BEFORE ANYTHING IS RECORDED OR APPENDED ──────
@@ -476,9 +503,6 @@ export function AppShell({
       // is only one API channel.
       if (isTypingIn(from) || apiInFlightRef.current) return
 
-      // Awaited AFTER the busy guard, so a click during a reveal is refused
-      // without paying for a module fetch it will not use.
-      const { buildResponse } = await answerModule()
       const { response, projectSlug, answerId } = buildResponse(text, {
         preloadedSlug: opts?.slug,
         currentProjectSlug: from === HOME_THREAD ? null : from,

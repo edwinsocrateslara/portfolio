@@ -182,9 +182,28 @@ export function ResumePane() {
   // inside @media (prefers-reduced-motion: no-preference) keyed on
   // data-resolved, so under reduced motion the rows are simply never hidden,
   // and there is no frame where they paint at rest and then jump away.
+  //
+  // ── [resume], NOT [] — AND THIS SHIPPED BROKEN ─────────────────────────
+  //
+  // The effect ARMS the entrance: it finds every [data-resolved] element and
+  // flips it to "true" on a cadence. Until it does, CSS holds those elements at
+  // opacity 0 and scale 0.
+  //
+  // With [] it ran exactly once, on mount — and after the résumé moved behind a
+  // fetch, mount is the LOADING frame. It queried a DOM that had a heading and
+  // nothing else, armed those, and never ran again. The real résumé then
+  // rendered every row with data-resolved="false" and nothing was left to flip
+  // them, so the pane was fully present in the DOM and completely invisible.
+  //
+  // Depending on `resume` means the effect re-runs when the data lands, against
+  // the DOM that data produced. The cleanup below tears the first pass down, so
+  // the two runs cannot both hold timers.
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
+    // Nothing to arm until the data is here. Without this the loading frame's
+    // heading gets a queue of its own and the real pass has to undo it.
+    if (!resume) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
     // The pane scrolls, not the window.
     const scroller = root.closest<HTMLElement>(".pane-scroll")
@@ -242,7 +261,7 @@ export function ResumePane() {
       if (frame) cancelAnimationFrame(frame)
       if (timer !== undefined) window.clearTimeout(timer)
     }
-  }, [])
+  }, [resume])
 
   // ONE ENTRY OR THREE, DECIDED BY THE DATA. docFormats returns null for a
   // document offered as a single file, and this falls back to the plain pill

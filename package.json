@@ -19,6 +19,7 @@
     "check:alt": "node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs",
     "check:numbers": "node scripts/check-numbers.mjs",
     "check:api": "node --import ./scripts/ts-extensionless.mjs scripts/check-api.mjs",
+    "check:paint": "node scripts/check-paint.mjs",
     "build:resume": "node --import ./scripts/ts-extensionless.mjs scripts/build-resume.mjs"
   },
   "dependencies": {

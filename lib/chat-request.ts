@@ -30,13 +30,36 @@
 // request is rejected. Nothing else survives — no system role, no tool calls,
 // no files, no images, no arbitrary parts.
 //
-// THE RATE LIMIT IS BEST-EFFORT AND SAYS SO. It is an in-process token bucket,
-// so on a serverless platform each instance keeps its own counter and a
-// distributed attacker gets one bucket per instance. It stops a single client
-// hammering one warm instance; it is not a substitute for an edge rate limit
-// or WAF, and nothing here should be read as claiming otherwise. It is the
-// strongest control that can live in this file, and the honest description is
-// worth more than a stronger-sounding one.
+// ── WHERE THE CEILING ACTUALLY IS ─────────────────────────────────────────
+//
+// THE REAL LIMIT ON SPEND IS THE ANTHROPIC CONSOLE SPEND CAP, not this file.
+// It is set on the account, with a usage alert below it, and it is the only
+// control that is hard, global and independent of how many instances happen to
+// be warm. Reaching it is a DEGRADED SITE RATHER THAN A BILL, and the shape of
+// that degradation is worth knowing before choosing the number: an Anthropic
+// 429 arrives inside the stream, so app-shell.tsx's error effect posts the
+// "something went wrong" message for that one turn and calls setUseApiMode
+// (false). Every question after it is answered from the scripted set, which is
+// most of what this site is asked anyway.
+//
+// THE BUCKET BELOW IS FAIRNESS, NOT A CEILING, and the distinction is the
+// whole reason to read this paragraph. It is an in-process token bucket, so on
+// a serverless platform each instance keeps its own counter and a distributed
+// caller gets one bucket per instance. What it does well is stop one client
+// hammering one warm instance, which is the common case and worth having in
+// front of the model. What it cannot do is bound total spend.
+//
+// That gap is CLOSED, deliberately and elsewhere — by the console cap — rather
+// than left open. An earlier version of this comment described the gap without
+// saying where it was closed, which reads as an outstanding weakness and
+// invites someone to "fix" it here by making the bucket cleverer. A cleverer
+// in-process bucket is still per-instance. The answer to a spend ceiling was
+// never going to live in this file, and the honest thing is to name the place
+// it does live.
+//
+// If the deployment ever grows an edge rate limit or a WAF, that belongs in
+// front of this, not instead of it: they bound request volume, the console cap
+// bounds money, and the bucket keeps one caller from crowding out another.
 import type { UIMessage } from "ai"
 
 /** Rejected requests carry a status and a reason the client can show.
