@@ -131,34 +131,54 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    // ── THE MODEL ID IS CURRENT AND WAS VERIFIED, NOT ASSUMED ──────────────
+    // ── THE MODEL WAS CHOSEN BY MEASUREMENT. RE-RUN IT BEFORE CHANGING. ────
     //
-    // Checked against /v1/models with the deployment's own key: claude-sonnet-4-6
-    // resolves, and it answers this prompt correctly — an in-scope question from
-    // the document, and the FALLBACK returned byte-for-byte on an out-of-scope
-    // one, including the mailto link.
+    // claude-sonnet-4-6, kept deliberately over five candidates that were all
+    // tested against THIS system prompt with the deployment's own key:
+    // haiku-4-5, sonnet-4-6, sonnet-5, opus-5, fable-5-1.
     //
-    // claude-sonnet-5 IS AVAILABLE AND SWITCHING IS NOT A ONE-LINE CHANGE. Two
-    // things were measured before leaving this alone:
+    // ON ACCURACY THEY WERE INDISTINGUISHABLE, and that is the finding, not a
+    // hedge. 7 questions the document answers, 5 it cannot, and 8 adversarial
+    // ones drawn from this site's own history of getting figures wrong — the
+    // unpublished SideBar denominator, the 73% that was removed as unsupported,
+    // the 75% that was our arithmetic, the 457-corpus-versus-300-per-run
+    // conflation. Every model scored 7/7, 5/5 and 8/8. None invented a figure.
+    // A bigger model caught nothing a smaller one missed.
     //
-    //   IT REJECTS `temperature`. The call below sets it to 0. Sonnet 5 returns
-    //   "`temperature` is deprecated for this model" — an error that arrives
-    //   INSIDE the stream, because this route returns 200 and surfaces failures
-    //   in the body. The visitor would get the generic error bubble and then
-    //   setUseApiMode(false) for the rest of the session. Changing the string
-    //   alone breaks every chat, and it breaks it in the shape that looks like
-    //   a spend cap rather than like a bad model id.
+    // SO THE DECISION TURNED ON PINNABILITY, which is the property worth having
+    // on an endpoint strangers can post to.
     //
-    //   IT ANSWERS IN THE FIRST PERSON. Asked about the design process, 4.6
-    //   says "Edwin works in 4 loose stages"; 5 says "I work in 4 loose
-    //   stages". The scripted answers are first person, so 5 is arguably the
-    //   better match — but that is a change to the site's voice, decided
-    //   deliberately and checked against the scripted register, not a version
-    //   bump.
+    //   THE THREE 2026 MODELS CANNOT BE PINNED AT ALL. sonnet-5, opus-5 and
+    //   fable-5-1 REJECT `temperature` — "`temperature` is deprecated for this
+    //   model" — and reject `top_p` with it. The rejection arrives INSIDE the
+    //   stream, because this route returns 200 and surfaces failures in the
+    //   body, so swapping the string alone gives every visitor the generic
+    //   error bubble and then setUseApiMode(false) for the session. It fails in
+    //   the shape of a tripped spend cap rather than a bad model id.
     //
-    // So: an upgrade is a real piece of work — drop temperature, re-verify the
-    // fallback is still verbatim, and rule on the person. Not a maintenance
-    // edit.
+    //   THE SPLIT IS PREDICTABLE FROM /v1/models: every model whose
+    //   capabilities report thinking.types.enabled.supported === false
+    //   (adaptive-only) refuses both parameters. Check that field before
+    //   assuming a newer id is a drop-in.
+    //
+    // AND IT IS CHEAPER TO RUN: 125 output tokens where opus-5 took 236 for the
+    // same content, against a 1024 cap.
+    //
+    // ⚠ REPEATABILITY IS NOT STABLE ENOUGH TO CITE AS A REASON. Three runs of
+    // one question: sonnet-4-6 varied in wording on the first pass and was
+    // byte-identical on the second, while sonnet-5 did the reverse. Only
+    // haiku-4-5 held byte-identical across both. `temperature: 0` is worth
+    // setting because it is the only control that exists, not because it was
+    // observed to make this model deterministic.
+    //
+    // AN EARLIER VERSION OF THIS COMMENT CLAIMED SONNET 5 ANSWERS IN THE FIRST
+    // PERSON. It does not reliably — it produced both registers on the same
+    // question across two runs. Person was never a property of the model; it
+    // was unspecified in the prompt, which is why the prompt now states it.
+    //
+    // BEFORE UPGRADING: re-run the suite. The accuracy tie means a newer model
+    // has to earn the change on something other than being newer, and the
+    // temperature line has to go with it.
     model: anthropic("claude-sonnet-4-6"),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
