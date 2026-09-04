@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo } from "react"
+import dynamic from "next/dynamic"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
@@ -8,9 +9,34 @@ import { PromptChip } from "@/components/chat/prompt-chip"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
-import { DeckPane } from "@/components/case-study/deck-pane"
-import { AboutPane } from "@/components/about/about-pane"
-import { ResumePane } from "@/components/resume/resume-pane"
+// ── THE THREE PANES ARE SPLIT OUT OF THE FIRST LOAD ──────────────────────
+// They were static imports, so a first-time visitor who only ever sees the
+// front door still downloaded, parsed and hydrated the résumé, the About page
+// and the 21-slide deck — plus their copy. That is the shell's largest
+// avoidable cost and it lands hardest on the slow phone the site is most
+// likely to be opened on.
+//
+// ssr: false BECAUSE NONE OF THEM IS THE FIRST PAINT. The front door is what
+// renders on arrival; a pane appears only after a rail click, which is a client
+// event by definition. Server-rendering markup that is always hidden on first
+// paint would put the bytes straight back into the HTML.
+//
+// The `loading` frame is `.pane-scroll` and nothing else — the same padded
+// scroller the pane will fill. An empty box of the right shape for the few
+// hundred milliseconds a chunk takes is calmer than a spinner, and it means the
+// scrollbar and the dock reservation do not jump when the content lands.
+const DeckPane = dynamic(
+  () => import("@/components/case-study/deck-pane").then((m) => m.DeckPane),
+  { ssr: false, loading: () => <div className="pane-scroll" /> }
+)
+const AboutPane = dynamic(
+  () => import("@/components/about/about-pane").then((m) => m.AboutPane),
+  { ssr: false, loading: () => <div className="pane-scroll" /> }
+)
+const ResumePane = dynamic(
+  () => import("@/components/resume/resume-pane").then((m) => m.ResumePane),
+  { ssr: false, loading: () => <div className="pane-scroll" /> }
+)
 import type { Resume } from "@/lib/resume"
 import { Sparkle } from "@/components/ui/sparkle"
 import { HERO_MEASURE } from "@/lib/layout"

@@ -81,6 +81,11 @@ const { projects, SOURCED_FIELDS } = await import("../lib/projects.ts")
 // answer from. Reading allProjects fixes an omission rather than widening a
 // boundary.
 const { vibeProjects } = await import("../lib/vibe-projects.ts")
+// The parsed résumé, for reconcile() below. lib/resume.ts reads and validates
+// lib/sources/resume.txt and throws loudly if the shape changed, so importing
+// it here means this script fails on a malformed source rather than silently
+// reconciling against nothing.
+const { resume } = await import("../lib/resume.ts")
 const allProjects = [...projects, ...vibeProjects]
 
 const STATUS_LABEL = { live: "Live", wip: "Work in progress" }
@@ -261,6 +266,71 @@ function splice(source, begin, end, generated, label) {
   }
   return source.slice(0, start) + generated + source.slice(stop + end.length)
 }
+
+// ── THE HAND-WRITTEN HEAD IS RECONCILED, NOT GENERATED ────────────────────
+//
+// The biography, contact block and Work History at the top of edwin-context.md
+// are hand-written, and the comment at the top of this file used to say so and
+// leave it there: "the last section of this file that nothing checks." That was
+// accurate and it was a hole. Those lines duplicate lib/sources/resume.txt, and
+// a controlled mutation proved the consequence — change a role's title or dates
+// in the résumé, regenerate everything, and every gate stays green while the
+// model keeps answering with the old value. The visible résumé would be right
+// and the chat would be confidently wrong.
+//
+// GENERATING THEM WAS THE OTHER OPTION AND IS THE WRONG ONE. The biography is
+// prose written for a model to read, not a rendering of résumé rows — "a B2B
+// and B2G AI-powered workforce development platform" appears in no source file
+// and should not have to. What is duplicated is the FACTS inside it, so the
+// facts are what get reconciled: each assertion below names a field of the
+// parsed résumé and the exact string the context must contain.
+//
+// A phrase, not a regex, and not a whole-line match: the context is allowed to
+// say things its own way as long as the fact survives. "He is currently
+// Designer & AI Builder at FutureFit AI" satisfies the title and employer
+// assertions without being a row.
+function reconcile(source) {
+  const problems = []
+  const flat = source.replace(/\s+/g, " ")
+  const need = (phrase, why) => {
+    if (!flat.includes(phrase.replace(/\s+/g, " "))) problems.push(`${why}\n      expected: ${phrase}`)
+  }
+
+  need(resume.summary, "the professional summary does not match resume.txt")
+  for (const line of resume.contact) need(line, `a contact line is missing or changed: ${line}`)
+
+  for (const role of resume.roles) {
+    need(`**${role.employer}** — ${role.title}`, `the Work History row for ${role.employer} is stale`)
+    // Dates are written with an en dash in the context and a spaced en dash in
+    // the résumé, so the halves are asserted rather than the joined string.
+    const [from, to] = role.dates.split(/\s*[–-]\s*/)
+    need(from, `${role.employer}'s start date is missing: ${from}`)
+    need(to, `${role.employer}'s end date is missing: ${to}`)
+  }
+
+  const current = resume.roles[0]
+  need(current.title, "the current-role sentence does not name the résumé's current title")
+  need(current.employer, "the current-role sentence does not name the current employer")
+
+  if (problems.length) {
+    console.error(
+      `\n${CONTEXT} disagrees with lib/sources/resume.txt in ${problems.length} place(s):\n`
+    )
+    for (const p of problems) console.error(`  x ${p}\n`)
+    console.error(
+      `  These sections are hand-written on purpose — the biography is prose for a\n` +
+      `  model, not a rendering of résumé rows — so this reconciles the FACTS inside\n` +
+      `  them rather than regenerating the words. Edit ${CONTEXT} to agree, or edit\n` +
+      `  the assertion in scripts/build-context.mjs if the fact itself changed.\n`
+    )
+    process.exit(1)
+  }
+  console.log(
+    `PASS — ${CONTEXT} biography, contact and work history agree with resume.txt ` +
+    `(${resume.roles.length} roles, ${resume.contact.length} contact lines)`
+  )
+}
+reconcile(file)
 
 let next = file
 next = splice(next, BEGIN, END, build(), "projects")

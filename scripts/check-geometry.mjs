@@ -37,17 +37,42 @@
 // reservation actually promises.
 import { connect } from "./shot.mjs"
 
-const RAILS = `[...document.querySelectorAll('.rail-item')].filter(e=>e.getBoundingClientRect().width>0)`
-const DOCS = `[...document.querySelectorAll('.rail-doc')].filter(e=>e.getBoundingClientRect().width>0)`
+// ── SELECTED BY IDENTITY, NOT BY POSITION ────────────────────────────────
+// These were `RAILS[1]` for Meridian, `RAILS[7]` for the vibe project and
+// `DOCS[2]` for About — array indices into whatever order the rail happens to
+// render. Inserting or reordering a project would have pointed a case named
+// "meridian-reveal" at a different surface and still gone green, which is the
+// worst kind of pass: a reassuring name over an unverified assertion.
+//
+// sidebar.tsx now carries data-project-slug and data-pane. The helpers below
+// resolve by those, and every surface ASSERTS what it landed on after clicking
+// rather than trusting that the click did what it said.
+const bySlug = (slug) =>
+  `document.querySelector('.rail-item[data-project-slug=${JSON.stringify(slug)}]')`
+const byPane = (pane) => `document.querySelector('.rail-doc[data-pane=${JSON.stringify(pane)}]')`
 const CHIPS = `[...document.querySelectorAll('.chip')].filter(e=>e.getBoundingClientRect().width>0)`
 
 /** Surfaces: how to get there from a fresh load, and how long to settle. */
 const SURFACES = {
   "front-door": { open: null, settle: 0 },
   "home-after-asking": { open: `${CHIPS}[0].click()`, settle: 6500 },
-  "meridian-reveal": { open: `${RAILS}[1].click()`, settle: 4200 },
-  "vibe-reveal": { open: `${RAILS}[7].click()`, settle: 4200 },
-  about: { open: `${DOCS}[2].click()`, settle: 2600 },
+  "meridian-reveal": {
+    open: `${bySlug("retail-banking")}.click()`,
+    settle: 4200,
+    // Asserted AFTER the click. A selector that found nothing would otherwise
+    // throw, and a selector that found the wrong row would not.
+    expect: `${bySlug("retail-banking")}.dataset.active === "true"`,
+  },
+  "vibe-reveal": {
+    open: `${bySlug("futurefit-ideas-dashboard")}.click()`,
+    settle: 4200,
+    expect: `${bySlug("futurefit-ideas-dashboard")}.dataset.active === "true"`,
+  },
+  about: {
+    open: `${byPane("about")}.click()`,
+    settle: 2600,
+    expect: `!!document.querySelector('.about')`,
+  },
 }
 
 /** (surface, a, b, relation). `a` and `b` are CSS selectors; the LAST match of
@@ -130,6 +155,17 @@ for (const [W, H] of WIDTHS) {
     if (s.open) {
       await evalJS(`(()=>{${s.open};return 1})()`)
       await sleep(s.settle)
+    }
+
+    // THE SURFACE IS THE ONE THE CASE NAMES, checked rather than assumed. A
+    // geometry result is only worth reading if it came from the screen the row
+    // claims to be about.
+    if (s.expect) {
+      const landed = await evalJS(`(()=>{ try { return !!(${s.expect}) } catch { return false } })()`)
+      if (!landed) {
+        problems.push(`${String(W).padStart(4)} ${c.surface} — did not open: ${s.expect}`)
+        continue
+      }
     }
 
     // Reachability, not visibility: see the note at the top.

@@ -106,7 +106,11 @@ const SETUP = SETUP_FILE
 // How long to let the app settle after setup — a pane swap re-renders, images
 // decode, and the dock re-measures. Deliberately separate from the post-load
 // settle: reaching a surface costs more than loading one.
-const SETUP_SETTLE = Number(arg("setup-settle", 1800))
+// A CEILING, NOT A WAIT. See the settle loop below: the script polls for a
+// settled transcript and stops early when it finds one. 40s covers the slow end
+// of a 38-block reveal at 900ms a block; a surface with no stream returns in
+// well under a second.
+const SETUP_SETTLE = Number(arg("setup-settle", 40_000))
 // FOLD BOARDS. Default is to grow the capture to the whole pane; --fold keeps
 // it at exactly --h and waives the height guard. It exists for one reason: at
 // full height the composer sits after the transcript and stops overlapping it,
@@ -225,8 +229,43 @@ await goto(ROUTE)
 await sleep(2500)
 if (SETUP) {
   await evalJS(SETUP)
-  await sleep(SETUP_SETTLE)
-  console.log(`setup: ${SETUP_FILE} (+${SETUP_SETTLE}ms)`)
+  // ── WAIT FOR THE STREAM, THEN FALL BACK TO THE TIMER ────────────────────
+  // The default settle was 1800ms, and a project reveal is a scripted stream:
+  // 38 body blocks behind 400-900ms pauses is 15-34 SECONDS. The board was
+  // captured mid-stream and the answer it showed depended on how the machine
+  // felt that morning, which is the opposite of what a static artboard is for.
+  // The vibe setup even scheduled a scroll reset at 20s, long after the capture
+  // it was meant to precede.
+  //
+  // So this polls for a settled transcript rather than trusting a number: no
+  // typing indicator, and the block count unchanged across 3 consecutive
+  // samples. --setup-settle is now the CEILING on that wait rather than the
+  // wait itself, which is why its default moved from 1800 to 40000.
+  //
+  // The timer remains as a floor for surfaces that stream nothing — the front
+  // door has no transcript to settle, and polling for one would return
+  // immediately and correctly.
+  const settleStart = Date.now()
+  let last = -1
+  let stable = 0
+  while (Date.now() - settleStart < SETUP_SETTLE) {
+    await sleep(400)
+    const state = JSON.parse(
+      await evalJS(`JSON.stringify({
+        blocks: document.querySelectorAll('.pane-scroll [class*="type-"]').length,
+        typing: !!document.querySelector('.typing-indicator, [class*="typing-"]'),
+      })`)
+    )
+    if (state.typing) { stable = 0; last = state.blocks; continue }
+    stable = state.blocks === last ? stable + 1 : 0
+    last = state.blocks
+    if (stable >= 3) break
+  }
+  const waited = Date.now() - settleStart
+  console.log(
+    `setup: ${SETUP_FILE} (settled after ${waited}ms, ${last} blocks` +
+      `${stable >= 3 ? "" : " — CEILING HIT, the board may be mid-stream"})`
+  )
 }
 
 // ── The capture height is MEASURED, not typed ────────────────────────────

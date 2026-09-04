@@ -90,6 +90,14 @@ function ProjectSection({
               key={p.slug}
               type="button"
               className="rail-item"
+              // A STABLE HANDLE FOR THE OFFLINE SCRIPTS. check-geometry.mjs and
+              // the artboard setups used to reach these rows by array position
+              // — RAILS[1] for Meridian, RAILS[7] for the vibe project — so
+              // reordering or inserting a project silently pointed a case named
+              // "meridian-reveal" at something else and still went green.
+              // Nothing here renders differently; the attribute exists so a
+              // test can select by identity and then assert what it selected.
+              data-project-slug={p.slug}
               data-active={active}
               aria-current={active ? "true" : undefined}
               onClick={pick(() => onSelect(p.slug))}
@@ -244,6 +252,7 @@ export function Sidebar({
           <button
             type="button"
             className="rail-doc"
+            data-pane="deck"
             data-active={activePane === "deck"}
             aria-current={activePane === "deck" ? "true" : undefined}
             onClick={pick(onSelectDeck)}
@@ -265,6 +274,7 @@ export function Sidebar({
           <button
             type="button"
             className="rail-doc"
+            data-pane="resume"
             data-active={activePane === "resume"}
             aria-current={activePane === "resume" ? "true" : undefined}
             onClick={pick(onSelectResume)}
@@ -280,6 +290,7 @@ export function Sidebar({
           <button
             type="button"
             className="rail-doc"
+            data-pane="about"
             data-active={activePane === "about"}
             aria-current={activePane === "about" ? "true" : undefined}
             onClick={pick(onSelectAbout)}
