@@ -652,7 +652,16 @@ function checkCssLayout(file, raw) {
 // Raising this is meant to cost something. It costs a row in DESIGN.md's
 // tracking table and this paragraph. Nine is the number; the next one has to
 // argue for ten.
-const TRACK_BUDGET = 9
+// 6, NOT 9. The budget was set against an older tracking ramp that named nine
+// tokens; the stylesheet has carried six since that ramp was replaced, so this
+// permitted three new tracking values without the "earn the row" review it
+// exists to force. A budget with three free slots is not a budget.
+//
+// COUNTING IS THE WEAK PART, DELIBERATELY. A count cannot tell a rename from a
+// replacement, so this is a ceiling on GROWTH rather than a guarantee about
+// which six. Held at the real number so adding one is a decision somebody has
+// to make in this file.
+const TRACK_BUDGET = 6
 
 function checkTracking(file, raw) {
   const found = []
@@ -938,8 +947,23 @@ const record = (v) => {
   // mistaken for waiving a control. The default is still failure, and waiving
   // still costs a written reason in a file somebody reviews.
   if (`${v.file}::${v.rule}::${v.detail}` in ALLOW) return
+  // ── CSS FINDINGS NOW FAIL THE BUILD ────────────────────────────────────
+  // They were report-only "for now", and the for-now outlasted its reason: the
+  // CSS dialect of rules 1-5 was added while most of the layout was still
+  // Tailwind, so a fatal gate would have failed on work not yet ported. That
+  // port is done and the stylesheet sits at 0 findings — so the hedge was
+  // protecting nothing while presenting a green gate that had, in principle,
+  // already detected violations.
+  //
+  // DESIGN.md described css-inline-type as enforced and said spacing must
+  // always use tokens. This makes the code agree with the document rather than
+  // the other way round.
+  //
+  // They are still listed separately in the summary, because knowing a finding
+  // came from the CSS dialect rather than the TSX one is useful. The waiver
+  // route is unchanged and still costs a written reason in ALLOW.
   if (v.reportOnly) reportOnly.push(v)
-  else violations.push(v)
+  violations.push(v)
 }
 for (const abs of files) {
   const rel = relative(ROOT_DIR, abs)
@@ -1005,6 +1029,13 @@ if (process.argv.includes("--list")) {
     "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
     "tracking-literal": "Letter-spacing literal (use var(--track-*))",
     "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
+    // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
+    // be report-only, so its labels lived only in CSS_RULES and this table did
+    // not know the names — which meant the first CSS violation after the switch
+    // printed "BUG: violations of rules missing from the RULES table" rather
+    // than the finding. It failed, which is what matters, but it failed
+    // illegibly. Spread rather than retyped so the two can never disagree.
+    ...CSS_RULES,
   }
   // A rule missing from this table still COUNTS toward the total and still
   // fails the build, but prints under no heading — which reads as "1 violation
@@ -1036,7 +1067,7 @@ if (process.argv.includes("--list")) {
     const byRule = Object.entries(CSS_RULES)
       .map(([r, l]) => [r, l, cssFindings.filter((v) => v.rule === r).length])
       .filter(([, , n]) => n)
-    console.log(`\nCSS rules 1-5 (REPORT-ONLY, does not fail the build): ${cssFindings.length} finding(s)`)
+    console.log(`\nCSS rules 1-5 (these FAIL the build): ${cssFindings.length} finding(s)`)
     for (const [rule, label, n] of byRule) console.log(`   ${String(n).padStart(4)}  ${rule} — ${label}`)
     console.log("   run `npm run check:design -- --css` for the list")
   }

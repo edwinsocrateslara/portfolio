@@ -7,9 +7,13 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { ICON_STROKE_CONTROL } from "@/lib/icons"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
+// alt REQUIRED, matching ImageMessage. It was optional, and `alt={image.alt ||
+// ""}` at the render site turned an omission into a declaration that the image
+// carries nothing — which is exactly the claim lib/sources/README.md § "Alt
+// text describes the frame" says an empty alt makes.
 interface LightboxImage {
   url: string
-  alt?: string
+  alt: string
 }
 
 interface ImageLightboxProps {
@@ -170,7 +174,10 @@ export function ImageLightbox({ images, initialIndex, onClose }: ImageLightboxPr
           <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 9" }}>
             <Image
               src={image.url}
-              alt={image.alt || ""}
+              // No `|| ""`. The type requires alt, so a fallback here would be
+              // dead code that also documented the wrong contract — it read as
+              // though omission were expected and handled.
+              alt={image.alt}
               fill
               className="object-contain"
               sizes="92vw"

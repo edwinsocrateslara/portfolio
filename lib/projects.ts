@@ -133,17 +133,12 @@ export const projects: Project[] = [
     // detail. The old alt was authored and accurate — to screens that are no
     // longer here. A correct-sounding description of an image that is not on
     // the page is worse than none, because nothing about it reads as
-    // unfinished, so it went empty with the others rather than being kept.
+    // unfinished, so it went empty rather than being kept. Both have since been
+    // written against the images that are actually here.
     //
     // New filenames rather than overwrites: the old ones had been fetched, and
     // a dev server that predates the swap will keep serving the old bytes for
     // the same URL. See DESIGN.md, Photography — "Replacing an image in place".
-    //
-    // TODO(edwin): alt text for all three. Authored, never generated — same
-    // rule as the rest. The graph needs a sentence carrying that it relates
-    // roles across three seniority levels by three kinds of connection; the
-    // role detail one pairing requirements and learning with labour-market
-    // figures.
     previewImage: {
       url: "/framer/ai-workforce-development/preview-image.webp",
     },

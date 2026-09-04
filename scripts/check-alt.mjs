@@ -49,6 +49,7 @@ import { join, relative } from "path"
 import { projects } from "../lib/projects.ts"
 import { vibeProjects } from "../lib/vibe-projects.ts"
 import { meridianDeck } from "../lib/case-study-deck.ts"
+import { PHOTOS } from "../lib/about-photos.ts"
 
 const ROOT = process.cwd()
 const ROOTS = ["lib", "components", "app"]
@@ -152,14 +153,26 @@ for (const rel of walk(ROOTS[0]).concat(walk(ROOTS[1]), walk(ROOTS[2]))) {
 
 // ── PASS 2: the written alt, against the rules a program can hold ────────
 // Imports the real data rather than reading source, so a string that moves
-// file or gains a line break is still checked. The About photographs are not
-// here — their PHOTOS map is module-private to about-pane.tsx — and pass 1
-// above already covers the only thing that can be wrong with them today.
+// file or gains a line break is still checked.
+//
+// THE ABOUT PHOTOGRAPHS ARE HERE NOW, and the comment they replace said they
+// did not need to be: "their PHOTOS map is module-private to about-pane.tsx —
+// and pass 1 above already covers the only thing that can be wrong with them
+// today." Pass 1 only sees `alt: ""`. Everything else this file checks —
+// length, the full stop, medium-announcing openings, cross-references — never
+// looked at the 3 images whose alt is written in Edwin's own first person and
+// is the hardest to get right. Deleting the final full stop from one of them
+// left this gate green.
+//
+// The map is exported from about-pane.tsx for exactly this reason. That the
+// data was private was a fact about the module, not a reason the rule stopped
+// applying at its edge.
 const written = [
   ...[...projects, ...vibeProjects].flatMap((p) =>
     (p.images ?? []).map((im, i) => ({ where: `${p.slug}[${i}]`, alt: im.alt }))
   ),
   ...meridianDeck.slides.map((sl, i) => ({ where: `deck slide ${i + 1}`, alt: sl.alt })),
+  ...Object.entries(PHOTOS).map(([key, ph]) => ({ where: `about.${key}`, alt: ph.alt })),
 ].filter((e) => e.alt)
 
 const broken = []

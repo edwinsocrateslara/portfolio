@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
-import { projects } from "@/lib/projects"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { DeckPane } from "@/components/case-study/deck-pane"
 import { AboutPane } from "@/components/about/about-pane"
@@ -140,6 +139,38 @@ export function AppShell({
   const apiBusy = isApiLoading
   const activeBusy = isTypingIn(activeThread) || apiBusy
 
+  // ── WHAT THE LIVE REGION SAYS, AND WHEN ─────────────────────────────────
+  // Three states, not two. Busy announces the start; not-busy announces the
+  // RESULT, which the old version left as an empty string — and emptying a live
+  // region is not an event a screen reader reports. Before any turn has
+  // happened there is nothing to announce, which is the third state and is why
+  // this is not a ternary.
+  //
+  // It carries the SHAPE of what landed — how many blocks, and the opening
+  // words of the last one — rather than the answer itself. Some reveals run to
+  // 13 blocks and a live region that recites them is worse than one that says
+  // nothing; this is enough to decide whether to go and read it.
+  //
+  // The ref keys on the assistant-message count so an unrelated re-render
+  // cannot re-announce an answer that landed minutes ago, and so two answers
+  // opening with the same words still produce a changed string — an unchanged
+  // string in a live region is not re-announced at all.
+  const liveStatusRef = useRef<{ count: number; text: string }>({ count: 0, text: "" })
+  const liveStatus = useMemo(() => {
+    if (activeBusy) return "Generating response"
+    const assistants = activeMessages.filter((m) => m.role === "assistant")
+    if (assistants.length === 0) return ""
+    if (assistants.length === liveStatusRef.current.count) return liveStatusRef.current.text
+    const opening = assistants
+      .map((m) => ("text" in m && typeof m.text === "string" ? m.text : ""))
+      .filter(Boolean)
+      .pop()
+    const preview = opening ? `. Begins: ${opening.slice(0, 90)}` : ""
+    const text = `Response ready, ${assistants.length} ${assistants.length === 1 ? "block" : "blocks"}${preview}`
+    liveStatusRef.current = { count: assistants.length, text }
+    return text
+  }, [activeBusy, activeMessages])
+
   // ── Scroll ──────────────────────────────────────────────────────
   // Each thread remembers where it was left. Restoring is a scrollTop write
   // against one always-mounted element, so it is cheap enough to ship — the
@@ -257,7 +288,12 @@ export function AppShell({
       // The project-header card used to carry this line into the API context.
       // With the card gone the identity has to come from the thread itself,
       // or the model loses track of which project is being discussed.
-      const subject = thread === HOME_THREAD ? null : projects.find((x) => x.slug === thread)
+      // allProjects, NOT projects. The Ideas Dashboard lives in vibeProjects,
+      // so a `projects` lookup returned undefined for its thread and the model
+      // was told nothing about what was being discussed. Every other lookup in
+      // this component already uses allProjects; this one was the odd one out,
+      // which is what made it a bug rather than a boundary.
+      const subject = thread === HOME_THREAD ? null : allProjects.find((x) => x.slug === thread)
       if (subject) {
         history.push({
           id: `ctx-${subject.slug}`,
@@ -761,7 +797,7 @@ export function AppShell({
           be browsing that subtree. Dropping the visible label is what
           prompted adding the announcement that was never there. */}
       <div role="status" aria-live="polite" className="sr-only">
-        {activeBusy ? "Generating response" : ""}
+        {liveStatus}
       </div>
 
       <main className="pane" ref={paneRef}>

@@ -50,6 +50,19 @@ export function ChatInput({
   }, [value])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // AN IME IS COMPOSING: Enter CONFIRMS A CANDIDATE, IT DOES NOT SUBMIT.
+    // In Japanese, Chinese, Korean and other input methods, Enter is how you
+    // accept the character you are part-way through choosing. Submitting on it
+    // sends a half-typed word and interrupts the composition — and the visitor
+    // has no way to tell that the site did it rather than their keyboard.
+    //
+    // `isComposing` is the modern signal; keyCode 229 is what older WebKit and
+    // some Android keyboards report instead, and it costs one clause to accept
+    // both. Neither is visible from the React synthetic event, so this reads
+    // nativeEvent.
+    const native = e.nativeEvent as KeyboardEvent
+    if (native.isComposing || native.keyCode === 229) return
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       if (value.trim() && !isLoading) onSubmit()

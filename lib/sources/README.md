@@ -195,6 +195,25 @@ sections are no longer hand-written:
 
 `npm run check:sources` runs both. Add it to CI.
 
+### There is no linter, and that is now stated rather than implied
+
+`package.json` carried `"lint": "next lint"` from the Next scaffold. On Next 16
+that command reads its argument as a directory and fails with *"Invalid project
+directory provided, no such directory: …/lint"* before linting anything. There
+is no ESLint config in the repo and no ESLint dependency — so the script was
+not a broken gate, it was the appearance of one.
+
+It has been removed. What actually guards this repo is `npm run build`, which
+runs `check:sources`, `check:design` and `check:chips` before `next build`, plus
+`tsc` through the build itself. Those check things a linter cannot: that a
+quoted string matches its source, that a figure is stated the same way in every
+file, that alt text obeys a written rule, that a chip routes to the answer it
+names.
+
+If a linter is wanted later it needs installing and configuring, and the command
+should invoke it directly rather than through a framework wrapper that has since
+changed meaning.
+
 ### `resume.txt` has three generated artefacts, and they are NOT built by `npm run build`
 
 `public/edwin-lara-resume-2026.pdf`, `.docx` and `.md` are written from

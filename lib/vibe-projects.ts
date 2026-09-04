@@ -13,10 +13,31 @@ import type { Project } from "./projects"
 // cannot resolve a module graph. So vibe entries cannot live in projects.ts
 // behind a flag the generator filters out.
 //
-// Keeping them here means the generator has no path to this file. Placeholder
-// copy CANNOT reach lib/edwin-context.md, and therefore cannot become
-// something the chat states as fact. That is a property of the module graph,
-// not a promise made by a filter somebody could later remove.
+// ⚠ THAT IS NOT AN ISOLATION BOUNDARY, AND THIS COMMENT USED TO SAY IT WAS.
+// It read: "Keeping them here means the generator has no path to this file.
+// Placeholder copy CANNOT reach lib/edwin-context.md, and therefore cannot
+// become something the chat states as fact. That is a property of the module
+// graph, not a promise made by a filter somebody could later remove."
+//
+// Every sentence of that is false. scripts/build-context.mjs opens with
+//
+//     const { vibeProjects } = await import("../lib/vibe-projects.ts")
+//     const allProjects = [...projects, ...vibeProjects]
+//
+// and the Ideas Dashboard is in lib/edwin-context.md today. Everything in this
+// file is transmitted to the model provider on every request.
+//
+// The content here is meant to be public, so nothing has leaked. The DEFECT was
+// that a maintainer was told, in strong terms, that this file was a safe place
+// for unfinished or client-sensitive copy — which is exactly the assumption
+// under which somebody would put something here that should not ship.
+//
+// WHAT IS ACTUALLY TRUE: the separate file is a build constraint, not a
+// boundary. projects.ts is imported by a script running under
+// --experimental-strip-types and cannot gain an import; that is the whole
+// reason for the split. If real isolation is ever needed it has to be built —
+// an explicit per-entry publication flag with generation failing closed on a
+// missing one — because a module boundary the generator crosses is not one.
 //
 // PUBLIC. This was gated on NODE_ENV while the case study was unfinished — the
 // gate sat on the DATA rather than the render, so the minifier dropped the
@@ -155,11 +176,6 @@ export const vibeProjects: Project[] = [
           // names because everything in them is cleared for publication. All
           // four ship as they are; the difference is provenance, not an
           // oversight, and it is recorded here so it stops being re-raised.
-          //
-          // TODO(edwin): alt text for all four. Authored, never generated —
-          // same rule as the 32 project images. The diagram needs the most
-          // care: it is the one image here whose content is a structure rather
-          // than a screenshot, so its alt has to carry the flow, not the look.
           images: [
             // NAMED FOR WHAT THEY SHOW, not image-1/2/3. Two reasons, and the
             // second is why the first was worth the churn:

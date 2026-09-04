@@ -579,10 +579,6 @@
      against a 40px thumbnail is the second, and it is worth doing — beside a
      40px picture a 24px mark is lighter than it was beside a 32px one. */
   --rail-doc-glyph: var(--icon-rail);
-  /* A leading icon inside a .chip. Same 16 as the rail's nav icons and for the
-     same reason, but its own name: a chip is not a rail row, and one may move
-     without the other. */
-  --chip-icon-size: var(--space-16);
   /* The trailing link arrow. 12, not the nav icons' 16: a nav icon LEADS a
      label and is structural, this TRAILS one and modifies it. At 12 it matches
      the label's own size and reads as part of the text run rather than as a

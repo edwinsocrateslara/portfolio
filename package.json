@@ -6,7 +6,6 @@
     "dev": "next dev --turbo",
     "build": "npm run check:sources && npm run check:design && npm run check:chips && next build",
     "start": "next start",
-    "lint": "next lint",
     "check:voice": "node scripts/check-voice.mjs",
     "build:context": "node --experimental-strip-types scripts/build-context.mjs",
     "check:context": "node --experimental-strip-types scripts/build-context.mjs --check",

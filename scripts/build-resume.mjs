@@ -309,21 +309,48 @@ const stamp = (pdf, hash) =>
   Buffer.concat([pdf, Buffer.from(`\n%resume-source-hash:${hash}\n`, "latin1")])
 
 // ── main ──────────────────────────────────────────────────────────────────
+// ── ALL THREE, OR NONE ────────────────────────────────────────────────────
+// Every buffer is built before anything is written. This used to write the
+// Markdown and the DOCX first and then go and print the PDF, which is by far
+// the most failure-prone stage: it launches Chrome, speaks CDP, waits on
+// webfonts over the network, and refuses outright if those fonts did not load.
+//
+// So the common failure left 2 of 3 public artefacts replaced and the third
+// stale — a set that disagrees with itself, in a working tree that now looks
+// like a legitimate edit. check:docs would have caught the stale PDF, but only
+// after somebody committed the other two.
+//
+// Buffers first, then a single write pass. There is no temp-file dance: the
+// writes are the last 3 statements in the process and nothing can fail between
+// them that would not also have taken the process down.
 const hash = sourceHash()
-const targets = []
-
-const md = buildMarkdown(resume, hash)
-writeFileSync(join(ROOT, "public", `${BASE}.md`), md)
-targets.push([`${BASE}.md`, Buffer.byteLength(md)])
-
+const md = Buffer.from(buildMarkdown(resume, hash), "utf8")
 const docx = buildDocx(resume, hash)
-writeFileSync(join(ROOT, "public", `${BASE}.docx`), docx)
-targets.push([`${BASE}.docx`, docx.length])
-
 const { pdf } = await buildPdf(buildPrintHtml(resume, hash))
 const stamped = stamp(stripTimestamps(pdf), hash)
-writeFileSync(join(ROOT, "public", `${BASE}.pdf`), stamped)
-targets.push([`${BASE}.pdf`, stamped.length])
+
+// A LAST CHECK BEFORE ANYTHING IS REPLACED. An empty or absurdly small buffer
+// means a builder returned something it should not have; writing it would
+// destroy a good artefact and pass check:docs as long as the stamp was there.
+const built = [
+  [`${BASE}.md`, md, 1_000],
+  [`${BASE}.docx`, docx, 2_000],
+  [`${BASE}.pdf`, stamped, 20_000],
+]
+for (const [name, buf, floor] of built) {
+  if (!buf || buf.length < floor) {
+    throw new Error(
+      `${name} came out at ${buf?.length ?? 0} bytes, under the ${floor}-byte floor.\n` +
+        `Nothing was written — the previous files are untouched.`
+    )
+  }
+}
+
+const targets = []
+for (const [name, buf] of built) {
+  writeFileSync(join(ROOT, "public", name), buf)
+  targets.push([name, buf.length])
+}
 
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`
 console.log(`build:resume — 3 file(s) from ${SOURCE}, stamped ${hash}`)

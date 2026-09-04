@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { CURRENTLY_READING } from "@/lib/currently-reading"
+import { PHOTOS } from "@/lib/about-photos"
 
 // The About page. Full pane width rather than the 720px chat column — the
 // Claude Design mock argues it and the argument holds: "With two images the
@@ -48,32 +49,6 @@ const SQUARE_RATIO = "1 / 1"
 // `position` is object-position, and it belongs to the PHOTOGRAPH rather than
 // to the frame: it describes where that image's subject sits, so it travels
 // with the file if the file moves to another slot. Omitted means centred.
-const PHOTOS = {
-  portrait: {
-    src: "/about/malamute.webp",
-    alt: "My dog standing at a bright window, looking out at a red-brick building and a tree, with his bed on the floor beside him.",
-  },
-  // 1:1 SOURCE IN A 1:1 FRAME, so `cover` trims nothing and there is no
-  // `position` to pick — unlike `race` below, which is 3:4 in the same square.
-  // 3024x3024 iPhone original, downscaled to 1200 and encoded webp q82, which
-  // is the same recipe as the two beside it. EXIF was stripped at encode
-  // (`cwebp -metadata none`) and verified: the file is a single VP8 chunk. The
-  // source carried GPS.
-  bouldering: {
-    src: "/about/bouldering.webp" as string | null,
-    alt: "Me part-way up an indoor bouldering wall, my face not visible from this angle. One hand high, the other lower, legs spread wide to 2 footholds. Grey panels, dozens of coloured holds.",
-  },
-  // 3:4 source in a 1:1 frame, so cover trims 25.2% of the height. Centred it
-  // took 12.6% off each edge and cut the shoes; bottom-aligned it takes the
-  // whole 25.2% off the top, which the frame can afford — the subject's head
-  // still clears the top edge, with less headroom rather than none.
-  race: {
-    src: "/about/race-day.webp",
-    alt: "Me walking through the finish area after a winter race, in a brown tracksuit with a bib and a medal, a water bottle in one hand, runners and a yellow banner behind me.",
-    position: "50% 100%",
-  },
-}
-
 function Slot({
   photo,
   ratio,

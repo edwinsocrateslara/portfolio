@@ -53,14 +53,28 @@ export interface SectionHeadingMessage extends BaseMessage {
 }
 
 
+// ── ALT IS REQUIRED HERE, AND IT USED NOT TO BE ─────────────────────────
+// `alt?: string` let a content image reach this renderer with none, and the
+// renderer's `alt={image.alt || ""}` turned the omission into a positive claim
+// that the image is decorative. lib/projects.ts has always REQUIRED alt on a
+// ProjectImage; this type quietly relaxed it one step downstream, so a new
+// scripted image could compile, pass every gate, and be invisible to a screen
+// reader — check:alt enumerates known project and deck sources rather than
+// proving this type is complete.
+//
+// It is the same shape as PreviewImage in lib/projects.ts, from the other
+// direction: there, making alt UNWRITABLE stopped 6 dead strings; here, making
+// it UNOMITTABLE stops a silent empty one. A decorative image is still
+// expressible — pass "" on purpose — but it has to be typed out, which is what
+// makes it a decision rather than a default.
 export interface ImageMessage extends BaseMessage {
   kind: "image"
-  image: { url: string; alt?: string }
+  image: { url: string; alt: string }
   // The project's full image set, so a single image placed on its own in
   // the reveal still opens a lightbox that can page through all of them.
   // Without this, splitting the images across the page would shrink each
   // lightbox to one item.
-  group?: { url: string; alt?: string }[]
+  group?: { url: string; alt: string }[]
   groupIndex?: number
 }
 
@@ -109,7 +123,7 @@ export type StructuredMessage =
   | DocLinkMessage
 
 // Text bubble with markdown-like formatting
-export function TextBubble({
+function TextBubble({
   text,
   lede,
   mono,
@@ -148,7 +162,7 @@ export function TextBubble({
 // Section heading — the "KEY IMPACTS" / "MY ROLE" / "THE CHALLENGE" rules
 // from the original Framer page. Mono eyebrow voice, matching the label on
 // the impact card and the client eyebrows elsewhere. No new type token.
-export function SectionHeading({ text }: { text: string }) {
+function SectionHeading({ text }: { text: string }) {
   return (
     <h3
       className="type-label"
@@ -184,13 +198,13 @@ const IMAGE_TRIGGER_STYLE = {
 // showing it to someone who can is redundant at best and reads as a leaked
 // annotation at worst. There is no caption element any more; if real captions
 // are ever wanted they are different copy and belong in lib/projects.ts.
-export function ImageBubble({
+function ImageBubble({
   image,
   group,
   groupIndex,
 }: {
-  image: { url: string; alt?: string }
-  group?: { url: string; alt?: string }[]
+  image: { url: string; alt: string }
+  group?: { url: string; alt: string }[]
   groupIndex?: number
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -207,7 +221,9 @@ export function ImageBubble({
       >
         <Image
           src={image.url}
-          alt={image.alt || ""}
+          // No `|| ""`. alt is required by ImageMessage; a fallback would be
+          // dead code that also documented the wrong contract.
+          alt={image.alt}
           fill
           className="object-cover"
           sizes={`${IMAGE_SIZES_MEASURE}px`}
@@ -251,7 +267,7 @@ export function ImageBubble({
  * cell to explain. It also puts the two sentence rows on their own left edge,
  * which marks them as the other kind inside one uniform structure.
  */
-export function SpecBubble({ items }: { items: string[] }) {
+function SpecBubble({ items }: { items: string[] }) {
   // `**LABEL** — value`, the shape the source has always used.
   const rows = items.map((raw) => {
     const m = /^\*\*(.+?)\*\*\s*—\s*(.*)$/.exec(raw)
@@ -309,7 +325,7 @@ export function SpecBubble({ items }: { items: string[] }) {
   )
 }
 
-export function ImpactBubble({
+function ImpactBubble({
   label,
   items,
 }: {
@@ -395,7 +411,7 @@ export function ImpactBubble({
 //
 // One card is a link-out today. That is not a reason to special-case it at the
 // call site — the rule costs one expression and describes all three.
-export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
+function DocLinkBubble({ docKey }: { docKey: DocKey }) {
   const doc = DOCS[docKey]
   const local = doc.url.startsWith("/")
   return (
@@ -543,7 +559,7 @@ export function DocLinkBubble({ docKey }: { docKey: DocKey }) {
 }
 
 // Follow-up suggestions
-export function FollowupsBubble({
+function FollowupsBubble({
   text,
   chips,
   onPick,
@@ -605,14 +621,21 @@ export function TypingIndicator() {
 }
 
 // Renders one block's content. The single switch over message kinds —
-// AssistantBubble wraps it for the chat stream, and the standalone
-// case-study route renders blocks with it directly, so neither maintains
-// its own copy of this mapping.
+// AssistantBubble wraps it for the chat stream. It used to say "and the
+// standalone case-study route renders blocks with it directly, so neither
+// maintains its own copy of this mapping" — that second consumer does not
+// exist. The deck route renders SlideGrid, which has its own markup, and
+// nothing outside this file has ever imported MessageContent.
+//
+// ONE SWITCH IS STILL RIGHT; A PUBLIC ONE WAS NOT. AssistantBubble and the
+// lightbox both lean on this mapping, which is an argument for one function in
+// this module rather than for an exported one. An export with no importer is a
+// promise to keep a shape stable for nobody.
 //
 // Takes MessageBlock rather than StructuredMessage so callers holding a
 // template (no id/role assigned yet) can render it; a StructuredMessage is
 // assignable, having only extra fields.
-export function MessageContent({
+function MessageContent({
   message,
   onChipPick,
   isLastAssistant,
