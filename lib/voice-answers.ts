@@ -156,7 +156,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "design-systems",
     triggers: ["design system", "component library", "design token"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "My approach to design systems is to build from a shared foundation of variables and design tokens, then use those foundations to create reusable atoms, molecules, organisms, and templates. I try to keep the system closely connected to code, so tokens can be exported to CSS and components can be implemented as live, reusable components rather than existing only in Figma.",
       "I'm also comfortable leveraging existing foundations like shadcn/ui rather than building everything from scratch. The goal is to create a system that gives designers and engineers a common language while making it faster to design, build, and maintain consistent experiences as the product scales.",
@@ -283,7 +283,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "why-leaving",
     triggers: ["why are you leaving", "leaving your", "why leave", "want to leave"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "I'm looking for my next challenge in the AI space. In my current role, AI powers and enables parts of the product, but I'm interested in joining a company where AI is more central to the product itself and the problems the team is solving.",
       "I'm also looking to move further into an AI builder role. Over the past few years, I've developed the technical skills to go beyond designing experiences and actually build them, from prototypes and internal tools to working directly in production code.",
@@ -302,7 +302,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "user-research",
     triggers: ["user research", "usability", "user testing", "validate", "validating", "prototype test"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "I increasingly use LLM tooling to scale my research and discovery process. I build API integrations into different data sources, bring the research together as context, and use LLMs to synthesize large amounts of information and surface recurring themes and opportunities.",
       "That context can include existing research and reports, product data, customer and client feedback, ratings and reviews, user interviews, surveys, journey maps, and competitive audits. The methods I use depend on what I'm trying to learn.",
@@ -313,7 +313,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "metrics",
     triggers: ["metric", "analytics", "measure success", "measure the success"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "I try to benchmark what success looks like with the team before a feature ships and connect it back to the product or roadmap goal we're trying to move.",
       "Depending on the feature, that might mean engagement, conversion, completion rates, retention, drop-off, or feature usage. I use behavioral data from tools like Heap and Hotjar to establish a baseline and understand current behavior.",
@@ -384,7 +384,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "difficult-stakeholders",
     triggers: ["difficult stakeholder", "difficult client", "handle stakeholders", "stakeholder pushback", "pushback on a design"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "My general approach is to find middle ground. I try to understand what the stakeholder is ultimately trying to achieve, and find an approach that addresses their concerns without compromising what I believe is best for the product.",
       "While redesigning Volkswagen's digital shopping experience, one of our goals was to improve the journey and help move customers toward next steps like Build & Price and Find a Dealer.",
@@ -430,7 +430,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "fundamentals",
     triggers: ["fundamental", "spacing scale", "design principle", "grid system"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "**Modular UI**",
       "More recently, I've been thinking about interfaces as modular systems rather than fixed pages. Bento-style components can be composed and rearranged based on context, which becomes especially interesting with LLMs that can determine which components are most relevant and render the experience dynamically.",
@@ -443,7 +443,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "accessibility",
     triggers: ["accessib", "a11y", "wcag", "inclusive design"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "I treat accessibility as something that needs to be considered throughout the entire design and development process, not just at the beginning or as a final check.",
       "I follow WCAG standards and build accessibility requirements into the design system so they're applied consistently across the product. I consider things like color contrast, keyboard navigation, focus states, target sizes, semantic structure, and ARIA labels as I design and test the UI.",
@@ -483,7 +483,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
   {
     id: "day-to-day",
     triggers: ["day to day", "day-to-day", "typical day", "your day like", "your day look"],
-    noChip: "typed-question coverage, not offered.",
+    noChip: "Listed in the ask-directory answer, which prints it as a question a visitor can type. Reachable by reading rather than by clicking, which is why it still has no chip of its own.",
     paragraphs: [
       "My day-to-day work is a mix of design, research, collaboration, and increasingly technical work.",
       "I meet with Product, Engineering, Customer Success, and other stakeholders to gather context, share work, and stay aligned on what we're building.",

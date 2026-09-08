@@ -5,6 +5,7 @@ import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
 import { asksLocation } from "./location-intent"
 import { meridianDeck } from "./case-study-deck"
 import { rotationFor } from "./chips"
+import { askDirectoryText } from "./ask-directory"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
 // ── Scripted topics and their chip routing ─────────────────────────────
@@ -37,6 +38,19 @@ const SURFACE = {
 
 
 export const SCRIPTED_TOPICS: ScriptedTopic[] = [
+  {
+    // The directory. See lib/ask-directory.ts for the list and for why it is
+    // pairs rather than prose.
+    id: "ask-directory",
+    chip: "What can I ask you?",
+    placement: "front-door",
+    // FOURTH, and last. The three before it are real answers a hiring reader
+    // wants; this one is a menu, and a menu should not outrank the thing it is
+    // a menu for. Measured at 380: the front door goes from 3 rows to 4, +55px.
+    // At 768 and 1440 it costs nothing — the fourth chip fits the existing two
+    // rows, because it is the narrowest of the four at 157px.
+    chipOrder: 4,
+  },
   {
     // RETIRED as a scripted answer; the id stays only in this note. It held two
     // inline paragraphs — a Meridian one and a Volkswagen one — that were never
@@ -264,6 +278,33 @@ export function buildResponse(
   // does not surface the deck. `projectSlug: null` keeps the two from
   // sharing conversation state.
   // SCRIPTED_TOPICS "deck"
+  // ── THE DIRECTORY ────────────────────────────────────────────────────────
+  // FIRST among the topic branches, deliberately. The triggers are narrow, but
+  // a question like "what can I ask about the deck" should reach the menu
+  // rather than the deck: somebody asking what they can ask has not chosen a
+  // subject yet. Placing it above the others makes that ordering a decision
+  // rather than an accident of which trigger happens to match first.
+  //
+  // NO FOLLOW-UP CHIPS, and that is the point rather than an omission. Every
+  // other answer ends with rotationFor(...) offering somewhere to go next. This
+  // answer IS somewhere to go next — nineteen of them. Appending three more
+  // would be a menu with a smaller menu stapled underneath it.
+  //
+  // NO LEDE AND NO PROSE AFTER. One block, one bubble, the list and nothing
+  // else. A sentence explaining a list of questions is the kind of thing that
+  // reads as filler on the second visit.
+  if (
+    t.includes("what can i ask") ||
+    t.includes("what else can i ask") ||
+    t.includes("what should i ask")
+  ) {
+    return {
+      response: [{ kind: "text", text: askDirectoryText() }],
+      projectSlug: currentProjectSlug || null,
+      answerId: "ask-directory",
+    }
+  }
+
   if (wantsDeck) {
     return {
       response: [

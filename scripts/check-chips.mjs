@@ -54,6 +54,7 @@ registerHooks({
 const { buildResponse, SCRIPTED_TOPICS } = await import("../lib/scripted-responses.ts")
 const { VOICE_ANSWERS } = await import("../lib/voice-answers.ts")
 const { frontDoorChips, rotationPool, routable } = await import("../lib/chips.ts")
+const { ASK_QUESTIONS, ASK_GROUPS } = await import("../lib/ask-directory.ts")
 
 // ── Identifying what a response actually IS ──────────────────────────────
 // Voice answers identify themselves: the first block is the entry's own
@@ -162,6 +163,59 @@ function check() {
     }
   }
 
+  // ── RULE 3: no-broken-directory ──────────────────────────────────────────
+  // The "What can I ask you?" answer prints 19 questions and tells a visitor to
+  // type them. Each one declares the answer it expects to reach, and this
+  // asserts it still does.
+  //
+  // WITHOUT THIS THE LIST ROTS SILENTLY. It is authored prose naming subjects,
+  // so it drifts the day a trigger changes — and the failure is invisible from
+  // both ends: the list still reads correctly, and the answer it used to reach
+  // still exists. The only symptom is a visitor typing exactly what the site
+  // told them to type and getting the API fallback, or a different answer than
+  // the one the question implied.
+  //
+  // This is rule 1 pointed at a second list, deliberately. Same instrument,
+  // same failure vocabulary, same reason: a label that promises one answer and
+  // delivers another is not visible by reading, only by running the matcher.
+  for (const { q, answerId } of ASK_QUESTIONS) {
+    const landed = classify(q)
+    if (landed.id !== answerId) {
+      problems.push({
+        rule: "no-broken-directory",
+        detail: `"${q}" declares ${answerId} but reaches ${landed.label}`,
+        why:
+          "The directory answer tells visitors to type this question. It must " +
+          "reach the answer it names, or the site is asking for input it cannot " +
+          "answer. Fix the question or the trigger — in the same commit.",
+      })
+    }
+  }
+  // And the declared ids must be real answers, so a typo in a pair is caught
+  // rather than silently comparing two strings that are both wrong.
+  {
+    const known = new Set(routable().map((r) => r.id))
+    for (const { q, answerId } of ASK_QUESTIONS) {
+      if (!known.has(answerId)) {
+        problems.push({
+          rule: "no-broken-directory",
+          detail: `"${q}" declares answerId "${answerId}", which is not an answer`,
+          why: "The pair would never match anything real. Check the id against VOICE_ANSWERS.",
+        })
+      }
+    }
+  }
+  // A group with no questions renders a heading over nothing.
+  for (const g of ASK_GROUPS) {
+    if (!g.questions.length) {
+      problems.push({
+        rule: "no-broken-directory",
+        detail: `group "${g.heading}" has no questions`,
+        why: "It would render a bold heading with an empty gap beneath it.",
+      })
+    }
+  }
+
   // Front-door ordering must be total, or the layout is non-deterministic.
   const orders = frontDoorChips().map((c) => routable().find((r) => r.id === c.id)?.chipOrder)
   if (new Set(orders).size !== orders.length || orders.some((o) => o == null)) {
@@ -209,6 +263,7 @@ const problems = check()
 const RULES = {
   "no-broken-chip": "Chip does not resolve to the answer that declared it",
   "no-unrouted-answer": "Answer has neither a chip nor a stated reason for not having one",
+  "no-broken-directory": "A question the directory answer prints no longer reaches the answer it names",
 }
 
 if (process.argv.includes("--list")) {
