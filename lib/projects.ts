@@ -384,7 +384,7 @@ export const projects: Project[] = [
       "Users were window-shopping but not buying. Engagement was low and watch-time was short. We needed to create a feature that would increase user engagement and revenue on the platform.",
     impacts: [
       "Within its first year of launch: auctions made up 63% of company revenue, with a quarterly growth rate of 23%",
-      "over 2,269+ auction shows conducted, 59,000+ items featured",
+      "2,269+ auction shows conducted, 59,000+ items featured",
       "172% increase in chat messages per show",
       "5 minute increase in average watch time.",
     ],
@@ -432,7 +432,7 @@ export const projects: Project[] = [
     challenge:
       "VW didn't have a comparison tool and recognized that a comparison tool is a big part of the purchase process. VW wanted to meet the needs of potential buyers, but also wanted to create a tool that would help potential buyers move down the sales funnel (e.g. either visiting a dealership or building a vehicle online).",
     impacts: [
-      "Since its launch, the tool serves over 112,000 customers across Canada on a monthly basis.",
+      "Since its launch, the tool serves 112,000+ customers across Canada on a monthly basis.",
     ],
     roleDescription:
       "Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.",

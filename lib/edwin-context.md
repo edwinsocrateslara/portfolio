@@ -4,7 +4,7 @@
 
 In his own words: "I'm Edwin, AI designer & builder making useful products and workflows."
 
-Designer & AI Builder with 10+ years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
+Designer & AI Builder with 10 years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
 
 He is currently Designer & AI Builder at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
 
@@ -154,7 +154,7 @@ I led the end-to-end design of a live-selling and auction experience.
 
 **Key impacts:**
 - Within its first year of launch: auctions made up 63% of company revenue, with a quarterly growth rate of 23%
-- over 2,269+ auction shows conducted, 59,000+ items featured
+- 2,269+ auction shows conducted, 59,000+ items featured
 - 172% increase in chat messages per show
 - 5 minute increase in average watch time.
 
@@ -176,7 +176,7 @@ I led the end-to-end design of a live-selling and auction experience.
 I created a car comparison tool that balances utility for users with upselling Volkswagen vehicles.
 
 **Key impacts:**
-- Since its launch, the tool serves over 112,000 customers across Canada on a monthly basis.
+- Since its launch, the tool serves 112,000+ customers across Canada on a monthly basis.
 
 **My role:** Product designer. I designed a car comparison tool that balanced utility for potential buyers while upselling VW products.
 
@@ -896,7 +896,7 @@ To me, scaling a design system now means more than creating a larger component l
 
 #### Years of experience
 
-10+ years
+10 years
 
 
 #### Mentoring other designers

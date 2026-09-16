@@ -91,28 +91,35 @@ const EXCEPTIONS = {
       "Role rather than one of the seven portfolio projects, so " +
       "lib/projects.ts has no entry that could state it.",
 
-    // The three SideBar figures, all the same case: SideBar is described on
-    // the résumé and in voice.md and has no lib/projects.ts entry, so there
-    // is no project data to compare against. Each is paired with a
-    // NAMED_FACTS entry below, which asserts the two files agree.
+    // ── THE SIDEBAR FIGURES USED TO BE EXCUSED HERE, AND ARE GONE ─────────
+    // The résumé stated "90% reached outreach, 80% would send the AI-drafted
+    // message as-is or with minor edits, and most said they were likely to use
+    // the coach again". The 2026 revision drops all three: the SideBar bullet
+    // now names the Christensen pilot and nothing numeric.
     //
-    // 80% IS HERE FOR A SECOND REASON WORTH RECORDING. Before the haystack
-    // stopped reading comments, this figure PASSED — `inData("80")` matched
-    // "the first 80 rows went" in a comment in lib/vibe-projects.ts about
-    // cropping a spreadsheet screenshot. A résumé claim about user testing
-    // was being verified by a note on image composition. It was the only
-    // figure in either source whose verdict the comment-stripping changed,
-    // and it needed exactly what the other two needed all along.
-    "90%":
-      "SideBar user testing, published by the Christensen Institute. No " +
-      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
-    "80%":
-      "SideBar user testing, published by the Christensen Institute. No " +
-      "lib/projects.ts entry states it; held by NAMED_FACTS against voice.md.",
+    // THE EXCEPTIONS ARE DELETED RATHER THAN LEFT IN PLACE. An exception is
+    // only consulted when the figure is actually found, so a stale one costs
+    // the build nothing and is never seen to be wrong — which is exactly why
+    // it must not sit here. This map's own rule, four lines up, is that an
+    // entry without a live reason is an ignore list.
+    //
+    // ⚠ voice.md STILL STATES ALL THREE and keeps its exceptions below. The
+    // fuller account lives there, with the Christensen provenance block
+    // recording what the report does and does not publish.
+    //
+    // 80% WAS ALSO A CAUTIONARY CASE, recorded because the lesson outlives the
+    // figure: before the haystack stopped reading comments it PASSED, because
+    // `inData("80")` matched "the first 80 rows went" in a comment in
+    // lib/vibe-projects.ts about cropping a screenshot. A résumé claim about
+    // user testing was being verified by a note on image composition.
   },
   "lib/sources/voice.md": {
-    "90%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
-    "80%": "SideBar, stated in Edwin's voice. See the resume.txt entries above.",
+    // SideBar, stated in Edwin's voice. voice.md is now the ONLY source for
+    // these — the résumé dropped them — so there is no second file to compare
+    // against and no cross-file assertion to make. What holds the wording is
+    // the single-file NAMED_FACTS entries below, which pin the exact sentence.
+    "90%": "SideBar user testing. No lib/projects.ts entry states it; wording pinned by NAMED_FACTS.",
+    "80%": "SideBar user testing. No lib/projects.ts entry states it; wording pinned by NAMED_FACTS.",
   },
 }
 
@@ -158,6 +165,9 @@ const NAMED_FACTS = [
     states: {
       "lib/sources/voice.md": "457 feedback posts",
       "lib/vibe-projects.ts": "457 feedback posts",
+      // The 2026 résumé states it too. Bound the day it was added, so a figure
+      // that arrived ungoverned did not stay that way.
+      "lib/sources/resume.txt": "457 posts and counting",
     },
   },
   {
@@ -166,6 +176,7 @@ const NAMED_FACTS = [
     states: {
       "lib/sources/voice.md": "roughly 300 evaluated",
       "lib/vibe-projects.ts": "~300 evaluated per run",
+      "lib/sources/resume.txt": "evaluates ~300 posts weekly",
     },
   },
   {
@@ -211,7 +222,6 @@ const NAMED_FACTS = [
     figure: "90%",
     fact: "of SideBar testers reached the outreach stage",
     states: {
-      "lib/sources/resume.txt": "90% reached outreach",
       "lib/sources/voice.md": "90% of participants reached the outreach stage",
     },
   },
@@ -219,7 +229,6 @@ const NAMED_FACTS = [
     figure: "80%",
     fact: "would send the AI-drafted message as-is or with minor edits",
     states: {
-      "lib/sources/resume.txt": "80% would send the AI-drafted message as-is or with minor edits",
       "lib/sources/voice.md": "80% said they would send the AI-drafted message as-is or with minor edits",
     },
   },
@@ -244,7 +253,6 @@ const NAMED_FACTS = [
     figure: "most",
     fact: "were likely to use the coach again — NO percentage, on purpose",
     states: {
-      "lib/sources/resume.txt": "most said they were likely to use the coach again",
       "lib/sources/voice.md": "most said they were likely to use the coach again",
     },
   },
@@ -354,12 +362,28 @@ for (const { figure, fact, states } of NAMED_FACTS) {
     // not a content change.
     const flat = (t) => t.replace(/\s+/g, " ")
     if (flat(readFileSync(file, "utf8")).includes(flat(phrase))) continue
+    // ── THE MESSAGE MUST READ CORRECTLY FOR A ONE-FILE ENTRY ──────────────
+    // Every entry used to name at least two files, so this template could
+    // assume there was an "also stated in" list to print. Since the 2026
+    // résumé dropped the SideBar figures, three entries name voice.md and
+    // nothing else — and the template rendered "The same fact is stated in ."
+    // A wrong sentence in the message somebody reads when something is ALREADY
+    // broken is the worst place for one, so the two cases are written
+    // separately rather than one string being stretched over both.
+    const others = Object.keys(states).filter((f) => f !== file)
     problems.push(
       `${file} no longer states the ${figure} — ${fact}\n` +
       `      expected the phrase: ${JSON.stringify(phrase)}\n` +
-      `      The same fact is stated in ${Object.keys(states).filter((f) => f !== file).join(", ")}.\n` +
-      `      If it changed, change it in both and update NAMED_FACTS. If this\n` +
-      `      project is no longer described twice, delete the entry.`
+      (others.length
+        ? `      The same fact is stated in ${others.join(", ")}.\n` +
+          `      If it changed, change it in every one of them and update\n` +
+          `      NAMED_FACTS. If this fact is no longer stated twice, drop the\n` +
+          `      file from \`states\` rather than deleting the entry — a one-file\n` +
+          `      entry still pins the wording.`
+        : `      This is the ONLY file that states it. The entry exists to pin\n` +
+          `      that exact wording, not to compare two sources. If the wording\n` +
+          `      changed on purpose, update the phrase here. If the fact is gone\n` +
+          `      from the site entirely, delete the entry.`)
     )
   }
 }

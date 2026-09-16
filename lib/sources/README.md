@@ -73,6 +73,46 @@ Applied across the content layer in one pass: 38 conversions, 11 pronouns and
 "10-year-old" because the digits scan and the hyphen already carries the
 grammar.
 
+## A quantity is "N+" or "over N", by register — never both
+
+**Data voice takes the suffix: `400+`, `106,372+`, `$10,500,000+`.** Résumé
+bullets, `impacts` arrays, spec tables. The `+` IS the "over", so writing
+`over $10,500,000+` says it twice.
+
+**Spoken voice takes the word: "over 112,000", "more than 370,000".** `voice.md`,
+taglines, `roleDescription` — anywhere a sentence is being said rather than a
+figure reported. Nobody says "three hundred and seventy thousand plus" out loud.
+
+THIS IS THE SAME BOUNDARY THE MONO TERM-LIST RULE DRAWS, one layer down. That
+rule, in lib/scripted-responses.ts, is "mono is for a list of things that exist,
+not a sentence about things — an inventory reports". `N+` is inventory notation.
+The register decides the form, and the same figure legitimately wears both: the
+résumé says `370,000+` and voice.md says "more than 370,000", and those are one
+rule applied twice rather than drift.
+
+### The exception is the tilde
+
+`~300` is data voice in both places it appears — the résumé bullet and the vibe
+spec table — because the approximation is part of the figure rather than a
+hedge around it. voice.md says "roughly 300" because that is the sentence
+version of the same thing.
+
+### ⚠ NOTHING ENFORCES THIS, AND THAT IS WHY IT IS WRITTEN DOWN
+
+`check:numbers` compares FIGURES, not the phrasing around them. Its FIGURE
+pattern deliberately cannot see prose — widening it to catch "over" would fire
+on every ordinary sentence, and a gate that cries wolf is one people learn to
+skip. So `over $10,500,000+` passed every check for as long as it existed, and
+so would the next one.
+
+This rule is maintained by reading, not by the build. A convention nobody can
+check should say so out loud, rather than being discovered as a convention only
+when somebody breaks it and no gate objects.
+
+Found by comparing the résumé's phrasing against lib/projects.ts and voice.md
+figure by figure — six mismatches across thirteen figures, none of which any
+gate could see.
+
 ## Alt text describes the frame
 
 **Alt says what is in the image, not what the thing in it does.** "Product

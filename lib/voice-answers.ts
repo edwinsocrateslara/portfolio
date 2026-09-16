@@ -100,7 +100,7 @@ export const VOICE_ANSWERS: VoiceAnswer[] = [
     triggers: ["how many years", "years of experience", "how long have you been"],
     noChip: "typed-question coverage, not offered.",
     paragraphs: [
-      "10+ years",
+      "10 years",
     ],
   },
   {

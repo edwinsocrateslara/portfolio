@@ -435,7 +435,7 @@ To me, scaling a design system now means more than creating a larger component l
 
 ## Years of experience
 
-10+ years
+10 years
 
 ## Mentoring other designers
 
