@@ -214,6 +214,46 @@ export async function POST(req: Request) {
     // has to earn the change on something other than being newer, and the
     // temperature line has to go with it.
     model: anthropic("claude-sonnet-4-6"),
+    // ── PROMPT CACHING WAS MEASURED AND DEFERRED. READ THIS BEFORE ADDING IT ──
+    //
+    // Decided September 2026. It lived only in a conversation until it was
+    // written here, which is the shape this repo avoids everywhere else.
+    //
+    // WHAT IT WOULD SAVE. Input is ~98% of spend: the prompt is ~15k tokens
+    // against 234-733 token answers. Caching cuts input from ~14,900 tokens
+    // to ~14 on every request after the first.
+    //
+    // BUT ONLY ABOVE 1.28 REQUESTS PER 5-MINUTE WINDOW. A cache write costs
+    // 1.25x an ordinary input token and a read 0.1x, so below break-even
+    // caching costs 25% MORE than not caching. A lone visitor who asks one
+    // question and leaves pays 1.25x. The earlier "10x saving" was only true
+    // at sustained traffic, and this endpoint has none.
+    //
+    // STALENESS IS NOT A RISK. The cache key is the prefix content, so a
+    // changed document silently re-caches and cannot serve stale. A deploy
+    // costs one extra cache write.
+    //
+    // ⚠ THE STRUCTURAL RISK IS THE REAL COST. Caching needs the system prompt
+    // to become positionally FIRST in the messages array, instead of this
+    // parameter. Anything that later maps, filters or slices messages could
+    // drop it silently, and the model would lose its instructions and answer
+    // freely. As `system:` that is impossible by construction.
+    //
+    // SO IF IT IS EVER IMPLEMENTED, A check:api CASE ASSERTING INDEX 0 IS
+    // MANDATORY. It has to assert on the array sent to the provider, not on
+    // parseChatRequest's output: lib/chat-request.ts rejects caller-supplied
+    // system roles, so the cached system message would be added after it, and
+    // a case written against the parser would pass while the bug shipped.
+    //
+    // UNTESTED: the 1-hour TTL. The API accepted it, but it could not be
+    // cleanly demonstrated.
+    //
+    // WHAT IMPROVES WITH SCALE: unlike the per-instance rate limiter, the
+    // cache is account-scoped, so its hit rate rises as the deployment scales
+    // rather than splitting across instances.
+    //
+    // DEFERRED: it optimises an endpoint with no traffic. Revisit with real
+    // usage data, against the 1.28 break-even above.
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     temperature: 0,
