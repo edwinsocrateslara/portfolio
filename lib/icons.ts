@@ -56,11 +56,12 @@ export const ICON_STROKE_CONTROL = 1.8
  *  controls and no heavier.
  *
  *  ── THE ONE THING OFF THIS SCALE ──────────────────────────────────────────
- *  The sparkle. Its size is on the ramp at both call sites (16 for the brand
- *  mark, 24 for the typing indicator) and its stroke is 8.33 in a 100-unit
- *  viewBox, which is the same 1:12 ratio ICON_STROKE expresses in 24 — so at
- *  16 it paints 1.33px and agrees. At 24 it paints 2.00px, where this rule
- *  asks for 1.50. It is left alone deliberately: the path and its stroke are
+ *  The sparkle — the typing indicator, its one call site, at 24 on the ramp.
+ *  Its stroke is 8.33 in a 100-unit viewBox, which is the same 1:12 ratio
+ *  ICON_STROKE expresses in 24, so at 24 it paints 2.00px where this rule asks
+ *  for 1.50. (This note said "both call sites, 16 for the brand mark" after
+ *  the brand had gone to 32 alone in the rail; the brand is the wordmark
+ *  "Edwin" now and uses no sparkle.) It is left alone deliberately: the path and its stroke are
  *  a trace of a Lottie source, documented in docs/provenance, and re-picking
  *  the stroke would make it no longer a trace. Recorded as an exception rather
  *  than assumed to be fine. */

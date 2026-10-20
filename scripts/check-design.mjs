@@ -73,8 +73,6 @@ const ALLOW = {
     "The fully-round pill. DESIGN.md names 9999px as a grid exception and the radius table gives it a row.",
   "app/globals.css::css-off-grid:::root — --track-caption: 0.4px":
     "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
-  "app/globals.css::css-off-grid:::root — --track-wordmark: 0.8px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caps-body: 1.4px":
     "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caps-label: 1.2px":
@@ -672,11 +670,16 @@ function checkCssLayout(file, raw) {
 // permitted three new tracking values without the "earn the row" review it
 // exists to force. A budget with three free slots is not a budget.
 //
+// 5, NOT 6, since the wordmark became Poppins 900 in mixed case. Its tracking
+// token, --track-wordmark (0.8px mono caps — formerly --track-badge), lost its
+// only reader and retired; leaving the budget at 6 would rebuild the free-slot
+// problem the paragraph above describes.
+//
 // COUNTING IS THE WEAK PART, DELIBERATELY. A count cannot tell a rename from a
 // replacement, so this is a ceiling on GROWTH rather than a guarantee about
-// which six. Held at the real number so adding one is a decision somebody has
+// which five. Held at the real number so adding one is a decision somebody has
 // to make in this file.
-const TRACK_BUDGET = 6
+const TRACK_BUDGET = 5
 
 function checkTracking(file, raw) {
   const found = []

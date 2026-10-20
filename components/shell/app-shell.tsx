@@ -38,7 +38,6 @@ const ResumePane = dynamic(
   { ssr: false, loading: () => <div className="pane-scroll" /> }
 )
 import type { ProjectIndexEntry } from "@/lib/project-index"
-import { Sparkle } from "@/components/ui/sparkle"
 import { HERO_MEASURE } from "@/lib/layout"
 // ── THE ANSWER CONTENT IS IMPORTED, NOT FETCHED ─────────────────────────
 //
@@ -833,18 +832,28 @@ export function AppShell({
   return (
     <div className="shell" data-sheet={sheetOpen}>
       {/* Mobile only — the rail collapses behind this. */}
-      {/* Same brand as the rail — "Edwin Lara". This used to be "Edwin" while
-          the rail said "Edwin Socrates Lara", which gave one person two name
-          forms depending on viewport width. One form now, at both widths.
-          This row is TIGHT: brand + subject + MENU filled 340 of 340 at
-          "Edwin", so the surname comes out of the subject's share —
-          .shell-topbar-subject is the element that gives, by ellipsis. */}
+      {/* Same brand as the rail — the wordmark "Edwin". ONE FORM AT BOTH
+          WIDTHS, which is the rule this bar has kept since it once said "Edwin"
+          while the rail said "Edwin Socrates Lara" and gave one person two
+          names by viewport width. Before the wordmark it was a 16px sparkle
+          beside "EDWIN LARA" in Plex Mono caps.
+
+          THE ROW WAS TIGHT at that brand: brand + subject + MENU filled 340 of
+          340, and .shell-topbar-subject is the element that gives, by
+          ellipsis. "Edwin" at 16 is narrower than the old brand, so the subject
+          has more room than it did; no project label truncates at 380.
+
+          Same accessible name as the rail's button, for the same reason: it
+          contains the visible "Edwin" and adds the full name and where it goes. */}
       <div className="shell-topbar">
-        <button type="button" className="rail-brand" onClick={handleHome} style={{ padding: 0 }}>
-          <Sparkle size="var(--brand-mark-topbar)" />
-          <span className="type-wordmark" style={{ color: "rgb(var(--bureau-text-primary))" }}>
-            Edwin Lara
-          </span>
+        <button
+          type="button"
+          className="rail-brand"
+          onClick={handleHome}
+          aria-label="Edwin Socrates Lara — home"
+          style={{ padding: 0, color: "rgb(var(--bureau-text-primary))" }}
+        >
+          <span className="type-wordmark">Edwin</span>
         </button>
         {/* On mobile the rail is behind the sheet, so with the header card
             gone this is the only thing naming the open project. railSubtitle
@@ -859,7 +868,8 @@ export function AppShell({
             rather than in .rail, but it is the sheet's toggle — the only way
             in and out of the navigation on a phone — so by the rule it is
             something a person navigates by, not a recorded fact. The brand
-            beside it keeps .type-wordmark and stays mono, deliberately. */}
+            beside it is .type-wordmark, which is neither voice: it is the
+            name, in the one display face the system allows. */}
         <button
           type="button"
           className="type-action rail-sheet-close"

@@ -206,10 +206,11 @@
      .type-caption is the only sans class down here, so the role and the
      class are one-to-one. */
   --track-caption:        0.4px;
-  --track-wordmark:       0.8px;  /* mono caps, 700 — the brand, and only the brand.
-                                     Was --track-badge, named for a class that had zero
-                                     instances and has been deleted. (This note said
-                                     "Was --track-wordmark", naming itself.) */
+  /* --track-wordmark (0.8px, mono caps at 700) is RETIRED. It tracked the
+     brand when the brand was "EDWIN LARA" in Plex Mono; the wordmark is
+     Poppins 900 in mixed case now and takes no tracking, so the token had no
+     reader. Before that it was --track-badge, named for a class that had zero
+     instances. TRACK_BUDGET went 6 -> 5 with it. */
   /* Mono caps, split by STEP. .type-section put caps at two sizes for the
      first time and one value cannot serve both: in EM — which is what the eye
      reads — 1.4/16 is 0.088em and 1.2/12 is 0.100em, so the smaller caps open
@@ -221,8 +222,8 @@
   /* SANS CAPS — the rail, at both of its steps. It arrived as the ninth
      token, and the budget was raised from 8 to 9 to admit it. The same day the
      four display tokens collapsed into --track-display, leaving six, and M8
-     set TRACK_BUDGET to 6. See TRACK_BUDGET in check-design.mjs and the
-     tracking table in DESIGN.md.
+     set TRACK_BUDGET to 6; --track-wordmark's retirement took it to 5. See
+     TRACK_BUDGET in check-design.mjs and the tracking table in DESIGN.md.
      
      IN EM, NOT PX, AND THAT IS WHY IT IS ONE TOKEN INSTEAD OF TWO. The rail
      sets caps at 12 and at 16, which in pixels wants 0.6 and 0.8 — two rows
@@ -232,10 +233,11 @@
      resolves to. The mono caps above stay in px because their two values are
      genuinely different corrections (0.100em and 0.088em), not one.
 
-     0.8px also happens to equal --track-wordmark. It is not the same value:
-     the wordmark is mono caps at 700 and this is sans caps at 600, solved from a
-     different face. Pointing one at the other would rebuild the coincidence
-     this system has spent several commits removing. */
+     0.8px also happened to equal --track-wordmark while that token existed. It
+     was not the same value: the wordmark was mono caps at 700 and this is sans
+     caps at 600, solved from a different face, and pointing one at the other
+     would have rebuilt the coincidence this system has spent several commits
+     removing. --track-wordmark has since retired with the mono wordmark. */
   --track-caps-sans:      0.05em;
 
   /* ── The ramp ─────────────────────────────────────────────────────────
@@ -497,51 +499,41 @@
      not the indicator is animating, so mount and unmount cost the
      stream nothing. */
   --indicator-size: var(--space-24);
-  /* ── The brand mark, at two widths, and they are two different marks ──
-     At 1440 the rail carries the sparkle ALONE, so no cap height governs it
-     and it is not sized against a neighbour. It is also not on the icon ramp,
-     and that is a decision with a reason: the ramp's top step is 24, and the
-     typing indicator is already a lime sparkle at 24. A 24px lime brand
-     sparkle would be the same shape, the same colour and the same size as the
-     indicator, in one view — the same object twice. 32 is the smallest step on
-     the 4px grid that separates them, and it is a sixth size that exists
-     because of a collision rather than because a rule produced it.
+  /* ── THE BRAND MARK WAS A SPARKLE, AND THIS IS ITS RECORD ─────────────
+     HISTORY, kept because the ruling below was a real decision and the next
+     person to put a sparkle near the indicator should find it. The brand is
+     the wordmark "Edwin" now (.type-wordmark), and the sparkle is the typing
+     indicator only. --brand-mark-size (32) and --brand-mark-topbar (16) were
+     deleted with the mark.
 
-     ── THE COLLISION IS ACCEPTED, NOT DESIGNED AROUND ────────────────────
-     Both marks are lime, both animate, and the styling is otherwise the same;
-     only the size differs. That is Edwin's call and it is a relationship
-     rather than an oversight: the sparkle is the site's mark, and when the
-     site is thinking a smaller one appears in the transcript. A version that
-     froze the brand to tell them apart was built and rejected.
+     THE 32 WAS AN OFF-RAMP SIZE THAT EXISTED BECAUSE OF A COLLISION. At 1440
+     the rail carried the sparkle alone, so no cap height governed it. The
+     ramp's top step is 24, and the indicator was already a lime sparkle at 24:
+     a 24px lime brand sparkle would have been the same shape, colour and size
+     in one view — the same object twice. 32 was the smallest grid step that
+     separated them.
 
-     So do NOT "fix" this by desaturating one, freezing one, or pulling them
-     further apart on size. If a future change makes them harder to tell
-     apart, the thing to protect is the 32/24 difference, not the sameness.
+     THE COLLISION WAS ACCEPTED, NOT DESIGNED AROUND, and it was Edwin's call.
+     Both marks were lime, both animated, and only size told them apart; the
+     relationship was the point — "the sparkle is the site's mark, and when the
+     site is thinking a smaller one appears in the transcript." A version that
+     froze the brand to tell them apart was built and rejected, and the rule
+     was not to fix it by desaturating, freezing or pulling them apart on size.
+     WHAT REPLACING THE MARK CHANGED: the collision is gone, and so is that
+     relationship. The indicator is no longer an echo of the brand; it is a
+     loading glyph. That was traded knowingly, not lost.
 
-     ON PHASE, because it is the obvious next question and the answer is not
-     the obvious one. They do not sync, and they do not drift either. Measured
-     off getAnimations(): the brand's animation starts once at load (startTime
-     465ms, unchanged for the session) while the indicator's startTime moves
-     every time it is sampled, because React rebuilds that element for every
-     block. Its currentTime never passed 700ms of a 1666.7ms cycle across
-     twelve samples — it is restarted from zero before it can finish a
-     revolution, and the offset between the two came back effectively random
-     (91°, 255°, 0°, 268°, 88°, 340°, …).
+     ON PHASE, measured off getAnimations() while both existed: the brand's
+     animation started once at load and never restarted, while React rebuilt
+     the indicator for every block, so it never finished a revolution and the
+     offset between them came back effectively random (91°, 255°, 0°, 268°,
+     88°, 340°, …). Arbitrary phase was judged right — two identical marks in
+     step would read as one mechanism mirrored. The restart itself is still
+     live; see the note on .indicator-arc.
 
-     Arbitrary phase is RIGHT here and worth keeping: two identical marks
-     locked in step would read as one mechanism mirrored, which is the
-     mechanical reading this is not going for. The restart is a separate
-     matter — see the note on .indicator-arc.
-
-     At 380 the mark still sits beside "Edwin Lara" in the top bar, so it is a
-     different problem with a different answer and needs its own token —
-     otherwise the rail's 32 lands beside 12px type at 3.9× its cap. */
-  --brand-mark-size: var(--space-32);
-  /* The top bar's mark, beside .type-wordmark at 12px. UNCHANGED at 16 by this
-     pass, and flagged rather than fixed: 16 against a 12px cap of 8.2 is 1.95×
-     where the cap rule asks for 1.4× and would give 12. That miss predates the
-     brand work — see the note in DESIGN.md. */
-  --brand-mark-topbar: var(--space-16);
+     THE TOP BAR'S MARK was a 16px sparkle beside "EDWIN LARA" at 12px, 1.91x
+     the cap where the cap rule would have given 12 — flagged, and never ruled
+     on. It went with the mark, so it closed by removal rather than by ruling. */
   /* --rail-icon-size is GONE. Its only readers were the WORK and VIBE CODING
      section headers, and those no longer carry a glyph; the document rows
      below always overrode it. A token whose every reader has been deleted is
@@ -657,6 +649,10 @@
      IBM Plex Mono is DATA, the interface reporting. See DESIGN.md. */
   --ff-archivo:    var(--font-archivo), system-ui, sans-serif;
   --ff-plex-mono:  var(--font-plex-mono), ui-monospace, monospace;
+  /* The display face for the name, and only the name. Readable inside
+     .type-wordmark and nowhere else — check:design's display-face-scope rule
+     fails the build on any other reader, in this file or inline. */
+  --ff-poppins:    var(--font-poppins), system-ui, sans-serif;
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -955,13 +951,23 @@ body {
      naming itself — and stays mono because a brand mark is allowed to be its
      own thing, and because with the rail in Archivo this is the only place the
      mono voice appears on every surface. */
+  /* THE NAME: "Edwin", Poppins 900. The only reader of --ff-poppins.
+
+     SIZED BY CAP-HEIGHT CLEARANCE, on existing rungs rather than new ones: the
+     smallest step whose cap clears the largest label beside it by 1.25x, one
+     ladder ratio. Measured on the rendered faces: at 1440 the WORK header's cap
+     is 10.98, and 20 gives 14.16 (1.29x) where 16 gives 11.33 (1.03x). At 640
+     and below MENU's cap is 8.23, and 16 gives 11.33 (1.38x) where 14 gives
+     9.91 (1.20x). Each takes its own rung's leading.
+
+     NO TRACKING. This was Plex Mono caps at 700 with --track-wordmark (0.8px);
+     a black-weight display face set in mixed case needs no correction at these
+     sizes, so the token retired and TRACK_BUDGET went 6 -> 5. */
   .type-wordmark {
-    font-family: var(--ff-plex-mono);
-    font-weight: 700;
-    font-size: var(--type-body-size);
-    line-height: var(--type-body-lh);
-    letter-spacing: var(--track-wordmark);
-    text-transform: uppercase;
+    font-family: var(--ff-poppins);
+    font-weight: 900;
+    font-size: var(--type-section-size);
+    line-height: var(--type-section-lh);
   }
   .type-label {
     font-family: var(--ff-plex-mono);
@@ -1016,14 +1022,17 @@ body {
       font-size: var(--type-section-size);
       line-height: var(--type-section-lh);
     }
-    /* ONE ROLE, TWO SIZES. The rail's brand is 16; the mobile top bar's is 12,
-       because that row fits brand + subject + MENU into 340px exactly. That
-       used to be a separate class (.type-badge) which an audit measuring only
-       1440 reported as having zero instances. It is the same role at a
-       breakpoint, which is what a breakpoint is for. */
+    /* ONE ROLE, TWO SIZES: 20 above 640, 16 here, each the smallest rung that
+       clears its neighbours (see .type-wordmark). This step was 16 -> 12 when
+       the wordmark was "EDWIN LARA" in Plex Mono caps, because that row fitted
+       brand + subject + MENU into 340px exactly; "Edwin" at 16 is 50px wide and
+       leaves the project label more room than it had. It used to be a separate
+       class (.type-badge) which an audit measuring only 1440 reported as having
+       zero instances. It is the same role at a breakpoint, which is what a
+       breakpoint is for. */
     .type-wordmark {
-      font-size: var(--type-data-size);
-      line-height: var(--type-data-lh);
+      font-size: var(--type-body-size);
+      line-height: var(--type-body-lh);
     }
   }
 }

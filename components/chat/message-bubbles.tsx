@@ -607,8 +607,10 @@ function FollowupsBubble({
 // role="status" on this element would have looked right and worked
 // intermittently.
 //
-// The geometry moved to components/ui/sparkle.tsx when the brand mark needed
-// the same shape. One path, two sizes.
+// The geometry lives in components/ui/sparkle.tsx. It moved there when the
+// brand mark needed the same shape; the brand is the wordmark "Edwin" now, and
+// this is the sparkle's only caller. The file keeps the trace the provenance
+// documents.
 export function TypingIndicator() {
   return (
     <div

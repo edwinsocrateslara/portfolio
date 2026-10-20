@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { Sparkle } from "@/components/ui/sparkle"
 // Layers, not Layers3: Layers3 is a deprecated alias in v0.544 and resolves to
 // the same component (verified: Layers3 === Layers). Importing the live name.
 // BriefcaseBusiness and CodeXml left with the section-header glyphs.
@@ -196,29 +195,31 @@ export function Sidebar({
 
   return (
     <aside className="rail" data-open={open} aria-label="Site index">
-      {/* THE MARK ALONE. The wordmark beside this was "Edwin Lara"; at 1440 the
-          rail now carries the sparkle and nothing else, in the accent.
+      {/* THE WORDMARK. "Edwin", Poppins 900, in primary ink — the same control
+          and the same string as the mobile top bar's, so the brand is one
+          thing at both widths again.
 
-          THE NAME IS NOT GONE FROM THE APP — it stays in the mobile top bar,
-          where the rail is behind a sheet and this button is not on screen. So
-          the two are not the same control at two widths any more: the desktop
-          rail is a mark, the phone's top bar is a mark and a name.
+          It was the sparkle alone, in the accent, from 3 September until the
+          wordmark replaced it; before that a sparkle beside "Edwin Lara". The
+          sparkle is the typing indicator only now. NOT LIME, deliberately: a
+          black-weight word is a region of ink, and DESIGN.md's accent
+          inventory records why it is not on the list.
 
-          THE ACCESSIBLE NAME IS NOT OPTIONAL AND CANNOT COME FROM THE CONTENT.
-          It used to: the button was named by the visible "Edwin Lara", and
-          Sparkle is aria-hidden at every call site. Removing the text would
-          have left a button with NO accessible name — announced as "button",
-          on the control that goes home. The aria-label carries it now, and it
-          says the name and the destination because the mark alone says
-          neither. */}
+          THE ACCESSIBLE NAME CONTAINS THE VISIBLE TEXT, and says more than it.
+          "Edwin Socrates Lara — home" carries the full name the page title and
+          metadata use, and the destination, which a five-letter word does not.
+          It has to CONTAIN "Edwin" (WCAG 2.5.3, Label in Name): a speech user
+          says what they see. While the mark was a sparkle the label carried
+          the whole name, because Sparkle was aria-hidden and the button had no
+          other. */}
       <button
         type="button"
         className="rail-brand"
         onClick={pick(onHome)}
-        aria-label="Edwin Lara — home"
-        style={{ color: "rgb(var(--bureau-accent))" }}
+        aria-label="Edwin Socrates Lara — home"
+        style={{ color: "rgb(var(--bureau-text-primary))" }}
       >
-        <Sparkle size="var(--brand-mark-size)" />
+        <span className="type-wordmark">Edwin</span>
       </button>
 
       {/* The wrapper exists to carry the fade: a background painted on the

@@ -4,10 +4,17 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 
 // The four-pointed sparkle, in ONE place.
 //
-// It was inline in TypingIndicator. The brand mark needs the same geometry, so
-// it moved here rather than being copied — a traced path duplicated in two
-// files is two things that can drift, and the provenance in
-// docs/provenance/typing-indicator/ documents one shape, not two.
+// ONE CALLER: the typing indicator. It was inline in TypingIndicator, and moved
+// here when the brand mark needed the same geometry — a traced path duplicated
+// in two files is two things that can drift. The brand is the wordmark "Edwin"
+// now, so the reason it moved is gone.
+//
+// IT STAYS HERE ANYWAY, for a different reason: this file IS the trace. The
+// provenance in docs/provenance/typing-indicator/ documents this path and these
+// trim values, and keeping the artwork in a component of its own keeps the
+// trace separate from the indicator's behaviour and copy. Folding it back into
+// message-bubbles.tsx would be churn that buys nothing, and a second caller —
+// if one ever comes — finds the shape where the provenance says it is.
 //
 // Traced from a Lottie source; see that folder for the derivation. These are
 // ARTWORK coordinates in the SVG's own normalised space, not layout values, so
@@ -26,8 +33,9 @@ const DOT_DASH = "3 97"
 const TRACK_OPACITY = 0.15
 
 /**
- * Decorative throughout — every caller is aria-hidden, and the accessible name
- * belongs to the thing the mark sits beside ("Edwin", "Generating response").
+ * Decorative — aria-hidden, and the announcement belongs to the shell's live
+ * region ("Generating response"), not to the mark. When the brand also used
+ * this, its accessible name came from the button's aria-label.
  *
  * `size` is a CSS length, always passed as a token by the caller.
  * `currentColor` for the stroke, so the mark inherits whatever colour its
@@ -47,7 +55,8 @@ export function Sparkle({ size }: { size: string }) {
     // itself at the full 720px chat column instead of 24px. It only looked
     // right in the rail because .rail-brand is a flex container and blockified
     // it. That fix is NOT part of the revert — it predates the rotation work
-    // and belongs to making the mark shareable at two sizes.
+    // and belonged to making the mark shareable at two sizes. It is still what
+    // keeps the indicator at 24 inside the chat column's non-flex wrapper.
     <span
       aria-hidden="true"
       style={{
