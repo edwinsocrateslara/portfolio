@@ -396,8 +396,15 @@ function checkFile(file, raw) {
   }
 
   // 2 — no off-grid raw numeric lengths inside style={{ }}
+  //
+  // `|$` IS LOAD-BEARING. styleBlocks() returns the text BETWEEN the braces, so
+  // on a one-line object the last property is followed by nothing at all —
+  // `style={{ width: 13 }}` hands this " width: 13 ", and a lookahead of
+  // [,}\n] alone never matched it. That shape passed rule 2 with TOTAL 0 for
+  // as long as the rule existed; FIXTURE_BAD now carries it, so dropping the
+  // `$` aborts the self-test rather than reopening the hole.
   for (const blk of styleBlocks(src)) {
-    const re = /([A-Za-z][A-Za-z0-9]*)\s*:\s*(-?\d+(?:\.\d+)?)\s*(?=[,}\n])/g
+    const re = /([A-Za-z][A-Za-z0-9]*)\s*:\s*(-?\d+(?:\.\d+)?)\s*(?=[,}\n]|$)/g
     let m
     while ((m = re.exec(blk.text))) {
       const [, prop, valStr] = m
@@ -428,8 +435,10 @@ function checkFile(file, raw) {
   //
   // 0 is excluded: `margin: 0` / `minWidth: 0` are idiomatic, unitless, and
   // have no token to replace them.
+  //
+  // Same `|$` as rule 2, for the same one-line shape.
   for (const blk of styleBlocks(src)) {
-    const re = /([A-Za-z][A-Za-z0-9]*)\s*:\s*(-?\d+(?:\.\d+)?)\s*(?=[,}\n])/g
+    const re = /([A-Za-z][A-Za-z0-9]*)\s*:\s*(-?\d+(?:\.\d+)?)\s*(?=[,}\n]|$)/g
     let m
     while ((m = re.exec(blk.text))) {
       const [, prop, valStr] = m
@@ -471,11 +480,13 @@ function checkFile(file, raw) {
 //
 // These are the same five invariants in the other dialect. Rule 3 has no CSS
 // form — there are no Tailwind class strings in a stylesheet — so four of the
-// five port. They are REPORT-ONLY for now: switching ~90% of the layout from
-// unchecked to build-failing in one commit would mean triaging every finding
-// under time pressure, which is how real exceptions get silenced with a token
-// instead of recorded with a reason. They graduate to failing once each
-// finding has been ruled on.
+// five port. THEY FAIL THE BUILD. They were REPORT-ONLY when they arrived:
+// switching ~90% of the layout from unchecked to build-failing in one commit
+// would have meant triaging every finding under time pressure, which is how
+// real exceptions get silenced with a token instead of recorded with a reason.
+// The plan was to graduate them once each finding had been ruled on; the
+// stylesheet reached 0 findings, and M7 (3956bee) made them fatal. See the
+// note in record() below.
 const CSS_TYPE_PROPS = ["font-size", "line-height", "font-family", "font-weight"]
 
 // The ONE shape allowed outside a .type-* rule: `body`, set from the ramp.
@@ -549,8 +560,12 @@ function cssDeclarations(raw) {
 
 function checkCssLayout(file, raw) {
   const found = []
+  // No `reportOnly` here. These used to carry it, and when M7 made them fatal
+  // it did so by ignoring the flag in record() — which made rule 5, the one
+  // rule the flag was really for, fatal along with them. One flag carrying
+  // two meanings is how a gate came to do something nobody chose.
   const add = (rule, detail, d) =>
-    found.push({ file, rule, detail: `${d.sel} — ${detail}`, line: lineAt(raw, d.start), reportOnly: true })
+    found.push({ file, rule, detail: `${d.sel} — ${detail}`, line: lineAt(raw, d.start) })
 
   for (const d of cssDeclarations(raw)) {
     const isToken = d.prop.startsWith("--")
@@ -701,6 +716,7 @@ export function Bad() {
   return (
     <div className="gap-4 px-5" style={{ fontSize: 13, marginTop: 5, color: "#ff0000", background: "rgba(0,0,0,.5)" }}>
       <span style={{ height: 42, backgroundColor: "rgb(var(--bureau-accent))" }} />
+      <i style={{ width: 13 }} />
     </div>
   )
 }
@@ -894,12 +910,42 @@ function selfTest() {
   // A px hidden inside a calc on a custom property is the --rail-inset shape.
   if (!cssHits("css-off-grid").some((f) => /--thing-inset/.test(f.detail)))
     problems.push('control: rule "css-off-grid" did not look inside a calc() on a custom property')
-  // Everything in the CSS layer is report-only for now. If one of these ever
-  // lands in `violations` it starts failing builds without anyone deciding to.
-  if (cssLayoutBad.some((f) => !f.reportOnly))
-    problems.push("control: a CSS-layer finding was not marked reportOnly — it would fail the build")
+  // The CSS layer FAILS THE BUILD since M7. This assertion used to require the
+  // opposite — that every CSS finding was report-only — and kept passing after
+  // M7 only because the flag had stopped meaning what it said. It now asserts
+  // the decision that was actually made.
+  if (cssLayoutBad.some((f) => routeOf(f) !== "violation"))
+    problems.push("control: a CSS-layer finding would not fail the build — the CSS dialect has gone report-only again")
   for (const f of cssLayoutGood)
     problems.push(`control: false positive on the good CSS fixture — ${f.rule} / ${f.detail}`)
+
+  // THE ONE-LINE SHAPE. `<i style={{ width: 13 }} />` is the last property of a
+  // single-line object, which rules 2 and 5 could not see until their
+  // lookahead learned `$`. The fixture is the fix; the regex is the patch.
+  if (!bad.some((f) => f.rule === "no-off-grid" && f.detail === "width=13"))
+    problems.push('control: rule "no-off-grid" did NOT fire on style={{ width: 13 }} — a one-line object\'s last property is invisible again')
+  if (!bad.some((f) => f.rule === "no-bare-length" && f.detail === "width=13"))
+    problems.push('control: rule "no-bare-length" did NOT fire on style={{ width: 13 }} — a one-line object\'s last property is invisible again')
+
+  // RULE 5 IS REPORT-ONLY, and the routing has to say so. M7 removed an `else`
+  // in record() to make the CSS dialect fatal and took rule 5 with it: the
+  // first bare length anywhere would have exited 2 with "BUG: rules missing
+  // from the RULES table" — failing, but illegibly, and by nobody's decision.
+  if (bad.some((f) => f.rule === "no-bare-length" && routeOf(f) !== "reportOnly"))
+    problems.push('control: rule "no-bare-length" would fail the build — it is report-only, and making it fatal is a decision, not a side effect')
+
+  // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
+  // class, not the instance: a fatal finding with no heading prints as
+  // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
+  // function record() uses — so the control exercises the real routing rather
+  // than a copy of it that could disagree.
+  const everyBad = [
+    ...bad, ...cssBad, ...cssLayoutBad, ...trackBad, ...rimMiss, ...nearMiss, ...glowFix,
+    ...checkTracking("<fixture-budget>", overBudget),
+  ]
+  for (const rule of new Set(everyBad.filter((f) => routeOf(f) === "violation").map((f) => f.rule)))
+    if (!(rule in RULES))
+      problems.push(`control: rule "${rule}" fails the build but has no row in RULES — it would exit 2 as "violation of nothing"`)
 
   // Rule 5 must fire on an ON-GRID bare length. That is the whole reason it
   // exists — if it only fired on off-grid values it would just be rule 2.
@@ -929,6 +975,57 @@ function walk(dir, acc = []) {
   return acc
 }
 
+// The CSS layer's rules, and their one-line reasons. Kept as their own table
+// because the summary lists CSS findings separately — knowing a finding came
+// from the stylesheet rather than a component is useful. They FAIL THE BUILD
+// like every rule in RULES; this table once read "everything here is
+// report-only", which stopped being true at M7.
+const CSS_RULES = {
+  "css-off-grid": "px length not a multiple of 4 (or an off-grid token definition)",
+  "css-bare-length": "px literal where a --space-* token belongs",
+  "css-inline-type": "type set outside a .type-* rule",
+  "css-raw-color": "raw colour literal in a stylesheet",
+}
+
+// Every rule that fails the build, with its heading. Defined BEFORE the
+// self-test, not inside the report, so the self-test can assert that every
+// fatal finding has a row here.
+const RULES = {
+  "no-inline-type": "Inline type declarations (use a .type-* class)",
+  "no-off-grid": "Raw numeric length not a multiple of 4",
+  "no-raw-tw-spacing": "Raw Tailwind numeric spacing (use a --space-* token)",
+  "no-raw-color": "Raw colour literal (use rgb(var(--bureau-*)))",
+  "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
+  "tracking-literal": "Letter-spacing literal (use var(--track-*))",
+  "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
+  // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
+  // be report-only, so its labels lived only in CSS_RULES and this table did
+  // not know the names — which meant the first CSS violation after the switch
+  // printed "BUG: violations of rules missing from the RULES table" rather
+  // than the finding. It failed, which is what matters, but it failed
+  // illegibly. Spread rather than retyped so the two can never disagree.
+  ...CSS_RULES,
+}
+
+// Where a finding goes: waived by ALLOW, report-only, or a build failure. ONE
+// function, used by record() and by the self-test, so the control proves the
+// routing the run actually uses.
+//
+// Gradients WERE non-allowlistable, on the reasoning that a gradient is never
+// a control. The hero glow is a deliberate exception, so they are
+// allowlistable again — but the detail string still carries "(GRADIENT)", so
+// an entry waiving one is obviously waiving a painted area and cannot be
+// mistaken for waiving a control. The default is still failure, and waiving
+// still costs a written reason in a file somebody reviews.
+function routeOf(v) {
+  if (`${v.file}::${v.rule}::${v.detail}` in ALLOW) return "allowed"
+  // `reportOnly` means rule 5 and nothing else. The CSS dialect used to carry
+  // it too; M7 made that dialect fatal by dropping this branch, and rule 5
+  // went fatal with it. The CSS findings no longer carry the flag, so the
+  // branch is back and means one thing.
+  return v.reportOnly ? "reportOnly" : "violation"
+}
+
 const controlProblems = selfTest()
 if (controlProblems.length) {
   console.error("SELF-TEST FAILED — refusing to report a result:\n")
@@ -940,13 +1037,6 @@ const files = ROOTS.flatMap((r) => walk(join(ROOT_DIR, r))).sort()
 const violations = []
 const reportOnly = []
 const record = (v) => {
-  // Gradients WERE non-allowlistable, on the reasoning that a gradient is never
-  // a control. The hero glow is a deliberate exception, so they are
-  // allowlistable again — but the detail string still carries "(GRADIENT)", so
-  // an entry waiving one is obviously waiving a painted area and cannot be
-  // mistaken for waiving a control. The default is still failure, and waiving
-  // still costs a written reason in a file somebody reviews.
-  if (`${v.file}::${v.rule}::${v.detail}` in ALLOW) return
   // ── CSS FINDINGS NOW FAIL THE BUILD ────────────────────────────────────
   // They were report-only "for now", and the for-now outlasted its reason: the
   // CSS dialect of rules 1-5 was added while most of the layout was still
@@ -962,8 +1052,13 @@ const record = (v) => {
   // They are still listed separately in the summary, because knowing a finding
   // came from the CSS dialect rather than the TSX one is useful. The waiver
   // route is unchanged and still costs a written reason in ALLOW.
-  if (v.reportOnly) reportOnly.push(v)
-  violations.push(v)
+  //
+  // M7 made that change by deleting the `else` below, and rule 5 — the only
+  // rule that is report-only on purpose — became fatal as a side effect. The
+  // routing now lives in routeOf(), which the self-test exercises directly.
+  const to = routeOf(v)
+  if (to === "reportOnly") reportOnly.push(v)
+  else if (to === "violation") violations.push(v)
 }
 for (const abs of files) {
   const rel = relative(ROOT_DIR, abs)
@@ -981,20 +1076,16 @@ for (const rel of CSS_FILES) {
   for (const v of checkCssLayout(rel, css)) record(v)
 }
 
-// The CSS layer's rules, and their one-line reasons. Deliberately a SEPARATE
-// table from RULES: everything here is report-only, and mixing the two would
-// make it read as though these fail the build.
-const CSS_RULES = {
-  "css-off-grid": "px length not a multiple of 4 (or an off-grid token definition)",
-  "css-bare-length": "px literal where a --space-* token belongs",
-  "css-inline-type": "type set outside a .type-* rule",
-  "css-raw-color": "raw colour literal in a stylesheet",
-}
-
-const cssFindings = reportOnly.filter((v) => v.rule in CSS_RULES)
+// From `violations`, not `reportOnly`: CSS findings fail the build. This read
+// reportOnly while the dialect was report-only, and kept reading it after M7,
+// which is also why --bare would have listed CSS findings as bare lengths.
+const cssFindings = violations.filter((v) => v.rule in CSS_RULES)
 
 if (process.argv.includes("--css")) {
-  console.log("CSS RULES 1-5 (REPORT-ONLY) — these do not fail the build\n")
+  // This banner read "(REPORT-ONLY) — these do not fail the build" until after
+  // M7 had made them fatal. --css itself is a listing and exits 0; the gate is
+  // the plain run.
+  console.log("CSS RULES 1-5 — these FAIL the build (this listing exits 0; run without --css for the gate)\n")
   for (const [rule, label] of Object.entries(CSS_RULES)) {
     const hits = cssFindings.filter((v) => v.rule === rule)
     console.log(`── ${rule} — ${label}: ${hits.length}`)
@@ -1002,51 +1093,46 @@ if (process.argv.includes("--css")) {
     if (!hits.length) console.log("   (none)")
     console.log()
   }
-  console.log(`TOTAL ${cssFindings.length} report-only CSS finding(s)`)
+  console.log(`TOTAL ${cssFindings.length} CSS finding(s), each a build failure`)
   process.exit(0)
 }
 
 if (process.argv.includes("--bare")) {
+  // Filtered by RULE, not just by routing. It used to list everything in
+  // `reportOnly`, which after M7 still held every CSS finding — so --bare would
+  // have printed stylesheet violations as bare lengths and parsed a NaN out of
+  // "`.sel — font-size: 13px`". The stylesheet sitting at 0 findings was luck,
+  // not a property. A future second report-only rule must not leak in either.
+  const bare = reportOnly.filter((v) => v.rule === "no-bare-length")
   const byFile = {}
-  for (const v of reportOnly) (byFile[v.file] ??= []).push(v)
+  for (const v of bare) (byFile[v.file] ??= []).push(v)
   console.log("RULE 5 (report-only) — bare numeric lengths in style objects, 0 excluded\n")
   for (const [f, hs] of Object.entries(byFile))
     console.log(`  ${f}\n${hs.map((h) => `      :${h.line}  ${h.detail}`).join("\n")}`)
-  const vals = reportOnly.map((v) => Number(v.detail.split("=")[1]))
+  const vals = bare.map((v) => Number(v.detail.split("=")[1]))
   const offGrid = vals.filter((v) => !Number.isInteger(v) || v % 4 !== 0).length
-  console.log(`\n  TOTAL ${reportOnly.length}   (${offGrid} also off-grid = rule 2's set, ${reportOnly.length - offGrid} on-grid and invisible to rule 2)`)
+  console.log(`\n  TOTAL ${bare.length}   (${offGrid} also off-grid = rule 2's set, ${bare.length - offGrid} on-grid and invisible to rule 2)`)
   process.exit(0)
 }
 
 if (process.argv.includes("--list")) {
   for (const v of violations) console.log(`${v.file}:${v.line}\t${v.rule}\t${v.detail}`)
 } else {
-  const RULES = {
-    "no-inline-type": "Inline type declarations (use a .type-* class)",
-    "no-off-grid": "Raw numeric length not a multiple of 4",
-    "no-raw-tw-spacing": "Raw Tailwind numeric spacing (use a --space-* token)",
-    "no-raw-color": "Raw colour literal (use rgb(var(--bureau-*)))",
-    "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
-    "tracking-literal": "Letter-spacing literal (use var(--track-*))",
-    "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
-    // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
-    // be report-only, so its labels lived only in CSS_RULES and this table did
-    // not know the names — which meant the first CSS violation after the switch
-    // printed "BUG: violations of rules missing from the RULES table" rather
-    // than the finding. It failed, which is what matters, but it failed
-    // illegibly. Spread rather than retyped so the two can never disagree.
-    ...CSS_RULES,
-  }
-  // A rule missing from this table still COUNTS toward the total and still
-  // fails the build, but prints under no heading — which reads as "1 violation
-  // of nothing". Adding a rule means adding a row here.
+  // A rule missing from RULES still COUNTS toward the total and still fails
+  // the build, but prints under no heading — which reads as "1 violation of
+  // nothing". Adding a rule means adding a row there. The self-test now
+  // refuses a fatal fixture finding with no row, so this is the backstop
+  // rather than the first line.
   const untitled = violations.filter((v) => !(v.rule in RULES))
   if (untitled.length) {
     console.error(`\nBUG: ${untitled.length} violation(s) of rules missing from the RULES table:`)
     for (const v of untitled) console.error(`  ${v.file}:${v.line}\t${v.rule}\t${v.detail}`)
     process.exit(2)
   }
-  console.log(`self-test PASS — all ${Object.keys(RULES).length} build-failing matchers + ${Object.keys(CSS_RULES).length} report-only CSS matchers fire on the bad fixtures, none on the good ones`)
+  // This read "N build-failing matchers + 4 report-only CSS matchers", which
+  // counted the CSS rules twice — RULES spreads CSS_RULES — and called them
+  // report-only after M7 had made them fatal.
+  console.log(`self-test PASS — all ${Object.keys(RULES).length} build-failing matchers (${Object.keys(CSS_RULES).length} of them CSS) fire on the bad fixtures, none on the good ones; rule 5 stays report-only`)
   console.log(`scanned ${files.length} files under ${ROOTS.join(", ")}, plus ${CSS_FILES.join(", ")}\n`)
   for (const [rule, label] of Object.entries(RULES)) {
     const hits = violations.filter((v) => v.rule === rule)
@@ -1060,9 +1146,11 @@ if (process.argv.includes("--list")) {
   }
   console.log(`TOTAL: ${violations.length} violation(s)`)
 
-  // Report-only, and printed anyway. A layer that is checked but never shown
-  // is the same failure as a layer that was never checked — which is the bug
-  // this section was added to fix.
+  // The CSS findings by rule, as a summary under the totals above. Written when
+  // the layer was report-only — "printed anyway", because a layer that is
+  // checked but never shown is the same failure as a layer that was never
+  // checked. It is fatal now; the summary stays because the dialect a finding
+  // came from is useful to know.
   if (cssFindings.length) {
     const byRule = Object.entries(CSS_RULES)
       .map(([r, l]) => [r, l, cssFindings.filter((v) => v.rule === r).length])
