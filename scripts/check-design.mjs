@@ -72,13 +72,13 @@ const ALLOW = {
   "app/globals.css::css-off-grid:::root — --bureau-radius-chip: 9999px":
     "The fully-round pill. DESIGN.md names 9999px as a grid exception and the radius table gives it a row.",
   "app/globals.css::css-off-grid:::root — --track-caption: 0.4px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-wordmark: 0.8px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caps-body: 1.4px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --track-caps-label: 1.2px":
-    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at 8 tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
+    "Optical tracking, not layout. DESIGN.md: \"Letter-spacing is optical tracking rather than layout, is sub-pixel by nature, and is also exempt.\" Rule 7 governs these properly - it caps the ramp at TRACK_BUDGET tokens and refuses a literal outside the block. This entry stops rule 2's CSS dialect double-reporting them.",
   "app/globals.css::css-off-grid:::root — --type-data-lh: 18px":
     "Derived leading. DESIGN.md: \"line-height has never been asked to be on\" the 4px grid. 1.5x at every step except display, where the >=40px bound applies and 58 is 1.16x.",
   "app/globals.css::css-off-grid:::root — --type-section-lh: 30px":
@@ -707,6 +707,88 @@ function checkTracking(file, raw) {
   return found
 }
 
+// ── Rule 8 — the display face is for the name ────────────────────────────
+// The system is two families, plus ONE display face for the name only:
+// Poppins 900, set by .type-wordmark on "Edwin" in the rail and the mobile top
+// bar. DESIGN.md § Typography states it; this is what holds it. Same shape as
+// rule 6's narrowing of the accent token: the face is permitted to exactly one
+// reader, and naming it anywhere else fails the build.
+//
+//   display-face-scope   --ff-poppins, --font-poppins or a bare `Poppins` read
+//                        anywhere but a `.type-wordmark` rule — in a
+//                        stylesheet, or in any .tsx at all (an inline style is
+//                        the easy way round a class rule). Two sanctioned
+//                        places: the token's own definition on :root, and the
+//                        next/font call in app/layout.tsx that loads it.
+//
+//   display-face-weight  that next/font call loading anything but ONE static
+//                        weight, 900, latin. A second weight is how a display
+//                        face becomes a text face; the variable axis is every
+//                        weight at once, at six times the bytes.
+//
+// WHY A BARE `Poppins` COUNTS: `font-family: Poppins` reaches the face without
+// the token, and next/font's generated family name contains the word. Matching
+// the name as well as the token closes the obvious route round the token.
+const DISPLAY_FACE = /--ff-poppins\b|--font-poppins\b|\bPoppins\b/
+const FONT_LOADER_FILE = "app/layout.tsx"
+
+function checkDisplayFace(file, raw, { css }) {
+  const found = []
+  if (css) {
+    for (const d of cssDeclarations(raw)) {
+      if (!DISPLAY_FACE.test(`${d.prop}: ${d.value}`)) continue
+      const inRoot = d.stack.some((s) => /(^|\s|,):root\b/.test(s) || s.trim() === ":root")
+      // The definition: --ff-poppins on :root, and only there.
+      if (d.prop === "--ff-poppins" && inRoot) continue
+      // The one reader. The WHOLE selector must be .type-wordmark — a list
+      // like `.type-wordmark, .type-name` is a second reader in disguise. An
+      // @media parent is fine; it is the same rule at a breakpoint.
+      if (d.sel.trim() === ".type-wordmark" && d.prop !== "--ff-poppins") continue
+      found.push({
+        file, rule: "display-face-scope",
+        detail: `${d.sel} — ${d.prop}: ${d.value}`,
+        line: lineAt(raw, d.start),
+      })
+    }
+    return found
+  }
+
+  const src = stripComments(raw)
+  if (file === FONT_LOADER_FILE) {
+    // The loader is the one .tsx allowed to name the face, and only inside the
+    // Poppins({...}) call, its import, and the className that applies the
+    // variable. Everything else in the file is held to the same rule.
+    const call = /\bPoppins\s*\(\s*\{([\s\S]*?)\}\s*\)/.exec(src)
+    if (call) {
+      const body = call[1]
+      const weight = /weight\s*:\s*(\[[^\]]*\]|"[^"]*"|'[^']*')/.exec(body)
+      const weights = weight ? [...weight[1].matchAll(/["']([^"']+)["']/g)].map((m) => m[1]) : []
+      const subsets = /subsets\s*:\s*\[([^\]]*)\]/.exec(body)
+      const subs = subsets ? [...subsets[1].matchAll(/["']([^"']+)["']/g)].map((m) => m[1]) : []
+      const problems = []
+      if (weights.length !== 1 || weights[0] !== "900")
+        problems.push(`weight ${weight ? weight[1].replace(/\s+/g, " ") : "(unset — the variable axis)"}, must be ["900"]`)
+      if (subs.length !== 1 || subs[0] !== "latin")
+        problems.push(`subsets [${subs.join(", ")}], must be ["latin"]`)
+      for (const p of problems)
+        found.push({ file, rule: "display-face-weight", detail: p, line: lineAt(raw, call.index) })
+    }
+    // Strip what is sanctioned, then hold the rest to the scope rule.
+    const rest = src
+      .replace(/\bPoppins\s*\(\s*\{[\s\S]*?\}\s*\)/, "")
+      .replace(/import\s*\{[^}]*\}\s*from\s*["']next\/font\/google["']/, "")
+      .replace(/\$\{\s*poppins\.variable\s*\}/g, "")
+    const m = DISPLAY_FACE.exec(rest)
+    if (m) found.push({ file, rule: "display-face-scope", detail: `"${m[0]}" outside the font loader's sanctioned lines`, line: 1 })
+    return found
+  }
+  const re = new RegExp(DISPLAY_FACE.source, "g")
+  let m
+  while ((m = re.exec(src)))
+    found.push({ file, rule: "display-face-scope", detail: `"${m[0]}" in a component — the face is .type-wordmark's alone`, line: lineAt(raw, m.index) })
+  return found
+}
+
 // ── Positive control ─────────────────────────────────────────────────────
 // A clean pass is worthless if a matcher silently broke. Each rule is run
 // against a fixture that MUST trip it, and against a fixture that must NOT.
@@ -826,6 +908,33 @@ body { font-family: var(--ff-archivo); font-size: var(--type-body-size); line-he
 .g { padding: var(--space-16); gap: var(--space-within); color: rgb(var(--bureau-text-primary)); }
 .h { border-width: 1px; border-radius: 9999px; border: 2px solid var(--hairline); outline-offset: 2px; }
 `
+// Rule 8. One sanctioned loader and one sanctioned stylesheet, then a fixture
+// per near-miss. Each near-miss changes exactly one thing, so a pass on it
+// means the rule is a hole rather than a narrowing.
+const FIXTURE_FACE_LOADER_GOOD = `
+import { Archivo, Poppins } from "next/font/google"
+const poppins = Poppins({ subsets: ["latin"], weight: ["900"], variable: "--font-poppins" })
+export default function L() { return <html className={\`a \${poppins.variable}\`} /> }
+`
+const FIXTURE_FACE_CSS_GOOD = `
+:root { --ff-poppins: var(--font-poppins), system-ui, sans-serif; }
+.type-wordmark { font-family: var(--ff-poppins); font-weight: 900; }
+@media (max-width: 640px) { .type-wordmark { font-family: var(--ff-poppins); } }
+`
+// near-miss 1: a second weight.
+const FIXTURE_FACE_SECOND_WEIGHT = FIXTURE_FACE_LOADER_GOOD.replace('weight: ["900"]', 'weight: ["900", "700"]')
+// near-miss 1b: the variable axis.
+const FIXTURE_FACE_VARIABLE = FIXTURE_FACE_LOADER_GOOD.replace('weight: ["900"]', 'weight: "variable"')
+// near-miss 2: the token in another class — and in a selector list that only
+// LOOKS like the sanctioned one.
+const FIXTURE_FACE_OTHER_CLASS = `
+.type-name { font-family: var(--ff-poppins); }
+.type-wordmark, .type-page { font-family: var(--ff-poppins); }
+`
+// near-miss 3: the token in an inline style.
+const FIXTURE_FACE_INLINE = `
+export function X() { return <span style={{ fontFamily: "var(--ff-poppins)" }}>Edwin</span> }
+`
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
@@ -934,6 +1043,26 @@ function selfTest() {
   if (bad.some((f) => f.rule === "no-bare-length" && routeOf(f) !== "reportOnly"))
     problems.push('control: rule "no-bare-length" would fail the build — it is report-only, and making it fatal is a decision, not a side effect')
 
+  // Rule 8 — the display face. Good inputs silent, each near-miss firing.
+  const faceGood = [
+    ...checkDisplayFace("app/layout.tsx", FIXTURE_FACE_LOADER_GOOD, { css: false }),
+    ...checkDisplayFace("<fixture-face-css-good>", FIXTURE_FACE_CSS_GOOD, { css: true }),
+  ]
+  for (const f of faceGood)
+    problems.push(`control: rule "${f.rule}" false positive on the sanctioned loader or stylesheet — ${f.detail}`)
+  const faceWeight = checkDisplayFace("app/layout.tsx", FIXTURE_FACE_SECOND_WEIGHT, { css: false })
+  if (!faceWeight.some((f) => f.rule === "display-face-weight"))
+    problems.push('control: rule "display-face-weight" did NOT fire on a second Poppins weight')
+  const faceVariable = checkDisplayFace("app/layout.tsx", FIXTURE_FACE_VARIABLE, { css: false })
+  if (!faceVariable.some((f) => f.rule === "display-face-weight"))
+    problems.push('control: rule "display-face-weight" did NOT fire on the variable axis')
+  const faceClass = checkDisplayFace("<fixture-face-class>", FIXTURE_FACE_OTHER_CLASS, { css: true })
+  if (faceClass.filter((f) => f.rule === "display-face-scope").length !== 2)
+    problems.push(`control: rule "display-face-scope" found ${faceClass.length}/2 readers outside .type-wordmark — it must catch the other class AND the selector list`)
+  const faceInline = checkDisplayFace("components/fixture.tsx", FIXTURE_FACE_INLINE, { css: false })
+  if (!faceInline.some((f) => f.rule === "display-face-scope"))
+    problems.push('control: rule "display-face-scope" did NOT fire on --ff-poppins in an inline style')
+
   // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
   // class, not the instance: a fatal finding with no heading prints as
   // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
@@ -942,6 +1071,7 @@ function selfTest() {
   const everyBad = [
     ...bad, ...cssBad, ...cssLayoutBad, ...trackBad, ...rimMiss, ...nearMiss, ...glowFix,
     ...checkTracking("<fixture-budget>", overBudget),
+    ...faceWeight, ...faceVariable, ...faceClass, ...faceInline,
   ]
   for (const rule of new Set(everyBad.filter((f) => routeOf(f) === "violation").map((f) => f.rule)))
     if (!(rule in RULES))
@@ -998,6 +1128,8 @@ const RULES = {
   "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
   "tracking-literal": "Letter-spacing literal (use var(--track-*))",
   "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
+  "display-face-scope": "The display face read outside .type-wordmark (it is for the name only)",
+  "display-face-weight": "The display face loaded at anything but one static weight, 900, latin",
   // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
   // be report-only, so its labels lived only in CSS_RULES and this table did
   // not know the names — which meant the first CSS violation after the switch
@@ -1062,7 +1194,9 @@ const record = (v) => {
 }
 for (const abs of files) {
   const rel = relative(ROOT_DIR, abs)
-  for (const v of checkFile(rel, readFileSync(abs, "utf8"))) record(v)
+  const src = readFileSync(abs, "utf8")
+  for (const v of checkFile(rel, src)) record(v)
+  for (const v of checkDisplayFace(rel, src, { css: false })) record(v)
 }
 
 // Rule 6 is the only rule that reads CSS. The token layer is where an accent
@@ -1074,6 +1208,7 @@ for (const rel of CSS_FILES) {
   for (const v of checkAccentFills(rel, css, { css: true })) record(v)
   for (const v of checkTracking(rel, css)) record(v)
   for (const v of checkCssLayout(rel, css)) record(v)
+  for (const v of checkDisplayFace(rel, css, { css: true })) record(v)
 }
 
 // From `violations`, not `reportOnly`: CSS findings fail the build. This read
