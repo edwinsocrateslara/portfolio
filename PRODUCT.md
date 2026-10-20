@@ -62,8 +62,11 @@ front door has to work without instruction.
   Claude API, whose system prompt is generated from the same source files.
 - **Every claim the site makes about the designer traces to `lib/sources/`.**
   The chat must never invent an answer to avoid a fallback. This is enforced
-  mechanically by `check:sources` and, during the visual experiment, by
-  `check:frozen`.
+  mechanically by `check:sources`. During the visual experiment it was also
+  enforced by `check:frozen`, which was that branch's name for
+  `scripts/check-content-frozen.mjs`; the experiment is over (see the
+  appendix), and on main the script is deliberately not wired in — its header
+  says why.
 - The site is statically prerendered at `/`; work that forces it dynamic is a
   regression, not a tradeoff.
 
@@ -103,15 +106,29 @@ Real, in the repository:
 - `lib/projects.ts` — case-study copy for all seven projects, authored and
   corrected in the repo.
 - `lib/sources/resume.txt` — employment history, dates, education.
-- `lib/sources/voice.md` — the designer's own writing, 20 sections.
+- `lib/sources/voice.md` — the designer's own writing, 38 sections. (It was
+  20 when this list was written; the voice layer was rewritten to 37 on 2
+  September, `c71e082`.)
 - `lib/sources/meridian-case-study.txt` — the deck's verbatim text.
-- `public/framer/<slug>/` — 32 real project screenshots with written alt text.
+- `public/framer/<slug>/` — 37 real project images across 8 projects: 29
+  screenshots with written alt text, and 8 previews that are decorative by
+  decision and carry none. (This read "32 … with written alt text" when the
+  previews still had alt and the vibe project's images had not arrived.)
 - `public/meridian-case-study.pdf` — the real 21-slide deck.
 
 **Absences that must not be fabricated:** there are no testimonials, no press,
 no metrics beyond those already stated in the project copy, and no live demo
-links. FutureFit AI is in progress and its impacts line reads "work in
-progress; coming soon" — that is the truth and must stay.
+links.
+
+FutureFit AI's Career Path Visualization has **no impacts block at all**, and
+that is the truth and must stay until real post-launch data is cleared for
+publication. When this was written the field read "work in progress; coming
+soon", and this line said that wording must stay. It was the only placeholder
+on the site and it rendered as a Key impacts block whose content was an
+apology for itself, so the field was deleted rather than filled;
+`lib/projects.ts` records why, and what would legitimately fill it. The
+principle is unchanged — an absence is stated, never filled — and an absent
+block states it better than a placeholder did.
 
 ## Product Principles
 

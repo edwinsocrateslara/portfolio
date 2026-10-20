@@ -219,7 +219,7 @@ phone "the mobile app".
 
 ## What is generated, and what is checked
 
-`lib/edwin-context.md` is the `/api/chat` system prompt. Two of its
+`lib/edwin-context.md` is the `/api/chat` system prompt. Three of its
 sections are no longer hand-written:
 
 - **Projects** is generated from `lib/projects.ts` by
@@ -229,11 +229,24 @@ sections are no longer hand-written:
 - **Case Study Deck** is generated from `meridian-case-study.txt` by the
   same script, into its own pair of markers. `npm run check:context` fails
   if it is out of date.
-- **In His Own Words** is copied from `voice.md`, and the scripted answers
-  in `lib/voice-answers.ts` are asserted character-for-character against
-  it by `npm run check:voice`.
+- **In His Own Words** is generated from `voice.md` by the same script,
+  into its own pair of markers, and `npm run check:context` fails if it is
+  out of date. The scripted answers in `lib/voice-answers.ts` are separately
+  asserted character-for-character against `voice.md` by
+  `npm run check:voice`.
 
-`npm run check:sources` runs both. Add it to CI.
+The biography and work history stay hand-written — they are prose for a
+model, not a rendering of résumé rows — but `npm run check:context` reconciles
+the facts inside them (summary, contact lines, every role's employer, title
+and dates) against `resume.txt`.
+
+This list said "two of its sections" and "copied from `voice.md`" until In
+His Own Words became generated (`d26808c`, 31 August), and the biography was
+"the last section nothing checks" until the reconciliation (`fd68c27`, 3
+September).
+
+`npm run check:sources` runs 8 gates: voice, context, docs, render, intent,
+alt, numbers and api. It said "runs both" when there were two. Add it to CI.
 
 ### There is no linter, and that is now stated rather than implied
 
@@ -318,9 +331,9 @@ intended edits.
 Two things make this easy to get wrong, and both are worth knowing before
 running it:
 
-- **It is not one of the four gates.** `npm run build` runs `check:sources`,
-  `check:design` and `check:chips`. This script is in neither the build chain
-  nor CI. Its own header says so and says why: compared against `main` from
+- **It is not one of the build's gates.** `npm run build` runs
+  `check:sources` (8 gates), `check:design` (2: design and fallback) and
+  `check:chips` — 11 in all. This script is in neither the build chain nor CI. Its own header says so and says why: compared against `main` from
   `main` it is self-referential and passes trivially, and a gate that always
   passes is worse than no gate.
 - **There is no stored baseline to update.** `--base` is a runtime argument
@@ -347,13 +360,20 @@ absorbed silently.
 | `voice-answers.ts` | `0abd941` | Currently-reading entries, so the About page and the chat cannot disagree about what Edwin is reading. |
 | `check-voice.mjs` | `0abd941`, `fa3b40d` | Book fields added, then the About page's lede. The comparison is now whitespace-normalised on both sides — `voice.md` hard-wraps and JSX wraps differently, so the raw substring test returned false for a correct sentence. |
 
-**Still unguarded, and named here so it is not mistaken for covered:**
-`lib/scripted-responses.ts` holds the downtime paragraph as an inline literal.
-`check-voice.mjs` reads `voice-answers.ts`, not that file, so the two can
-drift. The repo has the right pattern for it — the deck response uses
-`voiceAnswerById()` precisely so the gate catches it — but moving the
-downtime answer into `VOICE_ANSWERS` changes its chip routing, so it is a
-separate decision rather than a silent fix.
+**Guarded since 31 August, and it was unguarded when this section was
+written.** `lib/scripted-responses.ts` holds the downtime paragraph as an
+inline literal. When this was recorded, `check-voice.mjs` read
+`voice-answers.ts` and not that file, so the two could drift. The repo had the
+right pattern for it — the deck response uses `voiceAnswerById()` precisely so
+the gate catches it — but moving the downtime answer into `VOICE_ANSWERS`
+would have changed its chip routing, so it was a separate decision rather than
+a silent fix.
+
+That decision was avoided rather than taken: `check-voice.mjs` now finds the
+literal in place by pattern and asserts it against `voice.md`, along with the
+quote in `lib/edwin-context.md` (`c4c9bbd`). The routing is unchanged.
+Confirmed on 20 October by changing one word of the literal: `check:voice`
+exits 1 and names it.
 
 ## Source-layer edit: removing the export
 

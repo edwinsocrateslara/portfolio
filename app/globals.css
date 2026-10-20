@@ -207,8 +207,9 @@
      class are one-to-one. */
   --track-caption:        0.4px;
   --track-wordmark:       0.8px;  /* mono caps, 700 — the brand, and only the brand.
-                                     Was --track-wordmark, named for a class that had zero
-                                     instances and has been deleted. */
+                                     Was --track-badge, named for a class that had zero
+                                     instances and has been deleted. (This note said
+                                     "Was --track-wordmark", naming itself.) */
   /* Mono caps, split by STEP. .type-section put caps at two sizes for the
      first time and one value cannot serve both: in EM — which is what the eye
      reads — 1.4/16 is 0.088em and 1.2/12 is 0.100em, so the smaller caps open
@@ -217,9 +218,11 @@
      written as pixels. It is not. */
   --track-caps-body:      1.4px;  /* mono caps at 16 — region headings */
   --track-caps-label:     1.2px;  /* mono caps at 12 — rows, labels, links */
-  /* SANS CAPS — the rail, at both of its steps. The ninth token, and the
-     budget was raised from 8 to 9 to admit it; see TRACK_BUDGET in
-     check-design.mjs and the row in DESIGN.md's table.
+  /* SANS CAPS — the rail, at both of its steps. It arrived as the ninth
+     token, and the budget was raised from 8 to 9 to admit it. The same day the
+     four display tokens collapsed into --track-display, leaving six, and M8
+     set TRACK_BUDGET to 6. See TRACK_BUDGET in check-design.mjs and the
+     tracking table in DESIGN.md.
      
      IN EM, NOT PX, AND THAT IS WHY IT IS ONE TOKEN INSTEAD OF TWO. The rail
      sets caps at 12 and at 16, which in pixels wants 0.6 and 0.8 — two rows

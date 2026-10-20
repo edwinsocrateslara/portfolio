@@ -1,8 +1,8 @@
 // Fails if any scripted answer string is not present verbatim in voice.md.
 // Guards the deliberate duplications in the source layer.
 //
-// Three kinds of duplication are checked, and they are checked for different
-// reasons:
+// Four kinds of duplication are checked, and they are checked for different
+// reasons. (This said "three" after the fourth was added.)
 //
 //   1. voice-answers.ts paragraphs — the chat's own words.
 //   2. currently-reading.ts book fields — structured data DERIVED from a

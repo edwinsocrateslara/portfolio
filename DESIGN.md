@@ -45,7 +45,11 @@ automatically lighter, with no second token and no decision to make.
 
 `--layer-blur` (`20px`) is applied **deliberately, never as a default**:
 `backdrop-filter` forces a new compositing layer, and on a surface with
-nothing behind it that is pure cost. Today it is on the sampler cards only.
+nothing behind it that is pure cost. Today it is on two surfaces: the sampler
+cards and the chat dock. The dock's blur has the transcript scrolling under it
+and is doing visible work — see **The dock has no rule**. This line said "the
+sampler cards only" from 12 August, and the dock took its blur the next day
+(`58e6d58`).
 
 *Outstanding:* those cards were blurred because the hero glow sat behind
 them, and that glow has since been deleted as dead code. Nothing is behind
@@ -581,27 +585,45 @@ geometric and binding it to a 4px lattice would force it back into the
 arithmetic ramp it replaced. `check:design` has always agreed with the ramp —
 its off-grid rules read lengths, not font sizes.
 
-**Line-height is the one derived value, and it is exempt.** It is 1.5× the
-font size at every step but one, which means it lands off the grid at most
-of them — 12px type gets 18px leading, 20px type gets 30px. That is correct
+**Line-height is the one derived value, and it is exempt from the grid.** It
+is 1.5× the font size at every step but one, which means it lands off the grid
+at most of them — 12px type gets 18px leading, 20px type gets 30px. That is correct
 and intentional. Forcing line-height onto multiples of 4 would either
 break the ratio or constrain the type scale to sizes divisible by 8.
 The ratio matters more than the grid here, because leading is a
 relationship between two numbers rather than a measurement in space.
 
-**There is no exception. The ratio holds at every step.**
+**The step that is not 1.5× is `display`, at 50/58, under one bounded
+exception:** steps of 40px and above may tighten to no lower than 1.15×. The
+rule and its argument are under **Line-height: 1.5×, with one bounded
+exception** below.
 
-There used to be one: a `hero` step at 52 / 60 rather than 52 / 78, on the
-argument that display type tightens as it scales. That step existed to carry
-the front-door headline and nothing else, and when the headline moved to `h2`
-at weight 400 it had zero users. Both the step and its exception were deleted
-rather than left in the scale — an exception that exists to justify one value
-stops being a rule about type and becomes a note about history.
+This paragraph used to read **"There is no exception. The ratio holds at every
+step."** That was true when it was written on 13 August, when the largest step
+was 28. It stopped being true on 27 August: the 1.25 ladder put the front door
+at 50, and the bounded exception was argued and written into this document the
+same evening (`4cff98e`), including the counter-argument that nearly won. What
+follows is the history that sentence summarised, and its argument still
+stands.
 
-A `hero` step exists again, at 28/42, and the distinction matters: the old one
-was removed when its last user left, not because one user is too few. This one
-has a user, is exactly 1.5x, and carries no exception. It replaced a 28/48
-that would have been the first leading exception since the deletion above.
+There used to be one exception: a `hero` step at 52 / 60 rather than 52 / 78,
+on the argument that display type tightens as it scales. That step existed to
+carry the front-door headline and nothing else, and when the headline moved to
+`h2` at weight 400 it had zero users. Both the step and its exception were
+deleted rather than left in the scale — an exception that exists to justify
+one value stops being a rule about type and becomes a note about history.
+
+A `hero` step came back on 19 August, at 28/42, and the distinction mattered:
+the old one was removed when its last user left, not because one user is too
+few. The new one had a user, was exactly 1.5x, and carried no exception. It
+replaced a 28/48 that would have been the first leading exception since the
+deletion above. It was retired on 27 August, when the front door took the
+display step (`4bf4b18`).
+
+**Display is not the 52/60 exception coming back, and that is the
+distinction worth keeping.** That exception was granted to one value. This one
+is a bound on a range — 40px and above, never tighter than 1.15× — so it
+states a rule about large type rather than excusing a number.
 
 **`control` at 14/21 is off the type LADDER, which is a different claim.** It
 is not an exception to the 4px rule — no type size is on that grid — it is the
@@ -654,26 +676,35 @@ element that uses it:
 
 | Token | Value | Corrects |
 |---|---|---|
-| `--track-display-hero` | -1px | Archivo at 28 |
-| `--track-display-h2` | -1px | Archivo at 32 |
-| `--track-display-sub` | -0.6px | Archivo at 24 |
-| `--track-display-title` | -0.4px | Archivo at 20 |
+| `--track-display` | -0.03em | Archivo display, every step from 26 up |
 | `--track-caption` | 0.4px | Archivo at 12, the floor |
-| `--track-badge` | 0.8px | Plex Mono caps, 700 |
+| `--track-wordmark` | 0.8px | Plex Mono caps, 700 — the brand |
 | `--track-caps-body` | 1.4px | Plex Mono caps at 16 |
 | `--track-caps-label` | 1.2px | Plex Mono caps at 12 |
 | `--track-caps-sans` | 0.05em | Archivo caps, both rail steps |
 
-**Nine values.** The budget in `check-design` was raised from 8 when the rail
-moved to Archivo, and the raise is the review — a row here plus a paragraph at
-`TRACK_BUDGET`. The ask started at three values and came down to one: the brand
-stayed mono so needed nothing, and the rail's two caps steps collapse into a
-single correction when it is written in **em** rather than px. `0.05em` is
-0.6px at 12 and 0.8px at 16.
+**Six values**, read from `app/globals.css`, and `TRACK_BUDGET` in
+`check-design` is 6.
 
-That 0.8px equals `--track-badge` and is **not** the same value — badge is mono
-caps at 700, solved from a different face. Pointing one at the other would
-rebuild the kind of coincidence this document keeps deleting.
+**It was nine, and how it got there is the review this budget exists for.**
+The budget was raised from 8 to 9 when the rail moved to Archivo (`93b48ec`,
+27 August). The raise *was* the review: a row here plus a paragraph at
+`TRACK_BUDGET`. The ask started at three values and came down to one. The
+brand stayed mono, so it needed nothing, and the rail's two caps steps collapse
+into a single correction when it is written in **em** rather than px. `0.05em`
+is 0.6px at 12 and 0.8px at 16.
+
+Seven hours later the same day, the 1.25 ladder collapsed the four
+display-tracking tokens — `-hero` −1px at 28, `-h2` −1px at 32, `-sub` −0.6px
+at 24 and `-title` −0.4px at 20 — into one em value (`97b52af`). The reason is
+under **Tracking: six tokens** below. In the same commit `--track-badge` became
+`--track-wordmark`, after the one thing it tracks. The budget then stood at 9
+against 6 real tokens, which let three new tokens arrive without the review,
+until M8 (`3956bee`, 3 September) set it to the real count.
+
+That 0.8px equals `--track-wordmark` and is **not** the same value — the
+wordmark is mono caps at 700, solved from a different face. Pointing one at the
+other would rebuild the kind of coincidence this document keeps deleting.
 
 The ramp runs monotonically with optical size — large sans
 tightens, small sans opens, mono caps open furthest. Read the mono pair in
@@ -681,13 +712,16 @@ tightens, small sans opens, mono caps open furthest. Read the mono pair in
 1.2/12 is 0.100em, so the smaller caps do open further. The absolute pixel
 value falling as the type shrinks is what makes that confusing written down.
 
-`--track-display-hero` deliberately repeats h2's -1px. 28 and 32 are close
-enough that a different correction would be false precision; it has its own
-name so the two can diverge if either step moves.
+When display tracking was four tokens, `--track-display-hero` deliberately
+repeated h2's -1px: 28 and 32 were close enough that a different correction
+would have been false precision, and it had its own name so the two could
+diverge if either step moved. The collapse to one em value settled that
+question the other way — a proportional correction cannot repeat itself by
+accident, because it is stated once.
 
-**A ninth value has to earn a row in this table**, and `check-design`'s
+**A seventh value has to earn a row in this table**, and `check-design`'s
 `tracking-budget` rule is what makes that true rather than aspirational — it
-fails the build at nine. Its sibling `tracking-literal` fails on any
+fails the build at seven. Its sibling `tracking-literal` fails on any
 `letter-spacing` px value outside this block, which is how the `-0.6px` left
 behind in the mobile `@media` block was eventually found. Two values for one
 role is a nudge, not a step: if a label needs different tracking in one place
@@ -752,11 +786,24 @@ down is what made that visible; four controls agreeing and one not is a
 finding, where five arbitrary numbers are just five numbers.
 
 **"Icon-only" is the precondition, and it is doing work.** A mark with type
-beside it answers to the cap height instead — see [Icons](#icons). The rail's
-brand mark is the case that shows the boundary: it is a 16px sparkle in a 72px
-row, which is 22% and nowhere near half, and that is correct, because it is not
-an icon-only control. It sits beside a wordmark, and against that wordmark's
-cap it is 1.43×. Applying the target rule there would give 36 and be absurd.
+beside it answers to the cap height instead — see [Icons](#icons). The mobile
+top bar's brand mark is the case that shows the boundary: a 16px sparkle
+beside the wordmark. It is not an icon-only control, so the target rule does
+not size it; the type beside it does. Against the 16px wordmark's cap (11.17px,
+measured at 800 wide) it is **1.43×**, which is the 1.4× the cap rule asks for.
+
+⚠ **At 640 and below the live instance breaks the rule it illustrates.** The
+wordmark steps to 12 there (cap 8.38px) and the mark stays at 16, which is
+**1.91×**; the cap rule would give 12. Recorded rather than resolved: nobody
+has ruled whether the mark should step with its wordmark.
+
+This example used to be the rail's brand at 1440: a 16px sparkle in a 72px
+row, 22% of it and nowhere near half, which was correct because it sat beside
+a wordmark at 1.43× cap — applying the target rule there would have given 36
+and been absurd. Since 3 September (`26f3fee`) the rail carries the mark
+alone, at 32, with no type beside it. It answers to neither rule: it is an
+off-ramp size chosen so the brand cannot be mistaken for the 24px typing
+indicator, and the reason is at `--brand-mark-size` in `app/globals.css`.
 
 Two rules, and which applies is decided by one question: is there type beside
 this mark?
@@ -766,8 +813,9 @@ this mark?
 Most controls in this system are **42px tall**, not 44. That is deliberate and
 it is not an oversight to be "fixed" by a later audit.
 
-42 is the chip's own arithmetic: 8px padding + 24px line-height + 8px padding
-+ 2×1px border. Prompt chips are 42.
+42 was the chip's own arithmetic when this was written: 8px padding + 24px
+line-height + 8px padding + 2×1px border. Prompt chips are no longer 42 —
+they are 47, for the reasons below.
 
 **The rail's rows are not one height, and the shared left edge does not come
 from their height.** Measured: project rows are **56** and carry a 40px
@@ -893,19 +941,27 @@ populated, no step without a reason. This step inverts it: **one component is
 the reason.** It is recorded here rather than left to be inferred, because it
 has already been deleted once by someone reasoning from the count.
 
-**The history, in order:**
+**The history, in order** — read from `git log` of `.chip` in
+`app/globals.css` and of `components/chat/prompt-chip.tsx`:
 
-| | size | what happened |
-|---|---|---|
-| 1 | **14 / 21** | where chips started, as `.type-control` |
-| 2 | **16 / 24** | the step was retired as a single-consumer leftover and chips merged up into `.type-body` — **an error.** They landed on exactly the composer's type: same family, size, leading, weight and tracking, separated only by colour. A suggestion and the thing you act with read as peers. |
-| 3 | **12 / 18** | dropped to `.type-caption`, which is where `.chip`'s padding had always pointed (12 + 18 + 12 + 2 = 44). Correct arithmetic, and too small for something you tap. |
-| 4 | **14 / 21** | back, as a step held for one component. |
+| | size | commit | what happened |
+|---|---|---|---|
+| 1 | **16 / 24** | before `58e6d58` | where chips started: `.type-body`, `--space-8` padding, 42px. |
+| 2 | **12 / 18** | `58e6d58`, 13 Aug | dropped to `.type-caption` with `--space-12` padding, a 44px target. The argument: label size and hit size are independent, so the label can shrink while the target grows. |
+| 3 | **14 / 21** | `e673671`, 19 Aug | `.type-control` created for the chips: their own step. |
+| 4 | **16 / 24** | `49a9344`, 27 Aug | the step was retired as a single-consumer leftover during the move to the 1.25 ladder, and chips merged up into `.type-body` — **an error.** They landed on exactly the composer's type: same family, size, leading, weight and tracking, separated only by colour. A suggestion and the thing you act with read as peers. |
+| 5 | **12 / 18** | `df170f3`, 27 Aug | dropped to `.type-caption` again, "so they sit under the composer" — and where `.chip`'s padding had always pointed (12 + 18 + 12 + 2 = 44). Correct arithmetic, and too small for something you tap. |
+| 6 | **14 / 21** | `8e78b5f`, 27 Aug | back, 19 minutes later, as a step held for one component. |
+
+This table used to begin at row 3 and call it "where chips started". That was
+false rather than stale: chips started at 16, and without the first two rows
+it read as though 14 were the original and 12 and 16 were one-off detours,
+when each had been tried twice.
 
 **So: if you are reading this because you found a step with one consumer and
-wondered whether it is a leftover — it is not.** It was that once, it was
-deleted for that reason, and the two sizes either side of it were both tried
-and both wrong. The ladder governs ranks; this is a control label, and 14 is
+wondered whether it is a leftover — it is not.** It was taken for one once,
+it was deleted for that reason, and the two sizes either side of it were each
+tried twice and were wrong both times. The ladder governs ranks; this is a control label, and 14 is
 the size it wants.
 
 **No tracking on `.type-control`,** and that is a decision rather than an
@@ -944,11 +1000,20 @@ because the tightening bound does not reach below 40.
 The rule this replaced sent both 28 and 32 to 24, which made two levels the
 desktop distinguishes identical on a phone.
 
-`.type-wordmark` also steps, 16→12: one role at two sizes, the rail's brand and
-the mobile top bar's. That used to be a second class, `.type-badge`, which an
-audit measuring only 1440 reported as having zero instances.
+`.type-wordmark` also steps, 16→12: one role at two sizes, both in the mobile
+top bar — 16 above 640, 12 at 640 and below. When this was written the two
+sizes were the rail's brand at 1440 and the top bar's; the rail has carried the
+mark alone since `26f3fee`, so the wordmark no longer renders at desktop
+widths at all. The 12 used to be a second class, `.type-badge`, which an audit
+measuring only 1440 reported as having zero instances.
 
-### The thirteen classes
+### The fourteen classes
+
+Thirteen when this table was written (`4cff98e`, 27 August). That commit
+also deleted `.type-control`, as a single-consumer leftover, three minutes
+after the chips had stopped using it. It came back for the chips 89 minutes
+later (`8e78b5f`) — see **The 14/21 step is off the ladder, and kept on
+purpose**.
 
 | class | family | size | wt | tracking | voice |
 |---|---|---|---|---|---|
@@ -956,6 +1021,7 @@ audit measuring only 1440 reported as having zero instances.
 | `.type-page` | Archivo | 32/48 | 700 | −0.03em | Product |
 | `.type-name` | Archivo | 26/39 | 700 | −0.03em | Product |
 | `.type-body` | Archivo | 16/24 | 400 | — | Product |
+| `.type-control` | Archivo | 14/21 | 400 | — | Product |
 | `.type-body-strong` | Archivo | 16/24 | 600 | — | Product |
 | `.type-rail-section` | Archivo | 16/24 | 600 | 0.05em ᴜᴘ | Product |
 | `.type-action` | Archivo | 12/18 | 600 | 0.05em ᴜᴘ | Product |
@@ -1078,9 +1144,16 @@ rule describes.
 `.type-wordmark` — the brand — stays IBM Plex Mono at 16/24 weight 700. By the
 rule it is Product voice: it is the product naming itself, and it is the most
 "said aloud" string on the site. It stays Data-voiced because a brand mark is
-allowed to be its own thing, and because with the rail in Archivo it is the only
-place the mono voice appears on every surface. Alone at the top it reads as a
-mark; two sizes of it in the rail read as a texture.
+allowed to be its own thing.
+
+There was a second reason when this was written: with the rail in Archivo, the
+rail's wordmark was the only place the mono voice appeared on every surface.
+That stopped holding on 3 September (`26f3fee`), when the rail's brand became
+the mark alone; the wordmark now renders only in the mobile top bar, so at
+desktop widths it is not the thing carrying mono onto every surface. The first reason
+carries the decision alone now. The argument for one size per view is
+unchanged — alone at the top it reads as a mark; two sizes of it in one view
+read as a texture.
 
 #### One boundary that needs a reading
 
@@ -1127,14 +1200,23 @@ reveal, see the first line of the reveal sitting higher, and add a few pixels
 to close it. Those pixels would be wrong.
 
 All three scrolling panes are `.pane-scroll` and share its
-`padding-top: var(--space-group)`. Measured from the pane's content top:
+`padding-top: var(--space-group)`. Measured from the pane's content top at
+1440×900 on 20 October, with ink top as the first pixel row inside the
+element's box that differs from the ground by more than 24 across three
+channels:
 
 | view | box top | ink top | first element |
 |---|---|---|---|
-| deck | **32** | 38 | `.type-h2` 32/48 |
-| About | **32** | 38 | `.type-h2` 32/48 |
-| project reveal | **32** | 36 | `.type-title` 20/30 |
-| front door | 225 | 231 | `.type-h2`, `--hero-anchor: 25dvh` |
+| deck | **32** | 42 | `.type-page` 32/48 |
+| About | **32** | 42 | `.type-page` 32/48 |
+| project reveal | **32** | 41 | `.type-name` 26/39 |
+| front door | 225 | 233 | `.type-display` 50/58, `--hero-anchor: 25dvh` |
+
+The table used to name `.type-h2` and `.type-title` — classes from before the
+1.25 ladder (27 August) — and read 38 / 38 / 36 / 231. The class names were
+renamed out from under it; the ink tops were measured by an earlier method
+this document did not record, so the change between the two sets is not
+evidence that anything moved.
 
 #### The front door is exempt from the top rung, on purpose
 
@@ -1164,47 +1246,69 @@ reserve nothing on purpose — see the dock-reserve note above, where `--dock-h`
 is set to `0px` explicitly rather than left to a fallback.
 
 **The box tops are identical.** What differs is where the glyphs start inside
-their own line box: a 32px face in a 48px box begins 6px down, a 20px face in a
-30px box begins 4px. That is the same rule already stated for the rail — optical
-distances are paddings plus a fixed, known offset, and the offset is a property
-of the type step, not a spacing decision. Closing a 2px gap here would put a
-non-rung value into the one layer that cannot carry rungs.
+their own line box: a 32px face in a 48px box begins 10px down, a 26px face in
+a 39px box begins 9px. That is the same rule already stated for the rail —
+optical distances are paddings plus a fixed, known offset, and the offset is a
+property of the type step, not a spacing decision. Closing a 1px gap here would
+put a non-rung value into the one layer that cannot carry rungs. (It was a 2px
+gap when the reveal opened at 20/30; the argument does not depend on the size.)
 
 The reveal's ink moved 35 → 36 when its opening line went from `.type-body` to
-`.type-title`. That was a consequence of the type change, not the goal of it.
+`.type-title`, and moved again when it became `.type-name`. Both were
+consequences of the type change, not the goal of it.
 
 The front door is the only real difference, and it is deliberate:
 `--hero-anchor` anchors the hero rather than padding it.
 
 ### A project reveal opens at one step up
 
-The first line of a reveal is `.type-title` (20/700); every paragraph under it
+The first line of a reveal is `.type-name` (26/700); every paragraph under it
 is `.type-body` (16/400). It earns the step because it is the opening
 statement of the case study, and the same class does the same job on the About
-page's lede — one rule, not two.
+page's opening sentence — one rule, not two.
 
-It is deliberately **not** a heading. `.type-h2` is 32/700, and at 20 the line
-stays clearly subordinate to it, so a reveal still reads as a conversation
-rather than as a page with a title. Weight alone at body size was tried and
+It is deliberately **not** a heading. Weight alone at body size was tried and
 rejected: at 16/600 it read as bold prose inside a paragraph, not as a first
 line.
 
-The flag lives on the block, set in `buildProjectBodyBlocks` — so the chat
-reveal and `/case-study/[slug]` cannot disagree about which line is the
-opening one, the same reason the block ORDER lives there. A project with no
-tagline emits no block at all, so nothing renders an empty bubble.
+**It opened at 20/700, and the argument for 20 was never re-run at 26.** As
+first written, this section chose `.type-title` at 20 because against
+`.type-h2` at 32/700 "the line stays clearly subordinate to it, so a reveal
+still reads as a conversation rather than as a page with a title." On 27
+August the move to the 1.25 ladder took it to `.type-name` at 26 (`49a9344`),
+and that move was **forced, not argued**: the new ramp has no Archivo step at
+20 — 20/30 is now `.type-section`, which is mono and Data voice — so the only
+Archivo steps above body are 26, 32 and 50. The commit's stated reason is
+that the lede is "a rank above body"; it does not engage the subordination
+test. At 26 the line sits one rung under `.type-page` at 32/700, and nobody
+has checked whether a reveal still reads as a conversation at that size.
 
-**One consequence, on the standalone route only.** That page has its own
-project-header card, whose title is also `.type-title`, so two equal-rank lines
-now sit near the top. It reads because the header is inside a bordered card
-with a thumbnail and a mono eyebrow and the tagline is loose body text below
-it — but they are the same type step, and if that card is ever restyled this is
-the pairing to check.
+Ruled on 20 October: 26 stays. The site has been looked at at 26 for weeks and
+is the spec. The gap is written here so it is a known untested call rather than
+a silently blessed one, and it covers About's opening sentence too, which
+shares the class.
+
+The flag lives on the block, set in `buildProjectBodyBlocks`, the same reason
+the block ORDER lives there. A project with no tagline emits no block at all,
+so nothing renders an empty bubble.
+
+**There used to be a second consumer, and a consequence on it.** The flag was
+put on the block so the chat reveal and `/case-study/[slug]` could not
+disagree about which line was the opening one. That page had its own
+project-header card whose title was also `.type-title`, so two equal-rank lines
+sat near the top — it read because the header was inside a bordered card with
+a thumbnail and a mono eyebrow. The standalone route was deleted on 20 August
+(`263f220`); the chat reveal is now the only consumer.
 
 ## Icons
 
 Four sizes — 12, 16, 20, 24 — and two rules that produce them. Which rule
 applies depends on one question: is there type beside this mark?
+
+One mark sits off the ramp, and neither rule produced it: the rail's brand at
+1440 is 32, alone, sized to separate it from the 24px typing indicator. Its
+reason is at `--brand-mark-size` in `app/globals.css`, and the sparkle's
+section below covers its stroke.
 
 ### Beside type → 1.4× the cap height of the visible neighbour
 
@@ -1215,7 +1319,12 @@ which is the argument for 1.4 over a neighbouring ratio:
 | neighbour | cap | ×1.4 | icon | measured |
 |---|---|---|---|---|
 | 12px label — the download pills | 8.2 mono / 8.6 Archivo | 11.5–12.0 | **12** | 1.46× |
-| 16px title — doc-link cards, prose, SEND | 11.0 | 15.4 | **16** | 1.46× |
+| 16px title — doc-link cards, prose | 11.0 | 15.4 | **16** | 1.46× |
+
+This row also listed SEND, which was wrong rather than stale: SEND is
+icon-only, has no type beside it, and is sized by the target rule below — 16
+from a 34px target. The two rules give the same number there, which is why the
+mistake was invisible.
 
 **"Visible neighbour" is load-bearing, and getting it wrong is what produced
 the one real error here.** The doc-link card's trailing mark was sized at 12
@@ -1278,11 +1387,18 @@ prop, which a custom property cannot reach.
 
 ### The one exception: the sparkle
 
-Its **size** is on the ramp at both call sites — 16 for the brand mark, 24 for
-the typing indicator. Its **stroke** is 8.33 in a 100-unit viewBox, which is
-the same 1:12 ratio expressed in its own coordinate space, so at 16 it paints
-1.33px and agrees with everything else. At 24 it paints 2.00px where the rule
-asks for 1.50.
+Its **size** is on the ramp at two of its three call sites — 24 for the typing
+indicator, 16 for the brand beside the wordmark in the mobile top bar — and off
+it at the third, 32 for the rail's brand at 1440 (see the note at the top of
+this section). Its **stroke** is 8.33 in a 100-unit viewBox, read off the
+rendered SVG, which is the same 1:12 ratio expressed in its own coordinate
+space. So at 16 it paints 1.33px and agrees with everything else; at 24 it
+paints 2.00px and at 32 it paints 2.67px, where the rule asks for 1.50 at both.
+
+When this was written there were two call sites, and the brand mark was the 16
+beside the rail's wordmark. The rail's mark went to 32 on 3 September
+(`26f3fee`) and the stroke stayed 8.33; the reason below covers 32 as it
+covers 24.
 
 It is left alone deliberately. The path and its stroke are a trace of a Lottie
 source, documented in `docs/provenance/typing-indicator/`; re-picking the
@@ -1322,18 +1438,42 @@ edges. The impact card is narrower on the right by design
 
 ## Components
 
-- **Nav** — `.type-label`, `text-secondary`; hover → `text-primary` +
-  1px underline. Availability dot `text-primary`, 8px.
-- **Card** — `surface` fill or none, 1px `border`, `radius-card`. Image
-  **1:1** (matches the source preview images — all 7 are square), unfiltered.
-  Index bottom-right, mono. Hover: border → `border-strong`, lift 1px.
-- **Grid gutter** (Selected Work) — `group` (32px).
+*Three of the entries below — Nav, Card with its grid gutter, and Badge —
+describe components from the Bureau 1D handoff that no longer exist. They are
+kept and marked as history because each carries a decision someone would
+otherwise re-make.*
+
+- **Nav** — *historical.* The handoff's top nav: `.type-label`,
+  `text-secondary`; hover → `text-primary` + 1px underline. It went when the
+  sidebar app shell replaced the scrolling page (`43f53d3`, 11 August); the
+  rail is the site's index now.
+  **It carried an availability dot, and that is gone on purpose, not with the
+  nav.** It was removed the same day (`de393af`) for a reason that holds
+  regardless of where a dot would sit: Bureau 1D is achromatic, so a dot cannot
+  carry the green/amber convention that makes a bare status dot legible —
+  without the word it is decoration. It also rendered twice, because the mobile
+  top bar had one with no label at all. `PRODUCT.md` § Brand Commitments then
+  made the absence binding: no status or availability indicator, no recency
+  signalling. Do not reintroduce one as a styling detail.
+- **Card** — *historical.* The Selected Work grid card: `surface` fill or
+  none, 1px `border`, `radius-card`. Image **1:1** (matches the source preview
+  images), unfiltered. Index bottom-right, mono. Hover: border →
+  `border-strong`, lift 1px. The grid was removed with the old page
+  (`43f53d3`) because the rail lists every project; the front door's sampler
+  cards are its nearest descendant, described under **The front door**.
+- **Grid gutter** (Selected Work) — *historical,* with the grid — `group`
+  (32px).
 - **Chip / tag** — see **Chips** below; one primitive, pill radius. Tag text
-  `text-muted` `.type-attribute`; prompt-chip `text-secondary` `.type-body` with a
-  mono `→` prefix.
-- **Badge** — default = 1px `border-strong` + mono `text-secondary`.
-  **Live/active = filled `accent` on `on-accent`** — the one deliberate
-  inversion in the system, reserved for "this is on."
+  `text-muted` `.type-attribute`; prompt-chip `text-secondary` `.type-control`,
+  with an optional `.type-attribute` prefix. This entry said `.type-body` with
+  a mono `→` prefix, which was the chip before the history under **The 14/21
+  step is off the ladder**.
+- **Badge** — *historical.* Default = 1px `border-strong` + mono
+  `text-secondary`; **live/active = filled `accent` on `on-accent`**, the one
+  deliberate inversion in the system, reserved for "this is on." The badges
+  were deleted with the Side of Desk pane that held their only callers (see
+  **Chips** and Known judgment call 3). The inversion rule outlives them: SEND
+  takes the filled accent only once there is something to send.
 - **Input** — rest: `layer-1`/`hairline`, `radius-chip`. Focus: border →
   `text-secondary` + a 3px `accent`-at-11% ring (`--bureau-focus-ring`). Steps
   to `radius-card` once it grows past one line — see **The chat input is the
@@ -1346,13 +1486,16 @@ edges. The impact card is narrower on the right by design
 - **External link** — `<NewTabMark />`: trailing `↗` in `text-muted`, plus
   visually-hidden "(opens in a new tab)" text so the warning is announced
   rather than only drawn. The glyph is `aria-hidden`, or a screen reader
-  would say it twice. **On every `target="_blank"` in the app** — the rail's
-  RESUME and LINKEDIN rows, the doc-link card, the case-study header's
-  Portfolio link, and inline markdown links in chat prose. Before this, four
+  would say it twice. **On every `target="_blank"` in the app** — the rail
+  footer's LinkedIn link, the doc-link card, and inline markdown links in chat
+  prose. When this was written the list also had the rail's RESUME row, which
+  now opens the Résumé pane in place, and the case-study header's Portfolio
+  link, which went with the standalone route (`263f220`). Before this, four
   external links carried no signal at all, visible or announced.
   `glyph={false}` is for links that already have their own mark: the doc-link
   card has a download `↓`, and two arrows on one control read as two
-  different actions, so it takes the announcement without a second glyph.
+  different actions, so it takes the announcement without a second glyph. The
+  LinkedIn link takes it too, because the logo is its mark.
 - **Callout / doc link** — `surface`, 1px `border`, 2px `accent` left rule
   for emphasis blocks (e.g. IMPACT). Doc link = square "PDF" glyph + UI
   title + mono meta line + `↓`.
@@ -1372,23 +1515,34 @@ and nothing rendering them.
 
 | Class | Type step | Padding | Target | For |
 |---|---|---|---|---|
-| `.chip` | caption | `12 / 16` | **44px** | an action the visitor can take |
+| `.chip` | control, 14/21 | `12 / 16` | **47px** | an action the visitor can take |
 
-**`.chip` used to take body type**, on the reasoning that shrinking a tap
+This table said caption, 12/18, at 44px. That was the chip on 13 August, when
+this section was written, and it is the state the type ramp's history records
+as tried twice and wrong both times — "too small for something you tap." The
+chips have been at `.type-control` since 27 August (`8e78b5f`). The full
+sequence, all six steps, is under **The 14/21 step is off the ladder, and kept
+on purpose**; the 47px arithmetic is under **Touch targets**.
+
+**The argument this section made still holds, and the size it reached did
+not.** `.chip` used to take body type, on the reasoning that shrinking a tap
 target's label works against it. That was reversed deliberately: the label
-dropped to 12 and the padding rose to `--space-12`, so the text reads small
-while the target is **44px** — `12 + 18 + 12 + 2`. Measured, not assumed. The
+dropped to 12 and the padding rose to `--space-12`, so the text read small
+while the target was **44px** — `12 + 18 + 12 + 2`. Measured, not assumed. The
 argument was right about targets and wrong about the link between them: label
 size and hit size are independent, and treating them as one cost the chips
-more weight than an action of that scale earns.
+more weight than an action of that scale earns. That independence is exactly
+why 14 could come back without touching the padding: 14/21 + 12 + 12 + 2 = 47.
 
-**`caption`, not `label`, and the difference matters.** Both are 12 / 18. But
+**Archivo, not the mono label voice, and the difference matters.** This was
+argued when chips were at caption, and both caption and label were 12/18. But
 `label` is mono, uppercase and tracked — the system-chrome voice, for nav,
 badges, indices and meta. Chips carry things a person would actually say, so
 they take Archivo in sentence case. Setting them in `label` made the front door
 shout its own prompts in uppercase mono, and made them ~40% wider: the four
 front-door chips measured 1312px on one row at `label` against **885px** at
-`caption`.
+`caption`. `.type-control` is Archivo in sentence case too, so the argument
+carries over unchanged; the widths were measured at 12 and are not current.
 
 **Fill:**
 
@@ -1405,10 +1559,13 @@ inherited.
 
 ## Loading
 
-**The four-pointed sparkle appears twice**: as the typing indicator at
-`--indicator-size` (24), and as the brand mark beside the wordmark at
-`--brand-mark-size` (16). One component, `components/ui/sparkle.tsx`, one
-traced path — the geometry is not duplicated. Both are a 15%-opacity track, a
+**The four-pointed sparkle appears in two roles**: as the typing indicator at
+`--indicator-size` (24), and as the brand mark — alone in the rail at
+`--brand-mark-size` (32), and beside the wordmark in the mobile top bar at
+`--brand-mark-topbar` (16). Until 3 September the rail's mark was also 16 and
+sat beside the wordmark (`26f3fee`). One component,
+`components/ui/sparkle.tsx`, one traced path — the geometry is not duplicated.
+Every instance is a 15%-opacity track, a
 40% arc and a 3% leading dot, the last two rotating one full turn every
 1.6667s via `stroke-dashoffset`.
 
@@ -1499,9 +1656,13 @@ component. They are the same thing with different contents; a second copy of
 the markup would be a second place for the active treatment, the thumbnail
 rules and the truncation to drift.
 
-**VIBE CODING renders only when it has rows.** Its entries are dev-gated, so
-in production the section — heading included — is absent. A heading above
-nothing is worse than no section. It replaced a single nav row that swapped
+**VIBE CODING renders only when it has rows.** A heading above nothing is
+worse than no section, so emptying `lib/vibe-projects.ts` removes the section
+rather than leaving its heading. That guard is in `sidebar.tsx` and is
+unrelated to the environment. When this was written the entries were
+dev-gated, so in production the section was absent; the gate came off on 24
+August, when the case study was finished (`53c3eee`), and the section ships.
+It replaced a single nav row that swapped
 the pane to a Side of Desk grid; once the rail lists the projects, that pane
 was redundant the way the project grid would be if WORK listed everything, and
 it was deleted rather than left orphaned.
@@ -1519,29 +1680,40 @@ half of the split described under "The document group is divided by a rule".
 Everything else sits flush, so every visible gap is the sum of two facing
 paddings plus the slack left by centring content optically inside a taller box:
 
-- a 32px thumbnail centred in a 56px row leaves **4px** above and below
-- a 16px icon centred on an 18px label line leaves **1px**
+- a 40px thumbnail exactly fills a 56px row's 40px content box, so between
+  two rows there is **0** slack
+- a section header's text sits inside its own 24px line box, which is the
+  slack between a header and the rows around it
 
-So the distance between two painted things is `paddingA + paddingB + slack`,
-and the slack is 8px between two rows, 5px between a header icon and a
-thumbnail.
+So the distance between two painted things is `paddingA + paddingB + slack`.
+When this was written the thumbnails were 32 and the headers carried a 16px
+icon, which left 4px of slack above and below each thumbnail and 1px around
+each header icon. The thumbnail became 40 on 24 August, sized to the label
+block beside it (`bebe347`), and the header icons are gone.
 
-**That means the optical distances cannot themselves be ladder rungs, and are
-not.** Making them rungs would require the two facing paddings to sum to
-`rung − slack` — 8 for a 16px gap, 27 for a 32px gap — and 27 is not reachable
-from two rungs. The constraint is real, not a shortcut: with flush boxes and
-optically centred content, you can put the ladder on the paddings or on the
-gaps, but not both. **The paddings are the rungs**; the gaps are those plus a
-fixed, known offset.
+**That means the optical distances cannot generally be ladder rungs.** Making
+them rungs would require the two facing paddings to sum to `rung − slack` — at
+the old 8px row slack, 8 for a 16px gap and 27 for a 32px gap — and 27 is not
+reachable from two rungs. The constraint is real, not a shortcut: with flush
+boxes and optically centred content, you can put the ladder on the paddings or
+on the gaps, but not both. **The paddings are the rungs**; the gaps are those
+plus a fixed, known offset. Since the 40px thumbnail took the row slack to
+zero, row → row happens to be a rung (16, `between`) by construction; the
+header distances still carry their text's offset and are not.
 
 What matters is that the ORDER is right, and it was not. Symmetric `8 / 8`
-header padding produced this:
+header padding produced the first column below; the asymmetric padding fixed it
+in the second; the third is the rail measured on 20 October at 1440×900 —
+thumbnail edge to thumbnail edge, and header text box to thumbnail:
 
-| | before | after | from |
-|---|---|---|---|
-| row → row | 24 | **24** | row padding `8` + `8` |
-| header → its first row | 21 | **29** | header `between` + row `8` |
-| section → section | 21 | **45** | row `8` + header `group` |
+| | before | after | today | from |
+|---|---|---|---|---|
+| row → row | 24 | **24** | 16 | row padding `8` + `8` |
+| header → its first row | 21 | **29** | 28 | header `between` + row `8` |
+| section → section | 21 | **45** | 43 | row `8` + header `group` |
+
+The numbers moved with the thumbnail; the order did not, and the order is the
+claim.
 
 A section boundary was **tighter** than the gap between two rows inside a
 section, and identical to the gap between a header and the row it labels — so
@@ -1561,12 +1733,16 @@ replaced netted **+7px** — 680 against a 673 viewport. Fixing the inverted
 spacing hierarchy above cost **+64px** more (32px per header × 2), taking it to
 738. Widening the document icons to 32px cost **+42** (three rows, 42 → 56
 each) and the document group's hairline **+1**, taking it to **781, or 108px
-past the fold**. At 380 it is 215px past.
+past the fold**. At 380 it was 215px past.
+
+**Measured on 20 October**, on the dev server: 769 against a 752 viewport at
+1440×900, **17px past the fold**; 217 past at 1440×700; 110 past in the
+380×820 sheet. Document rows are 48 and headers 72 today.
 
 **Each further project costs 56px**, the row height, and each further *section*
-costs 98 — its header at 66 plus one row. Contact stays reachable at any
-height: `.rail-scroll` is `overflow-y: auto` and the CONTACT footer sits
-outside it, pinned. Verified at both widths.
+costs 128 — its header at 72 plus one row. (It was 98, with the header at 66.)
+Contact stays reachable at any height: `.rail-scroll` is `overflow-y: auto` and
+the contact footer sits outside it, pinned.
 
 This is accepted, not an oversight. It is mechanically fine — `.rail-scroll` is
 `overflow-y: auto` and the CONTACT footer sits outside it, pinned, so contact
@@ -1575,38 +1751,61 @@ at once on a common laptop" to "scrolls", and it will not move back. If that
 becomes a problem the answer is fewer sections or shorter rows, not removing
 the scroll.
 
-### One icon-to-label gap, and two label edges
+### One column, and two label edges
 
-Every mark in the rail sits `within` (8px) from the word it labels — headers,
-project rows, document rows, the CONTACT square. There is no second value.
+Measured on 20 October at 1440×900. Labels land on **two** left edges:
 
-Labels land on **three** left edges, and each is a consequence of the mark's
-width rather than a decision:
+| | mark | label x |
+|---|---|---|
+| WORK, VIBE CODING | none — the header text itself starts at 22 | **22** |
+| every project row | 40px thumbnail, 22–62 | **70** |
+| every document row | 24px glyph, 22–46, in a 40px column | **70** |
 
-| | mark | gap | label x |
-|---|---|---|---|
-| WORK, VIBE CODING | 16px icon | 8 | **46** |
-| every project and document row | 32px | 8 | **62** |
-| CONTACT | 8px square | 8 | **40** |
+Every project and document row reserves the same 40px column from x=22 and
+puts its label `within` (8px) of the column's edge. That is the alignment, and
+it comes from the column rather than the mark — **Touch targets**, above, says
+the same thing from the row side. The contact links are icon-only and have no
+label edge.
 
-This replaced an arrangement where the three document rows had a 24px gap —
-a `margin-right` that padded a 16px icon out to a 32px column in order to buy
-the 62 edge. It bought alignment by breaking the gap ladder on the only three
-rows in the rail that had one, and 24 is not a rung. **Widening the icon to 32
-gets both**: the gap is `within` because the column *is* the icon.
+**This section used to say "one icon-to-label gap": every mark `within` its
+word, on three edges** — headers at 46 behind a 16px icon, project and
+document rows at 62 behind a 32px mark, CONTACT at 40 behind an 8px square. It
+was written on 17 August (`b5366ec`). Two days later the document glyph went
+to 24 inside its 32px column (`c3ec8ef`). On 24 August the thumbnails went to
+40 and took the document column with them (`bebe347`), whose alignment table
+already shows the headings with no icon, their ink at 22. The CONTACT block
+has since become the icon-only footer.
 
-The alternative was leaving the document icons at 16 and letting their labels
-sit at 46. It was rejected for a specific reason, not on taste: document labels
-are mono caps, identical in type to WORK and VIBE CODING. At 46 with a 16px
-icon they become typographically indistinguishable from section headers, which
-would make the unheaded-group problem below strictly worse.
+**The argument it made applies today, and the call it points at was deferred,
+not made.** The 17 August change existed to remove a 24px gap: the document
+rows had a `margin-right` that padded a 16px icon out to a 32px column to buy
+the shared label edge, which "bought alignment by breaking the gap ladder on
+the only three rows in the rail that had one, and 24 is not a rung." Widening
+the icon to 32 got both, because the column *was* the icon. Today the column
+is 40 and the document glyph is 24 inside it, so from glyph to label is
+**24px** again, while the thumbnail rows sit at 8.
 
-Document icons carry `strokeWidth={1.25}`, not the 2 the 16px icons carry.
-Lucide expresses stroke width in viewBox units, so the same number paints twice
-as thick at 32px — at 2 a document mark out-weighed the section header above
-it, inverting the hierarchy. 1.25 was picked by eye against the rendered rail:
-1 goes spindly and falls behind its own 12px label, 1.5 still out-weighs the
-header. See `DOC_ICON_STROKE` in `components/shell/sidebar.tsx`.
+`bebe347` saw this and wrote it down in its commit message rather than here:
+"THE GLYPHS STAY 24 while their column grows … A 24px mark beside a 32px
+picture and a 24px mark beside a 40px one are not the same relationship, and
+the doc group reads lighter than it did … Not taken here because it is a
+second variable and this commit is about alignment." It has not been taken
+since. Recorded here so it is an open call in the document rather than only in
+git history.
+
+The alternative rejected then was leaving the document icons at 16 with labels
+at 46, because document labels were mono caps identical to WORK and VIBE
+CODING, and at 46 they would have been indistinguishable from section headers.
+The type has since diverged — headers are `.type-rail-section` at 16, document
+labels `.type-action` at 12 — so that reason is weaker than it was.
+
+Document icons carried `strokeWidth={1.25}`, picked by eye at 32: at 2 a
+document mark out-weighed the section header above it, 1 went spindly, 1.5
+still out-weighed the header. It stayed 1.25 when the glyph went to 24, where
+it painted 1.25px. That constant, `DOC_ICON_STROKE`, was retired with the
+icon ramp on 28 August (`0de263b`); the rail's 24px glyphs take
+`ICON_STROKE_RAIL` (1.5), which paints 1.5px — the ink the stroke rule under
+**Icons** holds above 16.
 
 ### The document group is divided by a rule
 
@@ -1628,13 +1827,16 @@ rather than clinging to one — measured 18px above, 21px below, the 3px from th
 doc row's icon being taller than its label ink.
 
 The rule costs 1px of rail height. Widening the document icons cost 42 more
-(three rows, 42 → 56 each), which is where the numbers below come from.
+(three rows, 42 → 56 each), which is where the numbers in **Known
+consequence** above came from. Document rows are 48 today; the 18 / 21 split
+around the rule was measured with 56px rows and has not been re-measured.
 
 ## The front door
 
 The hero is a **band sized to the viewport**, not a centred block. `.hero-band`
-takes `min-height: 100%` of `.pane-front`'s content box, centres the headline,
-input and chips within itself, and the three sampler cards follow **after** it
+takes `min-height: 100%` of `.pane-front`'s content box, anchors the headline,
+input and chips within itself at `--hero-anchor` (below — it centred them when
+this paragraph was first written), and the three sampler cards follow **after** it
 — so they start below the fold and are cut by the viewport edge rather than
 tucked inside it. There is something to scroll toward.
 
@@ -1650,8 +1852,14 @@ the viewport. It resolves to 225px at 1440×900, exactly where centring put it,
 so the hero did not move when the gap below it changed — verified element by
 element: headline 225, input 353, chips 419, before and after.
 
+Measured on 20 October at 1440×900: headline **225**, input **373**, chips
+**439**. The anchor has not moved; the input and chips sit 20px lower because
+the display headline is two lines of 58 (116px) where the 32/48 one it replaced
+was two lines of 48 (96px).
+
 It scales rather than pinning to a fixed 225 because a fixed anchor pushes the
-hero off a short viewport: at 500px tall it would start a 290px hero at 225.
+hero off a short viewport: at 500px tall it would start a 316px hero at 225.
+(It was 290 when this was written.)
 **Below 900px it is overridden to `--space-80`**, because the anchor is
 measured from the viewport and the pane no longer starts there — the 77px top
 bar is above it, so `25dvh` landed the headline 116px lower than it used to.
@@ -1674,11 +1882,12 @@ height decides nothing — the token had stopped doing its job before it was
 removed.
 
 **The fold behaviour is viewport-dependent, and that is the decision — not a
-bug to fix later.** At 1440×900 the cards sit fully visible at y=579 and the
-page scrolls 36px; they do not bleed past the viewport edge. At 1440×500 they
-are cut by the edge with 336px of scroll.
+bug to fix later.** At 1440×900 the cards sit fully visible at y=605 and the
+page scrolls 62px; they do not bleed past the viewport edge. At 1440×500 they
+are cut by the edge with 362px of scroll. Measured on 20 October; this read 579
+/ 36 / 336 when it was written.
 
-The two cannot both hold. The hero content is 290px tall, so in a 900px
+The two cannot both hold. The hero content is 316px tall, so in a 900px
 viewport a ladder-scale gap beneath it cannot also push a 293px card
 off-screen. An earlier version got the bleed by making the gap a remainder —
 193px of leftover from centring — which is precisely the emergent value this
@@ -1728,9 +1937,15 @@ elsewhere: it is not doing visible work there and the cards look unchanged.
 with the headline and sat in the middle of the viewport — which is the opposite
 of the intent, and looked correct enough to miss.
 
-**Type:** headline at the `h2` step, `32 / 48` at weight **400** — a Tailwind
-`font-normal` utility stepping the class's weight, which is what
-`@layer components` is for. It was `52 / 60` at weight 800.
+**Type:** headline at the `display` step, `.type-display`, `50 / 58` at weight
+**400** — the top of the ladder, and the one step under the bounded leading
+exception. It has been there since the 1.25 ladder gave the front door its own
+rung (`4bf4b18`, 27 August).
+
+Before that it was the `h2` step, `32 / 48` at weight 400, reached with a
+Tailwind `font-normal` utility stepping the class's weight — which is what
+`@layer components` is for — and before that `52 / 60` at weight 800.
+`.type-display` is 400 itself, so the utility is gone.
 
 **Spacing — the ladder has to be legible**, tightest to loosest:
 
@@ -1862,8 +2077,9 @@ lightbox can use.
 Two fixed aspect ratios, set by the actual asset dimensions rather than a
 layout choice — do not crop assets to a third ratio:
 
-- **Card / preview imagery** (`previewImage`, used in the project grid) —
-  **1:1**. All 7 source previews are square (2048×2048, one at 2160×2160).
+- **Card / preview imagery** (`previewImage`, used by the rail thumbnails and
+  the front door's sampler; it was written for the project grid, which is
+  gone) — **1:1**. All 7 source previews are square (2048×2048, one at 2160×2160).
 - **In-case-study detail imagery** (`images[]`) — **16:9**. All 25 source
   detail images are 3840×2160.
 
@@ -1892,8 +2108,11 @@ layout choice — do not crop assets to a third ratio:
 - Don't set `font-family`, `font-weight`, `font-size`, `line-height`, or
   `letter-spacing` inline. Add a `.type-*` class, or a new one if no role
   fits.
-- Don't add a font size outside the six steps, and don't set a
-  line-height that isn't 1.5× its size.
+- Don't add a font size outside the ramp — six rungs plus the off-ladder
+  14/21 control step — and don't set a line-height that isn't 1.5× its size,
+  except within the bounded exception: 40px and above, never tighter than
+  1.15×. (This line said "the six steps" and "1.5×" with no exception; both
+  were written before the control step returned and the display step arrived.)
 - Don't use a spacing value that isn't a multiple of 4. If a level feels
   wrong, the grouping is probably wrong.
 - Don't add a new border-radius value. Pick one of the four steps —
@@ -1926,3 +2145,7 @@ layer only. Placeholder content that already existed in the codebase before
 this migration (e.g. the "Sample prototype one/two" placeholders in
 `side-of-desk.tsx`) is left verbatim; fixing it is a separate, tracked piece
 of work.
+
+*That piece of work closed by deletion:* the Side of Desk pane, its
+placeholder cards and `side-of-desk.tsx` are gone (see **Chips** and **The
+rail**), so the example this paragraph names no longer exists.

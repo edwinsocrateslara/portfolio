@@ -14,8 +14,11 @@
 //   node scripts/build-context.mjs --check   fail if it is out of date
 //
 // Only the regions between the GENERATED markers are touched. The biography,
-// hand-copied from resume.txt, stays hand-written and is the last section of
-// this file that nothing checks.
+// hand-copied from resume.txt, stays hand-written. This note used to call it
+// "the last section of this file that nothing checks"; since M4 (fd68c27) the
+// --check run reconciles its facts — summary, contact lines, every role's
+// employer, title and dates — against resume.txt, without rewriting its words.
+// See the reconciliation near the end of this file.
 //
 // THE VOICE SECTIONS USED TO BE HAND-WRITTEN TOO, and the note here said they
 // were "verbatim-checked by check-voice.mjs". THAT WAS FALSE. check-voice.mjs
