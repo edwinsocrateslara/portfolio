@@ -85,6 +85,13 @@ context but has no way to ask for one. So it is supplied, not discovered.
   Executed on main. The Claude Design handoff bundle is still cited by its
   real filename, `EdwinOS 1D.dc.html`, because renaming a citation would
   falsify the provenance record.
+- **The wordmark is the short form: "Edwin".** Set in Poppins 900 in the rail
+  and the mobile top bar, replacing the sparkle mark. It does not replace the
+  name: the page title and metadata keep "Edwin Socrates Lara", and so does
+  the home control's accessible name ("Edwin Socrates Lara — home"), which
+  contains the visible "Edwin" as WCAG 2.5.3 requires. One form at both widths
+  — the top bar once said a different name from the rail, and that was the
+  thing to avoid.
 - **Chat-first interaction is binding.** A direction that turns this into a
   scrolling page violates the product, not the aesthetic.
 - **Voice is the designer's own**, recorded verbatim in

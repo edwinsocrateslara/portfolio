@@ -5,8 +5,9 @@ documentation. Origin: Claude Design handoff bundle (`EdwinOS 1D.dc.html`),
 direction "1D — Bureau."
 
 Near-neutral dark with a single accent hue, four radius steps, one type
-family (Archivo) with a mono label voice (IBM Plex Mono). Same content, IA,
-and component set as before — this is an identity layer only.
+family (Archivo) with a mono label voice (IBM Plex Mono), plus one display face
+(Poppins 900) for the name only. Same content, IA, and component set as before
+— this is an identity layer only.
 
 ## Color tokens
 
@@ -312,6 +313,17 @@ all six surfaces rather than read from source:
 
 Nine uses, none wider than 34px. With the wash off the accent is **purely
 structural**: active state, focus, caret, send, and two marks.
+
+**The wordmark is not on this list, and that was decided, not missed.** "Edwin"
+is in primary ink. Lime was rendered and compared side by side before it was
+built, and rejected for two reasons. First, a 900-weight word is about 63px of
+solid ink at 1440, nearly twice the widest use above: rule 6 only polices
+fills, so text colour would have passed, but the rule's own argument is that
+the accent stops being a signal the moment it paints a region, and black-weight
+type is close to one. Second, lime means active, focus and send here, and a
+lime wordmark a few rows above the lime active-rail bar would have blurred what
+it means. The sparkle the wordmark replaced was lime; the typing indicator,
+which keeps the sparkle, still is.
 
 ### The top-of-view wash — OFF, for now
 
@@ -678,13 +690,15 @@ element that uses it:
 |---|---|---|
 | `--track-display` | -0.03em | Archivo display, every step from 26 up |
 | `--track-caption` | 0.4px | Archivo at 12, the floor |
-| `--track-wordmark` | 0.8px | Plex Mono caps, 700 — the brand |
 | `--track-caps-body` | 1.4px | Plex Mono caps at 16 |
 | `--track-caps-label` | 1.2px | Plex Mono caps at 12 |
 | `--track-caps-sans` | 0.05em | Archivo caps, both rail steps |
 
-**Six values**, read from `app/globals.css`, and `TRACK_BUDGET` in
-`check-design` is 6.
+**Five values**, read from `app/globals.css`, and `TRACK_BUDGET` in
+`check-design` is 5. It was six until the wordmark became Poppins 900 in mixed
+case: `--track-wordmark` (0.8px, Plex Mono caps at 700) tracked the brand when
+the brand was "EDWIN LARA", lost its only reader, and retired, and the budget
+came down with it rather than leaving a free slot.
 
 **It was nine, and how it got there is the review this budget exists for.**
 The budget was raised from 8 to 9 when the rail moved to Archivo (`93b48ec`,
@@ -702,9 +716,10 @@ under **Tracking: six tokens** below. In the same commit `--track-badge` became
 against 6 real tokens, which let three new tokens arrive without the review,
 until M8 (`3956bee`, 3 September) set it to the real count.
 
-That 0.8px equals `--track-wordmark` and is **not** the same value — the
-wordmark is mono caps at 700, solved from a different face. Pointing one at the
-other would rebuild the kind of coincidence this document keeps deleting.
+While `--track-wordmark` existed, its 0.8px equalled `--track-caps-sans` at 16
+and was **not** the same value — the wordmark was mono caps at 700, solved from
+a different face. Pointing one at the other would have rebuilt the kind of
+coincidence this document keeps deleting.
 
 The ramp runs monotonically with optical size — large sans
 tightens, small sans opens, mono caps open furthest. Read the mono pair in
@@ -719,9 +734,9 @@ diverge if either step moved. The collapse to one em value settled that
 question the other way — a proportional correction cannot repeat itself by
 accident, because it is stated once.
 
-**A seventh value has to earn a row in this table**, and `check-design`'s
+**A sixth value has to earn a row in this table**, and `check-design`'s
 `tracking-budget` rule is what makes that true rather than aspirational — it
-fails the build at seven. Its sibling `tracking-literal` fails on any
+fails the build at six. Its sibling `tracking-literal` fails on any
 `letter-spacing` px value outside this block, which is how the `-0.6px` left
 behind in the mobile `@media` block was eventually found. Two values for one
 role is a nudge, not a step: if a label needs different tracking in one place
@@ -786,24 +801,25 @@ down is what made that visible; four controls agreeing and one not is a
 finding, where five arbitrary numbers are just five numbers.
 
 **"Icon-only" is the precondition, and it is doing work.** A mark with type
-beside it answers to the cap height instead — see [Icons](#icons). The mobile
-top bar's brand mark is the case that shows the boundary: a 16px sparkle
-beside the wordmark. It is not an icon-only control, so the target rule does
-not size it; the type beside it does. Against the 16px wordmark's cap (11.17px,
-measured at 800 wide) it is **1.43×**, which is the 1.4× the cap rule asks for.
+beside it answers to the cap height instead — see [Icons](#icons). The live
+case that shows the boundary is the doc-link card: its trailing mark is 16 in a
+58px card, nowhere near half the card, and that is correct because it sits
+beside the card's 16px title and is sized against that title's cap.
 
-⚠ **At 640 and below the live instance breaks the rule it illustrates.** The
-wordmark steps to 12 there (cap 8.38px) and the mark stays at 16, which is
-**1.91×**; the cap rule would give 12. Recorded rather than resolved: nobody
-has ruled whether the mark should step with its wordmark.
+**The brand used to be this example, and no longer is.** It was a 16px sparkle
+beside the mobile top bar's wordmark — 1.43× the 16px wordmark's cap at 800
+wide, which is what the cap rule asks for, and 1.91× at 640 and below, where
+the wordmark stepped to 12 and the mark did not, and the rule would have given
+12. That miss was recorded and never ruled on. Before that it was the rail's
+brand at 1440: a 16px sparkle in a 72px row, 22% of it, correct because it sat
+beside a wordmark — applying the target rule would have given 36 and been
+absurd. From 3 September (`26f3fee`) the rail carried the mark alone at 32,
+answering to neither rule: an off-ramp size chosen so the brand could not be
+mistaken for the 24px typing indicator.
 
-This example used to be the rail's brand at 1440: a 16px sparkle in a 72px
-row, 22% of it and nowhere near half, which was correct because it sat beside
-a wordmark at 1.43× cap — applying the target rule there would have given 36
-and been absurd. Since 3 September (`26f3fee`) the rail carries the mark
-alone, at 32, with no type beside it. It answers to neither rule: it is an
-off-ramp size chosen so the brand cannot be mistaken for the 24px typing
-indicator, and the reason is at `--brand-mark-size` in `app/globals.css`.
+The brand is the wordmark "Edwin" now, with no mark beside it at either width,
+so both cases — and the open 1.91× question — closed by removal rather than by
+ruling. The sparkle is the typing indicator only.
 
 Two rules, and which applies is decided by one question: is there type beside
 this mark?
@@ -876,12 +892,43 @@ Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 
 ## Typography
 
+**Two families, plus one display face for the name only.**
+
 One UI/prose family (**Archivo**, weights 400–800) plus a mono voice
-(**IBM Plex Mono**, weights 400–700). Which one speaks where is decided by
+(**IBM Plex Mono**, weights 400–600). Which one speaks where is decided by
 Product/Data below, not by a list of component names. Loaded via
 `next/font/google` in `app/layout.tsx` as `--font-archivo` /
 `--font-plex-mono`; `tailwind.config.ts` maps `font-sans` → Archivo and
 `font-mono` → IBM Plex Mono. No serif anywhere in this system.
+
+**The display face is Poppins, at one static weight, 900, latin, and it sets
+exactly one string: the wordmark "Edwin", in `.type-wordmark`.** It is neither
+voice. Product and Data are how the interface speaks and reports, and the name
+is not interface copy. That is the whole licence, and it is narrow on purpose:
+
+- **One reader.** `--ff-poppins` is read inside `.type-wordmark` and nowhere
+  else. `check:design` rule 8 (`display-face-scope`) fails the build on any
+  other reader — another class, a selector list that only looks like
+  `.type-wordmark`, an inline style, or a bare `Poppins` — the same narrowing
+  rule 6 applies to the accent token.
+- **One weight.** `display-face-weight` fails the build if `app/layout.tsx`
+  loads Poppins at anything but `["900"]`, latin. A second weight is how a
+  display face becomes a text face; the variable axis is every weight at once.
+- **Preloaded, `display: swap`, both stated rather than defaulted.** Measured
+  on a production build: the 7.6KB file lands before first paint on a 300ms /
+  1.6Mbps connection in 5 of 5 runs, so nothing swaps. Without the preload the
+  wordmark painted in the fallback sans and swapped ~350ms later every run.
+  `optional` was rejected because where it differs — the preload missing first
+  paint — it keeps the fallback for the whole visit. The table is in
+  `app/layout.tsx`.
+
+Both rules were proven by breaking them: a second weight, the variable axis,
+the token in `.type-name`, the token in `.type-wordmark, .type-page`, and the
+token in an inline `fontFamily` and an inline `font` shorthand each fail the
+build, and five of those six passed the gate as it stood before rule 8.
+
+Plex Mono's 700 retired with this. It was loaded for the old wordmark —
+"EDWIN LARA" in mono caps — and nothing else.
 
 ### Size ranks. Weight sorts.
 
@@ -1000,11 +1047,15 @@ because the tightening bound does not reach below 40.
 The rule this replaced sent both 28 and 32 to 24, which made two levels the
 desktop distinguishes identical on a phone.
 
-`.type-wordmark` also steps, 16→12: one role at two sizes, both in the mobile
-top bar — 16 above 640, 12 at 640 and below. When this was written the two
-sizes were the rail's brand at 1440 and the top bar's; the rail has carried the
-mark alone since `26f3fee`, so the wordmark no longer renders at desktop
-widths at all. The 12 used to be a second class, `.type-badge`, which an audit
+`.type-wordmark` also steps, 20→16: one role at two sizes — 20 in the rail
+and in the top bar above 640, 16 at 640 and below. Each is the smallest rung
+whose cap clears the largest label beside it by 1.25×, measured on the
+rendered faces: 14.16 against the WORK header's 10.98 at 1440 (1.29×; 16 would
+be 1.03×), and 11.33 against MENU's 8.23 at 380 (1.38×; 14 would be 1.20×).
+
+It stepped 16→12 when the wordmark was "EDWIN LARA" in Plex Mono caps — the
+rail's brand at 1440 and the top bar's, until the rail carried a sparkle alone
+from `26f3fee`. The 12 used to be a second class, `.type-badge`, which an audit
 measuring only 1440 reported as having zero instances.
 
 ### The fourteen classes
@@ -1027,7 +1078,7 @@ purpose**.
 | `.type-action` | Archivo | 12/18 | 600 | 0.05em ᴜᴘ | Product |
 | `.type-caption` | Archivo | 12/18 | 400 | 0.4px | Product |
 | `.type-section` | Mono | 20/30 | 600 | 1.4px ᴜᴘ | Data |
-| `.type-wordmark` | Mono | 16/24 | 700 | 0.8px ᴜᴘ | *exception* |
+| `.type-wordmark` | Poppins | 20/30 | 900 | — | *the name — neither voice* |
 | `.type-label` | Mono | 12/18 | 600 | 1.2px ᴜᴘ | Data |
 | `.type-attribute` | Mono | 12/18 | 500 | — | Data |
 | `.type-value` | Mono | 12/18 | 400 | — | Data |
@@ -1141,19 +1192,22 @@ rule describes.
 
 #### The one exception
 
-`.type-wordmark` — the brand — stays IBM Plex Mono at 16/24 weight 700. By the
-rule it is Product voice: it is the product naming itself, and it is the most
-"said aloud" string on the site. It stays Data-voiced because a brand mark is
-allowed to be its own thing.
+`.type-wordmark` — the name, "Edwin" — is set in neither voice. It is
+Poppins 900, the one display face the system allows, and the rule for it is
+under **Typography**: one reader, one weight, gated.
 
-There was a second reason when this was written: with the rail in Archivo, the
-rail's wordmark was the only place the mono voice appeared on every surface.
-That stopped holding on 3 September (`26f3fee`), when the rail's brand became
-the mark alone; the wordmark now renders only in the mobile top bar, so at
-desktop widths it is not the thing carrying mono onto every surface. The first reason
-carries the decision alone now. The argument for one size per view is
-unchanged — alone at the top it reads as a mark; two sizes of it in one view
-read as a texture.
+**It used to be the one exception INSIDE the two voices, and the argument is
+worth keeping.** As "EDWIN LARA" it was IBM Plex Mono at 16/24 weight 700. By
+the rule it was Product voice — the product naming itself, the most "said
+aloud" string on the site — and it stayed Data-voiced because a brand mark is
+allowed to be its own thing. For a while there was a second reason: with the
+rail in Archivo, the rail's wordmark was the only place mono appeared on every
+surface; that stopped holding when the rail's brand became a sparkle alone
+(`26f3fee`). The wordmark leaving Plex does not contradict the first reason. It
+takes it further: a brand mark allowed to be its own thing now has its own
+face, and the two voices have no exception left in them. The argument for one
+size per view is unchanged — alone at the top it reads as a mark; two sizes of
+it in one view would read as a texture.
 
 #### One boundary that needs a reading
 
@@ -1305,10 +1359,11 @@ a thumbnail and a mono eyebrow. The standalone route was deleted on 20 August
 Four sizes — 12, 16, 20, 24 — and two rules that produce them. Which rule
 applies depends on one question: is there type beside this mark?
 
-One mark sits off the ramp, and neither rule produced it: the rail's brand at
-1440 is 32, alone, sized to separate it from the 24px typing indicator. Its
-reason is at `--brand-mark-size` in `app/globals.css`, and the sparkle's
-section below covers its stroke.
+Nothing sits off the ramp now. One mark did: the rail's brand at 1440 was a
+32px sparkle, alone, sized to separate it from the 24px typing indicator —
+neither rule produced it, and its reason was a collision. The brand is the
+wordmark "Edwin" now, and that size went with it; the record of the collision
+ruling is at the typing indicator's token in `app/globals.css`.
 
 ### Beside type → 1.4× the cap height of the visible neighbour
 
@@ -1387,18 +1442,16 @@ prop, which a custom property cannot reach.
 
 ### The one exception: the sparkle
 
-Its **size** is on the ramp at two of its three call sites — 24 for the typing
-indicator, 16 for the brand beside the wordmark in the mobile top bar — and off
-it at the third, 32 for the rail's brand at 1440 (see the note at the top of
-this section). Its **stroke** is 8.33 in a 100-unit viewBox, read off the
-rendered SVG, which is the same 1:12 ratio expressed in its own coordinate
-space. So at 16 it paints 1.33px and agrees with everything else; at 24 it
-paints 2.00px and at 32 it paints 2.67px, where the rule asks for 1.50 at both.
+It has one call site, the typing indicator, at 24 — on the ramp. Its
+**stroke** is 8.33 in a 100-unit viewBox, read off the rendered SVG, which is
+the same 1:12 ratio expressed in its own coordinate space; at 24 it paints
+2.00px where the rule asks for 1.50.
 
-When this was written there were two call sites, and the brand mark was the 16
-beside the rail's wordmark. The rail's mark went to 32 on 3 September
-(`26f3fee`) and the stroke stayed 8.33; the reason below covers 32 as it
-covers 24.
+It had three call sites before the wordmark: the indicator at 24, the brand
+beside the mobile top bar's wordmark at 16 (1.33px, agreeing with everything
+else), and the rail's brand alone at 32 (2.67px). Before 3 September (`26f3fee`)
+the rail's was also the 16 beside a wordmark. The stroke stayed 8.33 at every
+size, for the reason below.
 
 It is left alone deliberately. The path and its stroke are a trace of a Lottie
 source, documented in `docs/provenance/typing-indicator/`; re-picking the
@@ -1559,13 +1612,18 @@ inherited.
 
 ## Loading
 
-**The four-pointed sparkle appears in two roles**: as the typing indicator at
-`--indicator-size` (24), and as the brand mark — alone in the rail at
-`--brand-mark-size` (32), and beside the wordmark in the mobile top bar at
-`--brand-mark-topbar` (16). Until 3 September the rail's mark was also 16 and
-sat beside the wordmark (`26f3fee`). One component,
-`components/ui/sparkle.tsx`, one traced path — the geometry is not duplicated.
-Every instance is a 15%-opacity track, a
+**The four-pointed sparkle is the typing indicator, and only that**, at
+`--indicator-size` (24). It was also the brand mark — alone in the rail at 32,
+and beside the wordmark in the mobile top bar at 16 — until the wordmark
+"Edwin" replaced it. That ended the collision Edwin had accepted between the
+two lime sparkles, and with it the relationship that made the collision worth
+keeping: the indicator was the site's mark, smaller, appearing when the site
+was thinking. It is a loading glyph now. The ruling and its phase measurements
+are kept as history at `--indicator-size` in `app/globals.css`.
+
+One component, `components/ui/sparkle.tsx`, one traced path. It has one caller
+now and stays its own file because it IS the trace the provenance documents.
+It is a 15%-opacity track, a
 40% arc and a 3% leading dot, the last two rotating one full turn every
 1.6667s via `stroke-dashoffset`.
 
@@ -1738,6 +1796,11 @@ past the fold**. At 380 it was 215px past.
 **Measured on 20 October**, on the dev server: 769 against a 752 viewport at
 1440×900, **17px past the fold**; 217 past at 1440×700; 110 past in the
 380×820 sheet. Document rows are 48 and headers 72 today.
+
+**The wordmark took 2px back.** The brand row was 80 — a 32px sparkle plus 24
+and 24 of padding, a number around a mark rather than a designed value — and
+is 78 with "Edwin" at 20 on its own rung's 30px leading. Measured on a
+production build: **15px past the fold** at 1440×900 and 215 at 1440×700.
 
 **Each further project costs 56px**, the row height, and each further *section*
 costs 128 — its header at 72 plus one row. (It was 98, with the header at 66.)
