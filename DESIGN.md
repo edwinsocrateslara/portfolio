@@ -5,9 +5,9 @@ documentation. Origin: Claude Design handoff bundle (`EdwinOS 1D.dc.html`),
 direction "1D — Bureau."
 
 Near-neutral dark with a single accent hue, four radius steps, one type
-family (Archivo) with a mono label voice (IBM Plex Mono), plus one display face
-(Poppins 900) for the name only. Same content, IA, and component set as before
-— this is an identity layer only.
+family (Archivo) with a mono label voice (IBM Plex Mono), and a filled brand
+mark. Same content, IA, and component set as before — this is an identity
+layer only.
 
 ## Color tokens
 
@@ -314,16 +314,36 @@ all six surfaces rather than read from source:
 Nine uses, none wider than 34px. With the wash off the accent is **purely
 structural**: active state, focus, caret, send, and two marks.
 
-**The wordmark is not on this list, and that was decided, not missed.** "Edwin"
-is in primary ink. Lime was rendered and compared side by side before it was
-built, and rejected for two reasons. First, a 900-weight word is about 63px of
-solid ink at 1440, nearly twice the widest use above: rule 6 only polices
-fills, so text colour would have passed, but the rule's own argument is that
-the accent stops being a signal the moment it paints a region, and black-weight
-type is close to one. Second, lime means active, focus and send here, and a
-lime wordmark a few rows above the lime active-rail bar would have blurred what
-it means. The sparkle the wordmark replaced was lime; the typing indicator,
-which keeps the sparkle, still is.
+**The brand mark is not on this list, and that was decided, not missed.** It
+is in primary ink. Lime was rendered beside primary before it was built
+(21 October) and ruled out on meaning: **lime means state here** — active,
+focus, caret, send, working — and a permanently lime identity mark reads as
+"on" all the time. Density was the supporting point, not the case: the mark
+inks 44.5% of its box, 2.6× the sparkle's 16.9%, about 456px² at 32 — still
+only half of SEND's 34px disc, so area alone would not have decided it.
+
+The sparkle the brand used to be was lime because it was the same object as
+the thinking indicator. That relationship ended with the sparkle-as-brand, so
+the reason went with it. The typing indicator, which keeps the sparkle, is
+still lime.
+
+**Rule 6 now sees an inherited fill.** The mark is `fill="currentColor"`, so
+its colour is whatever `color` its button sets — and rule 6 matched `fill:`
+declarations, never an SVG fill whose colour arrives as a `color`. That hole
+was open from the rule's first commit (`cd99088`, 12 August) to 21 October;
+nothing went through it, because no `currentColor` fill existed in the repo
+before this mark. The sparkle was never in it: it is `fill="none"
+stroke="currentColor"`, a stroke, which the accent is for. A second hole of the
+same age closed with it — Tailwind's `bg-accent` / `fill-accent`, which the
+config has generated since the first commit and the rule never read. Both are
+specified, and their limits listed, in `check-design.mjs` above
+`checkInheritedFills`; both were proven open in a copy before the fix and
+proven closed by putting the real mark in lime.
+
+**`app/icon.svg` is colour in an `.svg` on disk**, which the paragraph above
+says rule 6 must then cover. It does not need to: `check:design`'s
+`favicon-token-drift` fails the build unless the file's two fills are exactly
+`--bureau-bg` and `--bureau-text-primary`, so the accent cannot get in.
 
 ### The top-of-view wash — OFF, for now
 
@@ -791,6 +811,7 @@ yet: give it a target, halve it, land on the grid.
 | SEND | 34×34 | 17 | 16 |
 | lightbox close, chevrons | 40×40 | 20 | 20 |
 | rail contact links | 44×44 | 22 | 20 |
+| mobile top bar brand mark | 44×44 | 22 | 20 |
 | rail document rows | 247×48 | 24 | 24 |
 
 **It was derived, not decided.** Every one of those already sat at 45–50% of
@@ -817,9 +838,24 @@ absurd. From 3 September (`26f3fee`) the rail carried the mark alone at 32,
 answering to neither rule: an off-ramp size chosen so the brand could not be
 mistaken for the 24px typing indicator.
 
-The brand is the wordmark "Edwin" now, with no mark beside it at either width,
+The brand was then the wordmark "Edwin" (20 October), with no mark beside it,
 so both cases — and the open 1.91× question — closed by removal rather than by
-ruling. The sparkle is the typing indicator only.
+ruling. Since 21 October it is a filled mark alone, which brings it back to
+this rule at one width and not the other:
+
+- **The mobile top bar applies it.** An icon-only control with a 44px target
+  takes 20 — the row in the table above. The button had been only as wide as
+  its content, which for a 20px glyph made the target 20×44; it is 44×44 now
+  (`min-width: var(--space-44)`), with the glyph flush left and the extra
+  width as hit area to its right. Measured on the build: 44×44 at 380, 700 and
+  880 wide, and a point 20px right of the glyph hits the button.
+- **The rail does not, and says why.** Its 32 is the mark's legibility floor
+  rounded up to the grid — see [The brand mark: a fill, outside the
+  ramp](#the-brand-mark-a-fill-outside-the-ramp). The rail row is 80px tall
+  and the target rule would give 40; the mark's own drawing is the tighter
+  constraint, and it points the other way at no size.
+
+The sparkle is the typing indicator only.
 
 Two rules, and which applies is decided by one question: is there type beside
 this mark?
@@ -892,7 +928,7 @@ Grid: 3 columns desktop → 2 at 860px → 1 at 560px.
 
 ## Typography
 
-**Two families, plus one display face for the name only.**
+**Two families.**
 
 One UI/prose family (**Archivo**, weights 400–800) plus a mono voice
 (**IBM Plex Mono**, weights 400–600). Which one speaks where is decided by
@@ -901,34 +937,48 @@ Product/Data below, not by a list of component names. Loaded via
 `--font-plex-mono`; `tailwind.config.ts` maps `font-sans` → Archivo and
 `font-mono` → IBM Plex Mono. No serif anywhere in this system.
 
-**The display face is Poppins, at one static weight, 900, latin, and it sets
-exactly one string: the wordmark "Edwin", in `.type-wordmark`.** It is neither
-voice. Product and Data are how the interface speaks and reports, and the name
-is not interface copy. That is the whole licence, and it is narrow on purpose:
+#### The display face, 20–21 October — retired
 
-- **One reader.** `--ff-poppins` is read inside `.type-wordmark` and nowhere
-  else. `check:design` rule 8 (`display-face-scope`) fails the build on any
-  other reader — another class, a selector list that only looks like
-  `.type-wordmark`, an inline style, or a bare `Poppins` — the same narrowing
-  rule 6 applies to the accent token.
-- **One weight.** `display-face-weight` fails the build if `app/layout.tsx`
-  loads Poppins at anything but `["900"]`, latin. A second weight is how a
-  display face becomes a text face; the variable axis is every weight at once.
-- **Preloaded, `display: swap`, both stated rather than defaulted.** Measured
-  on a production build: the 7.6KB file lands before first paint on a 300ms /
-  1.6Mbps connection in 5 of 5 runs, so nothing swaps. Without the preload the
-  wordmark painted in the fallback sans and swapped ~350ms later every run.
-  `optional` was rejected because where it differs — the preload missing first
-  paint — it keeps the fallback for the whole visit. The table is in
-  `app/layout.tsx`.
+For one day the system was "two families, plus one display face for the name
+only": **Poppins 900, latin, setting exactly one string — the wordmark "Edwin"
+in `.type-wordmark`.** It was neither voice; the name is not interface copy.
+It left when the brand became a filled mark (21 October). With no name set in
+type the face had no reader, so all of it went in one change: the next/font
+call, `--ff-poppins`, `.type-wordmark` and its mobile step, the artboard's font
+link, and `check:design` rule 8. Recorded because it was a real decision, and
+because the method is reusable:
 
-Both rules were proven by breaking them: a second weight, the variable axis,
-the token in `.type-name`, the token in `.type-wordmark, .type-page`, and the
-token in an inline `fontFamily` and an inline `font` shorthand each fail the
-build, and five of those six passed the gate as it stood before rule 8.
+- **The licence was narrow on purpose.** Rule 8 (`display-face-scope`) failed
+  the build on any reader of `--ff-poppins` but `.type-wordmark`, and
+  `display-face-weight` on any load but `["900"]`, latin. It was proven by
+  breaking (`389d3cb`): a second weight, the variable axis, the token in
+  `.type-name`, the token in `.type-wordmark, .type-page`, and the token in an
+  inline `fontFamily` and an inline `font` shorthand each failed the build —
+  and five of those six had passed the gate as it stood before rule 8.
+- **The rule retired with its subject, not for failing.** A gate with nothing
+  to guard passes forever, and a pass that cannot fail reads exactly like a
+  clean room. If a display face comes back, restore `389d3cb`'s rule and
+  fixtures rather than rewriting them from memory.
+- **The loading method, measured.** Production build, cold cache, 5 runs each;
+  the Poppins latin file was 7.6KB:
 
-Plex Mono's 700 retired with this. It was loaded for the old wordmark —
-"EDWIN LARA" in mono caps — and nothing else.
+  |                     | 3G FCP | font done | at FCP      | unthrottled FCP | font |
+  |---------------------|--------|-----------|-------------|-----------------|------|
+  | swap + preload      | 1056   | 874       | loaded 5/5  | 40              | 18   |
+  | optional + preload  | 1036   | 871       | loaded 5/5  | 48              | 16   |
+  | swap, no preload    | 1036   | 1382      | loading 5/5 | 36              | 23   |
+
+  3G was 300ms RTT, 1.6Mbps. Without the preload the wordmark painted in the
+  fallback sans and swapped ~350ms later every run; preloaded, the file landed
+  ~180ms before first paint. `optional` was rejected because where it differs
+  — the preload missing first paint — it keeps the fallback for the whole
+  visit. The next face this system loads for a single visible string should be
+  measured the same way.
+
+Plex Mono's 700 retired in the same commit that brought Poppins in
+(`0228406`). It was loaded for the old wordmark —
+"EDWIN LARA" in mono caps — and nothing else; it does not come back with the
+mark, which is not type.
 
 ### Size ranks. Weight sorts.
 
@@ -1047,20 +1097,23 @@ because the tightening bound does not reach below 40.
 The rule this replaced sent both 28 and 32 to 24, which made two levels the
 desktop distinguishes identical on a phone.
 
-`.type-wordmark` also steps, 20→16: one role at two sizes — 20 in the rail
-and in the top bar above 640, 16 at 640 and below. Each is the smallest rung
-whose cap clears the largest label beside it by 1.25×, measured on the
-rendered faces: 14.16 against the WORK header's 10.98 at 1440 (1.29×; 16 would
-be 1.03×), and 11.33 against MENU's 8.23 at 380 (1.38×; 14 would be 1.20×).
+`.type-wordmark` stepped too, 20→16, while it existed (20–21 October): one
+role at two sizes, each the smallest rung whose cap cleared the largest label
+beside it by 1.25× — 14.16 against the WORK header's 10.98 at 1440 (1.29×),
+and 11.33 against MENU's 8.23 at 380 (1.38×). It retired with Poppins; the
+brand is a mark, and its two sizes come from [the mark's own
+floor](#the-brand-mark-a-fill-outside-the-ramp) and the target rule.
 
-It stepped 16→12 when the wordmark was "EDWIN LARA" in Plex Mono caps — the
+Before that it stepped 16→12 when the wordmark was "EDWIN LARA" in Plex Mono caps — the
 rail's brand at 1440 and the top bar's, until the rail carried a sparkle alone
 from `26f3fee`. The 12 used to be a second class, `.type-badge`, which an audit
 measuring only 1440 reported as having zero instances.
 
-### The fourteen classes
+### The thirteen classes
 
-Thirteen when this table was written (`4cff98e`, 27 August). That commit
+Thirteen again since 21 October, when `.type-wordmark` retired with Poppins;
+fourteen for the one day it existed. Thirteen when this table was first
+written, too (`4cff98e`, 27 August). That commit
 also deleted `.type-control`, as a single-consumer leftover, three minutes
 after the chips had stopped using it. It came back for the chips 89 minutes
 later (`8e78b5f`) — see **The 14/21 step is off the ladder, and kept on
@@ -1078,7 +1131,6 @@ purpose**.
 | `.type-action` | Archivo | 12/18 | 600 | 0.05em ᴜᴘ | Product |
 | `.type-caption` | Archivo | 12/18 | 400 | 0.4px | Product |
 | `.type-section` | Mono | 20/30 | 600 | 1.4px ᴜᴘ | Data |
-| `.type-wordmark` | Poppins | 20/30 | 900 | — | *the name — neither voice* |
 | `.type-label` | Mono | 12/18 | 600 | 1.2px ᴜᴘ | Data |
 | `.type-attribute` | Mono | 12/18 | 500 | — | Data |
 | `.type-value` | Mono | 12/18 | 400 | — | Data |
@@ -1190,13 +1242,14 @@ rule describes.
 | `01` / `02` | reveals | indices |
 | the six tools bands — 55 terms | résumé | technical inventories |
 
-#### The one exception
+#### No exception now
 
-`.type-wordmark` — the name, "Edwin" — is set in neither voice. It is
-Poppins 900, the one display face the system allows, and the rule for it is
-under **Typography**: one reader, one weight, gated.
+Every string on the site is Product or Data. The brand is a filled mark, not
+type, so it has no voice to be an exception in. For one day (20–21 October)
+`.type-wordmark` — "Edwin" in Poppins 900 — was set in neither voice; that
+retired with the face (see **Typography**).
 
-**It used to be the one exception INSIDE the two voices, and the argument is
+**The brand used to be the one exception INSIDE the two voices, and the argument is
 worth keeping.** As "EDWIN LARA" it was IBM Plex Mono at 16/24 weight 700. By
 the rule it was Product voice — the product naming itself, the most "said
 aloud" string on the site — and it stayed Data-voiced because a brand mark is
@@ -1204,8 +1257,9 @@ allowed to be its own thing. For a while there was a second reason: with the
 rail in Archivo, the rail's wordmark was the only place mono appeared on every
 surface; that stopped holding when the rail's brand became a sparkle alone
 (`26f3fee`). The wordmark leaving Plex does not contradict the first reason. It
-takes it further: a brand mark allowed to be its own thing now has its own
-face, and the two voices have no exception left in them. The argument for one
+took it further: a brand mark allowed to be its own thing had its own face for
+a day, and is not type at all now, so the two voices have no exception left in
+them. The argument for one
 size per view is unchanged — alone at the top it reads as a mark; two sizes of
 it in one view would read as a texture.
 
@@ -1359,11 +1413,14 @@ a thumbnail and a mono eyebrow. The standalone route was deleted on 20 August
 Four sizes — 12, 16, 20, 24 — and two rules that produce them. Which rule
 applies depends on one question: is there type beside this mark?
 
-Nothing sits off the ramp now. One mark did: the rail's brand at 1440 was a
-32px sparkle, alone, sized to separate it from the 24px typing indicator —
-neither rule produced it, and its reason was a collision. The brand is the
-wordmark "Edwin" now, and that size went with it; the record of the collision
-ruling is at the typing indicator's token in `app/globals.css`.
+One mark sits off the ramp, with a stated reason: the rail's brand at 32.
+It is the second mark to hold that size there, for a different cause. The
+first was a 32px sparkle, sized to separate it from the 24px typing indicator
+— its reason was a collision, and the record of that ruling is at the typing
+indicator's token in `app/globals.css`. The brand was then the wordmark
+"Edwin" for a day, and is now a filled mark whose 32 comes from its own
+drawing — see [The brand mark: a fill, outside the
+ramp](#the-brand-mark-a-fill-outside-the-ramp).
 
 ### Beside type → 1.4× the cap height of the visible neighbour
 
@@ -1457,6 +1514,103 @@ It is left alone deliberately. The path and its stroke are a trace of a Lottie
 source, documented in `docs/provenance/typing-indicator/`; re-picking the
 stroke would make it no longer a trace. Recorded as an exception rather than
 assumed to be fine.
+
+### The brand mark: a fill, outside the ramp
+
+`components/ui/brand-mark.tsx`, from `docs/provenance/brand-mark/source.svg`
+(21 October). **A fill, not a stroke** — so nothing in this section's stroke
+machinery applies to it: no stroke width to agree or disagree with the 1:12
+ratio, and no `ICON_STROKE_*`. It is not an exception to the stroke rule; it is
+outside it.
+
+**What limits a filled mark is its finest feature.** The drawing is on a
+10-unit module in a 260-unit box: bars 20, the narrowest gaps 10. A gap is one
+device pixel at 26px on a 1× screen; below that the interior closes.
+
+| size | finest gap at 1× | bar | where |
+|---|---|---|---|
+| 16 | 0.62px — a blob | 1.23 | nowhere (see the favicon, below) |
+| 20 | 0.77px | 1.54 | mobile top bar (2–3× on a phone: ≥1.5 device px) |
+| 24 | 0.92px | 1.85 | — |
+| **32** | **1.23px** | 2.46 | **the rail** |
+
+- **The rail: 32**, the first `--space` step above 26. Neither icon rule
+  produced it, and that is stated rather than hidden: the mark is alone (no
+  cap height), and the target rule would give 40 for an 80px row — the
+  drawing's own floor is the tighter constraint. The brand row is 80, and the
+  list scrolls 17px past its fold at 1440×900 — the sparkle-era numbers.
+- **The mobile top bar: 20**, by the target rule — see the table in [An
+  icon-only control's glyph is half its
+  target](#an-icon-only-controls-glyph-is-half-its-target).
+- **Colour: primary, from the button.** The SVG is `fill="currentColor"` and
+  the button sets `color` — the same pattern as the sparkle's stroke. The
+  source hardcoded white through an embedded `<style>`; the style, its class
+  and the layer ids were dropped, and only the path data was kept. Why not
+  lime is under [What rule 6 cannot see](#what-rule-6-cannot-see) — lime
+  means state.
+- **It does not collide with the indicator.** Rendered side by side on the
+  built site: the mark is static, filled, primary, symmetric, 32; the
+  indicator is lime, stroked, animated, 24. Different on every axis, not on
+  size alone, so the collision ruling stays history.
+- **No visible name inside the panes, accepted.** The button's
+  `aria-label` — "Edwin Socrates Lara — home" — carries the name, as it did
+  when the sparkle held this row; the hero's "I'm Edwin" carries it on the
+  front door and the page title carries it everywhere. A mark is allowed to be
+  a mark.
+
+**Measured at 1×, the floor is a floor, not a guarantee of crispness.** At 32
+the outer bars hold, but the gaps are 1.23px and do not land on pixel
+boundaries, so the inner ring antialiases to grey. At 20 on a 1× screen — a
+desktop window narrower than 900, which gets the top bar — the interior closes
+into a grey lump; it holds on a phone. Both rendered on the build.
+
+**The sub-900 softness was ruled, not missed (21 October): accepted.** A narrow
+desktop window on a 1× screen is a thin enough slice that a third size, and a
+third token to carry it, is not worth it. 24 between 641 and 899 was the
+alternative considered; its gaps would still be 0.92px, under a pixel.
+
+### The favicon: 32 and 180, no 16
+
+Decided 21 October, so the 16px question is answered rather than open.
+
+- **No 16px drawing.** At 16 the mark's finest gap is 0.62px and the
+  interior is a blob at 1×. No simplified 16 exists, and one was not drawn.
+- **`app/icon.svg`** — the vector, for browsers that take an SVG favicon. It
+  is the **one embedded `<style>` in the system, and the exception is
+  stated:** a favicon is a separate document, so `currentColor` has nothing
+  to inherit from and the tokens cannot reach it. It answers to
+  `prefers-color-scheme` instead — the mark in `--bureau-bg` on a light tab
+  bar, in `--bureau-text-primary` on a dark one. Those two literals are
+  copies, and `check:design`'s `favicon-token-drift` fails the build when
+  either stops matching its token, or when the file is gone.
+- **`app/icon1.tsx` → a 32px PNG**, for browsers that do not take SVG. A PNG
+  cannot follow the colour scheme, so it carries the site's ground: primary
+  ink on `#131313`, full-bleed so the 1.23px gaps survive.
+- **`app/apple-icon.tsx` → 180px**, opaque (iOS fills transparency with
+  black), the mark at 120 so iOS's corner rounding never reaches it.
+
+**What "no 16" can and cannot mean.** A tab draws its icon at 16 CSS px. On a
+2× screen that is 32 device pixels and the mark holds. On a 1× screen the
+browser rasterises whichever file it chose down to 16 device pixels, and the
+result is soft — rendered on the build from both the SVG and the PNG. No file
+choice prevents that; the decision is that nothing was *drawn* for 16, so the
+softness is the browser's scaling of a 32 rather than a 16 shipped as if it
+were finished.
+
+The PNGs and the link card are generated by `next/og` at build time and read
+their colours out of `app/globals.css` (`lib/image-tokens.ts`), so they cannot
+drift. All four are static in the build output.
+
+### The link card
+
+`app/opengraph-image.tsx`, 1200×630: the mark at 128 and "Edwin Socrates Lara"
+in Archivo 400 with `--track-display`, primary on the ground — the hero's
+setting at the card's own size, 80. LinkedIn is where visitors arrive from
+(PRODUCT.md), and until this a link to the site showed nothing. The face is a
+3.5KB subset of exactly those letters (`assets/og/README.md`); a letter
+outside it renders silently in `next/og`'s bundled Noto Sans, so changing the
+name means regenerating the subset. Its four inline type properties are in
+`check:design`'s ALLOW with the reason: satori has no stylesheet.
 
 ## Chat column alignment
 
@@ -1615,11 +1769,14 @@ inherited.
 **The four-pointed sparkle is the typing indicator, and only that**, at
 `--indicator-size` (24). It was also the brand mark — alone in the rail at 32,
 and beside the wordmark in the mobile top bar at 16 — until the wordmark
-"Edwin" replaced it. That ended the collision Edwin had accepted between the
+"Edwin" replaced it (20 October), and a filled mark replaced that (21
+October). That ended the collision Edwin had accepted between the
 two lime sparkles, and with it the relationship that made the collision worth
 keeping: the indicator was the site's mark, smaller, appearing when the site
 was thinking. It is a loading glyph now. The ruling and its phase measurements
-are kept as history at `--indicator-size` in `app/globals.css`.
+are kept as history at `--indicator-size` in `app/globals.css`. The filled
+mark does not reopen it: it differs from the indicator in colour, technique,
+motion and symmetry, not only in size, and was rendered beside it to check.
 
 One component, `components/ui/sparkle.tsx`, one traced path. It has one caller
 now and stays its own file because it IS the trace the provenance documents.
@@ -1799,8 +1956,13 @@ past the fold**. At 380 it was 215px past.
 
 **The wordmark took 2px back.** The brand row was 80 — a 32px sparkle plus 24
 and 24 of padding, a number around a mark rather than a designed value — and
-is 78 with "Edwin" at 20 on its own rung's 30px leading. Measured on a
-production build: **15px past the fold** at 1440×900 and 215 at 1440×700.
+was 78 with "Edwin" at 20 on its own rung's 30px leading: 15px past the fold
+at 1440×900 and 215 at 1440×700.
+
+**The mark gave it back (21 October).** A 32px mark plus 24 and 24 is 80
+again, and this time the 32 is the mark's legibility floor rather than a
+number around a mark. Measured on a production build: **17px past the fold**
+at 1440×900 and 217 at 1440×700.
 
 **Each further project costs 56px**, the row height, and each further *section*
 costs 128 — its header at 72 plus one row. (It was 98, with the header at 66.)
