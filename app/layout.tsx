@@ -33,10 +33,20 @@ const ibmPlexMono = IBM_Plex_Mono({
 // preload/display measurements that chose its loading strategy are kept in
 // DESIGN.md § Typography, because they are the method for the next face.
 
+const TITLE = "Edwin Socrates Lara — Product Design Portfolio"
+const DESCRIPTION =
+  "Ask me about Edwin Socrates Lara's product design work — case studies, process, and background."
+
+// THE LINK PREVIEW. og:image comes from app/opengraph-image.tsx by file
+// convention; title and description are stated here so a preview does not
+// depend on a scraper falling back to <title>. No metadataBase: on Vercel, Next
+// resolves the image URL against VERCEL_PROJECT_PRODUCTION_URL when none is
+// set (next/dist/lib/metadata/resolvers/resolve-url.js), which is the
+// production domain.
 export const metadata: Metadata = {
-  title: "Edwin Socrates Lara — Product Design Portfolio",
-  description:
-    "Ask me about Edwin Socrates Lara's product design work — case studies, process, and background.",
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: { title: TITLE, description: DESCRIPTION, type: "website" },
 }
 
 export const viewport: Viewport = {

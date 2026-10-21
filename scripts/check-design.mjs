@@ -63,6 +63,16 @@ const ALLOW = {
   "app/globals.css::no-accent-surface::.resume-row-node background":
     "The 8px round node on the resume timeline. Same judgment as the IMPACT marker one line up: it marks a point on a hairline, and the hairline is 1px wide. Education's node is the ring variant and is not accent at all.",
 
+  // Rule 1. One file, four properties, one reason.
+  "app/opengraph-image.tsx::no-inline-type::fontFamily":
+    "THE LINK-PREVIEW CARD HAS NO STYLESHEET. next/og renders it with satori, which takes inline style objects and nothing else, so there is no .type-* class for these to live in. The values are the hero's own — Archivo 400 and --track-display, read out of globals.css at build — except the size, 80, which is the card's: the page's 50 is sized for a 1440 viewport, and this is read as a 1200px image shrunk into a feed.",
+  "app/opengraph-image.tsx::no-inline-type::fontSize":
+    "THE LINK-PREVIEW CARD HAS NO STYLESHEET. next/og renders it with satori, which takes inline style objects and nothing else, so there is no .type-* class for these to live in. The values are the hero's own — Archivo 400 and --track-display, read out of globals.css at build — except the size, 80, which is the card's: the page's 50 is sized for a 1440 viewport, and this is read as a 1200px image shrunk into a feed.",
+  "app/opengraph-image.tsx::no-inline-type::fontWeight":
+    "THE LINK-PREVIEW CARD HAS NO STYLESHEET. next/og renders it with satori, which takes inline style objects and nothing else, so there is no .type-* class for these to live in. The values are the hero's own — Archivo 400 and --track-display, read out of globals.css at build — except the size, 80, which is the card's: the page's 50 is sized for a 1440 viewport, and this is read as a 1200px image shrunk into a feed.",
+  "app/opengraph-image.tsx::no-inline-type::letterSpacing":
+    "THE LINK-PREVIEW CARD HAS NO STYLESHEET. next/og renders it with satori, which takes inline style objects and nothing else, so there is no .type-* class for these to live in. The values are the hero's own — Archivo 400 and --track-display, read out of globals.css at build — except the size, 80, which is the card's: the page's 50 is sized for a 1440 viewport, and this is read as a 1200px image shrunk into a feed.",
+
   // ── Rules 1-5, CSS dialect ─────────────────────────────────────────────
   // Every entry below is a value that was ALREADY documented somewhere — in
   // DESIGN.md, or in a comment at its own definition — before this checker
@@ -937,6 +947,39 @@ function checkTracking(file, raw) {
 // empty one. If a display face ever comes back, restore 389d3cb's rule and
 // fixtures rather than writing a new one from memory.
 
+// ── The favicon's two literals ───────────────────────────────────────────
+// app/icon.svg is the one place in the system with an embedded <style> and hex
+// colours, and the exception is stated in the file: a favicon is a separate
+// document, so neither currentColor nor a var(--bureau-*) can reach it, and the
+// browser's colour scheme is the only signal it gets. Copies drift, so this
+// holds the copy to its source: the light-scheme fill must be --bureau-bg and
+// the dark-scheme fill --bureau-text-primary, read from globals.css on every
+// run.
+//
+// A MISSING FAVICON IS A FINDING, not a pass. Deleting the file is a decision,
+// and this check should go in the same commit; a check that silently has
+// nothing to look at is the failure rule 8's retirement note describes.
+const FAVICON = "app/icon.svg"
+
+function tokenHex(css, name) {
+  const m = new RegExp(`--${name}:\\s*(\\d+)\\s+(\\d+)\\s+(\\d+)\\s*;`).exec(css)
+  return m ? "#" + m.slice(1).map((n) => Number(n).toString(16).padStart(2, "0")).join("") : null
+}
+
+function checkFavicon(file, svg, css) {
+  const out = []
+  const add = (detail) => out.push({ file, rule: "favicon-token-drift", detail, line: 1 })
+  if (svg == null) { add("app/icon.svg is missing"); return out }
+  const style = /<style>([\s\S]*?)<\/style>/.exec(svg)?.[1] ?? ""
+  const dark = /@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)\s*\{([\s\S]*)\}/.exec(style)
+  const fillOf = (t) => /fill\s*:\s*(#[0-9a-fA-F]{3,8})\b/.exec(t ?? "")?.[1].toLowerCase() ?? "(none)"
+  const want = { light: tokenHex(css, "bureau-bg"), dark: tokenHex(css, "bureau-text-primary") }
+  const got = { light: fillOf(dark ? style.slice(0, dark.index) : style), dark: dark ? fillOf(dark[1]) : "(no dark-scheme block)" }
+  for (const k of ["light", "dark"])
+    if (got[k] !== want[k]) add(`${k}-scheme fill ${got[k]}, token is ${want[k]}`)
+  return out
+}
+
 // ── Positive control ─────────────────────────────────────────────────────
 // A clean pass is worthless if a matcher silently broke. Each rule is run
 // against a fixture that MUST trip it, and against a fixture that must NOT.
@@ -1105,6 +1148,8 @@ export function T() {
 const FIXTURE_TW_ACCENT_GOOD = `
 export function T() { return <div className="text-accent border-accent bg-bg caret-accent">accent-free bg-accent in prose is not a class</div> }
 `
+const FIXTURE_FAVICON_CSS = ":root { --bureau-bg: 19 19 19; --bureau-text-primary: 232 232 232; }"
+const FIXTURE_FAVICON_GOOD = '<svg><style>path{fill:#131313}@media (prefers-color-scheme:dark){path{fill:#E8E8E8}}</style><path d="M0 0"/></svg>'
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
@@ -1231,6 +1276,22 @@ function selfTest() {
   for (const f of checkAccentFills("<fixture-tw-good>", FIXTURE_TW_ACCENT_GOOD, { css: false }))
     problems.push(`control: rule "no-accent-surface" false positive on a non-area accent class — ${f.detail}`)
 
+  // The favicon's literals: silent when they match, firing on each way they
+  // can stop matching.
+  for (const f of checkFavicon("<fixture-favicon-good>", FIXTURE_FAVICON_GOOD, FIXTURE_FAVICON_CSS))
+    problems.push(`control: favicon-token-drift false positive — ${f.detail}`)
+  const faviconBad = []
+  for (const [why, svg] of [
+    ["light fill drifted", FIXTURE_FAVICON_GOOD.replace("#131313", "#141414")],
+    ["dark fill drifted", FIXTURE_FAVICON_GOOD.replace("#E8E8E8", "#ffffff")],
+    ["dark-scheme block gone", FIXTURE_FAVICON_GOOD.replace(/@media[^}]*\}\}/, "")],
+    ["file gone", null],
+  ]) {
+    const hits = checkFavicon("<fixture-favicon-bad>", svg, FIXTURE_FAVICON_CSS)
+    if (!hits.length) problems.push(`control: favicon-token-drift did NOT fire when the ${why}`)
+    faviconBad.push(...hits)
+  }
+
   // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
   // class, not the instance: a fatal finding with no heading prints as
   // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
@@ -1239,7 +1300,7 @@ function selfTest() {
   const everyBad = [
     ...bad, ...cssBad, ...cssLayoutBad, ...trackBad, ...rimMiss, ...nearMiss, ...glowFix,
     ...checkTracking("<fixture-budget>", overBudget),
-    ...inheritBad, ...twBad,
+    ...inheritBad, ...twBad, ...faviconBad,
   ]
   for (const rule of new Set(everyBad.filter((f) => routeOf(f) === "violation").map((f) => f.rule)))
     if (!(rule in RULES))
@@ -1296,6 +1357,7 @@ const RULES = {
   "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
   "tracking-literal": "Letter-spacing literal (use var(--track-*))",
   "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
+  "favicon-token-drift": "app/icon.svg's literal colours no longer match the tokens they copy",
   // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
   // be report-only, so its labels lived only in CSS_RULES and this table did
   // not know the names — which meant the first CSS violation after the switch
@@ -1381,6 +1443,13 @@ for (const rel of CSS_FILES) {
 // files.
 const cssSources = CSS_FILES.map((rel) => ({ file: rel, raw: readFileSync(join(ROOT_DIR, rel), "utf8") }))
 for (const v of checkInheritedFills(tsxSources, cssSources)) record(v)
+{
+  let svg = null
+  try { svg = readFileSync(join(ROOT_DIR, FAVICON), "utf8") } catch {}
+  const globals = cssSources.find((c) => c.file === "app/globals.css")?.raw ?? ""
+  for (const v of checkFavicon(FAVICON, svg, globals)) record(v)
+}
+
 // From `violations`, not `reportOnly`: CSS findings fail the build. This read
 // reportOnly while the dialect was report-only, and kept reading it after M7,
 // which is also why --bare would have listed CSS findings as bare lengths.
