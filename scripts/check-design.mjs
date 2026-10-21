@@ -300,14 +300,31 @@ function checkAccentFills(file, raw, { css }) {
       })
     }
   }
+  // THE TAILWIND DIALECT. See "HOLE 2" below: an area utility built from the
+  // config's `accent` colour paints the same fill with no `prop:` in sight.
+  if (!css) {
+    for (const cn of classNameValues(src)) {
+      for (const m of cn.text.matchAll(/\S+/g)) {
+        const u = ACCENT_AREA_UTILITY.exec(m[0])
+        if (!u) continue
+        const gradient = u[1] !== "bg" && u[1] !== "fill"
+        out.push({
+          file, rule: "no-accent-surface",
+          detail: gradient ? `class ${m[0]} (GRADIENT)` : `class ${m[0]}`,
+          line: lineAt(raw, cn.start + m.index), gradient, token: "--bureau-accent",
+        })
+      }
+    }
+  }
   return out
 }
 
-/* ── RULE 6'S HOLE: THE INHERITED FILL ─────────────────────────────────────
+/* ── RULE 6'S TWO HOLES ──────────────────────────────────────────────────────
  *
- * It was open for ten weeks — from the rule's first commit (cd99088, 12
- * August) until 21 October — and NOTHING USED IT in that time. It was found
- * when a filled brand mark arrived, and proven open before it was closed.
+ * Both were open for ten weeks — from the rule's first commit (cd99088, 12
+ * August) until 21 October — and NOTHING USED EITHER in that time. They were
+ * found when a filled brand mark arrived, and both were proven open before
+ * they were closed.
  *
  * HOLE 1 — THE INHERITED FILL. An SVG with fill="currentColor" paints its area
  * in whatever `color` its context sets. Give that context the accent and the
@@ -354,7 +371,16 @@ function checkAccentFills(file, raw, { css }) {
  *     (the same limit the declaration check has, and the same answer);
  *   - a stylesheet pairing the two in separate rules, by descendant selector.
  * Each of these is a deliberate route, not one taken by accident.
+ *
+ * HOLE 2 — THE TAILWIND CLASS. tailwind.config.ts has defined an `accent`
+ * colour since the first commit, so `bg-accent` and `fill-accent` exist, and
+ * they paint an area in the accent. The declaration check reads `prop:` and
+ * never saw a class name. Proven in a copy: a 200px-tall `bg-accent` div, and
+ * an SVG with `fill-accent`, each passed with 0 findings. No accent area
+ * utility has appeared in app/ or components/ since the rule landed. The
+ * gradient stops (from-/via-/to-accent) are caught as gradients.
  */
+const ACCENT_AREA_UTILITY = /^(?:[a-z0-9-]+:)*!?(bg|fill|from|via|to)-accent(?:\/\S+)?$/
 const ACCENT_TEXT_UTILITY = /^(?:[a-z0-9-]+:)*!?text-accent(?:\/\S+)?$/
 const CURRENT_COLOR = /^\s*currentcolor\s*$/i
 
@@ -1155,6 +1181,15 @@ const FIXTURE_INHERIT_CSS = { file: "<fixture-inherit-css>", raw: `
 .both-at-once { color: rgb(var(--bureau-accent)); fill: currentColor; }
 .primary-thing { color: rgb(var(--bureau-text-primary)); }
 ` }
+// HOLE 2: the Tailwind dialect of an accent area.
+const FIXTURE_TW_ACCENT_BAD = `
+export function T() {
+  return <div className="bg-accent"><svg className="hover:fill-accent/50" /><i className={\`x \${y} bg-gradient-to-r from-accent\`} /></div>
+}
+`
+const FIXTURE_TW_ACCENT_GOOD = `
+export function T() { return <div className="text-accent border-accent bg-bg caret-accent">accent-free bg-accent in prose is not a class</div> }
+`
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
@@ -1295,6 +1330,12 @@ function selfTest() {
     if (!hits.length) problems.push(`control: inherited fill did NOT fire on ${fx.file} — rule 6 has a hole again`)
     inheritBad.push(...hits)
   }
+  const twBad = checkAccentFills("<fixture-tw-bad>", FIXTURE_TW_ACCENT_BAD, { css: false })
+  if (twBad.length !== 3 || twBad.filter((f) => f.gradient).length !== 1)
+    problems.push(`control: Tailwind accent area classes — found ${twBad.length}/3 (${twBad.filter((f) => f.gradient).length}/1 gradient): ${twBad.map((f) => f.detail).join("; ")}`)
+  for (const f of checkAccentFills("<fixture-tw-good>", FIXTURE_TW_ACCENT_GOOD, { css: false }))
+    problems.push(`control: rule "no-accent-surface" false positive on a non-area accent class — ${f.detail}`)
+
   // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
   // class, not the instance: a fatal finding with no heading prints as
   // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
@@ -1304,7 +1345,7 @@ function selfTest() {
     ...bad, ...cssBad, ...cssLayoutBad, ...trackBad, ...rimMiss, ...nearMiss, ...glowFix,
     ...checkTracking("<fixture-budget>", overBudget),
     ...faceWeight, ...faceVariable, ...faceClass, ...faceInline,
-    ...inheritBad,
+    ...inheritBad, ...twBad,
   ]
   for (const rule of new Set(everyBad.filter((f) => routeOf(f) === "violation").map((f) => f.rule)))
     if (!(rule in RULES))
