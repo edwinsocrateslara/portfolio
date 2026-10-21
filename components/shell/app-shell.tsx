@@ -9,6 +9,7 @@ import { PromptChip } from "@/components/chat/prompt-chip"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
+import { BrandMark } from "@/components/ui/brand-mark"
 // ── THE THREE PANES ARE SPLIT OUT OF THE FIRST LOAD ──────────────────────
 // They were static imports, so a first-time visitor who only ever sees the
 // front door still downloaded, parsed and hydrated the résumé, the About page
@@ -832,19 +833,26 @@ export function AppShell({
   return (
     <div className="shell" data-sheet={sheetOpen}>
       {/* Mobile only — the rail collapses behind this. */}
-      {/* Same brand as the rail — the wordmark "Edwin". ONE FORM AT BOTH
-          WIDTHS, which is the rule this bar has kept since it once said "Edwin"
-          while the rail said "Edwin Socrates Lara" and gave one person two
-          names by viewport width. Before the wordmark it was a 16px sparkle
-          beside "EDWIN LARA" in Plex Mono caps.
+      {/* Same brand as the rail — the mark. ONE FORM AT BOTH WIDTHS, which is
+          the rule this bar has kept since it once said "Edwin" while the rail
+          said "Edwin Socrates Lara" and gave one person two names by viewport
+          width. Before the mark it was the wordmark "Edwin" in Poppins 900, and
+          before that a 16px sparkle beside "EDWIN LARA" in Plex Mono caps.
 
-          THE ROW WAS TIGHT at that brand: brand + subject + MENU filled 340 of
-          340, and .shell-topbar-subject is the element that gives, by
-          ellipsis. "Edwin" at 16 is narrower than the old brand, so the subject
-          has more room than it did; no project label truncates at 380.
+          20, NOT THE RAIL'S 32: this is an icon-only control with a 44px
+          target, and the glyph is half the target on the ramp. The 26px floor
+          the rail's 32 answers is a 1x one, and phones are 2-3x — the finest
+          gap is 1.5 device pixels or more there. A desktop window narrower
+          than 900 on a 1x screen also gets this bar, and the mark is soft
+          there — ruled and accepted, not missed; DESIGN.md records it.
 
-          Same accessible name as the rail's button, for the same reason: it
-          contains the visible "Edwin" and adds the full name and where it goes. */}
+          THE ROW WAS TIGHT at the mono brand: brand + subject + MENU filled 340
+          of 340, and .shell-topbar-subject is the element that gives, by
+          ellipsis. The mark is narrower than any brand this bar has had; no
+          project label truncates at 380.
+
+          Same accessible name as the rail's button: no visible text, so the
+          label carries the full name and where it goes. */}
       <div className="shell-topbar">
         <button
           type="button"
@@ -853,7 +861,7 @@ export function AppShell({
           aria-label="Edwin Socrates Lara — home"
           style={{ padding: 0, color: "rgb(var(--bureau-text-primary))" }}
         >
-          <span className="type-wordmark">Edwin</span>
+          <BrandMark size="var(--brand-mark-topbar)" />
         </button>
         {/* On mobile the rail is behind the sheet, so with the header card
             gone this is the only thing naming the open project. railSubtitle
@@ -868,8 +876,7 @@ export function AppShell({
             rather than in .rail, but it is the sheet's toggle — the only way
             in and out of the navigation on a phone — so by the rule it is
             something a person navigates by, not a recorded fact. The brand
-            beside it is .type-wordmark, which is neither voice: it is the
-            name, in the one display face the system allows. */}
+            beside it is the mark, which has no voice: it is not type. */}
         <button
           type="button"
           className="type-action rail-sheet-close"

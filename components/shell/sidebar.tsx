@@ -8,6 +8,7 @@ import Image from "next/image"
 import { Layers, FileText, UserRound, Mail, Linkedin } from "lucide-react"
 import { ICON_STROKE_CONTROL, ICON_STROKE_RAIL } from "@/lib/icons"
 import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
+import { BrandMark } from "@/components/ui/brand-mark"
 // NO PROJECT IMPORT. The rail draws a thumbnail, a client name and a subtitle;
 // importing lib/projects.ts to do that pulled every reveal's prose and alt text
 // into the first load. The 6 fields it needs arrive as a prop, derived on the
@@ -195,23 +196,19 @@ export function Sidebar({
 
   return (
     <aside className="rail" data-open={open} aria-label="Site index">
-      {/* THE WORDMARK. "Edwin", Poppins 900, in primary ink — the same control
-          and the same string as the mobile top bar's, so the brand is one
-          thing at both widths again.
+      {/* THE MARK, at 32, in primary ink — the same control and the same mark
+          as the mobile top bar's, so the brand is one thing at both widths.
 
-          It was the sparkle alone, in the accent, from 3 September until the
-          wordmark replaced it; before that a sparkle beside "Edwin Lara". The
-          sparkle is the typing indicator only now. NOT LIME, deliberately: a
-          black-weight word is a region of ink, and DESIGN.md's accent
-          inventory records why it is not on the list.
+          It was the sparkle alone, in the accent, from 3 September; then the
+          wordmark "Edwin" in Poppins 900 from 20 October; then this mark from
+          21 October. The sparkle is the typing indicator only. NOT LIME,
+          deliberately: lime means state on this site — active, focus, send,
+          working — and a permanently lime identity mark reads as "on" all the
+          time. DESIGN.md's accent inventory records it.
 
-          THE ACCESSIBLE NAME CONTAINS THE VISIBLE TEXT, and says more than it.
-          "Edwin Socrates Lara — home" carries the full name the page title and
-          metadata use, and the destination, which a five-letter word does not.
-          It has to CONTAIN "Edwin" (WCAG 2.5.3, Label in Name): a speech user
-          says what they see. While the mark was a sparkle the label carried
-          the whole name, because Sparkle was aria-hidden and the button had no
-          other. */}
+          NO VISIBLE TEXT, so the label carries the name: "Edwin Socrates Lara
+          — home", the full name the page title uses and the destination. The
+          mark is aria-hidden, as the sparkle was when it held this row. */}
       <button
         type="button"
         className="rail-brand"
@@ -219,7 +216,7 @@ export function Sidebar({
         aria-label="Edwin Socrates Lara — home"
         style={{ color: "rgb(var(--bureau-text-primary))" }}
       >
-        <span className="type-wordmark">Edwin</span>
+        <BrandMark size="var(--brand-mark-size)" />
       </button>
 
       {/* The wrapper exists to carry the fade: a background painted on the

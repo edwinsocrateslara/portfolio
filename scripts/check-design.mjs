@@ -913,87 +913,29 @@ function checkTracking(file, raw) {
   return found
 }
 
-// ── Rule 8 — the display face is for the name ────────────────────────────
-// The system is two families, plus ONE display face for the name only:
-// Poppins 900, set by .type-wordmark on "Edwin" in the rail and the mobile top
-// bar. DESIGN.md § Typography states it; this is what holds it. Same shape as
-// rule 6's narrowing of the accent token: the face is permitted to exactly one
-// reader, and naming it anywhere else fails the build.
+// ── Rule 8 — RETIRED 21 October: the display face is for the name ────────
+// It held Poppins to one string. From 389d3cb (20 October), two halves:
 //
 //   display-face-scope   --ff-poppins, --font-poppins or a bare `Poppins` read
-//                        anywhere but a `.type-wordmark` rule — in a
-//                        stylesheet, or in any .tsx at all (an inline style is
-//                        the easy way round a class rule). Two sanctioned
-//                        places: the token's own definition on :root, and the
-//                        next/font call in app/layout.tsx that loads it.
+//                        anywhere but a `.type-wordmark` rule, in a stylesheet
+//                        or any .tsx, with the token's :root definition and the
+//                        next/font call in app/layout.tsx as the two sanctioned
+//                        places;
+//   display-face-weight  that call loading anything but one static weight,
+//                        900, latin.
 //
-//   display-face-weight  that next/font call loading anything but ONE static
-//                        weight, 900, latin. A second weight is how a display
-//                        face becomes a text face; the variable axis is every
-//                        weight at once, at six times the bytes.
+// IT WAS PROVEN BY BREAKING when it landed. A second weight, the variable axis,
+// the token in another class, the token in a selector list that only looked
+// like the sanctioned one, and the token in an inline style each failed the
+// build; the sanctioned loader and stylesheet passed. Those were its fixtures.
 //
-// WHY A BARE `Poppins` COUNTS: `font-family: Poppins` reaches the face without
-// the token, and next/font's generated family name contains the word. Matching
-// the name as well as the token closes the obvious route round the token.
-const DISPLAY_FACE = /--ff-poppins\b|--font-poppins\b|\bPoppins\b/
-const FONT_LOADER_FILE = "app/layout.tsx"
-
-function checkDisplayFace(file, raw, { css }) {
-  const found = []
-  if (css) {
-    for (const d of cssDeclarations(raw)) {
-      if (!DISPLAY_FACE.test(`${d.prop}: ${d.value}`)) continue
-      const inRoot = d.stack.some((s) => /(^|\s|,):root\b/.test(s) || s.trim() === ":root")
-      // The definition: --ff-poppins on :root, and only there.
-      if (d.prop === "--ff-poppins" && inRoot) continue
-      // The one reader. The WHOLE selector must be .type-wordmark — a list
-      // like `.type-wordmark, .type-name` is a second reader in disguise. An
-      // @media parent is fine; it is the same rule at a breakpoint.
-      if (d.sel.trim() === ".type-wordmark" && d.prop !== "--ff-poppins") continue
-      found.push({
-        file, rule: "display-face-scope",
-        detail: `${d.sel} — ${d.prop}: ${d.value}`,
-        line: lineAt(raw, d.start),
-      })
-    }
-    return found
-  }
-
-  const src = stripComments(raw)
-  if (file === FONT_LOADER_FILE) {
-    // The loader is the one .tsx allowed to name the face, and only inside the
-    // Poppins({...}) call, its import, and the className that applies the
-    // variable. Everything else in the file is held to the same rule.
-    const call = /\bPoppins\s*\(\s*\{([\s\S]*?)\}\s*\)/.exec(src)
-    if (call) {
-      const body = call[1]
-      const weight = /weight\s*:\s*(\[[^\]]*\]|"[^"]*"|'[^']*')/.exec(body)
-      const weights = weight ? [...weight[1].matchAll(/["']([^"']+)["']/g)].map((m) => m[1]) : []
-      const subsets = /subsets\s*:\s*\[([^\]]*)\]/.exec(body)
-      const subs = subsets ? [...subsets[1].matchAll(/["']([^"']+)["']/g)].map((m) => m[1]) : []
-      const problems = []
-      if (weights.length !== 1 || weights[0] !== "900")
-        problems.push(`weight ${weight ? weight[1].replace(/\s+/g, " ") : "(unset — the variable axis)"}, must be ["900"]`)
-      if (subs.length !== 1 || subs[0] !== "latin")
-        problems.push(`subsets [${subs.join(", ")}], must be ["latin"]`)
-      for (const p of problems)
-        found.push({ file, rule: "display-face-weight", detail: p, line: lineAt(raw, call.index) })
-    }
-    // Strip what is sanctioned, then hold the rest to the scope rule.
-    const rest = src
-      .replace(/\bPoppins\s*\(\s*\{[\s\S]*?\}\s*\)/, "")
-      .replace(/import\s*\{[^}]*\}\s*from\s*["']next\/font\/google["']/, "")
-      .replace(/\$\{\s*poppins\.variable\s*\}/g, "")
-    const m = DISPLAY_FACE.exec(rest)
-    if (m) found.push({ file, rule: "display-face-scope", detail: `"${m[0]}" outside the font loader's sanctioned lines`, line: 1 })
-    return found
-  }
-  const re = new RegExp(DISPLAY_FACE.source, "g")
-  let m
-  while ((m = re.exec(src)))
-    found.push({ file, rule: "display-face-scope", detail: `"${m[0]}" in a component — the face is .type-wordmark's alone`, line: lineAt(raw, m.index) })
-  return found
-}
+// IT RETIRED BECAUSE THE THING IT GUARDED LEFT, not because it failed. The
+// brand became a filled mark, and Poppins, --ff-poppins and .type-wordmark were
+// removed. A gate with nothing to guard passes forever, and a pass that cannot
+// fail reads exactly like a clean room — the argument check-content-frozen.mjs
+// makes in its header, and the one the CSS dialect note above makes about an
+// empty one. If a display face ever comes back, restore 389d3cb's rule and
+// fixtures rather than writing a new one from memory.
 
 // ── Positive control ─────────────────────────────────────────────────────
 // A clean pass is worthless if a matcher silently broke. Each rule is run
@@ -1113,33 +1055,6 @@ const FIXTURE_CSS_LAYOUT_GOOD = `
 body { font-family: var(--ff-archivo); font-size: var(--type-body-size); line-height: var(--type-body-lh); }
 .g { padding: var(--space-16); gap: var(--space-within); color: rgb(var(--bureau-text-primary)); }
 .h { border-width: 1px; border-radius: 9999px; border: 2px solid var(--hairline); outline-offset: 2px; }
-`
-// Rule 8. One sanctioned loader and one sanctioned stylesheet, then a fixture
-// per near-miss. Each near-miss changes exactly one thing, so a pass on it
-// means the rule is a hole rather than a narrowing.
-const FIXTURE_FACE_LOADER_GOOD = `
-import { Archivo, Poppins } from "next/font/google"
-const poppins = Poppins({ subsets: ["latin"], weight: ["900"], variable: "--font-poppins" })
-export default function L() { return <html className={\`a \${poppins.variable}\`} /> }
-`
-const FIXTURE_FACE_CSS_GOOD = `
-:root { --ff-poppins: var(--font-poppins), system-ui, sans-serif; }
-.type-wordmark { font-family: var(--ff-poppins); font-weight: 900; }
-@media (max-width: 640px) { .type-wordmark { font-family: var(--ff-poppins); } }
-`
-// near-miss 1: a second weight.
-const FIXTURE_FACE_SECOND_WEIGHT = FIXTURE_FACE_LOADER_GOOD.replace('weight: ["900"]', 'weight: ["900", "700"]')
-// near-miss 1b: the variable axis.
-const FIXTURE_FACE_VARIABLE = FIXTURE_FACE_LOADER_GOOD.replace('weight: ["900"]', 'weight: "variable"')
-// near-miss 2: the token in another class — and in a selector list that only
-// LOOKS like the sanctioned one.
-const FIXTURE_FACE_OTHER_CLASS = `
-.type-name { font-family: var(--ff-poppins); }
-.type-wordmark, .type-page { font-family: var(--ff-poppins); }
-`
-// near-miss 3: the token in an inline style.
-const FIXTURE_FACE_INLINE = `
-export function X() { return <span style={{ fontFamily: "var(--ff-poppins)" }}>Edwin</span> }
 `
 // Rule 6's inherited fill. One component that renders a currentColor fill,
 // standing in for the brand mark, used from other files.
@@ -1298,26 +1213,6 @@ function selfTest() {
   if (bad.some((f) => f.rule === "no-bare-length" && routeOf(f) !== "reportOnly"))
     problems.push('control: rule "no-bare-length" would fail the build — it is report-only, and making it fatal is a decision, not a side effect')
 
-  // Rule 8 — the display face. Good inputs silent, each near-miss firing.
-  const faceGood = [
-    ...checkDisplayFace("app/layout.tsx", FIXTURE_FACE_LOADER_GOOD, { css: false }),
-    ...checkDisplayFace("<fixture-face-css-good>", FIXTURE_FACE_CSS_GOOD, { css: true }),
-  ]
-  for (const f of faceGood)
-    problems.push(`control: rule "${f.rule}" false positive on the sanctioned loader or stylesheet — ${f.detail}`)
-  const faceWeight = checkDisplayFace("app/layout.tsx", FIXTURE_FACE_SECOND_WEIGHT, { css: false })
-  if (!faceWeight.some((f) => f.rule === "display-face-weight"))
-    problems.push('control: rule "display-face-weight" did NOT fire on a second Poppins weight')
-  const faceVariable = checkDisplayFace("app/layout.tsx", FIXTURE_FACE_VARIABLE, { css: false })
-  if (!faceVariable.some((f) => f.rule === "display-face-weight"))
-    problems.push('control: rule "display-face-weight" did NOT fire on the variable axis')
-  const faceClass = checkDisplayFace("<fixture-face-class>", FIXTURE_FACE_OTHER_CLASS, { css: true })
-  if (faceClass.filter((f) => f.rule === "display-face-scope").length !== 2)
-    problems.push(`control: rule "display-face-scope" found ${faceClass.length}/2 readers outside .type-wordmark — it must catch the other class AND the selector list`)
-  const faceInline = checkDisplayFace("components/fixture.tsx", FIXTURE_FACE_INLINE, { css: false })
-  if (!faceInline.some((f) => f.rule === "display-face-scope"))
-    problems.push('control: rule "display-face-scope" did NOT fire on --ff-poppins in an inline style')
-
   // Rule 6's inherited fill — the hole that was open for ten weeks. Every
   // route must fire on its own; the primary mark and the lime STROKE must not.
   const inheritGood = checkInheritedFills([FIXTURE_MARK, FIXTURE_INHERIT_GOOD], [FIXTURE_INHERIT_CSS])
@@ -1344,7 +1239,6 @@ function selfTest() {
   const everyBad = [
     ...bad, ...cssBad, ...cssLayoutBad, ...trackBad, ...rimMiss, ...nearMiss, ...glowFix,
     ...checkTracking("<fixture-budget>", overBudget),
-    ...faceWeight, ...faceVariable, ...faceClass, ...faceInline,
     ...inheritBad, ...twBad,
   ]
   for (const rule of new Set(everyBad.filter((f) => routeOf(f) === "violation").map((f) => f.rule)))
@@ -1402,8 +1296,6 @@ const RULES = {
   "no-accent-surface": "Accent used as a fill (it marks structure, never a surface)",
   "tracking-literal": "Letter-spacing literal (use var(--track-*))",
   "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
-  "display-face-scope": "The display face read outside .type-wordmark (it is for the name only)",
-  "display-face-weight": "The display face loaded at anything but one static weight, 900, latin",
   // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
   // be report-only, so its labels lived only in CSS_RULES and this table did
   // not know the names — which meant the first CSS violation after the switch
@@ -1471,7 +1363,6 @@ for (const abs of files) {
   const rel = relative(ROOT_DIR, abs)
   const src = readFileSync(abs, "utf8")
   for (const v of checkFile(rel, src)) record(v)
-  for (const v of checkDisplayFace(rel, src, { css: false })) record(v)
   if (rel.endsWith(".tsx")) tsxSources.push({ file: rel, raw: src })
 }
 
@@ -1484,7 +1375,6 @@ for (const rel of CSS_FILES) {
   for (const v of checkAccentFills(rel, css, { css: true })) record(v)
   for (const v of checkTracking(rel, css)) record(v)
   for (const v of checkCssLayout(rel, css)) record(v)
-  for (const v of checkDisplayFace(rel, css, { css: true })) record(v)
 }
 // Rule 6's inherited fill reads every component and every stylesheet at once,
 // because the fill and the colour that reaches it are usually in different

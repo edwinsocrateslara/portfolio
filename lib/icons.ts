@@ -60,9 +60,14 @@ export const ICON_STROKE_CONTROL = 1.8
  *  Its stroke is 8.33 in a 100-unit viewBox, which is the same 1:12 ratio
  *  ICON_STROKE expresses in 24, so at 24 it paints 2.00px where this rule asks
  *  for 1.50. (This note said "both call sites, 16 for the brand mark" after
- *  the brand had gone to 32 alone in the rail; the brand is the wordmark
- *  "Edwin" now and uses no sparkle.) It is left alone deliberately: the path and its stroke are
+ *  the brand had gone to 32 alone in the rail; the brand uses no sparkle
+ *  now.) It is left alone deliberately: the path and its stroke are
  *  a trace of a Lottie source, documented in docs/provenance, and re-picking
  *  the stroke would make it no longer a trace. Recorded as an exception rather
- *  than assumed to be fine. */
+ *  than assumed to be fine.
+ *
+ *  THE BRAND MARK IS NOT ON THIS SCALE AT ALL, which is different from being
+ *  off it: it is a fill with no stroke, so there is no stroke width to agree
+ *  or disagree with. Its sizes come from its own finest feature instead — see
+ *  components/ui/brand-mark.tsx and --brand-mark-size. */
 export const ICON_STROKE_RAIL = 1.5

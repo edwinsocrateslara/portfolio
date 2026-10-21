@@ -207,9 +207,10 @@
      class are one-to-one. */
   --track-caption:        0.4px;
   /* --track-wordmark (0.8px, mono caps at 700) is RETIRED. It tracked the
-     brand when the brand was "EDWIN LARA" in Plex Mono; the wordmark is
-     Poppins 900 in mixed case now and takes no tracking, so the token had no
-     reader. Before that it was --track-badge, named for a class that had zero
+     brand when the brand was "EDWIN LARA" in Plex Mono; the brand left mono
+     for the wordmark "Edwin" in Poppins 900 (20 October), which took no
+     tracking, so the token had no reader. The brand is a mark now, which
+     takes none either. Before that it was --track-badge, named for a class that had zero
      instances. TRACK_BUDGET went 6 -> 5 with it. */
   /* Mono caps, split by STEP. .type-section put caps at two sizes for the
      first time and one value cannot serve both: in EM — which is what the eye
@@ -499,12 +500,38 @@
      not the indicator is animating, so mount and unmount cost the
      stream nothing. */
   --indicator-size: var(--space-24);
+  /* ── THE BRAND MARK ───────────────────────────────────────────────────
+     A filled mark (components/ui/brand-mark.tsx), in primary ink. It sits
+     OUTSIDE the icon ramp, with a stated reason — the same standing the
+     sparkle's 32 had, for a different cause:
+
+     32 IN THE RAIL IS THE LEGIBILITY FLOOR, ROUNDED UP TO THE GRID. The mark
+     is drawn on a 10-unit module in a 260-unit box, so its narrowest gap is
+     one device pixel at 26px on a 1x screen; below that the interior closes.
+     Measured at 1x: 16 is a blob, 24 gives 0.92px gaps, 32 gives 1.23. 32 is
+     the first --space step above 26. The brand row is 80 again, and the
+     rail's list scrolls 17px past its fold at 1440x900 (217 at 1440x700) —
+     the sparkle-era numbers exactly; the wordmark's 78 row gave 15 and 215.
+
+     20 IN THE TOP BAR IS THE TARGET RULE: an icon-only control at 44 takes a
+     glyph half its target, 22, which is 20 on the ramp. The floor above is a
+     1x one, and the top bar is mostly a phone surface (2-3x). A desktop
+     window narrower than 900 at 1x gets it too; DESIGN.md records that case. */
+  --brand-mark-size:   var(--space-32);
+  --brand-mark-topbar: var(--space-20);
   /* ── THE BRAND MARK WAS A SPARKLE, AND THIS IS ITS RECORD ─────────────
      HISTORY, kept because the ruling below was a real decision and the next
-     person to put a sparkle near the indicator should find it. The brand is
-     the wordmark "Edwin" now (.type-wordmark), and the sparkle is the typing
-     indicator only. --brand-mark-size (32) and --brand-mark-topbar (16) were
-     deleted with the mark.
+     person to put a sparkle near the indicator should find it. The brand
+     was the wordmark "Edwin" in Poppins 900 for a day (20 October), and is
+     the filled mark above now; the sparkle is the typing indicator only. The
+     two token names were deleted with the sparkle and reused for the new
+     mark: --brand-mark-size was 32 then and is 32 now, for a different
+     reason; --brand-mark-topbar was 16 and is 20.
+
+     THE NEW MARK DOES NOT COLLIDE WITH THE INDICATOR. Rendered side by side:
+     the mark is static, filled, primary, symmetric, 32; the indicator is
+     lime, stroked, animated, 24. Different objects on every axis, not on
+     size alone, so nothing below needs reopening.
 
      THE 32 WAS AN OFF-RAMP SIZE THAT EXISTED BECAUSE OF A COLLISION. At 1440
      the rail carried the sparkle alone, so no cap height governed it. The
@@ -649,10 +676,11 @@
      IBM Plex Mono is DATA, the interface reporting. See DESIGN.md. */
   --ff-archivo:    var(--font-archivo), system-ui, sans-serif;
   --ff-plex-mono:  var(--font-plex-mono), ui-monospace, monospace;
-  /* The display face for the name, and only the name. Readable inside
-     .type-wordmark and nowhere else — check:design's display-face-scope rule
-     fails the build on any other reader, in this file or inline. */
-  --ff-poppins:    var(--font-poppins), system-ui, sans-serif;
+  /* --ff-poppins is RETIRED. It was the display face for the name — "Edwin"
+     in Poppins 900, in .type-wordmark — from 20 October until the brand
+     became a mark on 21 October. With no name set in type, the face had no
+     reader; the font, the token, the class and check:design rule 8 went
+     together. Two families again. */
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -857,8 +885,8 @@ body {
      labels. A fourth kind arriving at one rank is not a weight problem, it is
      a signal that the level is overloaded and needs a size of its own.
 
-     Voice is stated per class. Archivo speaks, mono reports; the wordmark is
-     the one documented exception. */
+     Voice is stated per class. Archivo speaks, mono reports. There is no
+     exception now: the one the wordmark held retired with it. */
 
   /* ── Product voice — Archivo. The interface speaking. ────────────────── */
   .type-display {
@@ -947,28 +975,11 @@ body {
     letter-spacing: var(--track-caps-body);
     text-transform: uppercase;
   }
-  /* THE EXCEPTION. The brand is Product voice by the rule — it is the product
-     naming itself — and stays mono because a brand mark is allowed to be its
-     own thing, and because with the rail in Archivo this is the only place the
-     mono voice appears on every surface. */
-  /* THE NAME: "Edwin", Poppins 900. The only reader of --ff-poppins.
-
-     SIZED BY CAP-HEIGHT CLEARANCE, on existing rungs rather than new ones: the
-     smallest step whose cap clears the largest label beside it by 1.25x, one
-     ladder ratio. Measured on the rendered faces: at 1440 the WORK header's cap
-     is 10.98, and 20 gives 14.16 (1.29x) where 16 gives 11.33 (1.03x). At 640
-     and below MENU's cap is 8.23, and 16 gives 11.33 (1.38x) where 14 gives
-     9.91 (1.20x). Each takes its own rung's leading.
-
-     NO TRACKING. This was Plex Mono caps at 700 with --track-wordmark (0.8px);
-     a black-weight display face set in mixed case needs no correction at these
-     sizes, so the token retired and TRACK_BUDGET went 6 -> 5. */
-  .type-wordmark {
-    font-family: var(--ff-poppins);
-    font-weight: 900;
-    font-size: var(--type-section-size);
-    line-height: var(--type-section-lh);
-  }
+  /* .type-wordmark is RETIRED, with --ff-poppins. It set "Edwin" in Poppins
+     900 at 20/30, stepping to 16/24 at 640 — each the smallest rung whose cap
+     cleared the largest label beside it by 1.25x (WORK's 10.98 at 1440, MENU's
+     8.23 below 640). Before that it was the mono brand "EDWIN LARA". The brand
+     is a mark now and no class sets the name. Thirteen classes again. */
   .type-label {
     font-family: var(--ff-plex-mono);
     font-weight: 600;
@@ -1021,18 +1032,6 @@ body {
     .type-name {
       font-size: var(--type-section-size);
       line-height: var(--type-section-lh);
-    }
-    /* ONE ROLE, TWO SIZES: 20 above 640, 16 here, each the smallest rung that
-       clears its neighbours (see .type-wordmark). This step was 16 -> 12 when
-       the wordmark was "EDWIN LARA" in Plex Mono caps, because that row fitted
-       brand + subject + MENU into 340px exactly; "Edwin" at 16 is 50px wide and
-       leaves the project label more room than it had. It used to be a separate
-       class (.type-badge) which an audit measuring only 1440 reported as having
-       zero instances. It is the same role at a breakpoint, which is what a
-       breakpoint is for. */
-    .type-wordmark {
-      font-size: var(--type-body-size);
-      line-height: var(--type-body-lh);
     }
   }
 }
@@ -2224,9 +2223,15 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   }
   /* The brand mark is the way home on a phone, so it takes the same 44px
      floor as the menu beside it. Its own padding is zeroed in the component
-     to keep the label flush with the bar's edge, which left it 18px tall. */
+     to keep the mark flush with the bar's edge, which left it 20px tall.
+
+     44 WIDE AS WELL, since the mark. While the brand was text the button was
+     as wide as the word; an icon-only button is as wide as its 20px glyph,
+     which made the target 20x44. The glyph stays flush left — the extra width
+     is hit area to its right, inside the bar's existing gap. */
   .shell-topbar .rail-brand {
     min-height: var(--space-44);
+    min-width: var(--space-44);
     align-items: center;
   }
   /* The rail becomes a sheet that REPLACES the pane rather than overlaying

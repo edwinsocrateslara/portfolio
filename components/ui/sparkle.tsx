@@ -6,8 +6,8 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 //
 // ONE CALLER: the typing indicator. It was inline in TypingIndicator, and moved
 // here when the brand mark needed the same geometry — a traced path duplicated
-// in two files is two things that can drift. The brand is the wordmark "Edwin"
-// now, so the reason it moved is gone.
+// in two files is two things that can drift. The brand is a filled mark of its
+// own now (components/ui/brand-mark.tsx), so the reason it moved is gone.
 //
 // IT STAYS HERE ANYWAY, for a different reason: this file IS the trace. The
 // provenance in docs/provenance/typing-indicator/ documents this path and these

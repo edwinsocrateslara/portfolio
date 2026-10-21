@@ -608,8 +608,8 @@ function FollowupsBubble({
 // intermittently.
 //
 // The geometry lives in components/ui/sparkle.tsx. It moved there when the
-// brand mark needed the same shape; the brand is the wordmark "Edwin" now, and
-// this is the sparkle's only caller. The file keeps the trace the provenance
+// brand mark needed the same shape; the brand is a filled mark of its own now
+// (components/ui/brand-mark.tsx), and this is the sparkle's only caller. The file keeps the trace the provenance
 // documents.
 export function TypingIndicator() {
   return (

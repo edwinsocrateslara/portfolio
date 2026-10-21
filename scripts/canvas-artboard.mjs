@@ -732,10 +732,11 @@ const file = `<!doctype html>
        artboard that quietly counterfeits a face is exactly what this extractor
        exists to prevent.
 
-       Poppins 900 is here for the same reason: the wordmark is set in it, and
-       without the face the board would draw "Edwin" in a fallback sans. One
-       weight, matching what app/layout.tsx loads. -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Poppins:wght@900&amp;display=swap">
+       Poppins 900 was here for the same reason while the wordmark "Edwin"
+       was set in it (20-21 October). The brand is an SVG mark now, which
+       needs no face, so the family left this link when it left
+       app/layout.tsx. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
   <style>
     /* GLOBAL_RESET, written from the same table the diff uses as its
        reference — see the header. Nothing else belongs here: every other
