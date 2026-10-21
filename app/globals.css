@@ -121,9 +121,13 @@
        btn    8   buttons that are not pills
        chip  pill chips, badges, circular icon controls, and the chat
                   input at rest
-       thumb  4   the rail's 32px project frames, and only those — at that
-                  size `media` is a quarter of the box and reads as a
-                  squircle rather than a softened corner */
+       thumb  4   the rail's 40px project frames, and only those. Chosen
+                  when the frames were 32, where `media` was a quarter of
+                  the box and read as a squircle rather than a softened
+                  corner; at 40 (bebe347, 24 August) it would be a fifth,
+                  and 4 was kept. This line said "32px" until 21 October —
+                  two months after the frames grew, which is the stale
+                  number it was then corrected from. */
   /* ── The floating panel ────────────────────────────────────────
      Two values that exist for the résumé download menu, which is the
      first thing on this site to float over its own content.
@@ -505,19 +509,34 @@
      OUTSIDE the icon ramp, with a stated reason — the same standing the
      sparkle's 32 had, for a different cause:
 
-     32 IN THE RAIL IS THE LEGIBILITY FLOOR, ROUNDED UP TO THE GRID. The mark
-     is drawn on a 10-unit module in a 260-unit box, so its narrowest gap is
-     one device pixel at 26px on a 1x screen; below that the interior closes.
-     Measured at 1x: 16 is a blob, 24 gives 0.92px gaps, 32 gives 1.23. 32 is
-     the first --space step above 26. The brand row is 80 again, and the
-     rail's list scrolls 17px past its fold at 1440x900 (217 at 1440x700) —
-     the sparkle-era numbers exactly; the wordmark's 78 row gave 15 and 215.
+     IN THE RAIL IT IS THE THUMBNAIL'S SIZE, AND THAT IS THE REASON. It is
+     not a bigger element in the rail; it is the same size as what is already
+     there — 40x40 at x=22, the box every project thumbnail below it
+     occupies. So it reads --rail-thumb-size rather than its own 40, the way
+     --rail-doc-col does: two facts that must agree, written as one. If the
+     thumbnails change, the mark follows — and has to stay above the floor
+     below, which any size this rail has used does.
+
+     LEGIBILITY IS WHAT PROMPTED IT. The mark is drawn on a 10-unit module in
+     a 260-unit box, so its narrowest gap is one device pixel at 26px on a 1x
+     screen; below that the interior closes. That floor is 26. The rail took
+     32 first (21 October), as the first --space step above it; rendered at
+     1x it cleared the floor without reading — 1.23px gaps fall between pixel
+     boundaries and the interior went grey. At 40: 1.54px gaps, 3.08px bars,
+     the arms' teeth separate cleanly; the central ring still antialiases at
+     any size this rail can hold. 36 was rendered as the fallback.
+
+     MEASURED AGAINST WHAT SURROUNDS IT: 3.58x the WORK header's cap (11.17)
+     and 0.8x its width, the same 22px left edge, and 61.8px of clear space to
+     WORK's cap at any mark size, because the row grows with the mark. Brand
+     row 88; the rail's list scrolls 25px past its fold at 1440x900 and 225
+     at 1440x700 (32 gave 80, 17, 217).
 
      20 IN THE TOP BAR IS THE TARGET RULE: an icon-only control at 44 takes a
      glyph half its target, 22, which is 20 on the ramp. The floor above is a
      1x one, and the top bar is mostly a phone surface (2-3x). A desktop
      window narrower than 900 at 1x gets it too; DESIGN.md records that case. */
-  --brand-mark-size:   var(--space-32);
+  --brand-mark-size:   var(--rail-thumb-size);
   --brand-mark-topbar: var(--space-20);
   /* ── THE BRAND MARK WAS A SPARKLE, AND THIS IS ITS RECORD ─────────────
      HISTORY, kept because the ruling below was a real decision and the next
@@ -525,11 +544,11 @@
      was the wordmark "Edwin" in Poppins 900 for a day (20 October), and is
      the filled mark above now; the sparkle is the typing indicator only. The
      two token names were deleted with the sparkle and reused for the new
-     mark: --brand-mark-size was 32 then and is 32 now, for a different
-     reason; --brand-mark-topbar was 16 and is 20.
+     mark: --brand-mark-size was 32 then, was 32 again for the mark's first
+     hours, and is 40 now; --brand-mark-topbar was 16 and is 20.
 
      THE NEW MARK DOES NOT COLLIDE WITH THE INDICATOR. Rendered side by side:
-     the mark is static, filled, primary, symmetric, 32; the indicator is
+     the mark is static, filled, primary, symmetric, 40; the indicator is
      lime, stroked, animated, 24. Different objects on every axis, not on
      size alone, so nothing below needs reopening.
 
@@ -575,7 +594,8 @@
      back into one token re-breaks that alignment by exactly 8px. */
   /* The thumbnail, and the document column beside it. ONE TOKEN EACH, but the
      same value, because they are two different facts that must agree: how big
-     a picture is, and how wide the column before a document label is. They
+     a picture is, and how wide the column before a document label is. The
+     brand mark is a third (--brand-mark-size reads this token). They
      line up every rail label on one left edge (70px), which took a full round
      to establish and is not something a size change may quietly break. */
   --rail-thumb-size: var(--space-40);

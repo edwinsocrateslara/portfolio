@@ -849,11 +849,12 @@ this rule at one width and not the other:
   (`min-width: var(--space-44)`), with the glyph flush left and the extra
   width as hit area to its right. Measured on the build: 44×44 at 380, 700 and
   880 wide, and a point 20px right of the glyph hits the button.
-- **The rail does not, and says why.** Its 32 is the mark's legibility floor
-  rounded up to the grid — see [The brand mark: a fill, outside the
-  ramp](#the-brand-mark-a-fill-outside-the-ramp). The rail row is 80px tall
-  and the target rule would give 40; the mark's own drawing is the tighter
-  constraint, and it points the other way at no size.
+- **The rail does not, and says why.** Its 40 is the thumbnail column's size,
+  above the mark's own legibility floor — see [The brand mark: a fill, outside the
+  ramp](#the-brand-mark-a-fill-outside-the-ramp). The rule cannot settle it:
+  the row's height is the mark plus its padding, so "half the target" would
+  chase its own tail (an 88 row asks for 44, a 96 row for 48). The size was
+  chosen on the 1× render instead.
 
 The sparkle is the typing indicator only.
 
@@ -1413,12 +1414,13 @@ a thumbnail and a mono eyebrow. The standalone route was deleted on 20 August
 Four sizes — 12, 16, 20, 24 — and two rules that produce them. Which rule
 applies depends on one question: is there type beside this mark?
 
-One mark sits off the ramp, with a stated reason: the rail's brand at 32.
-It is the second mark to hold that size there, for a different cause. The
+One mark sits off the ramp, with a stated reason: the rail's brand at 40 —
+the size of the thumbnails beside it.
+The rail's brand has been off the ramp before, for a different cause. The
 first was a 32px sparkle, sized to separate it from the 24px typing indicator
 — its reason was a collision, and the record of that ruling is at the typing
 indicator's token in `app/globals.css`. The brand was then the wordmark
-"Edwin" for a day, and is now a filled mark whose 32 comes from its own
+"Edwin" for a day, and is now a filled mark whose 40 comes from its own
 drawing — see [The brand mark: a fill, outside the
 ramp](#the-brand-mark-a-fill-outside-the-ramp).
 
@@ -1532,13 +1534,28 @@ device pixel at 26px on a 1× screen; below that the interior closes.
 | 16 | 0.62px — a blob | 1.23 | nowhere (see the favicon, below) |
 | 20 | 0.77px | 1.54 | mobile top bar (2–3× on a phone: ≥1.5 device px) |
 | 24 | 0.92px | 1.85 | — |
-| **32** | **1.23px** | 2.46 | **the rail** |
+| 32 | 1.23px | 2.46 | the rail, 21 October — clears the floor, interior greys |
+| 36 | 1.38px | 2.77 | rendered as the fallback |
+| **40** | **1.54px** | 3.08 | **the rail** |
 
-- **The rail: 32**, the first `--space` step above 26. Neither icon rule
-  produced it, and that is stated rather than hidden: the mark is alone (no
-  cap height), and the target rule would give 40 for an 80px row — the
-  drawing's own floor is the tighter constraint. The brand row is 80, and the
-  list scrolls 17px past its fold at 1440×900 — the sparkle-era numbers.
+- **The rail: the thumbnail's size, and that is the reason.** The mark is
+  not a bigger element in the rail; it is the same size as what is already
+  there — 40×40 at x=22, the box every project thumbnail below it occupies.
+  The token says so: `--brand-mark-size: var(--rail-thumb-size)`, the same
+  way `--rail-doc-col` follows the thumbnail. That argument survives a
+  question about the size in a way taste does not.
+- **Legibility is what prompted it.** It was 32 for the mark's first hours
+  (21 October), stated then as "the first `--space` step above 26". That was
+  true and not enough: rendered at 1× the 1.23px gaps fall between pixel
+  boundaries and the interior went grey. At 40 the arms' teeth separate;
+  36 was rendered beside it as the fallback. Neither icon rule produced it,
+  and that is stated rather than hidden: the mark is alone (no cap height),
+  and the target rule has nothing fixed to halve (see the table above).
+- **Measured against what surrounds it:** 3.58× the WORK header's cap
+  (11.17), 0.8× its width, the same 22px left edge, and 61.8px of clear
+  space to its cap at any mark size, because the row grows with the mark.
+  Brand row 88; the list scrolls 25px past its fold at 1440×900 and 225 at
+  1440×700 (at 32: 80, 17, 217).
 - **The mobile top bar: 20**, by the target rule — see the table in [An
   icon-only control's glyph is half its
   target](#an-icon-only-controls-glyph-is-half-its-target).
@@ -1549,7 +1566,7 @@ device pixel at 26px on a 1× screen; below that the interior closes.
   lime is under [What rule 6 cannot see](#what-rule-6-cannot-see) — lime
   means state.
 - **It does not collide with the indicator.** Rendered side by side on the
-  built site: the mark is static, filled, primary, symmetric, 32; the
+  built site: the mark is static, filled, primary, symmetric, 40; the
   indicator is lime, stroked, animated, 24. Different on every axis, not on
   size alone, so the collision ruling stays history.
 - **No visible name inside the panes, accepted.** The button's
@@ -1559,8 +1576,10 @@ device pixel at 26px on a 1× screen; below that the interior closes.
   a mark.
 
 **Measured at 1×, the floor is a floor, not a guarantee of crispness.** At 32
-the outer bars hold, but the gaps are 1.23px and do not land on pixel
-boundaries, so the inner ring antialiases to grey. At 20 on a 1× screen — a
+the outer bars held, but the gaps are 1.23px and do not land on pixel
+boundaries, so the interior antialiased to grey — which is why the rail is 40.
+At 40 the arms' teeth separate cleanly and the outer bars are solid; the
+central ring still antialiases, at any size this rail can hold. At 20 on a 1× screen — a
 desktop window narrower than 900, which gets the top bar — the interior closes
 into a grey lump; it holds on a phone. Both rendered on the build.
 
@@ -1959,10 +1978,10 @@ and 24 of padding, a number around a mark rather than a designed value — and
 was 78 with "Edwin" at 20 on its own rung's 30px leading: 15px past the fold
 at 1440×900 and 215 at 1440×700.
 
-**The mark gave it back (21 October).** A 32px mark plus 24 and 24 is 80
-again, and this time the 32 is the mark's legibility floor rather than a
-number around a mark. Measured on a production build: **17px past the fold**
-at 1440×900 and 217 at 1440×700.
+**The mark gave it back, then took 8 (21 October).** At 32 the row was 80
+again — 17px past the fold at 1440×900, 217 at 1440×700. The rail mark went
+to 40 the same day for legibility at 1×, and the row is **88**: measured on a
+production build, **25px past the fold** at 1440×900 and 225 at 1440×700.
 
 **Each further project costs 56px**, the row height, and each further *section*
 costs 128 — its header at 72 plus one row. (It was 98, with the header at 66.)

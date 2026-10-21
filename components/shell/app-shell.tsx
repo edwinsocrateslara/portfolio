@@ -839,9 +839,9 @@ export function AppShell({
           width. Before the mark it was the wordmark "Edwin" in Poppins 900, and
           before that a 16px sparkle beside "EDWIN LARA" in Plex Mono caps.
 
-          20, NOT THE RAIL'S 32: this is an icon-only control with a 44px
-          target, and the glyph is half the target on the ramp. The 26px floor
-          the rail's 32 answers is a 1x one, and phones are 2-3x — the finest
+          20, NOT THE RAIL'S 40: this is an icon-only control with a 44px
+          target, and the glyph is half the target on the ramp. The mark's
+          26px legibility floor is a 1x one, and phones are 2-3x — the finest
           gap is 1.5 device pixels or more there. A desktop window narrower
           than 900 on a 1x screen also gets this bar, and the mark is soft
           there — ruled and accepted, not missed; DESIGN.md records it.

@@ -22,5 +22,7 @@ token at the call site, as the sparkle's stroke does.
 
 The drawing sits on a 10-unit module: bars are 20 units, the narrowest gaps 10.
 In a 260-unit box a 10-unit gap is one device pixel at 26px on a 1× screen.
-That is why the rail draws it at 32 and why there is no 16px favicon —
-DESIGN.md § Icons, "The brand mark: a fill, outside the ramp".
+That floor is why there is no 16px favicon, and why the rail could not go
+below 32; the rail draws it at 40, a legibility call above the floor made on
+the 1× render — DESIGN.md § Icons, "The brand mark: a fill, outside the
+ramp".

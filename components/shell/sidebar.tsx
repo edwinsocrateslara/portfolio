@@ -196,8 +196,9 @@ export function Sidebar({
 
   return (
     <aside className="rail" data-open={open} aria-label="Site index">
-      {/* THE MARK, at 32, in primary ink — the same control and the same mark
-          as the mobile top bar's, so the brand is one thing at both widths.
+      {/* THE MARK, at the thumbnails' 40, in primary ink — the same control
+          and the same mark as the mobile top bar's, so the brand is one thing
+          at both widths.
 
           It was the sparkle alone, in the accent, from 3 September; then the
           wordmark "Edwin" in Poppins 900 from 20 October; then this mark from
