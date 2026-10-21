@@ -16,6 +16,9 @@
 // is where an accent surface would actually be written.
 import { readFileSync, readdirSync, statSync } from "fs"
 import { join, relative } from "path"
+// Rule 6's inherited-fill pass only. Everything else here is grep, and stays
+// grep; that one pass has to see JSX nesting across files, which a regex can't.
+import ts from "typescript"
 
 const ROOTS = ["app", "components"]
 const ROOT_DIR = process.cwd()
@@ -298,6 +301,180 @@ function checkAccentFills(file, raw, { css }) {
     }
   }
   return out
+}
+
+/* ── RULE 6'S HOLE: THE INHERITED FILL ─────────────────────────────────────
+ *
+ * It was open for ten weeks — from the rule's first commit (cd99088, 12
+ * August) until 21 October — and NOTHING USED IT in that time. It was found
+ * when a filled brand mark arrived, and proven open before it was closed.
+ *
+ * HOLE 1 — THE INHERITED FILL. An SVG with fill="currentColor" paints its area
+ * in whatever `color` its context sets. Give that context the accent and the
+ * area is an accent fill, but nothing in the source says `fill:` with an
+ * accent token: the attribute says currentColor, and the accent is a `color`,
+ * which this rule permits because a colour marks a glyph. Proven in a copy:
+ * fill="currentColor" under style={{ color: accent }} passed with 0 findings,
+ * and the same fill written as style={{ fill: accent }} failed.
+ *
+ * NOTHING WENT THROUGH IT. No currentColor fill existed in app/ or components/
+ * in any commit before the brand mark. The sparkle is lime and is coloured by
+ * exactly this wrapper pattern, but it was always fill="none"
+ * stroke="currentColor": a stroke is an edge, which is what the accent is for,
+ * so the sparkle was permitted by design rather than by the hole. The brand
+ * mark is the repo's first currentColor fill, which is why the hole mattered
+ * now and not before.
+ *
+ * THE HEURISTIC, parsed with the TypeScript compiler rather than grepped,
+ * because the real shape crosses files: the mark sets its fill in
+ * brand-mark.tsx, and its colour comes from a button in sidebar.tsx.
+ *
+ *   A CURRENTCOLOR FILL is a JSX element with fill="currentColor" (attribute
+ *   or style), or a class that a stylesheet gives `fill: currentColor`; or a
+ *   use of a COMPONENT that renders one. Components are found by name and
+ *   transitively, so a wrapper around the mark counts as the mark.
+ *
+ *   AN ACCENT COLOUR is a JSX element whose style sets `color` to an accent
+ *   token, or whose className carries `text-accent` or a class that a
+ *   stylesheet gives an accent `color`.
+ *
+ *   FLAGGED: a currentColor fill on or inside an accent-coloured element, in
+ *   one JSX tree. In a stylesheet: one rule setting both.
+ *
+ * IT ERRS TOWARD A FINDING. It does not model an element in between resetting
+ * `color`: a lime wrapper around a component whose own button sets primary is
+ * flagged anyway. That is the rule's existing stance — it cannot measure the
+ * render, so it flags and the judgment goes in ALLOW with a reason.
+ *
+ * WHAT IT STILL LETS THROUGH, stated rather than discovered later:
+ *   - colour a component applies to `children` it is handed: the accent
+ *     element and the fill are then in different files' trees;
+ *   - a component imported under another name (`{ BrandMark as M }`);
+ *   - an accent reached through a custom property ACCENT_TOKENS does not list
+ *     (the same limit the declaration check has, and the same answer);
+ *   - a stylesheet pairing the two in separate rules, by descendant selector.
+ * Each of these is a deliberate route, not one taken by accident.
+ */
+const ACCENT_TEXT_UTILITY = /^(?:[a-z0-9-]+:)*!?text-accent(?:\/\S+)?$/
+const CURRENT_COLOR = /^\s*currentcolor\s*$/i
+
+/** Class names in the SUBJECT of each selector — the element the
+ *  declaration lands on. `.row[data-active] .label` gives "label". */
+function subjectClasses(sel) {
+  const out = []
+  for (const one of sel.split(",")) {
+    const subject = one.trim().split(/\s*[>+~]\s*|\s+/).pop() || ""
+    for (const m of subject.matchAll(/\.([A-Za-z0-9_-]+)/g)) out.push(m[1])
+  }
+  return out
+}
+
+/** What the stylesheets say about colour and fill, by class. */
+function cssPaint(cssSources) {
+  const accentColor = new Set(), currentFill = new Set(), found = []
+  for (const { file, raw } of cssSources) {
+    const byRule = new Map()
+    for (const d of cssDeclarations(raw)) {
+      const accent = d.prop === "color" && ACCENT_TOKENS.some((t) => d.value.includes(t))
+      const current = d.prop === "fill" && CURRENT_COLOR.test(d.value)
+      if (!accent && !current) continue
+      for (const c of subjectClasses(d.sel)) (accent ? accentColor : currentFill).add(c)
+      const key = d.stack.join(" | ")
+      const r = byRule.get(key) ?? { accent: false, current: false, d }
+      r.accent ||= accent
+      r.current ||= current
+      byRule.set(key, r)
+    }
+    for (const [, r] of byRule)
+      if (r.accent && r.current)
+        found.push({ file, rule: "no-accent-surface", detail: `${r.d.sel} fill: currentColor under an accent color`, line: lineAt(raw, r.d.start) })
+  }
+  return { accentColor, currentFill, found }
+}
+
+function jsxAttr(open, name) {
+  const a = open.attributes.properties.find((p) => ts.isJsxAttribute(p) && p.name.getText() === name)
+  if (!a?.initializer) return null
+  const init = a.initializer
+  if (ts.isStringLiteral(init)) return init.text
+  if (ts.isJsxExpression(init) && init.expression)
+    return ts.isStringLiteralLike(init.expression) ? init.expression.text : init.expression.getText()
+  return null
+}
+
+function jsxStyle(open, prop) {
+  const a = open.attributes.properties.find((p) => ts.isJsxAttribute(p) && p.name.getText() === "style")
+  const obj = a?.initializer && ts.isJsxExpression(a.initializer) ? a.initializer.expression : null
+  if (!obj || !ts.isObjectLiteralExpression(obj)) return null
+  for (const p of obj.properties) {
+    if (!ts.isPropertyAssignment(p)) continue
+    if (p.name.getText().replace(/^["']|["']$/g, "") !== prop) continue
+    return ts.isStringLiteralLike(p.initializer) ? p.initializer.text : p.initializer.getText()
+  }
+  return null
+}
+
+function jsxClasses(open) {
+  return (jsxAttr(open, "className") ?? "").replace(/[`"']/g, " ").split(/\s+/).filter(Boolean)
+}
+
+const openingOf = (n) => (ts.isJsxElement(n) ? n.openingElement : ts.isJsxSelfClosingElement(n) ? n : null)
+
+function eachJsx(node, fn) {
+  const open = openingOf(node)
+  if (open) fn(node, open)
+  ts.forEachChild(node, (c) => eachJsx(c, fn))
+}
+
+/** The nearest enclosing component's name, if it is one (capitalised). */
+function componentOf(node) {
+  for (let n = node.parent; n; n = n.parent) {
+    if (ts.isFunctionDeclaration(n) && n.name) return /^[A-Z]/.test(n.name.text) ? n.name.text : null
+    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) return /^[A-Z]/.test(n.name.text) ? n.name.text : null
+  }
+  return null
+}
+
+function checkInheritedFills(sources, cssSources) {
+  const css = cssPaint(cssSources)
+  const trees = sources.map(({ file, raw }) => ({
+    file, raw, sf: ts.createSourceFile(file, raw, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX),
+  }))
+  const fillComponents = new Set()
+  const isFill = (open) =>
+    CURRENT_COLOR.test(jsxAttr(open, "fill") ?? "") ||
+    CURRENT_COLOR.test(jsxStyle(open, "fill") ?? "") ||
+    jsxClasses(open).some((c) => css.currentFill.has(c)) ||
+    fillComponents.has(open.tagName.getText())
+  const isAccent = (open) =>
+    ACCENT_TOKENS.some((t) => (jsxStyle(open, "color") ?? "").includes(t)) ||
+    jsxClasses(open).some((c) => ACCENT_TEXT_UTILITY.test(c) || css.accentColor.has(c))
+
+  // Every component that renders a currentColor fill, to a fixed point.
+  for (let grew = true; grew; ) {
+    grew = false
+    for (const { sf } of trees)
+      eachJsx(sf, (node, open) => {
+        const name = isFill(open) && componentOf(node)
+        if (name && !fillComponents.has(name)) { fillComponents.add(name); grew = true }
+      })
+  }
+
+  const found = [...css.found]
+  for (const { file, raw, sf } of trees)
+    eachJsx(sf, (node, open) => {
+      if (!isAccent(open)) return
+      const hits = []
+      if (isFill(open)) hits.push(`<${open.tagName.getText()}> with its own accent color`)
+      if (ts.isJsxElement(node))
+        for (const child of node.children)
+          eachJsx(child, (_, inner) => {
+            if (isFill(inner)) hits.push(`<${inner.tagName.getText()}> under an accent color`)
+          })
+      for (const h of hits)
+        found.push({ file, rule: "no-accent-surface", detail: `currentColor fill: ${h}`, line: lineAt(raw, open.getStart()) })
+    })
+  return found
 }
 
 // ── Comment stripping ────────────────────────────────────────────────────
@@ -938,6 +1115,46 @@ const FIXTURE_FACE_OTHER_CLASS = `
 const FIXTURE_FACE_INLINE = `
 export function X() { return <span style={{ fontFamily: "var(--ff-poppins)" }}>Edwin</span> }
 `
+// Rule 6's inherited fill. One component that renders a currentColor fill,
+// standing in for the brand mark, used from other files.
+const FIXTURE_MARK = { file: "<fixture-mark>", raw: `
+export function Mark() { return <span aria-hidden="true"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M0 0h10v10z" /></svg></span> }
+` }
+// Must stay silent: the mark in primary, and the sparkle's real shape — a
+// STROKE under an accent wrapper, which the accent is for.
+const FIXTURE_INHERIT_GOOD = { file: "<fixture-inherit-good>", raw: `
+export function Brand() { return <button style={{ color: "rgb(var(--bureau-text-primary))" }}><Mark /></button> }
+export function Indicator() { return <div style={{ color: "rgb(var(--bureau-accent))" }}><svg fill="none" stroke="currentColor"><path d="M0 0" /></svg></div> }
+` }
+// Each must fire, and each changes ONE route the accent can arrive by.
+const FIXTURE_INHERIT_BAD = [
+  // 1. the element carries both
+  `export function A() { return <svg fill="currentColor" style={{ color: "rgb(var(--bureau-accent))" }} /> }`,
+  // 2. a wrapper, the fill written inline below it
+  `export function B() { return <span style={{ color: "rgb(var(--bureau-accent))" }}><svg><path fill="currentColor" /></svg></span> }`,
+  // 3. the fill as a style rather than an attribute
+  `export function C() { return <span style={{ color: "rgb(var(--bureau-accent))" }}><svg style={{ fill: "currentColor" }} /></span> }`,
+  // 4. the mark from another file — the real brand shape
+  `export function D() { return <button style={{ color: "rgb(var(--bureau-accent))" }}><Mark /></button> }`,
+  // 5. a wrapper COMPONENT around the mark, used from a third place
+  `export function Logo() { return <Mark /> }\nexport function E() { return <a style={{ color: "rgb(var(--bureau-accent))" }}><Logo /></a> }`,
+  // 6. the accent as a Tailwind class
+  `export function F() { return <span className="text-accent"><Mark /></span> }`,
+  // 7. the accent as a stylesheet class (FIXTURE_INHERIT_CSS)
+  `export function G() { return <span className="lime-thing"><Mark /></span> }`,
+  // 8. the accent's other names
+  `export function H() { return <span style={{ color: "rgb(var(--hero-glow))" }}><Mark /></span> }`,
+  // 9. the fill as a stylesheet class (FIXTURE_INHERIT_CSS)
+  `export function I() { return <span style={{ color: "rgb(var(--bureau-accent))" }}><svg className="filled-thing" /></span> }`,
+  // 10. nested, conditional, deeper than one level
+  `export function J({ on }) { return <div style={{ color: "rgb(var(--bureau-accent))" }}><p>{on && <em><Mark /></em>}</p></div> }`,
+].map((raw, i) => ({ file: `<fixture-inherit-bad-${i + 1}>`, raw }))
+const FIXTURE_INHERIT_CSS = { file: "<fixture-inherit-css>", raw: `
+.lime-thing { color: rgb(var(--bureau-accent)); }
+.filled-thing { fill: currentColor; }
+.both-at-once { color: rgb(var(--bureau-accent)); fill: currentColor; }
+.primary-thing { color: rgb(var(--bureau-text-primary)); }
+` }
 function selfTest() {
   const bad = checkFile("<fixture-bad>", FIXTURE_BAD)
   const good = checkFile("<fixture-good>", FIXTURE_GOOD)
@@ -1066,6 +1283,18 @@ function selfTest() {
   if (!faceInline.some((f) => f.rule === "display-face-scope"))
     problems.push('control: rule "display-face-scope" did NOT fire on --ff-poppins in an inline style')
 
+  // Rule 6's inherited fill — the hole that was open for ten weeks. Every
+  // route must fire on its own; the primary mark and the lime STROKE must not.
+  const inheritGood = checkInheritedFills([FIXTURE_MARK, FIXTURE_INHERIT_GOOD], [FIXTURE_INHERIT_CSS])
+  // The CSS fixture's own `.both-at-once` is the one expected finding here.
+  if (inheritGood.length !== 1 || !/both-at-once/.test(inheritGood[0].detail))
+    problems.push(`control: inherited fill — expected only .both-at-once from the stylesheet, got ${inheritGood.length}: ${inheritGood.map((f) => f.detail).join("; ")}`)
+  const inheritBad = []
+  for (const fx of FIXTURE_INHERIT_BAD) {
+    const hits = checkInheritedFills([FIXTURE_MARK, fx], [FIXTURE_INHERIT_CSS]).filter((f) => f.file === fx.file)
+    if (!hits.length) problems.push(`control: inherited fill did NOT fire on ${fx.file} — rule 6 has a hole again`)
+    inheritBad.push(...hits)
+  }
   // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
   // class, not the instance: a fatal finding with no heading prints as
   // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
@@ -1075,6 +1304,7 @@ function selfTest() {
     ...bad, ...cssBad, ...cssLayoutBad, ...trackBad, ...rimMiss, ...nearMiss, ...glowFix,
     ...checkTracking("<fixture-budget>", overBudget),
     ...faceWeight, ...faceVariable, ...faceClass, ...faceInline,
+    ...inheritBad,
   ]
   for (const rule of new Set(everyBad.filter((f) => routeOf(f) === "violation").map((f) => f.rule)))
     if (!(rule in RULES))
@@ -1195,11 +1425,13 @@ const record = (v) => {
   if (to === "reportOnly") reportOnly.push(v)
   else if (to === "violation") violations.push(v)
 }
+const tsxSources = []
 for (const abs of files) {
   const rel = relative(ROOT_DIR, abs)
   const src = readFileSync(abs, "utf8")
   for (const v of checkFile(rel, src)) record(v)
   for (const v of checkDisplayFace(rel, src, { css: false })) record(v)
+  if (rel.endsWith(".tsx")) tsxSources.push({ file: rel, raw: src })
 }
 
 // Rule 6 is the only rule that reads CSS. The token layer is where an accent
@@ -1213,7 +1445,11 @@ for (const rel of CSS_FILES) {
   for (const v of checkCssLayout(rel, css)) record(v)
   for (const v of checkDisplayFace(rel, css, { css: true })) record(v)
 }
-
+// Rule 6's inherited fill reads every component and every stylesheet at once,
+// because the fill and the colour that reaches it are usually in different
+// files.
+const cssSources = CSS_FILES.map((rel) => ({ file: rel, raw: readFileSync(join(ROOT_DIR, rel), "utf8") }))
+for (const v of checkInheritedFills(tsxSources, cssSources)) record(v)
 // From `violations`, not `reportOnly`: CSS findings fail the build. This read
 // reportOnly while the dialect was report-only, and kept reading it after M7,
 // which is also why --bare would have listed CSS findings as bare lengths.
