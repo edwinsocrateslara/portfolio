@@ -9,8 +9,10 @@ import { join } from "path"
 // that rots. Editing resume.txt changes the page; there is no other edit.
 //
 // ⚠ THIS RUNS AT MODULE SCOPE, on the server, at build time. It is imported by
-// app/page.tsx and the deck route — both server components — which pass the
-// result into AppShell as a prop. It CANNOT be imported by a client component:
+// app/api/resume/route.ts, which serves the parsed résumé to the pane, and by
+// the build scripts. (It said app/page.tsx and the deck route passed the result
+// to AppShell as a prop; that stopped in 0a98e7b, M10.) It CANNOT be imported
+// by a client component:
 // `fs` does not exist there, and everything under components/shell/app-shell
 // is a client tree.
 //

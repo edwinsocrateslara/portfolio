@@ -18,8 +18,9 @@ import type { Project } from "./projects"
 //
 // `toProjectIndex` DERIVES this from the same Project objects at the server
 // boundary. There is no second file to keep in agreement and nothing is
-// retyped: app/page.tsx and the deck route import lib/projects.ts (server
-// side, where it costs nothing) and hand the mapped result down as a prop.
+// retyped: app/(site)/layout.tsx imports lib/projects.ts (server side, where
+// it costs nothing) and hands the mapped result down as a prop. (Until 24
+// November each page did this itself, because each rendered its own shell.)
 //
 // If a field is added to the rail, it is added here and it arrives from the
 // same objects. The compiler enforces that the names match Project, because

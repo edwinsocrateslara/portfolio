@@ -17,7 +17,7 @@ import type { ProjectIndexEntry } from "@/lib/project-index"
 
 // The persistent left rail. It is the site's index: every project is a row,
 // and clicking one streams that project's reveal into the chat. It replaces
-// the old scrolling project grid entirely — see the note in app/page.tsx.
+// the old scrolling project grid entirely.
 //
 // Project rows open a conversation; CASE STUDY, RESUME and ABOUT open
 // documents. The handoff distinguished the two with a right-aligned mono meta
@@ -256,9 +256,12 @@ export function Sidebar({
         )}
 
         <div className="rail-docs">
-          {/* A button, not a link: navigating to /case-study/meridian-deck
-              would remount the shell and lose every project thread. The route
-              still exists for deep links and renders this same shell. */}
+          {/* Still a button that swaps the pane, but no longer for the reason
+              this said — "navigating to /case-study/meridian-deck would remount
+              the shell and lose every project thread". That stopped being true
+              when the shell moved into the shared layout (app/(site)/layout.tsx)
+              on 24 November: a route change keeps every thread. Turning these
+              rows into real links is the next piece of the routing work. */}
           <button
             type="button"
             className="rail-doc"
@@ -293,10 +296,11 @@ export function Sidebar({
             <span className="type-action rail-doc-label">Resume</span>
           </button>
 
-          {/* Last in the document group, and a pane swap rather than a route:
-              About is not a deep-linkable artefact the way the deck is, and a
-              real navigation remounts the shell and destroys every project
-              thread. */}
+          {/* Last in the document group, and a pane swap for now. This said
+              a real navigation "remounts the shell and destroys every project
+              thread"; since the shell moved into the shared layout (24
+              November) it does not. /about becomes a real route in the next
+              piece of the routing work. */}
           <button
             type="button"
             className="rail-doc"

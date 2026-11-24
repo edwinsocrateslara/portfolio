@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo } from "react"
 import dynamic from "next/dynamic"
 import { useChat } from "@ai-sdk/react"
+import { usePathname } from "next/navigation"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
@@ -114,13 +115,21 @@ function createTransport() {
   return new DefaultChatTransport({ api: "/api/chat" })
 }
 
-// The one layout every destination renders inside. Lifted out of app/page.tsx
-// so the deck route can render it too — see the note on `initialPane`.
+// Which pane a URL opens on a fresh load. The shell lives in a shared layout
+// (app/(site)/layout.tsx), which a page cannot hand props to, so it reads the
+// path itself. This replaced an `initialPane` prop the deck route passed when
+// each page rendered its own shell. Only the first render reads it: after
+// that the pane is the shell's own state, exactly as before — moving between
+// panes does not change the URL yet. That is the next piece.
+const PANE_FOR_PATH: Readonly<Record<string, Pane>> = {
+  "/case-study/meridian-deck": "deck",
+}
+
+// The one layout every destination renders inside, mounted once per visit by
+// app/(site)/layout.tsx.
 export function AppShell({
-  initialPane = "chat",
   projectIndex,
 }: {
-  initialPane?: Pane
   /** The 6 fields the rail, the sampler and the top bar need, DERIVED from
    *  lib/projects.ts and lib/vibe-projects.ts by a server component.
    *
@@ -147,7 +156,8 @@ export function AppShell({
   // it is a rail section of projects, and its rows open conversations through
   // the same flow as the seven. An earlier comment here said otherwise; it was
   // describing SideOfDesk, which no longer exists.
-  const [pane, setPane] = useState<Pane>(initialPane)
+  const pathname = usePathname()
+  const [pane, setPane] = useState<Pane>(() => PANE_FOR_PATH[pathname] ?? "chat")
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // ── Threads ─────────────────────────────────────────────────────
@@ -753,10 +763,13 @@ export function AppShell({
   )
 
 
-  // The deck swaps the pane rather than navigating. A route change would
-  // remount this component and take every project thread with it, which is
-  // the whole conversation model. /case-study/meridian-deck still exists for
-  // deep links and renders this same shell with the pane pre-opened.
+  // The deck swaps the pane rather than navigating — for now. This said a
+  // route change "would remount this component and take every project thread
+  // with it". Since 24 November the shell lives in app/(site)/layout.tsx and a
+  // route change keeps it mounted (proved: a client navigation to the deck and
+  // back kept the Meridian thread, with no document load). Driving panes from
+  // the URL is the next piece; /case-study/meridian-deck already opens the
+  // deck pane on a fresh load, through PANE_FOR_PATH.
   const handleDeck = useCallback(() => {
     setPane("deck")
     setSheetOpen(false)
