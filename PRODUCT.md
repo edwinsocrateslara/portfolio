@@ -100,6 +100,28 @@ context but has no way to ask for one. So it is supplied, not discovered.
   site makes the case.
 - **Chat-first interaction is binding.** A direction that turns this into a
   scrolling page violates the product, not the aesthetic.
+- **A URL addresses a thread, never a page.** Recorded 24 November, before
+  routing was built, as the constraint that work is held to. Projects, the
+  résumé, the deck and About get real URLs so they can be shared and found.
+  That does not break the premise that the portfolio IS a conversation —
+  landing on `/work/retail-banking` puts a visitor inside a conversation
+  already under way, the way a shared chat link does: the site's messages
+  about the project, the composer live beneath them, the rail showing the
+  other conversations. **The premise breaks only if a project URL renders as
+  a page instead of a thread.** So:
+  - What a project URL server-renders for search engines is the thread's
+    own messages, finished. Never an article layout, a hero, or a "case
+    study page" built because it would rank better. Proposing one for SEO is
+    proposing the scrolling page the bullet above already rules out.
+  - Typed answers get no URLs. A conversation stays a conversation; URLs
+    address the lasting things — projects and documents.
+  - A project that is in the conversation but deliberately not listed (the
+    off-rail vibe project, 24 November) gets no URL either, and opening it
+    from chat does not change the address bar.
+  
+  The honest cost, accepted: a visitor can now arrive on a project, read it,
+  and leave without typing. That was already true of a rail click; a URL makes
+  it the commonest path, and the composer is there either way.
 - **Voice is the designer's own**, recorded verbatim in
   `lib/sources/voice.md`. It is first-person, plain, and specific — "It usually
   starts with data", not "I leverage data-driven insights". Copy may be
