@@ -1,6 +1,6 @@
 import { AppShell } from "@/components/shell/app-shell"
 import { projects } from "@/lib/projects"
-import { vibeProjects } from "@/lib/vibe-projects"
+import { offRailVibeProjects, vibeProjects } from "@/lib/vibe-projects"
 import { toProjectIndex } from "@/lib/project-index"
 
 // A static segment, so it takes precedence over the [slug] route alongside
@@ -22,7 +22,11 @@ export const metadata = {
 // project modules are imported on the server — where they cost nothing — and
 // only the 6 fields the rail needs cross into the client tree. See
 // lib/project-index.ts for why that is a mapping rather than a second file.
-const index = [...toProjectIndex(projects, "work"), ...toProjectIndex(vibeProjects, "vibe")]
+const index = [
+  ...toProjectIndex(projects, "work"),
+  ...toProjectIndex(vibeProjects, "vibe"),
+  ...toProjectIndex(offRailVibeProjects, "off-rail"),
+]
 
 export default function MeridianDeckPage() {
   return <AppShell initialPane="deck" projectIndex={index} />

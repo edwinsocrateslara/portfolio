@@ -107,13 +107,15 @@ const { projects, SOURCED_FIELDS } = await import("../lib/projects.ts")
 // the proudest answer describes it at length — and had no project entry to
 // answer from. Reading allProjects fixes an omission rather than widening a
 // boundary.
-const { vibeProjects } = await import("../lib/vibe-projects.ts")
+// reachableVibeProjects, not vibeProjects: an off-rail project is unlisted, not
+// unknown, and the model must still be able to answer about it.
+const { reachableVibeProjects } = await import("../lib/vibe-projects.ts")
 // The parsed résumé, for reconcile() below. lib/resume.ts reads and validates
 // lib/sources/resume.txt and throws loudly if the shape changed, so importing
 // it here means this script fails on a malformed source rather than silently
 // reconciling against nothing.
 const { resume } = await import("../lib/resume.ts")
-const allProjects = [...projects, ...vibeProjects]
+const allProjects = [...projects, ...reachableVibeProjects]
 
 const STATUS_LABEL = { live: "Live", wip: "Work in progress" }
 

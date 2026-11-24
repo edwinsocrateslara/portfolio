@@ -45,9 +45,42 @@ import type { Project } from "./projects"
 // The case study is finished, so the gate is gone and the section ships.
 //
 // The rail still renders the header only when there is something under it, so
-// emptying this array removes the section rather than leaving a heading above
-// nothing. That guard is in sidebar.tsx and is unrelated to the environment.
-export const vibeProjects: Project[] = [
+// emptying the rail's list removes the section rather than leaving a heading
+// above nothing. That guard is in sidebar.tsx and is unrelated to the
+// environment.
+//
+// ── TWO LISTS: IN THE RAIL, AND IN THE CONVERSATION BUT NOT THE RAIL ────────
+//
+// `vibeProjects` is what the rail's VIBE CODING section lists. It is EMPTY
+// since 24 November, so the section is gone — by the guard above, with no
+// change to the rail.
+//
+// `offRailVibeProjects` is reachable everywhere EXCEPT the rail: its chat
+// triggers open its reveal, Edwin's proudest answer still describes it, the
+// model's reference document still carries it, the résumé bullet stands, and
+// every gate still reads it. It gets no URL and no sitemap entry, and opening
+// it from chat does not change the address bar (PRODUCT.md, "A URL addresses
+// a thread, never a page").
+//
+// WHY: TEMPORARY CURATION, NOT CONFIDENTIALITY. Edwin is building better
+// vibe-coded projects and wants those in the rail when they are ready. Nothing
+// here is secret — everything in this file is public and goes to the model
+// provider on every request (see the note above).
+//
+// WHAT BRINGS THE SECTION BACK: add an entry to `vibeProjects`. That is all —
+// the heading returns through the existing guard, and nobody has to remember a
+// flag. Two lists rather than an `inRail: false` field because a flag lives on
+// the entry, where it gets copied into the next one by accident; a list says
+// where the entry is, in the one place an editor of this file looks. To put
+// the Ideas Dashboard itself back, move it from one list to the other.
+//
+// ORDER IS LOAD-BEARING: allProjects is [...projects, ...vibeProjects,
+// ...offRailVibeProjects], and a project's index there picks its follow-up
+// chips. With the rail list empty the Ideas Dashboard keeps index 7 and its
+// reveal is byte-identical to before the split (verified 24 November).
+export const vibeProjects: Project[] = []
+
+export const offRailVibeProjects: Project[] = [
         {
           slug: "futurefit-ideas-dashboard",
           // ⚠ THIS IS NOT A CLIENT, AND THAT IS DELIBERATE. `client` is what the
@@ -347,3 +380,9 @@ export const vibeProjects: Project[] = [
 
 // Both sections, in rail order. The chat resolves slugs against this so a vibe
 // project is findable by exactly the same path as the seven.
+
+/** Every vibe project the conversation can reach — the rail's, then the
+ *  off-rail ones. Everything EXCEPT the rail reads this: the vibe reveal flow,
+ *  allProjects and its chat triggers, the model's reference document, and the
+ *  alt-text gate. */
+export const reachableVibeProjects: Project[] = [...vibeProjects, ...offRailVibeProjects]

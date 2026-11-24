@@ -42,8 +42,14 @@ export interface ProjectIndexEntry {
    *
    *  The SERVER knows this, because it knows which module the entry came from.
    *  The alternative was a slug list in the client, which is a second place to
-   *  record the same fact and the one that goes stale. */
-  section: "work" | "vibe"
+   *  record the same fact and the one that goes stale.
+   *
+   *  "off-rail": in the conversation but not listed (lib/vibe-projects.ts). It
+   *  stays in the index because the shell reads the index for the "Currently
+   *  discussing" line the model receives and for the mobile top bar's subject
+   *  — dropping it from here is the M1 defect the code audit closed. The rail
+   *  selects "work" and "vibe" by section, so it never lists this one. */
+  section: "work" | "vibe" | "off-rail"
 }
 
 /** Map full projects to the slim shape, at a server boundary. */

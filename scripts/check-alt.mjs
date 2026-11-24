@@ -47,7 +47,7 @@
 import { readFileSync, readdirSync, statSync } from "fs"
 import { join, relative } from "path"
 import { projects } from "../lib/projects.ts"
-import { vibeProjects } from "../lib/vibe-projects.ts"
+import { reachableVibeProjects } from "../lib/vibe-projects.ts"
 import { meridianDeck } from "../lib/case-study-deck.ts"
 import { PHOTOS } from "../lib/about-photos.ts"
 
@@ -168,7 +168,7 @@ for (const rel of walk(ROOTS[0]).concat(walk(ROOTS[1]), walk(ROOTS[2]))) {
 // data was private was a fact about the module, not a reason the rule stopped
 // applying at its edge.
 const written = [
-  ...[...projects, ...vibeProjects].flatMap((p) =>
+  ...[...projects, ...reachableVibeProjects].flatMap((p) =>
     (p.images ?? []).map((im, i) => ({ where: `${p.slug}[${i}]`, alt: im.alt }))
   ),
   ...meridianDeck.slides.map((sl, i) => ({ where: `deck slide ${i + 1}`, alt: sl.alt })),

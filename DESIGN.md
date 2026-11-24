@@ -1928,6 +1928,16 @@ the pane to a Side of Desk grid; once the rail lists the projects, that pane
 was redundant the way the project grid would be if WORK listed everything, and
 it was deleted rather than left orphaned.
 
+**VIBE CODING IS EMPTY SINCE 24 NOVEMBER — temporary curation.** The Ideas
+Dashboard moved from `vibeProjects` (the rail's list) to `offRailVibeProjects`
+in `lib/vibe-projects.ts`: unlisted, not removed. Its chat triggers, Edwin's
+proudest answer, the model's reference document, the résumé bullet and every
+gate still reach it, and it carries section `"off-rail"` in the project index
+so the model's "Currently discussing" line and the mobile top bar still name
+it. The section disappeared through the guard above — the rail was not taught
+to skip anything. **It comes back by adding an entry to `vibeProjects`**; the
+heading returns with it. Edwin is building vibe projects to put there.
+
 **A row with no artwork draws an empty frame**, not a borrowed screenshot from
 another project. The rail is where the site asserts what a project looks like.
 
@@ -2015,6 +2025,14 @@ costs 128 — its header at 72 plus one row. (It was 98, with the header at 66.)
 Contact stays reachable at any height: `.rail-scroll` is `overflow-y: auto` and
 the contact footer sits outside it, pinned.
 
+**With VIBE CODING empty (24 November), the rail fits at 1440×900 again**:
+measured on a production build, **0px past the fold** at 1440×900 and at
+1440×1000, and **97 at 1440×700** — the recorded 225 less exactly the 128 a
+section costs, which is the arithmetic above confirmed rather than assumed.
+This is a temporary state, not a reversal of what follows: the section comes
+back with new entries, and the first one returns the rail to the 25 / 225
+above, plus 56 per further row.
+
 This is accepted, not an oversight. It is mechanically fine — `.rail-scroll` is
 `overflow-y: auto` and the CONTACT footer sits outside it, pinned, so contact
 stays reachable at any height. But the rail has moved from "everything visible
@@ -2078,6 +2096,12 @@ stroke = 1.5 × 24 / size.
 | 28 | 1.286 | 20 | 21–25 | no | 52 | 37 / 237 |
 | **32** (recommended) | 1.125 | 16 — `between` | 18–21 | yes | 56 — same as project rows | 49 / 249 |
 | 40 | 0.9 | 8 — `within`, the thumbnails' gap | 10–15 | yes | 64 | 73 / 273 |
+
+The rail-overflow column was measured with VIBE CODING present. It was emptied
+the same day, so each figure is now up to 128px lower — only 24 was
+re-measured (0 at 1440×900, 97 at 1440×700). The differences between sizes —
+12, 24 and 48px — do not depend on the section, and they are what the
+decision rests on.
 
 The ink gap is wider than the box gap because Lucide draws inset inside its own
 square; a thumbnail fills its square, so the project rows' 8 is 8 either way.

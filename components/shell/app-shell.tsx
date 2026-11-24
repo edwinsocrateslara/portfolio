@@ -385,11 +385,14 @@ export function AppShell({
       // The project-header card used to carry this line into the API context.
       // With the card gone the identity has to come from the thread itself,
       // or the model loses track of which project is being discussed.
-      // allProjects, NOT projects. The Ideas Dashboard lives in vibeProjects,
-      // so a `projects` lookup returned undefined for its thread and the model
-      // was told nothing about what was being discussed. Every other lookup in
-      // this component already uses allProjects; this one was the odd one out,
-      // which is what made it a bug rather than a boundary.
+      // The WHOLE index, NOT the seven. The Ideas Dashboard is not a Work
+      // project, so a `projects` lookup returned undefined for its thread and
+      // the model was told nothing about what was being discussed. Every other
+      // lookup in this component already used the full set; this one was the
+      // odd one out, which is what made it a bug rather than a boundary.
+      // Since 24 November the Ideas Dashboard is OFF THE RAIL (section
+      // "off-rail" in the index, lib/vibe-projects.ts) — still in the index,
+      // precisely so this line keeps finding it.
       const subject = thread === HOME_THREAD ? null : projectIndex.find((x) => x.slug === thread)
       if (subject) {
         history.push({

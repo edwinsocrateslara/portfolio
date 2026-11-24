@@ -1,5 +1,5 @@
 import type { Project } from "./projects"
-import { vibeProjects } from "./vibe-projects"
+import { reachableVibeProjects } from "./vibe-projects"
 import type { MessageBlock } from "@/hooks/use-scripted-stream"
 
 // Which flow an entry takes, DERIVED from which list it is in rather than
@@ -15,7 +15,8 @@ import type { MessageBlock } from "@/hooks/use-scripted-stream"
 // Membership cannot fall out of sync the way a discriminator can. An entry in
 // vibeProjects takes the vibe flow by existing; there is no second thing to
 // remember to set, and no state where the flow has zero users while the code
-// stays alive.
+// stays alive. Both lists count — an off-rail vibe project is still a vibe
+// project, it is only unlisted (lib/vibe-projects.ts).
 //
 // It USED TO add no fields to Project, and the claim was that the shape lived
 // entirely in the content and its order — same six copy fields, different
@@ -36,7 +37,7 @@ import type { MessageBlock } from "@/hooks/use-scripted-stream"
 // the entry is describing a system rather than arguing a decision. Not when a
 // field feels full.
 function isVibe(p: Project): boolean {
-  return vibeProjects.some((v) => v.slug === p.slug)
+  return reachableVibeProjects.some((v) => v.slug === p.slug)
 }
 
 // The single definition of how a project case study is ordered.

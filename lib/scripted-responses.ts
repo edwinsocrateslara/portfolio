@@ -1,5 +1,5 @@
 import { projects } from "./projects"
-import { vibeProjects } from "./vibe-projects"
+import { reachableVibeProjects } from "./vibe-projects"
 import { buildProjectBodyBlocks } from "./project-flow"
 import { matchVoiceAnswer, voiceAnswerById } from "./voice-answers"
 import { asksLocation } from "./location-intent"
@@ -93,9 +93,10 @@ export const SCRIPTED_TOPICS: ScriptedTopic[] = [
 // was a third copy that scrolled away the moment the reveal got going.
 // The bubble is gone too, with the "project-header" kind — it had no producer
 // and the renderer advertised a state that could not occur.
-/** The seven, then the vibe-coded ones. Rail order, and the order slugs and
- *  rotation indices resolve against. */
-export const allProjects = [...projects, ...vibeProjects]
+/** The seven, then every reachable vibe-coded one — the rail's, then the
+ *  off-rail ones. The order slugs and rotation indices resolve against, so it
+ *  is load-bearing: see lib/vibe-projects.ts. */
+export const allProjects = [...projects, ...reachableVibeProjects]
 
 function projectStream(
   p: (typeof projects)[0],
