@@ -14,8 +14,8 @@ import { toProjectIndex } from "@/lib/project-index"
 // route change would have remounted the shell and discarded every thread —
 // which is why the rail's document rows were buttons rather than links.
 //
-// The pages under this group are thin: they carry their metadata and, later,
-// the server-rendered content of their route. The shell reads the URL itself
+// The pages under this group are thin: they carry their metadata and the
+// server-rendered content of their route, which the shell places in the pane. The shell reads the URL itself
 // (usePathname) to know what to show, because a layout cannot be handed props
 // by the page beneath it.
 //
@@ -35,9 +35,9 @@ const index = [
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <AppShell projectIndex={index} />
-      {children}
-    </>
+    // The route's own content goes INTO the shell, which places it in the
+    // pane: a document's page renders its pane on the server, and the shell
+    // frames it. "/" renders nothing, because the conversation is the shell's.
+    <AppShell projectIndex={index}>{children}</AppShell>
   )
 }

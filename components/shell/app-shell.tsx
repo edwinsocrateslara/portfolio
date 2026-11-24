@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo } from "react"
-import dynamic from "next/dynamic"
 import { useChat } from "@ai-sdk/react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { DefaultChatTransport } from "ai"
 import { ChatInput } from "@/components/chat/chat-input"
 import { PromptChip } from "@/components/chat/prompt-chip"
@@ -11,34 +10,22 @@ import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
 import { BrandMark } from "@/components/ui/brand-mark"
-// ── THE THREE PANES ARE SPLIT OUT OF THE FIRST LOAD ──────────────────────
-// They were static imports, so a first-time visitor who only ever sees the
-// front door still downloaded, parsed and hydrated the résumé, the About page
-// and the 21-slide deck — plus their copy. That is the shell's largest
-// avoidable cost and it lands hardest on the slow phone the site is most
-// likely to be opened on.
+// ── THE THREE DOCUMENTS ARE THEIR ROUTES' OWN CONTENT ──────────────────
+// /case-study/meridian-deck, /resume and /about render their pane on the
+// SERVER, in their own page files, and the shell places that output — its
+// `children` — in the pane. Until 24 November the shell imported all three
+// itself, behind next/dynamic with ssr: false, so a first-time visitor who only
+// saw the front door downloaded none of them. That property holds without the
+// dynamic imports: a page's components travel with that page, so "/" still
+// ships none of them, and each document arrives with the route that shows it.
 //
-// ssr: false BECAUSE NONE OF THEM IS THE FIRST PAINT. The front door is what
-// renders on arrival; a pane appears only after a rail click, which is a client
-// event by definition. Server-rendering markup that is always hidden on first
-// paint would put the bytes straight back into the HTML.
-//
-// The `loading` frame is `.pane-scroll` and nothing else — the same padded
-// scroller the pane will fill. An empty box of the right shape for the few
-// hundred milliseconds a chunk takes is calmer than a spinner, and it means the
-// scrollbar and the dock reservation do not jump when the content lands.
-const DeckPane = dynamic(
-  () => import("@/components/case-study/deck-pane").then((m) => m.DeckPane),
-  { ssr: false, loading: () => <div className="pane-scroll" /> }
-)
-const AboutPane = dynamic(
-  () => import("@/components/about/about-pane").then((m) => m.AboutPane),
-  { ssr: false, loading: () => <div className="pane-scroll" /> }
-)
-const ResumePane = dynamic(
-  () => import("@/components/resume/resume-pane").then((m) => m.ResumePane),
-  { ssr: false, loading: () => <div className="pane-scroll" /> }
-)
+// What changed is the HTML. ssr: false was argued as "a pane appears only after
+// a rail click, which is a client event by definition" — true while a document
+// had no URL. A document with a URL can be ARRIVED at, and then its content
+// has to be in the HTML or a search engine, a link preview and a slow phone
+// all see an empty frame. Measured before the change: 55 visible words at the
+// deck's URL, with not one slide's text among them.
+
 import type { ProjectIndexEntry } from "@/lib/project-index"
 import { HERO_MEASURE } from "@/lib/layout"
 // ── THE ANSWER CONTENT IS IMPORTED, NOT FETCHED ─────────────────────────
@@ -115,21 +102,27 @@ function createTransport() {
   return new DefaultChatTransport({ api: "/api/chat" })
 }
 
-// Which pane a URL opens on a fresh load. The shell lives in a shared layout
-// (app/(site)/layout.tsx), which a page cannot hand props to, so it reads the
-// path itself. This replaced an `initialPane` prop the deck route passed when
-// each page rendered its own shell. Only the first render reads it: after
-// that the pane is the shell's own state, exactly as before — moving between
-// panes does not change the URL yet. That is the next piece.
+// WHICH PANE THE URL SHOWS — and the URL is the only source. The shell lives
+// in a shared layout (app/(site)/layout.tsx), which a page cannot hand props
+// to, so it reads the path itself; there is no pane state to keep in step
+// with the address bar, so back, forward, a shared link and a rail click all
+// land on the same thing. Any path not listed here is the conversation.
 const PANE_FOR_PATH: Readonly<Record<string, Pane>> = {
   "/case-study/meridian-deck": "deck",
+  "/resume": "resume",
+  "/about": "about",
 }
 
 // The one layout every destination renders inside, mounted once per visit by
 // app/(site)/layout.tsx.
 export function AppShell({
   projectIndex,
+  children,
 }: {
+  /** The current route's server-rendered content. Documents (/resume,
+   *  /about, the deck) render their pane here; "/" renders nothing, because
+   *  the conversation is the shell's own. */
+  children?: React.ReactNode
   /** The 6 fields the rail, the sampler and the top bar need, DERIVED from
    *  lib/projects.ts and lib/vibe-projects.ts by a server component.
    *
@@ -144,20 +137,23 @@ export function AppShell({
    *  server maps the same Project objects, so there is no file to keep in
    *  agreement and nothing is retyped.
    *
-   *  The résumé used to be a prop here too and is not any more — the pane
-   *  fetches /api/resume, because a prop is serialised into the HTML of a page
-   *  most visitors never open that pane on. */
+   *  The résumé is not a prop here. It was once, which serialised it into the
+   *  HTML of every page; then the pane fetched it from /api/resume; since 24
+   *  November /resume's own page parses it and renders the pane, so it is in
+   *  that page's HTML and nowhere else. */
   projectIndex: ProjectIndexEntry[]
 }) {
   const [input, setInput] = useState("")
   const prefersReducedMotion = usePrefersReducedMotion()
-  // Which destination the pane is showing. "chat" is home; the three document
-  // rows (CASE STUDY, RESUME, ABOUT) are what swap it. VIBE CODING does NOT —
-  // it is a rail section of projects, and its rows open conversations through
-  // the same flow as the seven. An earlier comment here said otherwise; it was
-  // describing SideOfDesk, which no longer exists.
+  // Which destination the pane is showing — DERIVED FROM THE URL, not stored
+  // (see PANE_FOR_PATH). "chat" is the conversation; the three document rows
+  // (CASE STUDY, RESUME, ABOUT) are links to the routes that show the others.
   const pathname = usePathname()
-  const [pane, setPane] = useState<Pane>(() => PANE_FOR_PATH[pathname] ?? "chat")
+  const router = useRouter()
+  const pane: Pane = PANE_FOR_PATH[pathname] ?? "chat"
+  // Read inside callbacks, so they need not re-create on every navigation.
+  const onDocumentRef = useRef(pane !== "chat")
+  onDocumentRef.current = pane !== "chat"
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // ── Threads ─────────────────────────────────────────────────────
@@ -466,7 +462,9 @@ export function AppShell({
   // deferred cannot be interleaved with another one.
   const openProjectThread = useCallback(
     (slug: string) => {
-      setPane("chat")
+      // From a document, the conversation is at "/" — projects get URLs of
+      // their own in the next piece. A push, so back returns to the document.
+      if (onDocumentRef.current) router.push("/")
       setCurrentProjectSlug(slug)
       switchThread(slug)
       if (revealedRef.current.has(slug)) return
@@ -479,7 +477,7 @@ export function AppShell({
       queueScriptedMessages(response, slug)
       revealedRef.current.add(slug)
     },
-    [switchThread, queueScriptedMessages]
+    [switchThread, queueScriptedMessages, router]
   )
 
   // Every entry point routes through here: typed input, landing chips,
@@ -763,27 +761,9 @@ export function AppShell({
   )
 
 
-  // The deck swaps the pane rather than navigating — for now. This said a
-  // route change "would remount this component and take every project thread
-  // with it". Since 24 November the shell lives in app/(site)/layout.tsx and a
-  // route change keeps it mounted (proved: a client navigation to the deck and
-  // back kept the Meridian thread, with no document load). Driving panes from
-  // the URL is the next piece; /case-study/meridian-deck already opens the
-  // deck pane on a fresh load, through PANE_FOR_PATH.
-  const handleDeck = useCallback(() => {
-    setPane("deck")
-    setSheetOpen(false)
-  }, [])
-
-  const handleAbout = useCallback(() => {
-    setPane("about")
-    setSheetOpen(false)
-  }, [])
-
-  const handleResume = useCallback(() => {
-    setPane("resume")
-    setSheetOpen(false)
-  }, [])
+  // The three document rows are links now (sidebar.tsx), and the pane follows
+  // the URL, so there are no deck / about / resume handlers here. They existed
+  // to swap pane state; that state is gone.
 
   // Brand mark returns to the front door, and CLEARS the home thread to do it.
   //
@@ -794,13 +774,16 @@ export function AppShell({
   // cannot get back to at the cost of the landing state they can see the way
   // back to. Home is scratch space; the rail's seven threads are the ones
   // worth keeping, and this does not touch them.
+  //
+  // From a document it also NAVIGATES to "/" — a push, so back returns to the
+  // document. Already at "/", there is nothing to push.
   const handleHome = useCallback(() => {
-    setPane("chat")
+    if (onDocumentRef.current) router.push("/")
     setCurrentProjectSlug(null)
     switchThread(HOME_THREAD)
     resetStream(HOME_THREAD)
     setSheetOpen(false)
-  }, [switchThread, resetStream])
+  }, [switchThread, resetStream, router])
 
   // Find last assistant message index for followup chip activation
   const lastAssistantIdx = activeMessages.reduce(
@@ -911,9 +894,6 @@ export function AppShell({
         activeSlug={currentProjectSlug}
         activePane={pane}
         onProjectSelect={handleSidebarProject}
-        onSelectAbout={handleAbout}
-        onSelectDeck={handleDeck}
-        onSelectResume={handleResume}
         onHome={handleHome}
         onNavigate={() => setSheetOpen(false)}
         open={sheetOpen}
@@ -938,23 +918,20 @@ export function AppShell({
       </div>
 
       <main className="pane" ref={paneRef}>
+        {/* A DOCUMENT IS ITS ROUTE'S CONTENT — `children`, rendered on the
+            server by the page file — inside the same scroller and wash it
+            always had. */}
         {pane === "resume" ? (
-          <div className="pane-scroll resume-glow">
-            <ResumePane />
-          </div>
+          <div className="pane-scroll resume-glow">{children}</div>
         ) : pane === "about" ? (
-          <div className="pane-scroll about-glow">
-            <AboutPane />
-          </div>
+          <div className="pane-scroll about-glow">{children}</div>
         ) : pane === "deck" ? (
           // Both washes sit on the SCROLLER, not on the pane component's root:
           // they have to cover .pane-scroll's own top padding or they start
           // 32px down and leave a flat band above the heading. Separate
           // classes rather than one shared name so each is its own entry in
           // check-design's rule 6 — see the note there.
-          <div className="pane-scroll deck-glow">
-            <DeckPane />
-          </div>
+          <div className="pane-scroll deck-glow">{children}</div>
         ) : isFrontDoor ? (
           <div className="pane-front">
             {/* Four declarations and no DOM nodes; see .dot-field. */}

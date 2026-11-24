@@ -11,6 +11,12 @@
 //
 // The pane shipped fully present in the DOM and completely invisible.
 //
+// THE LOADING FRAME IS GONE since 24 November — /resume renders the pane on the
+// server with its data, so the effect now mounts against the real rows — but
+// the class of bug is not: anything that changes when that effect runs, or what
+// it finds when it does, can hide the pane the same way. The rail rows this
+// gate clicks are links now, so it exercises the route as a visitor reaches it.
+//
 // ── AND WHY IT MEASURES PIXELS, WHICH LOOKS CRUDE ─────────────────────────
 //
 // Two finer instruments were tried against the broken build first, because the

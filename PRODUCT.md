@@ -67,8 +67,11 @@ front door has to work without instruction.
   `scripts/check-content-frozen.mjs`; the experiment is over (see the
   appendix), and on main the script is deliberately not wired in — its header
   says why.
-- The site is statically prerendered at `/`; work that forces it dynamic is a
-  regression, not a tradeoff.
+- The site is statically prerendered — every page, not only `/`; work that
+  forces a page dynamic is a regression, not a tradeoff. Since 24 November
+  that is `/`, `/resume`, `/about` and `/case-study/meridian-deck`, each with
+  its own content in its HTML. (This read "at `/`", when `/` and the deck were
+  the only pages.)
 
 **The craft bar is an input, not something a tool elicits.** When a refinement
 pass needs a quality benchmark, the project owner names two or three reference

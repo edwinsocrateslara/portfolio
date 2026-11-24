@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 // Layers, not Layers3: Layers3 is a deprecated alias in v0.544 and resolves to
@@ -48,9 +49,6 @@ interface SidebarProps {
   activeSlug: string | null
   activePane: Pane
   onProjectSelect: (slug: string) => void
-  onSelectAbout: () => void
-  onSelectDeck: () => void
-  onSelectResume: () => void
   onHome: () => void
   /** Mobile sheet only — dismisses after a selection. */
   onNavigate?: () => void
@@ -157,9 +155,6 @@ export function Sidebar({
   activeSlug,
   activePane,
   onProjectSelect,
-  onSelectAbout,
-  onSelectDeck,
-  onSelectResume,
   onHome,
   onNavigate,
   open = false,
@@ -256,62 +251,58 @@ export function Sidebar({
         )}
 
         <div className="rail-docs">
-          {/* Still a button that swaps the pane, but no longer for the reason
-              this said — "navigating to /case-study/meridian-deck would remount
-              the shell and lose every project thread". That stopped being true
-              when the shell moved into the shared layout (app/(site)/layout.tsx)
-              on 24 November: a route change keeps every thread. Turning these
-              rows into real links is the next piece of the routing work. */}
-          <button
-            type="button"
+          {/* REAL LINKS since 24 November: each document has its own URL —
+              /case-study/meridian-deck, /resume, /about — so it can be shared,
+              found, bookmarked and reached with back and forward. They used to
+              be buttons that swapped the pane, because a route change would
+              have remounted the shell and discarded every thread; the shell now
+              lives in app/(site)/layout.tsx and a navigation keeps it.
+
+              The pane follows the URL (PANE_FOR_PATH in app-shell.tsx), so
+              there is no handler here to keep in step with it. onNavigate only
+              closes the mobile sheet. data-pane stays: check:paint selects on
+              it. */}
+          <Link
+            href="/case-study/meridian-deck"
             className="rail-doc"
             data-pane="deck"
             data-active={activePane === "deck"}
-            aria-current={activePane === "deck" ? "true" : undefined}
-            onClick={pick(onSelectDeck)}
+            aria-current={activePane === "deck" ? "page" : undefined}
+            onClick={onNavigate}
           >
-            {/* 1.25, not the 2 the 16px icons carry. A Lucide stroke is in
-                viewBox units, so the same number on a 32px icon paints twice
-                as thick — at 2 the document marks out-weighed the section
-                header above them, which inverts the hierarchy. See
-                DOC_ICON_STROKE. */}
+            {/* ICON_STROKE_RAIL, 1.5px of ink at 24 — the rule in
+                lib/icons.ts. (This said "1.25… See DOC_ICON_STROKE"; that
+                constant retired with the icon ramp on 28 August, 0de263b.) */}
             <Layers className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
             <span className="type-action rail-doc-label">Case Study</span>
-          </button>
+          </Link>
 
-          {/* A button, not a link. This row opened DocHub in a new tab until
-              the Resume pane existed; now it swaps the pane like CASE STUDY
-              and ABOUT. NewTabMark came off with the href — it announced
-              "opens in a new tab", which would now be a lie, and a stale
-              announcement survives a redesign unnoticed. */}
-          <button
-            type="button"
+          {/* This row opened DocHub in a new tab until the Resume pane
+              existed. NewTabMark came off with that href — it announced "opens
+              in a new tab", which would now be a lie. */}
+          <Link
+            href="/resume"
             className="rail-doc"
             data-pane="resume"
             data-active={activePane === "resume"}
-            aria-current={activePane === "resume" ? "true" : undefined}
-            onClick={pick(onSelectResume)}
+            aria-current={activePane === "resume" ? "page" : undefined}
+            onClick={onNavigate}
           >
             <FileText className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
             <span className="type-action rail-doc-label">Resume</span>
-          </button>
+          </Link>
 
-          {/* Last in the document group, and a pane swap for now. This said
-              a real navigation "remounts the shell and destroys every project
-              thread"; since the shell moved into the shared layout (24
-              November) it does not. /about becomes a real route in the next
-              piece of the routing work. */}
-          <button
-            type="button"
+          <Link
+            href="/about"
             className="rail-doc"
             data-pane="about"
             data-active={activePane === "about"}
-            aria-current={activePane === "about" ? "true" : undefined}
-            onClick={pick(onSelectAbout)}
+            aria-current={activePane === "about" ? "page" : undefined}
+            onClick={onNavigate}
           >
             <UserRound className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
             <span className="type-action rail-doc-label">About</span>
-          </button>
+          </Link>
         </div>
       </nav>
       </div>

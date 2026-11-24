@@ -6,8 +6,10 @@
 // THE RÉSUMÉ USED TO BE PARSED HERE and passed down. It is not any more: a
 // prop is serialised into this page's HTML, so every visitor received 6 roles,
 // 21 bullets, 6 skills bands and 3 education entries whether or not they ever
-// opened the Resume pane. The pane fetches /api/resume instead, which imports
-// the same parser — one source, delivered to the people who ask for it.
+// opened the Resume pane. It is parsed by /resume's own page now
+// (app/(site)/resume/page.tsx), so it is in that page's HTML and no other —
+// one source, delivered to the people who ask for it. (Between 0a98e7b and 24
+// November the pane fetched it from /api/resume, which no longer exists.)
 export default function HomePage() {
   return null
 }
