@@ -233,6 +233,16 @@ function ImageBubble({
         <ImageLightbox
           images={group && group.length > 0 ? group : [image]}
           initialIndex={group && group.length > 0 ? (groupIndex ?? 0) : 0}
+          // ⚠ OBSERVED, NOT FIXED: opening and closing the lightbox re-downloads
+          // THIS bubble's inline image (the 720px-sizes variant — w=750 at 1x,
+          // w=1920 at 2x) although it had already loaded and is served with a
+          // 4-hour Cache-Control and an ETag. 8 KB at 1x, 27 KB at 2x for the
+          // first Meridian image. Measured 24 November under CDP throttling in
+          // headless Chrome, on the old lightbox and the new one alike, so it
+          // predates the keyed lightbox. It may be an artefact of how CDP
+          // throttling treats the cache; it has not been reproduced in a normal
+          // browser. Left alone deliberately — recorded so the next person to
+          // see it in a network panel starts here rather than from nothing.
           onClose={() => {
             setLightboxOpen(false)
             triggerRef.current?.focus()
