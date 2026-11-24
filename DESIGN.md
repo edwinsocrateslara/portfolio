@@ -111,8 +111,13 @@ on `--remote-debugging-port=9222`).
 project is not in it.** Its 5 images (4 detail, 1 preview) landed on 19
 August, a week after this measurement, and no re-run is recorded.
 `sample-hues.mjs` reads all of `public/framer/`, so a re-run would include
-them, and its own header asks for one whenever the imagery changes. Until then
-the 95° choice is argued from 32 of the 37 images the accent now sits beside.
+them. The 95° choice is argued from 32 of the 37 images the accent now sits
+beside.
+
+**RULED 24 November: the accent stands, and this is not reopened.** The note
+above is a statement of what the evidence covers, not a pending task: the
+decision was not to re-sample. A future reader finding the
+gap should read it as known and accepted, not as an unfinished measurement.
 
 The corpus came out as two masses with a void between them:
 
@@ -2342,6 +2347,29 @@ source resolution costs roughly half what the PNG does and is pixel-identical.
 Do not pre-resize below 3840 either: that is `next/image`'s largest device
 size, so it can never request more, and anything smaller throws away detail the
 lightbox can use.
+
+#### The exception: Meridian's five JPEGs, permanently
+
+`public/framer/retail-banking/image-1.jpg` through `image-5.jpg` are
+progressive JPEGs at roughly q90, 3840×2160, exported from Framer and in the
+repo since 25 July (`84347a7`). **They stay JPEG, and this is a permanent
+exception, not a to-do.**
+
+The rule exists to keep a lossy step out of the chain between the source and
+`next/image`. For these five, that step already happened at export, and the
+lossless originals are not available: Meridian was 2019–2020, two employers
+ago, and the source files did not leave with Edwin. Re-exporting is the only
+change that would improve them, and it cannot be done.
+
+Converting them would satisfy the rule's letter and nothing else. A lossless
+WebP of a JPEG preserves the JPEG's artefacts pixel for pixel, so `next/image`
+decodes the same pixels and serves the same q75 output; the only difference
+is the repo. Measured on two of them: 197 KB → 469 KB and 347 KB → 571 KB.
+
+The eight re-encoded on 24 August (`07836b1`) had lossless sources to encode
+from, which is why the rule could be applied to them and not to these.
+Recorded 24 November; until then the five sat outside the rule with no
+sentence saying so.
 
 Two fixed aspect ratios, set by the actual asset dimensions rather than a
 layout choice — do not crop assets to a third ratio:

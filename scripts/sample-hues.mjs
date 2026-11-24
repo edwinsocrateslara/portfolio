@@ -8,6 +8,10 @@
 // band they leave empty — not by taste. Re-run this if the project set or its
 // imagery changes; if the empty band moves, the accent is wrong.
 //
+// The vibe project's 5 images were RULED not to trigger that (24 November):
+// the accent stands without a re-sample, and the gap is accepted, not pending.
+// DESIGN.md § Accent records the ruling.
+//
 //   npm run dev            (must already be running on :3200)
 //   node scripts/sample-hues.mjs
 //

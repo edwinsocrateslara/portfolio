@@ -260,6 +260,9 @@ export const projects: Project[] = [
     previewImage: {
       url: "/framer/retail-banking/preview-image.png",
     },
+    // JPEG, not lossless WebP, PERMANENTLY. The originals are not available
+    // and converting changes nothing served — DESIGN.md § Photography, "The
+    // exception: Meridian's five JPEGs, permanently".
     images: [
       {
         url: "/framer/retail-banking/image-1.jpg",
