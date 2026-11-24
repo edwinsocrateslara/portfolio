@@ -223,6 +223,39 @@ export async function POST(req: Request) {
     // longer existed. One question has changed sets since — its header says
     // which and why — so a new run's 8/4 split is not a regression from 7/5.
     // Grade by reading: the original graders failed correct answers twice.
+    //
+    // ── THE API VERSION, AND WHAT UPGRADING @ai-sdk/anthropic CHANGES ──────
+    //
+    // API version 2026-10-21 rejects `temperature`, `top_p` and `top_k` with a
+    // 400 on EVERY model, Sonnet 4.6 included. This route survives it only
+    // because @ai-sdk/anthropic hard-codes `anthropic-version: 2023-06-01`
+    // (installed 2.0.74: node_modules/@ai-sdk/anthropic/dist/index.mjs).
+    //
+    // NO RELEASED VERSION SWITCHES YET, AS OF 24 NOVEMBER 2026. Checked by
+    // reading the published packages, not the changelog: the newest of all
+    // three release lines — 2.0.115 (ai-v5 tag), 3.0.143 (ai-v6) and 4.0.107
+    // (latest) — and the newest prereleases (4.0.0-beta.69, -canary.66) all
+    // send 2023-06-01. So does vercel/ai main (packages/anthropic/src/
+    // anthropic-provider.ts:171, last touched 12 November), and no open PR
+    // proposes a switch. When one does, `temperature: 0` below becomes a 400
+    // inside the stream — the "spend cap" failure described above, on the
+    // model we ALREADY use. Before upgrading, grep the new package for
+    // "anthropic-version"; `npm run model-suite -- plan` prints it too.
+    //
+    // ⚠ BUT EVERY VERSION AFTER 2.0.74 CHANGES WHAT A MODEL SWAP DOES. From
+    // 2.0.75 (16 April, the Opus 4.7 release) onward, on all three lines, the
+    // SDK carries a model table and SILENTLY DROPS `temperature` for models it
+    // marks as rejecting sampling — Sonnet 5 and 5.5, Opus 4.7, 4.8, 5 and
+    // 5.5, Haiku 5.5, every Fable — with only a server-log warning ("temperature
+    // is not supported by … and will be ignored"). Sonnet 4.6 is marked as
+    // accepting it, so for THIS model nothing changes.
+    //
+    // What changes is the warning above. On 2.0.74, swapping the id to one of
+    // those models fails loudly, in the stream. After an upgrade it SUCCEEDS,
+    // unpinned, and nothing on the page says so. Loud was better: the
+    // pinnability the model was chosen on would be lost without an error.
+    // The suite still catches it — its report leads with the rejection,
+    // because it calls the API directly rather than through the SDK.
     model: anthropic("claude-sonnet-4-6"),
     // ── PROMPT CACHING WAS MEASURED AND DEFERRED. READ THIS BEFORE ADDING IT ──
     //
