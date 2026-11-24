@@ -221,9 +221,11 @@ await (async () => {
 // and temperature, and capture the request it would have sent — offline, via
 // a mocked fetch. Then assert on what would have gone over the wire.
 //
-// WHAT IT CANNOT SEE, said plainly: on an SDK with no table (2.0.74, today),
-// a swap to a model that rejects temperature still sends it, and still fails
-// at runtime, loudly. That is the API's knowledge, not the SDK's, and a gate
+// WHAT IT CANNOT SEE, said plainly: for a model the installed SDK's table
+// does not list, a swap to a model that rejects temperature still sends it,
+// and still fails at runtime, loudly. On 2.0.74 (installed until 24 November)
+// that was every model, since it had no table; on 3.0.89 (installed since)
+// it is Sonnet 5, Opus 5 and the 5.5 models, which its table does not list. That is the API's knowledge, not the SDK's, and a gate
 // with no network cannot have it. `npm run model-suite -- run <id>` can.
 ran++
 await (async () => {

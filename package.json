@@ -27,12 +27,12 @@
     "build:resume": "node --import ./scripts/ts-extensionless.mjs scripts/build-resume.mjs"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^2.0.0",
-    "@ai-sdk/react": "^3.0.0",
-    "ai": "^6.0.0",
+    "@ai-sdk/anthropic": "^3.0.89",
+    "@ai-sdk/react": "^3.0.216",
+    "ai": "^6.0.214",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
-    "next": "16.1.6",
+    "next": "16.4.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "^2.5.5"

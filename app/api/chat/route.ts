@@ -229,7 +229,15 @@ export async function POST(req: Request) {
     // API version 2026-10-21 rejects `temperature`, `top_p` and `top_k` with a
     // 400 on EVERY model, Sonnet 4.6 included. This route survives it only
     // because @ai-sdk/anthropic hard-codes `anthropic-version: 2023-06-01`
-    // (installed 2.0.74: node_modules/@ai-sdk/anthropic/dist/index.mjs).
+    // (installed 3.0.89 since 24 November; 2.0.74 before that).
+    //
+    // 3.x IS THE PAIRING `ai` 6 WAS BUILT FOR. From the first commit until 24
+    // November the route ran `ai` 6 over the 2.x provider, which is the `ai` 5
+    // line: `ai` 6 accepted it in "v2 specification compatibility mode" and
+    // logged that warning when it streamed (seen on a mocked stream; not
+    // checked in production logs). Moved with the Next 16.4.6
+    // security upgrade, and tested before landing with two real requests
+    // through this route: an in-document answer and the byte-exact fallback.
     //
     // NO RELEASED VERSION SWITCHES YET, AS OF 24 NOVEMBER 2026. Checked by
     // reading the published packages, not the changelog: the newest of all
@@ -256,10 +264,12 @@ export async function POST(req: Request) {
     //   every version     Sonnet 4.6 KEEPS it
     //
     // So for THIS model nothing changes. What changes is the warning above.
-    // On 2.0.74, swapping the id to one of those models fails loudly, in the
-    // stream. After an upgrade it can SUCCEED, unpinned, and nothing on the
-    // page says so — the pinnability the model was chosen on, lost without an
-    // error.
+    // On 2.0.74, swapping the id to one of those models failed loudly, in the
+    // stream. On a version whose table lists it, the swap SUCCEEDS, unpinned,
+    // and nothing on the page says so — the pinnability the model was chosen
+    // on, lost without an error. On the INSTALLED 3.0.89 that is Opus 4.7, 4.8
+    // and Fable 5.1; Sonnet 5, Opus 5 and the 5.5 models are not in its table
+    // yet, so for them the swap still fails loudly at runtime.
     //
     // THAT IS NOW A BUILD FAILURE, not just this comment. check:api's "model
     // pinning" case streams through the INSTALLED SDK exactly as this route
@@ -267,8 +277,9 @@ export async function POST(req: Request) {
     // the request it would send has no temperature, or carries an API
     // version that rejects one. It asks the SDK rather than keeping a list,
     // because the list is what changed under us. It cannot see what only the
-    // API knows: on an SDK with no table (2.0.74), a swap still fails at
-    // runtime, loudly. `npm run model-suite -- run <id>` covers that.
+    // API knows: for a model the installed SDK's table does not list, a swap
+    // still sends temperature and fails at runtime, loudly. `npm run
+    // model-suite -- run <id>` covers that.
     //
     // (Corrected 24 November, the day it was written: the first version of
     // this paragraph said 2.0.75 stripped all of those models. The mechanism
