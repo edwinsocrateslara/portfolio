@@ -243,19 +243,36 @@ export async function POST(req: Request) {
     // "anthropic-version"; `npm run model-suite -- plan` prints it too.
     //
     // ⚠ BUT EVERY VERSION AFTER 2.0.74 CHANGES WHAT A MODEL SWAP DOES. From
-    // 2.0.75 (16 April, the Opus 4.7 release) onward, on all three lines, the
-    // SDK carries a model table and SILENTLY DROPS `temperature` for models it
-    // marks as rejecting sampling — Sonnet 5 and 5.5, Opus 4.7, 4.8, 5 and
-    // 5.5, Haiku 5.5, every Fable — with only a server-log warning ("temperature
-    // is not supported by … and will be ignored"). Sonnet 4.6 is marked as
-    // accepting it, so for THIS model nothing changes.
+    // 2.0.75 (16 April, the Opus 4.7 release) the SDK carries a model table
+    // and SILENTLY DROPS `temperature` for models it marks as rejecting
+    // sampling, with only a server-log warning ("temperature is not supported
+    // by … and will be ignored"). THE TABLE GREW RELEASE BY RELEASE, so which
+    // models are stripped depends on the exact version. Measured by sending
+    // through each SDK with a mocked fetch:
     //
-    // What changes is the warning above. On 2.0.74, swapping the id to one of
-    // those models fails loudly, in the stream. After an upgrade it SUCCEEDS,
-    // unpinned, and nothing on the page says so. Loud was better: the
-    // pinnability the model was chosen on would be lost without an error.
-    // The suite still catches it — its report leads with the rejection,
-    // because it calls the API directly rather than through the SDK.
+    //   2.0.75            Opus 4.7
+    //   2.0.84, 3.0.89    + Opus 4.8, Fable 5.1
+    //   2.0.100, 3.0.120  + Sonnet 5, Opus 5, Sonnet/Opus/Haiku 5.5
+    //   every version     Sonnet 4.6 KEEPS it
+    //
+    // So for THIS model nothing changes. What changes is the warning above.
+    // On 2.0.74, swapping the id to one of those models fails loudly, in the
+    // stream. After an upgrade it can SUCCEED, unpinned, and nothing on the
+    // page says so — the pinnability the model was chosen on, lost without an
+    // error.
+    //
+    // THAT IS NOW A BUILD FAILURE, not just this comment. check:api's "model
+    // pinning" case streams through the INSTALLED SDK exactly as this route
+    // does — this model id, this temperature, a mocked fetch — and fails if
+    // the request it would send has no temperature, or carries an API
+    // version that rejects one. It asks the SDK rather than keeping a list,
+    // because the list is what changed under us. It cannot see what only the
+    // API knows: on an SDK with no table (2.0.74), a swap still fails at
+    // runtime, loudly. `npm run model-suite -- run <id>` covers that.
+    //
+    // (Corrected 24 November, the day it was written: the first version of
+    // this paragraph said 2.0.75 stripped all of those models. The mechanism
+    // arrived then; the list did not. The gate's own break test found it.)
     model: anthropic("claude-sonnet-4-6"),
     // ── PROMPT CACHING WAS MEASURED AND DEFERRED. READ THIS BEFORE ADDING IT ──
     //

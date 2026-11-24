@@ -26,6 +26,9 @@ import {
   resetRateLimit,
   clientKey,
 } from "../lib/chat-request.ts"
+import { readFileSync } from "fs"
+import { createAnthropic } from "@ai-sdk/anthropic"
+import { streamText } from "ai"
 
 const problems = []
 let ran = 0
@@ -196,6 +199,99 @@ await (async () => {
   if (key !== same) problems.push("clientKey: not stable for the same address")
 })()
 
+// ── The model is pinned, through the SDK that is actually installed ──────
+//
+// route.ts sends `temperature: 0`, and the model was CHOSEN for being able to
+// take it (see the comment above its model line). Two things can quietly undo
+// that without touching route.ts's logic, and neither is visible in a review:
+//
+//   1. THE SDK STRIPS IT. From @ai-sdk/anthropic 2.0.75 on, the SDK carries a
+//      model table and drops `temperature` for models it marks as rejecting
+//      sampling, with a server-log warning and nothing else. Swap the model id
+//      to one of those and the route works — unpinned, with no error anywhere.
+//      On 2.0.74 the same swap failed loudly in the stream; an upgrade turns
+//      a loud failure into a silent one.
+//   2. THE SDK MOVES TO A NEWER API VERSION. 2026-10-21 rejects `temperature`
+//      on every model, so the same request becomes a 400 inside the stream,
+//      for the model already in use.
+//
+// So this does not read the SDK's table, which is internal and has changed
+// shape between majors. It ASKS THE SDK: build the provider exactly as the
+// route does, stream exactly as the route does with the route's own model id
+// and temperature, and capture the request it would have sent — offline, via
+// a mocked fetch. Then assert on what would have gone over the wire.
+//
+// WHAT IT CANNOT SEE, said plainly: on an SDK with no table (2.0.74, today),
+// a swap to a model that rejects temperature still sends it, and still fails
+// at runtime, loudly. That is the API's knowledge, not the SDK's, and a gate
+// with no network cannot have it. `npm run model-suite -- run <id>` can.
+ran++
+await (async () => {
+  const route = readFileSync("app/api/chat/route.ts", "utf8")
+  const modelId = /model:\s*anthropic\("([^"]+)"\)/.exec(route)?.[1]
+  // The CODE line; the comment above the model line also says "temperature: 0".
+  const temperature = Number(/^\s*temperature:\s*([\d.]+),/m.exec(route)?.[1])
+  if (!modelId || Number.isNaN(temperature)) {
+    problems.push("pinning: cannot find the model id or the temperature line in app/api/chat/route.ts")
+    return
+  }
+
+  const sent = []
+  const mockFetch = async (url, init) => {
+    sent.push({ url: String(url), headers: new Headers(init?.headers), body: JSON.parse(init?.body ?? "{}") })
+    return new Response(JSON.stringify({ type: "error", error: { type: "invalid_request_error", message: "check:api mock" } }),
+      { status: 400, headers: { "content-type": "application/json" } })
+  }
+  // Capture the SDK's warnings rather than printing them into the build log.
+  // Quoting one in the failure is BEST-EFFORT: `ai` logs warnings at stream
+  // start, and the mock's 400 ends the stream first, so in practice the list
+  // is empty. The request body is the evidence; the warning would only be a
+  // caption for it.
+  const warnings = []
+  const prevLogger = globalThis.AI_SDK_LOG_WARNINGS
+  globalThis.AI_SDK_LOG_WARNINGS = ({ warnings: w }) => warnings.push(...w)
+  try {
+    const anthropic = createAnthropic({ apiKey: "check-api-mock", fetch: mockFetch })
+    const result = streamText({
+      model: anthropic(modelId),
+      system: "check:api",
+      messages: [{ role: "user", content: "check:api" }],
+      temperature,
+      maxOutputTokens: 16,
+      maxRetries: 0,
+      onError: () => {},
+    })
+    await result.consumeStream()
+  } finally {
+    globalThis.AI_SDK_LOG_WARNINGS = prevLogger
+  }
+
+  const req = sent.find((s) => s.url.includes("/messages"))
+  if (!req) {
+    problems.push(`pinning: the SDK sent no /messages request for ${modelId} — the probe is not exercising the route's path`)
+    return
+  }
+  const version = req.headers.get("anthropic-version")
+  if (req.body.temperature !== temperature) {
+    const why = warnings.find((w) => w.feature === "temperature")?.details
+    problems.push(
+      `pinning: route.ts asks for temperature ${temperature} on ${modelId}, and the installed ` +
+      `@ai-sdk/anthropic sends ${req.body.temperature === undefined ? "NONE" : req.body.temperature}` +
+      (why ? ` ("${why}")` : "") +
+      `. The model would run unpinned with no error. Choose a model the SDK keeps temperature for, ` +
+      `or change the decision in route.ts's model comment knowingly.`
+    )
+  }
+  if (!version) {
+    problems.push("pinning: the SDK sent no anthropic-version header; cannot tell which API rules apply")
+  } else if (version >= "2026-10-21" && "temperature" in req.body) {
+    problems.push(
+      `pinning: the installed @ai-sdk/anthropic sends anthropic-version ${version}, which rejects ` +
+      `temperature on every model — every chat answer would be a 400 inside the stream`
+    )
+  }
+})()
+
 if (problems.length) {
   console.error(`\ncheck:api — ${problems.length} problem(s)\n`)
   for (const p of problems) console.error(`  x ${p}`)
@@ -207,5 +303,5 @@ if (problems.length) {
 }
 console.log(
   `check:api — PASS, ${ran} cases: roles, non-text parts, shape, size caps, rebuild, ` +
-  `body reader, rate limiter, client key`
+  `body reader, rate limiter, client key, model pinning`
 )
