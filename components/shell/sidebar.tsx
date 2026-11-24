@@ -48,7 +48,6 @@ interface SidebarProps {
   vibe: ProjectIndexEntry[]
   activeSlug: string | null
   activePane: Pane
-  onProjectSelect: (slug: string) => void
   onHome: () => void
   /** Mobile sheet only — dismisses after a selection. */
   onNavigate?: () => void
@@ -65,14 +64,12 @@ function ProjectSection({
   items,
   activePane,
   activeSlug,
-  onSelect,
   pick,
 }: {
   heading: string
   items: ProjectIndexEntry[]
   activePane: Pane
   activeSlug: string | null
-  onSelect: (slug: string) => void
   pick: (fn: () => void) => () => void
 }) {
   return (
@@ -93,9 +90,16 @@ function ProjectSection({
         {items.map((p) => {
           const active = activePane === "chat" && activeSlug === p.slug
           return (
-            <button
+            // A REAL LINK to the project's thread, /work/<slug>, since 24
+            // November — so a row can be opened in a new tab, shared, and
+            // crawled. The shell opens the thread when the URL changes; this
+            // only closes the mobile sheet. As a link it takes Enter and not
+            // Space — standard for something that navigates. Pixel-identical
+            // to the button it replaced: the front door was compared at
+            // 1440x900, 1440x700 and 380x820, 0 pixels different.
+            <Link
               key={p.slug}
-              type="button"
+              href={`/work/${p.slug}`}
               className="rail-item"
               // A STABLE HANDLE FOR THE OFFLINE SCRIPTS. check-geometry.mjs and
               // the artboard setups used to reach these rows by array position
@@ -106,8 +110,8 @@ function ProjectSection({
               // test can select by identity and then assert what it selected.
               data-project-slug={p.slug}
               data-active={active}
-              aria-current={active ? "true" : undefined}
-              onClick={pick(() => onSelect(p.slug))}
+              aria-current={active ? "page" : undefined}
+              onClick={pick(() => {})}
             >
               {/* Decorative: the row's accessible name is the title beside it,
                   so alt="" avoids announcing the same project twice.
@@ -141,7 +145,7 @@ function ProjectSection({
                 <span className="type-action rail-item-client">{p.client}</span>
                 <span className="type-caption rail-item-subtitle">{p.railSubtitle}</span>
               </span>
-            </button>
+            </Link>
           )
         })}
       </div>
@@ -154,7 +158,6 @@ export function Sidebar({
   vibe,
   activeSlug,
   activePane,
-  onProjectSelect,
   onHome,
   onNavigate,
   open = false,
@@ -224,7 +227,6 @@ export function Sidebar({
           items={work}
           activePane={activePane}
           activeSlug={activeSlug}
-          onSelect={onProjectSelect}
           pick={pick}
         />
 
@@ -245,7 +247,6 @@ export function Sidebar({
             items={vibe}
             activePane={activePane}
             activeSlug={activeSlug}
-            onSelect={onProjectSelect}
             pick={pick}
           />
         )}

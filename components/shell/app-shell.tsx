@@ -113,6 +113,33 @@ const PANE_FOR_PATH: Readonly<Record<string, Pane>> = {
   "/about": "about",
 }
 
+// ── PROJECT URLS ────────────────────────────────────────────────────────
+// /work/<slug> addresses a project's thread (PRODUCT.md, "A URL addresses a
+// thread, never a page"). The slug comes from the path, and only projects the
+// rail LISTS are addressable — Work and Vibe Coding; an off-rail project is in
+// the conversation but has no URL, so its slug here resolves to nothing.
+function slugFromPath(pathname: string, addressable: ReadonlySet<string>): string | null {
+  const m = /^\/work\/([^/]+)$/.exec(pathname)
+  return m && addressable.has(m[1]) ? m[1] : null
+}
+
+// A project's reveal, FINISHED — every block at once, for the first render of
+// a /work/<slug> URL. The server renders this into the HTML (so the case study
+// is in it, for search and link previews) and the client builds the same
+// thing during hydration.
+//
+// DETERMINISTIC, AND IT HAS TO BE. The streamed path ids its messages with
+// generateMessageId(), a counter plus Date.now() — different on the server
+// and the client by construction. These ids are derived from the slug and the
+// block's position instead, and buildResponse with no prior answers depends
+// only on the slug. Proved, not assumed: see the routing piece-4 commit.
+function finishedReveal(slug: string): StructuredMessage[] {
+  const { response } = buildResponse("", { preloadedSlug: slug })
+  return (response ?? []).map(
+    (block, i) => ({ id: `reveal:${slug}:${i}`, role: "assistant", ...block }) as StructuredMessage
+  )
+}
+
 // The one layout every destination renders inside, mounted once per visit by
 // app/(site)/layout.tsx.
 export function AppShell({
@@ -154,6 +181,18 @@ export function AppShell({
   // Read inside callbacks, so they need not re-create on every navigation.
   const onDocumentRef = useRef(pane !== "chat")
   onDocumentRef.current = pane !== "chat"
+  const pathnameRef = useRef(pathname)
+  pathnameRef.current = pathname
+
+  // Which projects have URLs: the rail's, never the off-rail ones.
+  const addressable = useMemo(
+    () => new Set(projectIndex.filter((p) => p.section !== "off-rail").map((p) => p.slug)),
+    [projectIndex]
+  )
+  // The project this URL addresses on a FRESH load. Read once, below, to seed
+  // the thread state the first render needs; after that, the effect that
+  // watches the path does the work.
+  const [initialSlug] = useState(() => slugFromPath(pathname, addressable))
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // ── Threads ─────────────────────────────────────────────────────
@@ -163,7 +202,7 @@ export function AppShell({
   //
   // In-memory only, by design: a refresh starts over. There is no persistence
   // layer and nothing here is written to storage.
-  const [activeThread, setActiveThread] = useState<string>(HOME_THREAD)
+  const [activeThread, setActiveThread] = useState<string>(initialSlug ?? HOME_THREAD)
   // Read inside callbacks so they don't have to re-create on every switch.
   // Which answers each thread has already given, so a follow-up chip is not
   // offered twice in one conversation.
@@ -186,7 +225,7 @@ export function AppShell({
 
   // Threads whose scripted reveal has already run. A revisit must show
   // history, not stream the reveal a second time.
-  const revealedRef = useRef<Set<string>>(new Set())
+  const revealedRef = useRef<Set<string>>(new Set(initialSlug ? [initialSlug] : []))
 
   const {
     enqueue: queueScriptedMessages,
@@ -194,7 +233,7 @@ export function AppShell({
     reset: resetStream,
     messagesOf,
     isTypingIn,
-  } = useScriptedStream()
+  } = useScriptedStream(initialSlug ? { [initialSlug]: finishedReveal(initialSlug) } : undefined)
 
   const activeMessages = messagesOf(activeThread)
 
@@ -210,7 +249,7 @@ export function AppShell({
   // an idle status and both send.
   const apiInFlightRef = useRef(false)
   // Track current project being discussed (to avoid repeating scripted reveals)
-  const [currentProjectSlug, setCurrentProjectSlug] = useState<string | null>(null)
+  const [currentProjectSlug, setCurrentProjectSlug] = useState<string | null>(initialSlug)
 
   // Claude API chat (for when scripted responses don't match)
   const { messages: apiMessages, sendMessage, status, setMessages: setApiMessages } = useChat({
@@ -462,9 +501,6 @@ export function AppShell({
   // deferred cannot be interleaved with another one.
   const openProjectThread = useCallback(
     (slug: string) => {
-      // From a document, the conversation is at "/" — projects get URLs of
-      // their own in the next piece. A push, so back returns to the document.
-      if (onDocumentRef.current) router.push("/")
       setCurrentProjectSlug(slug)
       switchThread(slug)
       if (revealedRef.current.has(slug)) return
@@ -477,8 +513,20 @@ export function AppShell({
       queueScriptedMessages(response, slug)
       revealedRef.current.add(slug)
     },
-    [switchThread, queueScriptedMessages, router]
+    [switchThread, queueScriptedMessages]
   )
+
+  // Opening a project: navigation if it has a URL — a push, so back returns
+  // where the visitor was — and the thread directly if it does not. The
+  // off-rail project opens without touching the address bar (PRODUCT.md).
+  const goToProject = useCallback(
+    (slug: string) => {
+      if (addressable.has(slug)) router.push(`/work/${slug}`)
+      else openProjectThread(slug)
+    },
+    [addressable, router, openProjectThread]
+  )
+
 
   // Every entry point routes through here: typed input, landing chips,
   // follow-up chips, and the rail. One decision about which thread a turn
@@ -536,7 +584,7 @@ export function AppShell({
       // thread should read as that project's own conversation, not as a reply
       // to something typed somewhere else.
       if (response && projectSlug && projectSlug !== from) {
-        openProjectThread(projectSlug)
+        goToProject(projectSlug)
         return
       }
 
@@ -580,7 +628,7 @@ export function AppShell({
     // and the busy guard above would read the state as it was at mount — which
     // is never typing, which is the guard doing nothing.
     [
-      openProjectThread,
+      goToProject,
       appendImmediate,
       queueScriptedMessages,
       buildApiHistory,
@@ -755,11 +803,29 @@ export function AppShell({
     [dispatch]
   )
 
-  const handleSidebarProject = useCallback(
-    (slug: string) => openProjectThread(slug),
-    [openProjectThread]
-  )
-
+  // THE URL OPENS PROJECT THREADS. A rail row, a sampler card or a typed
+  // question that reveals a project navigates to /work/<slug>; this effect
+  // sees the path change and opens the thread — streaming its reveal the
+  // first time, exactly as a click always did, and showing history after.
+  // Back and forward come through the same door.
+  //
+  // On a fresh load the thread is already open and finished (initialSlug), and
+  // prevPathRef starts at that path, so nothing re-runs.
+  const prevPathRef = useRef(pathname)
+  useEffect(() => {
+    if (prevPathRef.current === pathname) return
+    const from = prevPathRef.current
+    prevPathRef.current = pathname
+    const slug = slugFromPath(pathname, addressable)
+    if (slug) {
+      openProjectThread(slug)
+    } else if (pathname === "/" && slugFromPath(from, addressable)) {
+      // Leaving a project's URL for "/" leaves its thread. An off-rail thread
+      // opened AT "/" is not touched: it never had a URL to leave.
+      setCurrentProjectSlug(null)
+      switchThread(HOME_THREAD)
+    }
+  }, [pathname, addressable, openProjectThread, switchThread])
 
   // The three document rows are links now (sidebar.tsx), and the pane follows
   // the URL, so there are no deck / about / resume handlers here. They existed
@@ -775,10 +841,10 @@ export function AppShell({
   // back to. Home is scratch space; the rail's seven threads are the ones
   // worth keeping, and this does not touch them.
   //
-  // From a document it also NAVIGATES to "/" — a push, so back returns to the
-  // document. Already at "/", there is nothing to push.
+  // From anywhere but "/" it also NAVIGATES there — a push, so back returns
+  // to the document or project. Already at "/", there is nothing to push.
   const handleHome = useCallback(() => {
-    if (onDocumentRef.current) router.push("/")
+    if (pathnameRef.current !== "/") router.push("/")
     setCurrentProjectSlug(null)
     switchThread(HOME_THREAD)
     resetStream(HOME_THREAD)
@@ -893,7 +959,6 @@ export function AppShell({
         vibe={vibeIndex}
         activeSlug={currentProjectSlug}
         activePane={pane}
-        onProjectSelect={handleSidebarProject}
         onHome={handleHome}
         onNavigate={() => setSheetOpen(false)}
         open={sheetOpen}
@@ -1053,7 +1118,6 @@ export function AppShell({
             items={projectIndex}
               className={fadeIn}
               animationDelay={delay(180)}
-              onSelect={handleSidebarProject}
             />
           </div>
         ) : (

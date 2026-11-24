@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 // NO PROJECT IMPORT — the sampler shows a thumbnail, a client and a subtitle.
 // See lib/project-index.ts.
 import type { ProjectIndexEntry } from "@/lib/project-index"
@@ -16,14 +17,12 @@ const SAMPLE_SLUGS = ["ai-workforce-development", "retail-banking", "live-sellin
 
 export function ProjectSampler({
   items,
-  onSelect,
   className,
   animationDelay,
 }: {
   /** Every project, in rail order. The sampler picks 3 by slug from this rather
    *  than importing the modules — see lib/project-index.ts. */
   items: ProjectIndexEntry[]
-  onSelect: (slug: string) => void
   className?: string
   animationDelay?: string
 }) {
@@ -34,12 +33,9 @@ export function ProjectSampler({
   return (
     <div className={`sampler ${className ?? ""}`} style={{ maxWidth: "var(--prose-measure)", animationDelay }}>
       {sample.map((p) => (
-        <button
-          key={p.slug}
-          type="button"
-          className="sampler-card"
-          onClick={() => onSelect(p.slug)}
-        >
+        // A real link to the project's thread, like the rail rows: the shell
+        // opens it when the URL changes.
+        <Link key={p.slug} href={`/work/${p.slug}`} className="sampler-card">
           {/* Decorative: the client and subtitle below name the project, so
               alt="" keeps a screen reader from hearing it three times. The
               source is 2048px square; `sizes` is what keeps the optimizer
@@ -57,7 +53,7 @@ export function ProjectSampler({
             <span className="type-action sampler-client">{p.client}</span>
             <span className="type-caption sampler-sub">{p.railSubtitle}</span>
           </span>
-        </button>
+        </Link>
       ))}
     </div>
   )

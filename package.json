@@ -23,6 +23,7 @@
     "check:numbers": "node scripts/check-numbers.mjs",
     "check:api": "node --import ./scripts/ts-extensionless.mjs scripts/check-api.mjs",
     "check:paint": "node scripts/check-paint.mjs",
+    "check:threads": "node scripts/check-threads.mjs",
     "model-suite": "node scripts/model-suite.mjs",
     "build:resume": "node --import ./scripts/ts-extensionless.mjs scripts/build-resume.mjs"
   },

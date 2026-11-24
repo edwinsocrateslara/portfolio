@@ -51,9 +51,14 @@ const EMPTY: StructuredMessage[] = []
 // handled by AssistantBubble/UserBubble themselves) are skipped entirely —
 // the whole queue is revealed at once, with isTyping never becoming true, so
 // input stays enabled immediately.
-export function useScriptedStream() {
+/** `initial` seeds threads that already exist when the shell first renders —
+ *  a project URL's finished reveal (app-shell.tsx, finishedReveal). It is read
+ *  once, by useState, on the server and again during hydration, so it must be
+ *  built deterministically: the same input has to give the same messages,
+ *  ids included, on both sides. */
+export function useScriptedStream(initial?: Record<string, StructuredMessage[]>) {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const [threads, setThreads] = useState<Record<string, StructuredMessage[]>>({})
+  const [threads, setThreads] = useState<Record<string, StructuredMessage[]>>(() => initial ?? {})
   // KEYED BY THREAD, all three. `pending` used to be a single slot carrying a
   // thread id, which routed blocks correctly and lost them: the drain loop
   // wrote the remainder back after every block, so a reveal starting in thread
