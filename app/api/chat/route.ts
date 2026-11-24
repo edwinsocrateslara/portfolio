@@ -213,6 +213,16 @@ export async function POST(req: Request) {
     // BEFORE UPGRADING: re-run the suite. The accuracy tie means a newer model
     // has to earn the change on something other than being newer, and the
     // temperature line has to go with it.
+    //
+    //   npm run model-suite -- run <model-id>      (costs money; ~23 requests)
+    //   npm run model-suite -- grade <run-dir>     (you read each answer)
+    //   npm run model-suite -- report <run-dir>...
+    //
+    // scripts/model-suite.mjs is the 4 September run, recovered and committed
+    // on 24 November; until then this line pointed at scratch files that no
+    // longer existed. One question has changed sets since — its header says
+    // which and why — so a new run's 8/4 split is not a regression from 7/5.
+    // Grade by reading: the original graders failed correct answers twice.
     model: anthropic("claude-sonnet-4-6"),
     // ── PROMPT CACHING WAS MEASURED AND DEFERRED. READ THIS BEFORE ADDING IT ──
     //
