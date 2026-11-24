@@ -2047,8 +2047,9 @@ to 24 inside its 32px column (`c3ec8ef`). On 24 August the thumbnails went to
 already shows the headings with no icon, their ink at 22. The CONTACT block
 has since become the icon-only footer.
 
-**The argument it made applies today, and the call it points at was deferred,
-not made.** The 17 August change existed to remove a 24px gap: the document
+**The argument it made applies today. The call it points at was deferred three
+times and is now CLOSED: the glyph stays 24, reviewed 24 November** (the
+record is the next section). The 17 August change existed to remove a 24px gap: the document
 rows had a `margin-right` that padded a 16px icon out to a 32px column to buy
 the shared label edge, which "bought alignment by breaking the gap ladder on
 the only three rows in the rail that had one, and 24 is not a rung." Widening
@@ -2060,9 +2061,59 @@ is 40 and the document glyph is 24 inside it, so from glyph to label is
 "THE GLYPHS STAY 24 while their column grows … A 24px mark beside a 32px
 picture and a 24px mark beside a 40px one are not the same relationship, and
 the doc group reads lighter than it did … Not taken here because it is a
-second variable and this commit is about alignment." It has not been taken
-since. Recorded here so it is an open call in the document rather than only in
-git history.
+second variable and this commit is about alignment." It was not taken for
+three months. It was recorded here on 20 October so it would be an open call in
+the document rather than only in git history, and it is closed below.
+
+### The document glyph stays 24 — reviewed 24 November
+
+**Decided, not deferred.** Four sizes were rendered on a production build at
+1440×900, changing only the glyph and its stroke; the stroke was re-picked for
+each by `lib/icons.ts`'s rule above 16 — hold the painted line at 1.5px, so
+stroke = 1.5 × 24 / size.
+
+| glyph | stroke | glyph → label, box | glyph → label, ink | on the ladder? | doc row | rail past fold, 1440×900 / ×700 |
+|---|---|---|---|---|---|---|
+| **24** (kept) | 1.5 | 24 | 25–28 | no | 48 | 25 / 225 |
+| 28 | 1.286 | 20 | 21–25 | no | 52 | 37 / 237 |
+| **32** (recommended) | 1.125 | 16 — `between` | 18–21 | yes | 56 — same as project rows | 49 / 249 |
+| 40 | 0.9 | 8 — `within`, the thumbnails' gap | 10–15 | yes | 64 | 73 / 273 |
+
+The ink gap is wider than the box gap because Lucide draws inset inside its own
+square; a thumbnail fills its square, so the project rows' 8 is 8 either way.
+The 24 row reproduces the 25 / 225 this document already records under **Known
+consequence**, which is what makes the other three rows comparable.
+
+**Weight.** No size makes the document group heavier than the project rows.
+Summed ink per row: a document row is 282 at 24, 303 at 28, 318 at 32 and 351
+at 40, against 651–888 for a project row (the thumbnail alone averages 453). At
+32 the glyph's ink is about equal to its own label's; at 40 the glyph outweighs
+the word beside it and starts to read as an illustration rather than a mark.
+
+**The brand mark at 40 removed `bebe347`'s defence of 24.** That commit kept 24
+on the ground that "the glyph is a drawn mark whose size is a separate
+aesthetic call" from the pictures in the column. Since 21 October the column
+also holds a drawn mark at 40 — the brand, at x=22, 40×40 — so the rail has
+already decided a drawn mark in this column can be the column's size, and the
+document glyphs are the only thing in it below 40. It strengthens the case for
+a larger glyph; it does not argue for 40 itself, because the brand sits at the
+top of the rail and these rows at the bottom, and the eye compares them with
+the thumbnail directly above, not with the brand.
+
+**32 WAS THE RECOMMENDATION AND WAS NOT TAKEN.** The case for it: the gap lands
+on a rung (16) instead of the off-ladder 24, every rail row becomes 56, and the
+glyph sits level with its label. What it would not have done: match the
+thumbnails' 8 (only 40 does), and it costs the rail 24px. It is also off the
+icon ramp (12 / 16 / 20 / 24) and no icon rule produces it — the half-target
+rule chases its own tail, because the row grows with the glyph (a 56 row asks
+for 28) — so it would need a stated exception, the way the brand mark has one.
+28 was weaker on every count: no rung, little visible change, 12px of rail. 40
+reaches 8 but outweighs its labels and costs 48px.
+
+**If this is reopened, start from 32, not from scratch.** Taking it means: the
+glyph token, a stroke constant at 1.125 beside `ICON_STROKE_RAIL`, this
+section's icon-rule table and the **Icons** exception list, and a line here
+saying it was taken. The measurements above stand until the rail changes.
 
 The alternative rejected then was leaving the document icons at 16 with labels
 at 46, because document labels were mono caps identical to WORK and VIBE

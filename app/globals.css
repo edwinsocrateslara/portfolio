@@ -668,7 +668,11 @@
   --icon-inline:  var(--space-12);   /* a mark inside 12px type: the pill arrows   */
   --icon-mark:    var(--space-16);   /* beside a 16px title, or in prose; and SEND */
   --icon-control: var(--space-20);   /* a standalone control in a 40–44px target   */
-  --icon-rail:    var(--space-24);   /* rail document rows: the icon IS the column */
+  --icon-rail:    var(--space-24);   /* rail document rows: a 24 glyph in a 40 column */
+  /* That line said "the icon IS the column". It was never true: it was written
+     on 28 August (0de263b), four days after bebe347 had taken the column to 40
+     and left the glyph at 24. The size was reviewed and kept on 24 November —
+     DESIGN.md § "The document glyph stays 24". */
 
   /* The left edge every rail row aligns to — the list's padding, the 2px
      active bar, and the row's own padding. Written as the composition so a
@@ -1175,10 +1179,20 @@ body {
   height: var(--icon-rail);
   flex: none;
 }
-/* A document row's icon IS its left column, rather than a small glyph with a
-   margin pretending to be one — the margin version aligned the labels but left
-   these three rows with a 24px icon-to-label gap while every other row in the
-   rail sat at 8, alignment bought by breaking the gap ladder.
+/* A document row's glyph is 24, inside a column that is 40 — the thumbnail's
+   width — with the remainder as margin, so the label lands on the same 70px
+   edge as every project row. That is a glyph with a margin, and it leaves
+   these three rows with a 24px glyph-to-label gap where every project row has
+   8: the shared label edge is bought by stepping off the gap ladder.
+   That trade was reviewed and KEPT on 24 November — DESIGN.md § "The document
+   glyph stays 24", which has the measurements and the 32 that was recommended
+   and not taken.
+
+   This comment used to say the icon "IS its left column, rather than a small
+   glyph with a margin pretending to be one". It never was: it was written on
+   19 August (c3ec8ef) in the same commit that shrank the glyph to 24 inside a
+   32px column, describing the arrangement that commit was replacing. The icon
+   was the column only from 17 to 19 August, at 32 (b5366ec).
    PRIMARY, not currentColor: the label beside it is primary too, so the pair
    reads as one object. The consequence is that `active` no longer steps the
    glyph — the accent bar and the layer-1 fill carry that state alone. */
