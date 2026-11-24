@@ -971,7 +971,10 @@ export function AppShell({
                       animationDelay: delay(60),
                     }}
                   >
-                    {/* LAB: the aurora spans the PHRASE, not a word. One span
+                    {/* THE AURORA SPANS THE PHRASE, not a word. (This opened
+                        "LAB:" — written on the lab branch in 4dfcb06 and
+                        shipped unchanged when 095a987 stripped the lab; the
+                        effect is no longer an experiment.) One span
                         across "designer & builder" so the gradient runs the
                         length of it — background-clip:text on a single inline
                         box paints one continuous ramp, and box-decoration-break

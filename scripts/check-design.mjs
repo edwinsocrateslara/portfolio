@@ -11,9 +11,29 @@
 //   node scripts/check-design.mjs --list     machine-readable, one per line
 //   node scripts/check-design.mjs --bare     rule 5, report-only
 //
-// Five enforced rules plus one report-only. Rules 1-5 read .tsx under app/
-// and components/; rule 6 also reads app/globals.css, because the token layer
-// is where an accent surface would actually be written.
+// THE RULES, numbered as the comments below use them:
+//
+//   1  no-inline-type      type set inline rather than by a .type-* class
+//   2  no-off-grid         a raw length that is not a multiple of 4
+//   3  no-raw-tw-spacing   a raw Tailwind spacing class (no CSS form)
+//   4  no-raw-color        a colour literal rather than a token
+//   5  no-bare-length      any bare length in a style object — REPORT-ONLY
+//   6  no-accent-surface   the accent painting an area
+//   7  tracking-literal,   letter-spacing outside the --track-* block, and
+//      tracking-budget     more --track-* tokens than TRACK_BUDGET
+//   8  RETIRED 21 October  display-face-scope; see its note below
+//      favicon-token-drift app/icon.svg's copied colours against the tokens
+//
+// Rules 1-5 read .tsx under app/ and components/. Rules 1, 2, 4 and 5 also
+// read every stylesheet under app/ in a CSS dialect (css-inline-type,
+// css-off-grid, css-raw-color, css-bare-length), and that dialect fails the
+// build like the rest. Rule 6 reads both, because the token layer is where an
+// accent surface would actually be written.
+//
+// This read "Five enforced rules plus one report-only", which was true when it
+// was written: rules 1-4 and 6 enforced, rule 5 reporting. Rule 7, the
+// favicon check and the CSS dialect's promotion to fatal (M7, 3956bee) all
+// arrived after it, and it kept counting the original six.
 import { readFileSync, readdirSync, statSync } from "fs"
 import { join, relative } from "path"
 // Rule 6's inherited-fill pass only. Everything else here is grep, and stays
@@ -44,7 +64,9 @@ const CSS_FILES = (function findCss(dir = "app", acc = []) {
 })()
 
 // ── Allowlist ────────────────────────────────────────────────────────────
-// Deliberately empty. Entries are `"<file>::<rule>::<detail>"` with a reason,
+// Every entry is a waiver somebody argued; the default is failure. (This
+// opened "Deliberately empty." — true on 11 August, when the gate first ran
+// (1a20f86), and left in place as the entries below arrived.) Entries are `"<file>::<rule>::<detail>"` with a reason,
 // so adding one is an edit somebody reviews rather than a comment anyone can
 // write. A documented exception in a code comment does NOT exempt a value —
 // three separate `marginTop: 5` comments is how a missing token hides.
@@ -54,10 +76,12 @@ const ALLOW = {
 
   // Rule 6. Each of these is a CONTROL or a MARK, which is what the accent is
   // for; the rule cannot measure rendered size, so the judgment is recorded
-  // here instead of guessed. DESIGN.md lists the same three under "Where the
-  // accent is allowed".
+  // here instead of guessed. DESIGN.md lists all three in the table under
+  // "Every place the accent paints today", and the first two under "Where the
+  // accent is allowed". (This said all three were in the second list; the
+  // résumé's timeline node never was.)
   "components/chat/chat-input.tsx::no-accent-surface::background":
-    "The SEND button fill, 42px tall, and only once there is something to send.",
+    "The SEND button fill, 34px across, and only once there is something to send. (This said 42px: SEND's size when the field was 66px tall. It is derived from --input-rest-h now.)",
   "components/chat/message-bubbles.tsx::no-accent-surface::background":
     "The 8px square IMPACT marker. A glyph, not a surface.",
   "app/globals.css::no-accent-surface::.resume-row-node background":
@@ -103,9 +127,9 @@ const ALLOW = {
   "app/globals.css::css-off-grid:::root — --type-display-size: 50px":
     "A rung of the 1.25 ladder. DESIGN.md: type sizes have never been bound to the 4px grid - 14/21 and 20/30 predate this ramp - and binding a geometric ladder to a 4px lattice would force it back into the arithmetic ramp it replaced.",
   "app/globals.css::css-raw-color::.dot-field — -webkit-mask-image: hex #000":
-    "A MASK IS AN ALPHA CHANNEL, NOT A COLOUR. #000 in mask-image means fully opaque; the mask never paints and the value could be any colour at all without changing a pixel. Rule 3 is right to be literal about hex, and this is the one shape where a hex carries no colour information — recorded here rather than special-cased in the matcher, which would then have to know what a mask is.",
+    "A MASK IS AN ALPHA CHANNEL, NOT A COLOUR. #000 in mask-image means fully opaque; the mask never paints and the value could be any colour at all without changing a pixel. Rule 4 is right to be literal about hex (this said rule 3, which is Tailwind spacing and has no CSS form), and this is the one shape where a hex carries no colour information — recorded here rather than special-cased in the matcher, which would then have to know what a mask is.",
   "app/globals.css::css-raw-color::.dot-field — mask-image: hex #000":
-    "A MASK IS AN ALPHA CHANNEL, NOT A COLOUR. #000 in mask-image means fully opaque; the mask never paints and the value could be any colour at all without changing a pixel. Rule 3 is right to be literal about hex, and this is the one shape where a hex carries no colour information — recorded here rather than special-cased in the matcher, which would then have to know what a mask is.",
+    "A MASK IS AN ALPHA CHANNEL, NOT A COLOUR. #000 in mask-image means fully opaque; the mask never paints and the value could be any colour at all without changing a pixel. Rule 4 is right to be literal about hex (this said rule 3, which is Tailwind spacing and has no CSS form), and this is the one shape where a hex carries no colour information — recorded here rather than special-cased in the matcher, which would then have to know what a mask is.",
   "app/globals.css::css-off-grid:::root — --shimmer-blur: 1px":
     "A BLUR RADIUS IS NOT A LENGTH ON THE GRID. Rule 2 governs layout — positions and sizes that have to line up with other things. This value lines up with nothing: it is how far a rim of light bleeds, and the grid has no opinion about that any more than it has one about a transition duration. Snapping it to 4px would make the rim four times thicker to satisfy a rule about spacing.",
   "app/globals.css::css-off-grid:::root — --type-control-size: 14px":
@@ -121,7 +145,7 @@ const ALLOW = {
   "app/globals.css::css-off-grid:::root — --bureau-focus-ring: 0 0 0 2px rgb(var(--bureau-accent) / 0.11)":
     "A glow, not the focus indicator. The indicator is the border: hairline -> text-secondary, measured on the running page at 4.76:1 between states and 7.11:1 against the ground, which is what satisfies 1.4.11. This ring reads 1.23:1 and cannot count as indicator area under 1.4.11 or 2.4.13, so its size is a visual decision. 2px matches the active rail row's border, the width DESIGN.md already names. 4px would need no entry at all; it was not taken because a 4px glow at 11% reads as a halo rather than an edge.",
   "app/globals.css::css-bare-length:::root — --panel-shadow: 0 12px 32px rgb(0 0 0 / 0.44)":
-    "A shadow's offset and blur are not spacing. --space-* encodes RELATEDNESS between two things, or the DIMENSION of one; a blur radius is neither, and writing this as `0 var(--space-12) var(--space-32)` would be using the grid to satisfy a linter rather than because 12 and 32 mean what those tokens mean. Same judgment already recorded one entry up for --bureau-focus-ring, which is the same shape: a shadow-family token whose lengths are visual rather than structural. The values are on the 4px grid anyway, so rule 1 has nothing to say about them; this entry is only about which token family they should have come from.",
+    "A shadow's offset and blur are not spacing. --space-* encodes RELATEDNESS between two things, or the DIMENSION of one; a blur radius is neither, and writing this as `0 var(--space-12) var(--space-32)` would be using the grid to satisfy a linter rather than because 12 and 32 mean what those tokens mean. Same judgment already recorded one entry up for --bureau-focus-ring, which is the same shape: a shadow-family token whose lengths are visual rather than structural. The values are on the 4px grid anyway, so rule 2 has nothing to say about them (this said rule 1, which is inline type); this entry is only about which token family they should have come from.",
   "app/globals.css::css-off-grid::.resume-rule — height: 1px":
     "The 1px hairline, drawn as a box rather than as an edge. DESIGN.md's exception is about the HAIRLINE, not the property it is spelled with - a border cannot be animated from one end, and the timeline draws this line downward.",
   "app/globals.css::css-off-grid::.resume-row-line — width: 1px":

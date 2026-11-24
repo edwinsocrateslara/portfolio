@@ -16,8 +16,9 @@
 //      voice.md, about-pane.tsx (the lede plus the reading ledger, both
 //      already covered), lib/scripted-responses.ts as an inline literal, and
 //      lib/edwin-context.md as a quote the model reads. The last two were
-//      unguarded — lib/sources/README.md names the scripted one as "still
-//      unguarded, and named here so it is not mistaken for covered" — and the
+//      unguarded — lib/sources/README.md named the scripted one as "still
+//      unguarded, and named here so it is not mistaken for covered", and now
+//      records it as "Guarded since 31 August" by this rule — and the
 //      fix it contemplated, moving the answer into VOICE_ANSWERS, would have
 //      changed the chip routing. Asserting it in place does not.
 //

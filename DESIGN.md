@@ -83,9 +83,15 @@ The old blue accent (`#1e96fc`) and its dependents (a "Sunshine" amber scale,
 a warm-accent orange, a blue-tinted "golden shadow" glow system) are still
 gone, and were not reinstated by adding an accent back. Emphasis that used to
 be color-coded still lives mostly in **value and form**: mono
-`text-secondary` for eyebrows/indices, underlines for links and hero
-emphasis, and outline vs. filled for badge states (see Components below). The
-accent supplements that; it did not replace it.
+`text-secondary` for eyebrows/indices, underlines for links, and outline vs.
+filled for badge states (see Components below). The accent supplements that;
+it did not replace it.
+
+*This list also named underlines for "hero emphasis". The front door had an
+underlined phrase until 10 August (`d3f4cea`), carried none from then until 28
+August, and since then its one emphasis is the aurora on "designer & builder"
+(`095a987`) — chromatic, so it is under **Two chromatic colours arrived**, not
+here. See also Known judgment call 2.*
 
 ## Accent
 
@@ -100,6 +106,13 @@ that UI chrome inside the screenshots would not dominate the result.
 
 Reproduce with `node scripts/sample-hues.mjs` (needs the dev server and Chrome
 on `--remote-debugging-port=9222`).
+
+**The corpus is the seven Work projects as of 12 August, and the vibe
+project is not in it.** Its 5 images (4 detail, 1 preview) landed on 19
+August, a week after this measurement, and no re-run is recorded.
+`sample-hues.mjs` reads all of `public/framer/`, so a re-run would include
+them, and its own header asks for one whenever the imagery changes. Until then
+the 95° choice is argued from 32 of the 37 images the accent now sits beside.
 
 The corpus came out as two masses with a void between them:
 
@@ -731,7 +744,7 @@ is 0.6px at 12 and 0.8px at 16.
 Seven hours later the same day, the 1.25 ladder collapsed the four
 display-tracking tokens — `-hero` −1px at 28, `-h2` −1px at 32, `-sub` −0.6px
 at 24 and `-title` −0.4px at 20 — into one em value (`97b52af`). The reason is
-under **Tracking: six tokens** below. In the same commit `--track-badge` became
+under **Tracking: five tokens** below. In the same commit `--track-badge` became
 `--track-wordmark`, after the one thing it tracks. The budget then stood at 9
 against 6 real tokens, which let three new tokens arrive without the review,
 until M8 (`3956bee`, 3 September) set it to the real count.
@@ -1153,7 +1166,12 @@ primary/secondary/muted hierarchy.
 not a rank above body; it is a different kind of thing at the same rank. It also
 could not be `.type-name`: the card is 58px tall and 26/39 does not fit in it.
 
-### Tracking: six tokens
+### Tracking: five tokens
+
+*This heading read "six tokens". It was corrected to six on 20 October
+(`ece07e7`), and `--track-wordmark` retired 96 minutes later with the move to
+Poppins (`0228406`), which took `TRACK_BUDGET` to 5 and left the heading one
+behind. The table under **The 4px rule** lists the five.*
 
 There were nine, four of which were display tracking at one value per size —
 and they were not consistent with each other: −1px at 28 is −0.036em, −1px at 32
@@ -1701,7 +1719,11 @@ otherwise re-make.*
   **Chips** and Known judgment call 3). The inversion rule outlives them: SEND
   takes the filled accent only once there is something to send.
 - **Input** — rest: `layer-1`/`hairline`, `radius-chip`. Focus: border →
-  `text-secondary` + a 3px `accent`-at-11% ring (`--bureau-focus-ring`). Steps
+  `text-secondary` + a 2px `accent`-at-11% ring (`--bureau-focus-ring`) — a
+  glow, not the indicator; the border is the indicator. (This said 3px, the
+  ring's value from the token layer's first commit until it moved onto the 4px
+  grid's 2px exception on 26 August, `925dc05`; the argument for 2 over 4 is
+  at the token.) Steps
   to `radius-card` once it grows past one line — see **The chat input is the
   one radius that moves**. SEND is an **icon-only circle**, muted at rest and
   filled `accent` with `on-accent` ink once there is something to send; 34×34
@@ -2253,8 +2275,11 @@ They used to carry `grayscale(.15)` so they would "sit inside the achromatic
 system". That was backwards: it spent effort suppressing the only chromatic
 material the page actually owns, in service of a rule about the chrome. The
 chrome can stay near-neutral without the content having to apologise for
-being in colour. 32 real screenshots is the strongest asset here and
-desaturating them was a self-inflicted loss.
+being in colour. 37 real project images — 32 across the seven Work projects
+and 5 from the vibe project — are the strongest asset here, and desaturating
+them was a self-inflicted loss. (This said "32 real screenshots", the Work
+projects' count when it was written; the vibe project's 5 arrived on 19
+August.)
 
 No hover-reveal either. A filter that lifts on hover implies the resting
 state is a preview of the real thing; there is no reason for the resting
@@ -2323,9 +2348,17 @@ layout choice — do not crop assets to a third ratio:
 
 - **Card / preview imagery** (`previewImage`, used by the rail thumbnails and
   the front door's sampler; it was written for the project grid, which is
-  gone) — **1:1**. All 7 source previews are square (2048×2048, one at 2160×2160).
-- **In-case-study detail imagery** (`images[]`) — **16:9**. All 25 source
-  detail images are 3840×2160.
+  gone) — **1:1**. All 8 source previews are square: the seven Work
+  projects' (2048×2048, one at 2160×2160) and the vibe project's (2160×2160).
+- **In-case-study detail imagery** (`images[]`) — **16:9**. All 29 source
+  detail images are 3840×2160: 25 across the Work projects and 4 from the vibe
+  project.
+
+*These counts read "7" and "25" — correct for the seven Work projects, which
+were the whole set when they were written (25 July, `cbb0da4`). The vibe
+project's images landed on 19 August and the counts never took them in. They
+were never wrong; they described a set that grew. Both ratios held for the
+new images, which is the claim that matters.*
 
 ## Do
 
@@ -2372,8 +2405,16 @@ layout choice — do not crop assets to a third ratio:
    value + form. Partly superseded: an accent exists again at `#7fdd3c`, but
    chosen against the screenshot corpus rather than inherited, and scoped to
    structural marks. Value + form still carry most of the emphasis.
-2. **Hero emphasis phrase** ("AI products and workflows") — was blue, now a
-   thin `border-strong` underline. Reads as emphasis, not a link.
+2. **Hero emphasis phrase** — *historical as written.* The handoff's phrase
+   was "AI products and workflows": blue, then a thin `border-strong`
+   underline, on the reasoning that it should read as emphasis, not a link.
+   The underlined phrase left with the input-first hero (`d3f4cea`, 10
+   August). Today's headline is "I'm Edwin, AI designer & builder making
+   useful products and workflows.", and its emphasis is the aurora across
+   "designer & builder" (`095a987`, 28 August) — the one chromatic gesture in
+   the system, argued under **Two chromatic colours arrived** and at
+   `.aurora-word` in `app/globals.css`. The underline's argument still holds
+   for any emphasis that is not chromatic: it must not read as a link.
 3. **Status badges (In Progress / Live) used to both read as blue** — they
    became outline and filled/inverted, then were deleted outright with the
    Side of Desk pane. No status badge exists now.

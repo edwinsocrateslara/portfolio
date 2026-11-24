@@ -1,7 +1,9 @@
 // Weighted hue histogram over every project screenshot in public/framer/.
 //
 // This is the evidence behind --bureau-accent. The accent's job is to stay
-// legible against 32 real screenshots it has no control over, so the hue was
+// legible against real screenshots it has no control over — 32 when this was
+// first run on 12 August, 37 since the vibe project's 5 landed on 19 August,
+// which no recorded run has included (DESIGN.md § Accent) — so the hue was
 // picked by measuring where those screenshots already live and choosing a
 // band they leave empty — not by taste. Re-run this if the project set or its
 // imagery changes; if the empty band moves, the accent is wrong.

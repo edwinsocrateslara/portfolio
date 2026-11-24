@@ -5,7 +5,9 @@
 // filled mark is its finest feature. The drawing is on a 10-unit module in a
 // 260-unit box (bars 20, the narrowest gaps 10), so a gap is one device pixel
 // at 26px on a 1x screen; below that the interior closes and it reads as a
-// blob. DESIGN.md § Iconography records the sizes that follow from that.
+// blob. DESIGN.md § Icons, "The brand mark: a fill, outside the ramp", records
+// the sizes that follow from that. (This cited "§ Iconography", a heading
+// DESIGN.md has never had.)
 //
 // THE SOURCE IS docs/provenance/brand-mark/source.svg, and this is its path
 // data and nothing else. The source hardcoded white through an embedded

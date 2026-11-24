@@ -585,13 +585,20 @@
      below always overrode it. A token whose every reader has been deleted is
      not a default, it is a value waiting to be picked up by mistake.
 
-     Document rows: the COLUMN and the GLYPH are two different numbers now,
-     which is the whole point of naming both. The column stays 32 — the same
-     width a project row's thumbnail takes — so every label in the rail still
-     lands on the same 62px edge (8 list padding + 2 border + 12 row padding +
-     32 column + 8 gap). The glyph inside it drops to 24 and centres, so the
-     mark got smaller without the list shifting under it. Collapsing these
-     back into one token re-breaks that alignment by exactly 8px. */
+     Document rows: the COLUMN and the GLYPH are two different numbers, which
+     is the whole point of naming both. The column is the thumbnail's width —
+     40 — so every label in the rail lands on the same 70px edge (8 list
+     padding + 2 border + 12 row padding + 40 column + 8 gap). The glyph is 24
+     and centres inside it. Collapsing the two back into one token would put
+     document labels 16px left of every project label.
+
+     HISTORY, because the numbers above replaced these. Written 19 August
+     (c3ec8ef), when the glyph dropped from 32 to 24 inside a column that
+     stayed 32: labels on a 62px edge, and collapsing the tokens re-broke it
+     by 8px. The column went to 40 with the thumbnails on 24 August (bebe347);
+     this paragraph kept saying 32 and 62 until 24 November, two lines above
+     the token that says 40. The 24px gap that leaves between glyph and label
+     is an open call, recorded in DESIGN.md § The rail. */
   /* The thumbnail, and the document column beside it. ONE TOKEN EACH, but the
      same value, because they are two different facts that must agree: how big
      a picture is, and how wide the column before a document label is. The

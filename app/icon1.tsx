@@ -8,7 +8,8 @@ import { tokenRgb } from "@/lib/image-tokens"
 // bar and a dark one. The mark is full-bleed because 32 is the size where its
 // finest gap is 1.23px at 1x; inset it and it drops under the 26px floor.
 //
-// No 16. DESIGN.md § Iconography records why.
+// No 16. DESIGN.md § Icons, "The favicon: 32 and 180, no 16", records why.
+// (This cited "§ Iconography", a heading DESIGN.md has never had.)
 export const size = { width: 32, height: 32 }
 export const contentType = "image/png"
 
