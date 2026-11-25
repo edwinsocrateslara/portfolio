@@ -409,13 +409,14 @@
      900px the header is hidden and the anchor is overridden to --space-80
      anyway; see the mobile block.)
 
-     (For part of 25 November this also subtracted --space-within, for a gap
-     between the header and the panels. The gap was reversed — content runs
-     up under the bar — so the pane starts at the header's line again and the
-     subtraction went with it. Measured: headline 225, input 373, first chip
-     439, unchanged throughout.) */
+     ⚠ AND FOR THE GAP BELOW IT (25 November). The header is now a full-width
+     band with --space-within of black between it and the panels, so the pane
+     starts --header-h + --space-within down, and both are subtracted. Measured
+     at 1440x900: headline 225, unchanged. Remove the gap's subtraction with
+     the gap, the header's with the header. (It was removed with the gap in
+     48489cb and restored with it; the headline sat at 225 throughout.) */
   --header-h: var(--space-48);
-  --hero-anchor: calc(25dvh - var(--header-h));
+  --hero-anchor: calc(25dvh - var(--header-h) - var(--space-within));
 
   /* The About page's prose measure. The mock puts the words on a 328-588
      band inside the full-width pane; 588 is the upper end, which is where
@@ -1146,21 +1147,20 @@ body {
 /* ── PANELS ON A BLACK BACKDROP (25 November) ─────────────────────────
    Above the breakpoint the shell is a grid: the header across the top, full
    width, on the black; under it the rail and the pane as two rounded panels.
-   ONE GAP — --space-within, "parts of one thing", because the header, the
-   rail and the pane are three parts of one surface: between the panels and
-   round the outside edge. It was ALSO between the header and the panels
-   until later on 25 November — a larger step there (--space-between) would
-   have made the header a different KIND of thing from the panels rather than
-   its own band among them.
-   ⚠ REVERSED THE SAME DAY: CONTENT RUNS UNDER THE BAR. The gap UNDER the
-   header was ruled as what made the header its own band rather than a lid.
-   Kept as that ruling's reason; it is gone because it prevented what Edwin
-   actually wanted — content running up under the bar, the way a sticky
-   header works. The header is opaque black, so "under the header" and "cut
-   at its line" look identical: the panels' tops MEET THE LINE (no row gap)
-   with SQUARE top corners, since rounded ones would leave black notches at
-   each end of it. Bottom corners keep 12. The column gap and the outside
-   edge keep --space-within.
+   ONE GAP FOR EVERYTHING — --space-within, "parts of one thing", because the
+   header, the rail and the pane are three parts of one surface: between the
+   header and the panels, between the panels, and round the outside edge. A
+   larger step under the header (--space-between) would make it a different
+   KIND of thing from the panels rather than its own band among them.
+
+   ⚠ THE GAP UNDER THE HEADER WAS REMOVED AND RESTORED, BOTH ON 25 NOVEMBER.
+   Ruled first as what makes the header its own band rather than a lid.
+   REMOVED (48489cb) so content could run up under the bar, the way a sticky
+   header works: the panels met the line with square top corners. RESTORED
+   (the second reversal) because, seen live, the panels meeting the line read
+   worse than the band did. ACCEPTED CONSEQUENCE, chosen knowingly: content
+   stops at the panel's top edge, 8px below the line, and cannot run under
+   the bar while the gap is there. Do not remove the gap to "fix" that.
 
    The hairlines retire with this: the rail's right border and the header's
    bottom border. The black gap separates the regions now, and a gap plus a
@@ -1174,23 +1174,21 @@ body {
     display: grid;
     grid-template-columns: var(--rail-width) minmax(0, 1fr);
     grid-template-rows: var(--header-h) minmax(0, 1fr);
-    /* No row gap: the panels meet the header's line (see the note above). */
-    column-gap: var(--space-within);
+    gap: var(--space-within);
     padding: 0 var(--space-within) var(--space-within);
   }
   .rail {
     grid-column: 1;
     grid-row: 2;
     background: rgb(var(--bureau-rail));
-    /* Square top corners, meeting the header's line; bottom corners 12. */
-    border-radius: 0 0 var(--bureau-radius-card) var(--bureau-radius-card);
+    border-radius: var(--bureau-radius-card);
     overflow: hidden;
   }
   .pane {
     grid-column: 2;
     grid-row: 2;
     background: rgb(var(--bureau-bg));
-    border-radius: 0 0 var(--bureau-radius-card) var(--bureau-radius-card);
+    border-radius: var(--bureau-radius-card);
     overflow: hidden;
   }
 }
@@ -1818,9 +1816,8 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    that reason by moving the mark INTO the bar's left end, at the rail's text
    column (--rail-inset from the edge), so the mark still owns the top-left —
    now as the header's first item rather than the rail's first row. The bar
-   sits on the black backdrop; the panels meet its line and content scrolls
-   up under it (reversing, the same day, an --space-within gap below it that
-   was ruled to make it its own band rather than a lid).
+   sits on the black backdrop with --space-within below it, its own band
+   rather than a lid on the panels.
 
    Case Study, Resume and About, moved out of the rail on 24 November. 48
    tall, which holds a 44px target in a row. Right-aligned to the pane's 40px
@@ -1828,10 +1825,12 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    rows they replaced.
 
    THE BOTTOM HAIRLINE, EDGE TO EDGE (25 November). It marks the header's band
-   across the whole viewport, and it is now the edge content scrolls up to
-   and under. (It was ruled alongside a --space-within gap below it, which
-   separated the panels from the band; that gap was reversed the same day so
-   content could run under the bar. The line stays.)
+   across the whole viewport; the --space-within gap below it separates the
+   panels from that band. Two jobs, so two devices — which is why this is not
+   the "gap plus border" that was first left out, when both would have been
+   doing the one job of separating the panels. (That ruling stood for the
+   rendering before this one and is superseded by Edwin's call, not undone
+   by accident.)
 
    FULL LENGTH: the shell's grid sits inside --space-within of padding, so the
    header steps out by that much on each side (negative margin) and pays it
@@ -2467,12 +2466,11 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
 @media (max-width: 900px) {
   /* The same panels at phone width: the top bar is the header, on the black,
-     and the pane (or the sheet, when it is open) is a panel inset by
-     --space-within at the sides and bottom, meeting the bar's line with square
-     top corners, so content runs up under the bar as it does on desktop. The
-     bar keeps its hairline, edge to edge. (A gap under the bar existed for
-     part of 25 November and was reversed with the desktop one.) */
-  .shell { flex-direction: column; }
+     and the pane (or the sheet, when it is open) is a rounded panel inset by
+     --space-within, with the same gap under the bar. The bar keeps its
+     hairline, edge to edge, for the same reason the desktop header does: it
+     marks the band; the gap separates the panels. */
+  .shell { flex-direction: column; gap: var(--space-within); }
   .shell-topbar {
     display: flex;
     flex: none;
@@ -2484,7 +2482,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .pane {
     margin: 0 var(--space-within) var(--space-within);
     background: rgb(var(--bureau-bg));
-    border-radius: 0 0 var(--bureau-radius-card) var(--bureau-radius-card);
+    border-radius: var(--bureau-radius-card);
     overflow: hidden;
   }
   /* The brand mark is the way home on a phone, so it takes the same 44px
@@ -2518,7 +2516,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     min-height: 0;
     margin: 0 var(--space-within) var(--space-within);
     background: rgb(var(--bureau-rail));
-    border-radius: 0 0 var(--bureau-radius-card) var(--bureau-radius-card);
+    border-radius: var(--bureau-radius-card);
     overflow: hidden;
   }
   /* The pane gives way to the sheet. (This was `.pane-column` from 24 to 25
@@ -2532,10 +2530,13 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
      headline 116px lower than it used to sit. A flat value here keeps the
      hero near the top of a screen that has much less of it to spare.
 
-     (For part of 25 November this subtracted a gap under the top bar; the
-     gap was reversed, and with the pane meeting the bar's line again the
-     headline is at 157 and the input at 381 — as before the panels.) */
-  .hero-band { --hero-anchor: var(--space-80); }
+     (Removed with the gap in 48489cb and restored with it.)
+     ⚠ LESS THE GAP UNDER THE TOP BAR (25 November), for the same reason the
+     desktop anchor subtracts it: the pane panel starts --space-within lower
+     than it did, so the headline would have dropped by it (measured: 157 ->
+     164). Subtracted, it sits where it did before the panels: the top bar's
+     1px hairline, briefly retired, is back (measured below). */
+  .hero-band { --hero-anchor: calc(var(--space-80) - var(--space-within)); }
   /* Tighter gutters, but the bottom reserve is still the dock's own height —
      writing 0 here silently undid --dock-h and put the last message back
      underneath the dock at mobile only, while desktop looked correct. */
