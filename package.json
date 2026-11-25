@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "npm run check:sources && npm run check:design && npm run check:chips && next build && npm run check:routes",
+    "build": "npm run check:sources && npm run check:design && npm run check:chips && npm run check:tools && next build && npm run check:routes",
     "start": "next start",
     "check:voice": "node scripts/check-voice.mjs",
     "build:context": "node --experimental-strip-types scripts/build-context.mjs",
@@ -22,6 +22,7 @@
     "check:alt": "node --import ./scripts/ts-extensionless.mjs scripts/check-alt.mjs",
     "check:numbers": "node scripts/check-numbers.mjs",
     "check:api": "node --import ./scripts/ts-extensionless.mjs scripts/check-api.mjs",
+    "check:tools": "node --import ./scripts/ts-extensionless.mjs scripts/check-tools.mjs",
     "check:paint": "node scripts/check-paint.mjs",
     "check:threads": "node scripts/check-threads.mjs",
     "check:routes": "node --import ./scripts/ts-extensionless.mjs scripts/check-routes.mjs",

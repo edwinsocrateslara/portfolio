@@ -1937,6 +1937,32 @@ document group, which is now the MOBILE SHEET's only. One list renders both;
 CSS shows whichever applies. The sections below about the document group, its
 divider rule, its label edge and its glyph describe the sheet.
 
+**Changing the rail or the document links means running the browser tools**
+(24 November): check:paint, check:threads, check:geometry, and the artboard
+setups in `scripts/setups/` through canvas-artboard. They drive the rail by
+hand and need a browser, so none is a build gate.
+
+**The incident this rule carries.** In one day, three changes to the rail and
+its links broke FOUR tools, and every build gate passed each time:
+
+1. Piece 1 (the Ideas Dashboard leaves the rail) broke `setups/vibe.js` and
+2. check:geometry's vibe surface — both clicked a row that no longer existed.
+3. Item 3 (the documents move to a header) broke check:geometry at 380: its
+   new selector took only a VISIBLE link, and at 380 the only copy is in the
+   closed sheet.
+4. `setups/meridian.js` had the same visible-only flaw from before, and the
+   item-4 rewrite kept it.
+
+`check:tools` was written after the first two, and catches their class — a
+tool naming a slug the rail doesn't list or a pane that isn't a document, or
+the components dropping the `data-*` handles. It does NOT catch the other
+class, a selector that resolves on one width and not another. **And the gate
+was written by the same process that caused the break it was written for:
+breaks 3 and 4 were made in the same session as the gate, by the author of
+the gate, and were found only by running the tools at 380.** A gate covers
+the class someone has already seen. Running the tools is how the next class
+gets seen.
+
 **Two project sections, WORK and VIBE CODING**, sharing one `ProjectSection`
 component. They are the same thing with different contents; a second copy of
 the markup would be a second place for the active treatment, the thumbnail

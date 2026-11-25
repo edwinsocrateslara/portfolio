@@ -1,3 +1,5 @@
 // The visible Resume link: the header above the pane on desktop, the rail's
 // document group in the mobile sheet. Selected by data-pane, not by position.
-;[...document.querySelectorAll('[data-pane="resume"]')].find(e => e.getBoundingClientRect().width > 0).click()
+// Visible copy first; at 900px and below the only copy is in the closed
+// sheet — hidden, and a click on it still navigates.
+;(() => { const all = [...document.querySelectorAll('[data-pane="resume"]')]; (all.find(e => e.getBoundingClientRect().width > 0) ?? all[0]).click() })()

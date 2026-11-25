@@ -49,9 +49,12 @@ import { connect } from "./shot.mjs"
 // rather than trusting that the click did what it said.
 const bySlug = (slug) =>
   `document.querySelector('.rail-item[data-project-slug=${JSON.stringify(slug)}]')`
-// The VISIBLE document link: the header above the pane on desktop, the rail's
-// group in the mobile sheet (one list, components/shell/document-links.tsx).
-const byPane = (pane) => `[...document.querySelectorAll('[data-pane=${JSON.stringify(pane)}]')].find((e) => e.getBoundingClientRect().width > 0)`
+// The VISIBLE document link if there is one — the header above the pane on
+// desktop — and otherwise the first, which at 900px and below is the copy in
+// the CLOSED mobile sheet: hidden, and a click on it still navigates. Visible-
+// only was written for item 3 and threw at 380, where nothing is visible until
+// the sheet opens; found by running this tool, not by any gate.
+const byPane = (pane) => `(() => { const all = [...document.querySelectorAll('[data-pane=${JSON.stringify(pane)}]')]; return all.find((e) => e.getBoundingClientRect().width > 0) ?? all[0] })()`
 const CHIPS = `[...document.querySelectorAll('.chip')].filter(e=>e.getBoundingClientRect().width>0)`
 
 /** Surfaces: how to get there from a fresh load, and how long to settle. */
@@ -65,10 +68,16 @@ const SURFACES = {
     // throw, and a selector that found the wrong row would not.
     expect: `${bySlug("retail-banking")}.dataset.active === "true"`,
   },
+  // The Ideas Dashboard is OFF THE RAIL since 24 November (lib/vibe-projects
+  // .ts), so there is no row to click: it opens the way a visitor reaches it,
+  // through the composer. This surface clicked its rail row by slug until
+  // then and was broken from piece 1 of the routing work until check:tools
+  // found it. Asserted by its content — no rail row lights for an unlisted
+  // project — and the 457-post corpus is in its reveal and no other.
   "vibe-reveal": {
-    open: `${bySlug("futurefit-ideas-dashboard")}.click()`,
+    open: `(() => { const ta = [...document.querySelectorAll('textarea')].find((e) => e.getBoundingClientRect().width > 0); Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(ta, 'tell me about the ideas dashboard'); ta.dispatchEvent(new Event('input', { bubbles: true })); ta.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true })) })()`,
     settle: 4200,
-    expect: `${bySlug("futurefit-ideas-dashboard")}.dataset.active === "true"`,
+    expect: `(document.querySelector('main.pane .pane-scroll')?.innerText ?? '').includes('457') && !document.querySelector('.rail-item[data-active="true"]')`,
   },
   about: {
     open: `${byPane("about")}.click()`,

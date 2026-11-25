@@ -1,6 +1,8 @@
 // Meridian's rail row, by slug — not by position, which the vibe setup
 // learned the hard way.
-;[...document.querySelectorAll('.rail-item[data-project-slug="retail-banking"]')].find(e => e.getBoundingClientRect().width > 0).click()
+// Visible copy first; at 900px and below the rail is the closed sheet —
+// hidden, and a click on its row still opens the thread.
+;(() => { const all = [...document.querySelectorAll('.rail-item[data-project-slug="retail-banking"]')]; (all.find(e => e.getBoundingClientRect().width > 0) ?? all[0]).click() })()
 
 // SINCE 24 NOVEMBER A REVEAL LANDS AT THE TOP and does not stream, so this
 // reset no longer has anything to undo; it stays as a harmless safety net.

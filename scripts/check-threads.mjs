@@ -28,10 +28,11 @@
 //
 // It also checks the other promise: arriving by URL shows the same thread as a
 // click. It opens "/", clicks the project's rail row, waits for the reveal to
-// finish (it no longer streams — 24 November — so this is near-instant; the
-// wait stays, in case it ever streams again) — the follow-up chips present AND no change for 4s, because the image
-// groups pause long enough to fool a shorter wait (they did, on the first run)
-// — and compares the text with the server's.
+// finish — the follow-up chips present AND no change for 4s, because the
+// image groups paused long enough to fool a shorter wait while reveals
+// streamed (they did, on the first run) — and compares the text with the
+// server's. Since 24 November reveals do not stream, so the wait is near-
+// instant; it stays, in case they ever stream again.
 //
 // PROVED BY BREAKING, 24 November: in a scratch copy where the client built one
 // block fewer than the server, both cases failed (transcript differs, and
