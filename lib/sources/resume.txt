@@ -96,12 +96,18 @@ Oct 2025 – Present
   Miles across the platform through contextual prompts and AI
   actions.
 
-- Built SideBar, an LLM-powered networking coach that helps job
-  seekers activate their existing networks. Piloted for the
-  Christensen Institute's Prosocial Possibilities research cohort,
-  which selected FutureFit AI as one of 10 edtech providers studying
-  how technology can strengthen social connection and expand access
-  to opportunity.
+# SIDEBAR IS UNNAMED HERE ON PURPOSE (25 November). This bullet said "Built
+# SideBar, an LLM-powered networking coach…" for one deploy; Edwin dropped the
+# name because the bullet reads better without it, knowing the chat and
+# voice.md § SideBar both name it. Not an oversight — do not re-add it. (Miles
+# stays named in the bullet above, where the draft had introduced it unnamed and
+# then referred to it by name, which read as two products. Different problem.)
+- Built an LLM-powered networking coach that helps job seekers
+  activate their existing networks. Piloted for the Christensen
+  Institute's Prosocial Possibilities research cohort, which
+  selected FutureFit AI as one of 10 edtech providers studying how
+  technology can strengthen social connection and expand access to
+  opportunity.
 
 - Designed and built an AI prioritization system that evaluates
   customer feedback against company strategy and technical

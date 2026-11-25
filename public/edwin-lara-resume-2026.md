@@ -1,4 +1,4 @@
-<!-- resume-source-hash:8bb29198eea9c8a2 -->
+<!-- resume-source-hash:2ffa3002c1ddc1ad -->
 <!-- Generated from lib/sources/resume.txt by scripts/build-resume.mjs. Do not edit. -->
 
 # EDWIN SOCRATES LARA
@@ -14,7 +14,7 @@ Designer & AI Builder with 10 years of experience across fintech, e-commerce, an
 
 - Design and build AI products for a workforce platform serving businesses and governments. Worked across research, product, design, AI prototyping, data integrations, and production code.
 - Designed and shipped the core UX/UI for Miles, FutureFit's trained LLM, including conversational flows for career exploration, job discovery, and understanding fit for specific roles. Integrated Miles across the platform through contextual prompts and AI actions.
-- Built SideBar, an LLM-powered networking coach that helps job seekers activate their existing networks. Piloted for the Christensen Institute's Prosocial Possibilities research cohort, which selected FutureFit AI as one of 10 edtech providers studying how technology can strengthen social connection and expand access to opportunity.
+- Built an LLM-powered networking coach that helps job seekers activate their existing networks. Piloted for the Christensen Institute's Prosocial Possibilities research cohort, which selected FutureFit AI as one of 10 edtech providers studying how technology can strengthen social connection and expand access to opportunity.
 - Designed and built an AI prioritization system that evaluates customer feedback against company strategy and technical architecture, surfacing 10 priorities each week and quick wins for the team to build.
 - Built integrations across Canny, Clarify, and Heap using Claude Code and LLMs to synthesize customer feedback, client conversations, and behavioral data into evidence for product decisions.
 - Built an AI-compatible design system with design tokens and shadcn/ui, enabling code-generation tools to assemble interfaces from established components. Shipped WCAG, ARIA, and Cypress accessibility improvements directly to production.
