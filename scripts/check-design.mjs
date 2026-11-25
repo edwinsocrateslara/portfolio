@@ -24,6 +24,7 @@
 //   8  RETIRED 21 October  display-face-scope; see its note below
 //      favicon-token-drift app/icon.svg's copied colours against the tokens
 //      favicon-mark-drift  app/icon.svg's copied path and box against the mark
+//      theme-color-drift   app/layout.tsx's themeColor against --bureau-backdrop
 //
 // Rules 1-5 read .tsx under app/ and components/. Rules 1, 2, 4 and 5 also
 // read every stylesheet under app/ in a CSS dialect (css-inline-type,
@@ -72,8 +73,8 @@ const CSS_FILES = (function findCss(dir = "app", acc = []) {
 // write. A documented exception in a code comment does NOT exempt a value —
 // three separate `marginTop: 5` comments is how a missing token hides.
 const ALLOW = {
-  "app/layout.tsx::no-raw-color::hex #131313":
-    "PWA themeColor - read by browser chrome before CSS loads, so it cannot be a CSS var.",
+  "app/layout.tsx::no-raw-color::hex #000000":
+    "PWA themeColor - read by browser chrome before CSS loads, so it cannot be a CSS var. EXCUSED HERE, HELD BELOW: theme-color-drift requires it to equal --bureau-backdrop. (Until 25 November this entry excused #131313 and nothing held it to a token.)",
 
   // Rule 6. Each of these is a CONTROL or a MARK, which is what the accent is
   // for; the rule cannot measure rendered size, so the judgment is recorded
@@ -1041,6 +1042,29 @@ function checkFaviconMark(file, svg, markSrc) {
   return out
 }
 
+// ── The browser's theme colour ───────────────────────────────────────────
+// app/layout.tsx's `themeColor` tints the browser's own chrome — mobile
+// Safari's toolbar, Android's status bar — and Next writes it into a <meta>,
+// so it cannot read a CSS variable. It is a COPY of the colour the page meets
+// at its top edge, which is --bureau-backdrop since the panels (25 November).
+// It sat at "#131313" for months, a copy of --bureau-bg with nothing holding
+// it — the favicon's problem in another file — and the panels would have left
+// it one shade off the top bar with every gate green. Exact match, read from
+// globals.css on every run; a missing themeColor is a finding, not a pass.
+const LAYOUT_FILE = "app/layout.tsx"
+
+function checkThemeColor(file, src, css) {
+  const out = []
+  const add = (detail) => out.push({ file, rule: "theme-color-drift", detail, line: 1 })
+  if (src == null) { add(`${LAYOUT_FILE} is missing`); return out }
+  const got = /themeColor:\s*"(#[0-9a-fA-F]{3,8})"/.exec(src)?.[1]?.toLowerCase()
+  const want = tokenHex(css, "bureau-backdrop")
+  if (!want) add("--bureau-backdrop is not defined in app/globals.css — nothing to hold themeColor to")
+  else if (!got) add(`${LAYOUT_FILE} has no themeColor string literal`)
+  else if (got !== want) add(`themeColor is ${got}, --bureau-backdrop is ${want}`)
+  return out
+}
+
 // ── Positive control ─────────────────────────────────────────────────────
 // A clean pass is worthless if a matcher silently broke. Each rule is run
 // against a fixture that MUST trip it, and against a fixture that must NOT.
@@ -1372,6 +1396,23 @@ function selfTest() {
     faviconBad.push(...hits)
   }
 
+  // The theme colour: silent when it matches the backdrop, firing when it
+  // drifts, when it is gone, and when the token it copies is gone.
+  const THEME_CSS = ":root { --bureau-bg: 19 19 19; --bureau-backdrop: 0 0 0; }"
+  const THEME_GOOD = 'export const viewport = { themeColor: "#000000", width: "device-width" }'
+  for (const f of checkThemeColor("<fixture-theme-good>", THEME_GOOD, THEME_CSS))
+    problems.push(`control: theme-color-drift false positive — ${f.detail}`)
+  for (const [why, src, css] of [
+    ["value drifted to the pane's ground", THEME_GOOD.replace("#000000", "#131313"), THEME_CSS],
+    ["themeColor removed", THEME_GOOD.replace(/themeColor:[^,]*,/, ""), THEME_CSS],
+    ["token removed", THEME_GOOD, THEME_CSS.replace("--bureau-backdrop: 0 0 0;", "")],
+    ["file gone", null, THEME_CSS],
+  ]) {
+    const hits = checkThemeColor("<fixture-theme-bad>", src, css)
+    if (!hits.length) problems.push(`control: theme-color-drift did NOT fire when the ${why}`)
+    faviconBad.push(...hits)
+  }
+
   // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
   // class, not the instance: a fatal finding with no heading prints as
   // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
@@ -1439,6 +1480,7 @@ const RULES = {
   "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
   "favicon-token-drift": "app/icon.svg's literal colours no longer match the tokens they copy",
   "favicon-mark-drift": "app/icon.svg's copied drawing no longer matches the brand mark it copies",
+  "theme-color-drift": "app/layout.tsx's themeColor no longer matches --bureau-backdrop",
   // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
   // be report-only, so its labels lived only in CSS_RULES and this table did
   // not know the names — which meant the first CSS violation after the switch
@@ -1532,6 +1574,9 @@ for (const v of checkInheritedFills(tsxSources, cssSources)) record(v)
   let markSrc = null
   try { markSrc = readFileSync(join(ROOT_DIR, MARK_FILE), "utf8") } catch {}
   for (const v of checkFaviconMark(FAVICON, svg, markSrc)) record(v)
+  let layoutSrc = null
+  try { layoutSrc = readFileSync(join(ROOT_DIR, LAYOUT_FILE), "utf8") } catch {}
+  for (const v of checkThemeColor(LAYOUT_FILE, layoutSrc, globals)) record(v)
 }
 
 // From `violations`, not `reportOnly`: CSS findings fail the build. This read

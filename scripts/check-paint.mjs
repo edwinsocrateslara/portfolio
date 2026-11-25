@@ -161,22 +161,15 @@ await send("Emulation.setDeviceMetricsOverride", {
 })
 
 /**
- * The share of pixels in the pane that differ from the page background.
- *
- * Sampled on a grid rather than read per-pixel: this is a yes/no question
- * about whether a surface has content, and a 4px lattice answers it in a
- * fraction of the time while still landing inside every glyph stem at this
- * viewport. Alpha is ignored — the canvas is opaque.
- */
-/**
- * The share of pixels in the pane region that differ from the page background.
+ * The share of pixels in the pane region that differ from the PANE'S OWN
+ * GROUND, read from the pane element rather than from the picture.
  *
  * Sampled on a 4px lattice rather than every pixel: this is a yes/no question
  * about whether a surface carries content, and the lattice answers it in a
  * fraction of the time while still landing inside glyph stems at this
  * viewport.
  */
-async function inkOf(rect) {
+async function inkOf(rect, bg) {
   // Captured through CDP rather than drawn in the page: html2canvas-style
   // approaches re-render from the DOM, which would reintroduce exactly the
   // blind spot this check exists to avoid. This is the compositor's output.
@@ -189,9 +182,15 @@ async function inkOf(rect) {
   const bitmap = await decode(png)
   let ink = 0
   let seen = 0
-  // The background is whatever the corner pixel is, read from the shot itself
-  // rather than hard-coded, so a theme change does not silently zero this out.
-  const bg = [bitmap.get(2, 2, 0), bitmap.get(2, 2, 1), bitmap.get(2, 2, 2)]
+  // THE BACKGROUND IS THE PANE'S OWN COMPUTED GROUND, passed in — NOT THE
+  // CORNER PIXEL, which is what this read until 25 November ("whatever the
+  // corner pixel is ... so a theme change does not silently zero this out").
+  // The panels made that the failure it was guarding against, inverted: the
+  // pane became a rounded panel on a black backdrop, its corner pixel became
+  // black, and every #131313 pixel then "differed from the background" — an
+  // empty pane would have measured ~100% painted and passed forever. Read from
+  // the element, a theme change still cannot zero this out, and the shape of
+  // the panel no longer decides what counts as content.
   for (let y = 0; y < bitmap.height; y += 4) {
     for (let x = 0; x < bitmap.width; x += 4) {
       seen++
@@ -275,20 +274,36 @@ for (const c of CASES) {
   // must not be able to mistake "still arriving" for "arrived empty".
   await sleep(7000)
 
+  // The region, INSET BY THE PANE'S CORNER RADIUS so the rounded corners — the
+  // black backdrop showing through — are never sampled as content. And the
+  // ground: the pane panel's own computed background. A pane with no opaque
+  // ground is a FAILURE, not a guess: then nothing here can tell content from
+  // background, and a check that cannot tell must not report a number.
   const rect = await js(`(() => {
     const el = document.querySelector(".doc-pane, .pane-body, main")
-    if (!el) return null
+    const panel = document.querySelector("main.pane")
+    if (!el || !panel) return null
+    const cs = getComputedStyle(panel)
+    const m = /rgba?\\(([\\d.]+),\\s*([\\d.]+),\\s*([\\d.]+)(?:,\\s*([\\d.]+))?\\)/.exec(cs.backgroundColor)
+    const ground = m && (m[4] === undefined || Number(m[4]) === 1) ? [+m[1], +m[2], +m[3]] : null
+    const r = Math.ceil(parseFloat(cs.borderTopLeftRadius) || 0)
     const b = el.getBoundingClientRect()
-    return { x: Math.round(b.x), y: Math.round(b.y),
-             width: Math.round(Math.min(b.width, innerWidth - b.x)),
-             height: Math.round(Math.min(b.height, innerHeight - b.y)) }
+    const x = Math.round(b.x) + r, y = Math.round(b.y) + r
+    return { ground, groundCss: cs.backgroundColor, x, y,
+             width: Math.round(Math.min(b.width, innerWidth - b.x)) - 2 * r,
+             height: Math.round(Math.min(b.height, innerHeight - b.y)) - 2 * r }
   })()`)
   if (!rect || rect.width < 100 || rect.height < 100) {
     problems.push(`${c.name}: could not measure the pane region`)
     continue
   }
+  if (!rect.ground) {
+    problems.push(`${c.name}: the pane has no opaque ground (${rect.groundCss}) — cannot tell content from background`)
+    continue
+  }
 
-  const ink = await inkOf(rect)
+  const { ground, groundCss, ...clip } = rect
+  const ink = await inkOf(clip, ground)
   rows.push({ name: c.name, ink, floor: c.minInk })
   if (ink < c.minInk) {
     problems.push(

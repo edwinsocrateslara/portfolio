@@ -9,7 +9,6 @@ import Image from "next/image"
 import { Mail, Linkedin } from "lucide-react"
 import { ICON_STROKE_CONTROL } from "@/lib/icons"
 import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
-import { BrandMark } from "@/components/ui/brand-mark"
 import { DocumentLinks } from "@/components/shell/document-links"
 // NO PROJECT IMPORT. The rail draws a thumbnail, a client name and a subtitle;
 // importing lib/projects.ts to do that pulled every reveal's prose and alt text
@@ -49,7 +48,6 @@ interface SidebarProps {
   vibe: ProjectIndexEntry[]
   activeSlug: string | null
   activePane: Pane
-  onHome: () => void
   /** Mobile sheet only — dismisses after a selection. */
   onNavigate?: () => void
   /** Mobile sheet visibility. Desktop ignores it; see the media query. */
@@ -159,7 +157,6 @@ export function Sidebar({
   vibe,
   activeSlug,
   activePane,
-  onHome,
   onNavigate,
   open = false,
 }: SidebarProps) {
@@ -195,30 +192,14 @@ export function Sidebar({
 
   return (
     <aside className="rail" data-open={open} aria-label="Site index">
-      {/* THE MARK, at the thumbnails' 40, in primary ink — the same control
-          and the same mark as the mobile top bar's, so the brand is one thing
-          at both widths.
-
-          It was the sparkle alone, in the accent, from 3 September; then the
-          wordmark "Edwin" in Poppins 900 from 20 October; then this mark from
-          21 October. The sparkle is the typing indicator only. NOT LIME,
-          deliberately: lime means state on this site — active, focus, send,
-          working — and a permanently lime identity mark reads as "on" all the
-          time. DESIGN.md's accent inventory records it.
-
-          NO VISIBLE TEXT, so the label carries the name: "Edwin Socrates Lara
-          — home", the full name the page title uses and the destination. The
-          mark is aria-hidden, as the sparkle was when it held this row. */}
-      <button
-        type="button"
-        className="rail-brand"
-        onClick={pick(onHome)}
-        aria-label="Edwin Socrates Lara — home"
-        style={{ color: "rgb(var(--bureau-text-primary))" }}
-      >
-        <BrandMark size="var(--brand-mark-size)" />
-      </button>
-
+      {/* THE MARK LEFT THE RAIL on 25 November, for the full-width header's
+          left end (app-shell.tsx, .site-header-brand). It was this rail's
+          first row: the sparkle alone, in the accent, from 3 September; the
+          wordmark "Edwin" in Poppins 900 from 20 October; the filled mark from
+          21 October, at the thumbnails' 40. NOT LIME at any point since,
+          deliberately: lime means state on this site, and a permanently lime
+          identity mark reads as "on" all the time. The rail panel now starts
+          with its first section. */}
       {/* The wrapper exists to carry the fade: a background painted on the
           scroller itself scrolls away with the list. */}
       <div className="rail-scroll-wrap" data-overflow={more}>
@@ -253,7 +234,7 @@ export function Sidebar({
         )}
 
         {/* THE MOBILE SHEET'S DOCUMENT GROUP. Above 900px the three documents
-            are the header over the pane (app-shell.tsx, .site-header) and this
+            are the full-width header (app-shell.tsx, .site-header) and this
             group is hidden by CSS; at 900px and below the top bar has no room
             for them, so they stay here. One list, components/shell/
             document-links.tsx, renders both. */}

@@ -876,7 +876,10 @@ this rule at one width and not the other:
   (`min-width: var(--space-44)`), with the glyph flush left and the extra
   width as hit area to its right. Measured on the build: 44×44 at 380, 700 and
   880 wide, and a point 20px right of the glyph hits the button.
-- **The rail does not, and says why.** Its 40 is the thumbnail column's size,
+- **The header's mark does not either (since 25 November).** It is 32: the
+  48px bar less `--space-within` on each side (`--brand-mark-size`). The rail's
+  40, below, ended when the mark left the rail.
+- **(History, 21 October – 25 November.) The rail does not, and says why.** Its 40 is the thumbnail column's size,
   above the mark's own legibility floor — see [The brand mark: a fill, outside the
   ramp](#the-brand-mark-a-fill-outside-the-ramp). The rule cannot settle it:
   the row's height is the mark plus its padding, so "half the target" would
@@ -1573,11 +1576,22 @@ the ground the most-closed gap gets.
 | 14 | 1.27px | 10 | 19% grey | — |
 | **16** | 1.45px | 10 | 8% grey | **the tab icon** (see the favicon, below) |
 | 20 | 1.82px | 10 | clean | mobile top bar — and at 1× too |
-| **40** | 3.6px | 10 | clean | **the rail** |
+| **32** | 2.9px | 10 | clean | **the header, since 25 November** |
+| 40 | 3.6px | 10 | clean | the rail, until 25 November |
 
-**Its floor is about 16**, against the previous mark's 26. Neither size moved:
-40 is the thumbnail's size and 20 is the target rule, and neither argument
-depends on the drawing. Coverage is 38.6% ink against the previous mark's
+**Its floor is about 16**, against the previous mark's 26. When the asterisk
+arrived neither size moved: 40 was the thumbnail's size and 20 the target
+rule, and neither argument depended on the drawing.
+
+**On 25 November the mark left the rail for the full-width header, at 32, and
+the 40 argument ENDED WITH THE MOVE.** It was "the thumbnail's size, because
+it sits in the thumbnails' column" — true while the mark was the rail's first
+row, false the moment it left that column, so it is not carried over. 32 is
+the header's 48 less `--space-within` (8) above and below, written as that
+calculation in `--brand-mark-size`. The mark's left edge is x=30, the rail's
+text column (8 of backdrop plus `--rail-inset`), so it still sits over the
+thumbnails, aligned with them rather than sized by them. The bullets below
+about the rail's 40 are history. Coverage is 38.6% ink against the previous mark's
 44.5% — a little lighter, not enough to change anything below.
 
 **HISTORY — the previous mark (21 October – 25 November)**, kept as written
@@ -1594,7 +1608,7 @@ pixel at 26px on a 1× screen; below that the interior closed.
 | 36 | 1.38px | 2.77 | rendered as the fallback |
 | **40** | **1.54px** | 3.08 | **the rail** |
 
-- **The rail: the thumbnail's size, and that is the reason.** The mark is
+- **ENDED 25 NOVEMBER, kept as history: "The rail: the thumbnail's size, and that is the reason."** The mark was
   not a bigger element in the rail; it is the same size as what is already
   there — 40×40 at x=22, the box every project thumbnail below it occupies.
   The token says so: `--brand-mark-size: var(--rail-thumb-size)`, the same
@@ -1607,7 +1621,7 @@ pixel at 26px on a 1× screen; below that the interior closed.
   36 was rendered beside it as the fallback. Neither icon rule produced it,
   and that is stated rather than hidden: the mark is alone (no cap height),
   and the target rule has nothing fixed to halve (see the table above).
-- **Measured against what surrounds it:** 3.58× the WORK header's cap
+- **(History, the rail's brand row.) Measured against what surrounds it:** 3.58× the WORK header's cap
   (11.17), 0.8× its width, the same 22px left edge, and 61.8px of clear
   space to its cap at any mark size, because the row grows with the mark.
   Brand row 88; the list scrolls 25px past its fold at 1440×900 and 225 at
@@ -1986,9 +2000,99 @@ its container rather than the viewport, this is why.
 
 ## The rail
 
+### The shell: two panels on a black backdrop (25 November)
+
+**The rail and the pane are rounded panels; the header is a band above them.**
+Behind them is `--bureau-backdrop` (`#000000`), showing at the corners, between
+the panels and round the outside. The pane keeps `--bureau-bg` (`#131313`); the
+rail is `--bureau-rail` (`#292929`). Each is a token named for its job.
+
+- **Why `#292929`.** Chosen from five sampled shades by measurement. `1F1F1F`
+  is 1.13:1 above the pane and, rendered, was no step at all: the black gap
+  did all the separating. `292929` is 1.28:1, a visibly lighter panel, with
+  secondary text at 5.56:1 and muted at 4.50:1, the AA floor; the rail sets no
+  muted text. `333333` and `474747` are 1 and 3 levels off the flattened
+  `--hairline` and `--hairline-strong`, a rail the colour of the borders.
+  `3D3D3D` drops secondary text to 4.15:1.
+- **Opaque, not a layer.** The `--layer-*` tokens are white at an alpha,
+  solved over `#131313`; over black they would land on other greys. A panel
+  is an opaque ground, and the layers sit inside it and stay compositional.
+- **One gap, one level: `--space-within` (8).** "Parts of one thing": the
+  header, the rail and the pane are three parts of one surface. The same 8
+  sits under the header, between the panels and round the outside.
+  `--space-between` (16) under the header alone would make it a different
+  kind of thing from the panels, not its own band among them. At 380 the top
+  bar is the header and gets the same gap above the pane panel and the sheet.
+- **Radius: `--bureau-radius-card` (12),** whose table already lists "panels".
+  No rule bends. The brief for this change said it would break a "2px flat
+  radius" rule; that premise was outdated, Edwin's own, from a doc line rather
+  than the code. The flat 2px was retired on 12 August (`2d52398`), see Radius.
+- **The rail's right border retires;** the black gap separates the panels.
+- **The header keeps a bottom border, edge to edge, AND the gap** (Edwin, 25
+  November). They do two jobs: the border marks the header's band across the
+  whole viewport, 0 to 1440; the gap separates the panels from that band.
+  (The first build left the border out as "two devices doing one job", which
+  was true only while both were read as separating the panels. Superseded by
+  this ruling.) It sits at the bottom of the 48, inside it: the header is
+  border-box, so the bar stays 48 and the fold does not move — headline 225,
+  input 373, first chip 439 at 1440×900. Below the gap it would have sat on
+  the panels' top edge and been cut by their corners. The header steps out by
+  `--space-within` each side to reach the viewport's edges and pays it back in
+  padding, so the mark stays at x=30 and the last label on the pane's gutter.
+  The mobile top bar keeps its line the same way, edge to edge; at 380 the
+  headline is 157 and the input 381, exactly as before the panels.
+- **Its weight: `--hairline`, the plain one — chosen, not defaulted.** Both
+  weights were measured and rendered at 1440 and 380:
+
+  | token | on black | read |
+  |---|---|---|
+  | **`--hairline`** | `#242424`, **1.35:1** | quiet; barely there at 1× |
+  | `--hairline-strong` | `#3b3b3b`, 1.87:1 | a clear edge |
+
+  For comparison, `--hairline` made 1.49:1 on `#131313` before the panels.
+  The strong one was recommended, because the line marks a band and the plain
+  one nearly disappears at 1×. Edwin kept the plain one: it reads right
+  against black. A quiet edge is the ruling; don't "fix" its faintness.
+
+**THE HEADER WENT FULL WIDTH: A REVERSAL of 24 November's "pane-only".** The
+reason it was pane-only, kept: *the rail's mark owns the top-left*, so a bar
+across the whole width would have sat on top of it. The reversal keeps that
+reason by moving the mark into the bar: it is the header's first item, at
+x=30 over the thumbnails' column, home on click, with the same accessible name
+("Edwin Socrates Lara — home"). The rail's 88px brand row is gone; the panel
+starts with WORK. The header is a `<header>` child of the shell's grid, and
+the `.pane-column` wrapper, which only held a pane-only header over the pane,
+retired with it. Proved after the move: the same `<header>` element through
+header links, a rail project, back, back, forward and the mark, with 0
+document loads; with JavaScript off, the server's HTML marks Resume, About
+and Case Study active on their own routes and nothing on `/` or a project.
+
+**The fold, re-measured.** The panels start 56 down (header 48 + gap 8), so the
+headline offset now subtracts the gap as well as the header (§ the front
+door). Headline 225, input 373, first chip 439 at 1440×900, the same as
+before, and the same at 1280×800 (200) and 1440×700 (175). The pane is 8px
+shorter at the bottom, so the front door scrolls 70 instead of 62 (220 instead
+of 212 at 700 tall). At 380 the mobile offset subtracts the gap too: headline
+156, input 380, 1px higher than before because the top bar's hairline went.
+The pane is 1152 wide at 1440 (24 narrower).
+
+**Two copies found and held while doing this.**
+- **check:paint read its background from the shot's corner pixel.** At a
+  rounded corner on black that pixel is black, so every `#131313` pixel would
+  have counted as content and an empty pane would have passed forever. Proved:
+  with every document pane made empty, the old check measured 99.99% and
+  PASSED; the fixed one reads the pane element's own computed ground, skips
+  the corners, measures 0.00% and fails all three.
+- **`themeColor` in `app/layout.tsx`** (the browser's own toolbar colour) was
+  `#131313`, a copy of a token that check:design's allow-list *excused* by
+  value and nothing *held*. It is `#000000` now, to meet the top bar, and
+  `theme-color-drift` fails the build unless it equals `--bureau-backdrop`.
+
+### The documents (24 November)
+
 **The documents left the rail on 24 November.** Case Study, Resume and About
-are a thin header over the pane on desktop — 48 tall, pane-only, in flow, text
-only, right-aligned to the pane's 40px gutter, the active link marked by a 2px
+are a thin header on desktop — 48 tall, in flow, text only (pane-only until
+25 November; full width since, above), right-aligned to the pane's 40px gutter, the active link marked by a 2px
 accent bottom edge (`.site-header`, `components/shell/document-links.tsx`). At
 900px and below the top bar has no room, so they stay in the rail as its
 document group, which is now the MOBILE SHEET's only. One list renders both;
@@ -2146,11 +2250,14 @@ WORK and VIBE CODING read is the seven-rows-to-one difference, not spacing.
 ### Known consequence: the rail now scrolls at 1440×900
 
 **SUPERSEDED, 24 November, and the void that replaced it is ACCEPTED.** With
-the documents in the header and VIBE CODING empty, the rail is the mark, WORK's
-seven rows and the pinned contact footer — and it no longer scrolls at any
-desktop size measured. What it has instead is empty space between the last
-project row (bottom at 552) and the footer (top at 832): **280px at 1440×900,
-180 at 1280×800, 80 at 1440×700.** Ruled fine, not overlooked: the VIBE CODING
+the documents in the header and VIBE CODING empty, the rail is WORK's seven
+rows and the pinned contact footer (the mark left for the header on 25
+November) — and it no longer scrolls at any desktop size measured. What it has
+instead is empty space between the last project row and the footer:
+**304px at 1440×900, 204 at 1280×800, 104 at 1440×700**, re-measured on the
+panels build (25 November). Each is 24 more than before: the 88px brand row
+left the rail, which now starts 56 down in a panel that ends 8 short of the
+viewport. It was 280 / 180 / 80 on 24 November. Ruled fine, not overlooked: the VIBE CODING
 section returns into that space when its new entries are ready (a section
 costs 128, below), and the footer stays pinned exactly where it is — the mail
 and LinkedIn icons do not move. Do not close the gap by unpinning the footer:
@@ -2365,8 +2472,12 @@ chips was then a *remainder*: whatever the band had left over, 161px at
 1440×900. That is why it was never on the relatedness ladder. Nobody set it.
 
 `--hero-anchor` is where the headline sits, measured from the top of the
-viewport. **Since 24 November it is `calc(25dvh - var(--header-h))`: the
-offset compensates for the documents header**, which puts the band 48px down,
+viewport. **Since 25 November it is `calc(25dvh - var(--header-h) -
+var(--space-within))`: the offset compensates for the header AND the gap below
+it**, which put the pane 56 down; re-measured, headline 225, input 373, first
+chip 439, the page scrolling 70 (62 before the pane lost 8 at the bottom).
+From 24 to 25 November it was `calc(25dvh - var(--header-h))`, which
+compensated for the documents header alone, which put the band 48px down,
 so the headline stays at 225 at 1440×900. If the header ever goes, the
 subtraction goes with it, or the headline sits 48px high with nothing to say
 why. Re-measured with the header in place: headline 225, input 373, sampler

@@ -1004,12 +1004,42 @@ export function AppShell({
         </button>
       </div>
 
+      {/* THE HEADER, FULL WIDTH — a reversal (25 November). It was the
+          documents bar over the pane only, ruled on 24 November because "the
+          rail's mark owns the top-left". The reversal keeps that: the mark
+          moved INTO the header's left end, at the rail's text column, so it
+          still owns the top-left — as the bar's first item now, not the
+          rail's first row. The 40px "thumbnail's size" argument ended with the
+          move; the mark is 32, the bar less the gap on each side
+          (--brand-mark-size). DESIGN.md § The rail records the reversal.
+
+          A <header>, outside <main>: site identity and navigation are not the
+          page's main content. Rendered by the shell, which mounts once per
+          visit (app/(site)/layout.tsx), so it survives every navigation, as
+          the documents bar did (proved by element identity, 24 November).
+          Hidden at 900px and below, where the top bar is the header.
+
+          Same accessible name as the top bar's button: no visible text, so
+          the label carries the full name and where it goes. */}
+      <header className="site-header">
+        <button
+          type="button"
+          className="site-header-brand"
+          onClick={handleHome}
+          aria-label="Edwin Socrates Lara — home"
+        >
+          <BrandMark size="var(--brand-mark-size)" />
+        </button>
+        <nav className="site-header-links" aria-label="Documents">
+          <DocumentLinks variant="header" activePane={pane} />
+        </nav>
+      </header>
+
       <Sidebar
         work={workIndex}
         vibe={vibeIndex}
         activeSlug={currentProjectSlug}
         activePane={pane}
-        onHome={handleHome}
         onNavigate={() => setSheetOpen(false)}
         open={sheetOpen}
       />
@@ -1032,18 +1062,9 @@ export function AppShell({
         {liveStatus}
       </div>
 
-      {/* THE PANE COLUMN: the documents header over the pane. The header is
-          OUTSIDE <main>, because site navigation is not the page's main
-          content, and inside this column so it spans the pane only — the
-          rail's mark owns the top-left. It is rendered by the shell, which
-          lives in app/(site)/layout.tsx, so it mounts once per visit and
-          survives every navigation like the rail does (proved by element
-          identity, 24 November). Hidden at 900px and below, where the top
-          bar is full and the sheet carries the three links instead. */}
-      <div className="pane-column">
-        <nav className="site-header" aria-label="Documents">
-          <DocumentLinks variant="header" activePane={pane} />
-        </nav>
+      {/* The pane: a rounded panel beside the rail since 25 November. (From
+          24 to 25 November it sat in a .pane-column under a pane-only
+          documents bar; the bar is the full-width header above now.) */}
       <main className="pane" ref={paneRef}>
         {/* A DOCUMENT IS ITS ROUTE'S CONTENT — `children`, rendered on the
             server by the page file — inside the same scroller and wash it
@@ -1281,7 +1302,6 @@ export function AppShell({
           </>
         )}
       </main>
-      </div>
     </div>
   )
 }

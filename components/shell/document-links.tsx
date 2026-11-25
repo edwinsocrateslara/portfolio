@@ -5,8 +5,9 @@ import { Layers, FileText, UserRound } from "lucide-react"
 import { ICON_STROKE_RAIL } from "@/lib/icons"
 import type { Pane } from "@/components/shell/sidebar"
 
-// THE THREE DOCUMENTS, IN ONE PLACE. They render twice: as the thin header
-// above the pane on desktop, and as the rail's document group inside the
+// THE THREE DOCUMENTS, IN ONE PLACE. They render twice: in the full-width
+// header on desktop (beside the mark since 25 November; over the pane only
+// before that), and as the rail's document group inside the
 // mobile sheet (the top bar has no room for them below 900px). CSS shows
 // whichever applies (.site-header / .rail-docs in globals.css). One list, so
 // the two cannot disagree about a label, an order or a URL.

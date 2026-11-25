@@ -55,7 +55,13 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#131313",
+  // THE BROWSER'S OWN CHROME (mobile Safari's toolbar, Android's status bar):
+  // the colour the page meets at its top edge, which since 25 November is the
+  // black backdrop the top bar sits on. A COPY of --bureau-backdrop — metadata
+  // cannot read a CSS variable — so check:design's theme-color-drift fails the
+  // build when it stops matching. It was "#131313", a copy of --bureau-bg
+  // that nothing held, the favicon's problem in a different file.
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
 }
