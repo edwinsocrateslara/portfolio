@@ -1,7 +1,11 @@
-// Rail project rows, visible set only. Meridian is retail-banking, row 2.
-const rows = [...document.querySelectorAll('.rail-item')].filter(e => e.getBoundingClientRect().width > 0)
-rows[1].click()
+// Meridian's rail row, by slug — not by position, which the vibe setup
+// learned the hard way.
+;[...document.querySelectorAll('.rail-item[data-project-slug="retail-banking"]')].find(e => e.getBoundingClientRect().width > 0).click()
 
+// SINCE 24 NOVEMBER A REVEAL LANDS AT THE TOP and does not stream, so this
+// reset no longer has anything to undo; it stays as a harmless safety net.
+// What it used to answer:
+//
 // THE STREAM AUTO-SCROLLS. A reveal appends 13-15 blocks and follows them
 // down, so by the time the transcript settles the scroller sits at the
 // bottom — and the artboard, which serialises layout rather than scroll

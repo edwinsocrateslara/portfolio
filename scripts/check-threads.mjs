@@ -27,8 +27,9 @@
 // Neither is a mismatch, and both were the first "differences" this found.
 //
 // It also checks the other promise: arriving by URL shows the same thread as a
-// click. It opens "/", clicks the project's rail row, waits for the stream to
-// finish — the follow-up chips present AND no change for 4s, because the image
+// click. It opens "/", clicks the project's rail row, waits for the reveal to
+// finish (it no longer streams — 24 November — so this is near-instant; the
+// wait stays, in case it ever streams again) — the follow-up chips present AND no change for 4s, because the image
 // groups pause long enough to fool a shorter wait (they did, on the first run)
 // — and compares the text with the server's.
 //

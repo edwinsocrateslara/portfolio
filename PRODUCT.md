@@ -118,6 +118,15 @@ context but has no way to ask for one. So it is supplied, not discovered.
     proposing the scrolling page the bullet above already rules out.
   - Typed answers get no URLs. A conversation stays a conversation; URLs
     address the lasting things — projects and documents.
+  - **A project renders immediately, both ways — by decision (24
+    November).** Arriving at a project URL and clicking a project in the rail
+    are the same: the whole case study at once, landing at its top, not
+    streamed block by block and not scrolled to its end. Streaming read as
+    conversation inside a chat; someone arriving from a search result is not
+    in one, and the two paths were made identical rather than split. Chat
+    answers — typed questions, chips — still stream exactly as before; this
+    is only the project reveals. A thread the visitor returns to (a revisit,
+    back, forward) restores where they left it.
   - A project that is in the conversation but deliberately not listed (the
     off-rail vibe project, 24 November) gets no URL either, and opening it
     from chat does not change the address bar — **with one deliberate

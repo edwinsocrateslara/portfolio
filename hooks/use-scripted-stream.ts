@@ -169,6 +169,22 @@ export function useScriptedStream(initial?: Record<string, StructuredMessage[]>)
     []
   )
 
+  /** Append a run of blocks AT ONCE, with no typing delay between them — a
+   *  project's reveal (since 24 November a reveal does not stream; chat
+   *  answers still go through enqueue). Returns nothing: the caller already
+   *  holds the blocks, and the shell takes the reveal's length from the same
+   *  array it passes here, so its scroll bookkeeping cannot disagree with what
+   *  was appended. */
+  const appendAll = useCallback((blocks: MessageBlock[], thread: string) => {
+    setThreads((prev) => ({
+      ...prev,
+      [thread]: [
+        ...(prev[thread] ?? []),
+        ...blocks.map((block) => ({ id: generateMessageId(), role: "assistant", ...block }) as StructuredMessage),
+      ],
+    }))
+  }, [])
+
   /** Clear one thread, or every thread when called with no argument. */
   const reset = useCallback((thread?: string) => {
     if (thread === undefined) {
@@ -210,6 +226,7 @@ export function useScriptedStream(initial?: Record<string, StructuredMessage[]>)
   return {
     enqueue,
     appendImmediate,
+    appendAll,
     reset,
     messagesOf,
     isTypingIn,

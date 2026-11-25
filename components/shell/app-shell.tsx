@@ -194,6 +194,12 @@ export function AppShell({
   // the thread state the first render needs; after that, the effect that
   // watches the path does the work.
   const [initialSlug] = useState(() => slugFromPath(pathname, addressable))
+  // The finished reveal a fresh /work/<slug> load opens with, built ONCE: the
+  // stream hook seeds its thread from it, and the scroll bookkeeping below
+  // takes its length from the very same array.
+  const [initialThreads] = useState(() =>
+    initialSlug ? { [initialSlug]: finishedReveal(initialSlug) } : undefined
+  )
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // ── Threads ─────────────────────────────────────────────────────
@@ -231,10 +237,11 @@ export function AppShell({
   const {
     enqueue: queueScriptedMessages,
     appendImmediate,
+    appendAll,
     reset: resetStream,
     messagesOf,
     isTypingIn,
-  } = useScriptedStream(initialSlug ? { [initialSlug]: finishedReveal(initialSlug) } : undefined)
+  } = useScriptedStream(initialThreads)
 
   const activeMessages = messagesOf(activeThread)
 
@@ -319,8 +326,23 @@ export function AppShell({
   // against one always-mounted element, so it is cheap enough to ship — the
   // alternative was jumping to the bottom on every switch.
   const paneScrollRef = useRef<HTMLDivElement>(null)
-  const scrollPosRef = useRef<Record<string, number>>({})
-  const seenCountRef = useRef<Record<string, number>>({})
+  // A project ARRIVED AT lands at the TOP of its reveal, not the bottom of
+  // the thread (ruled 24 November). The defaults below are chat behaviour —
+  // a thread opened with nothing saved goes to its end, and new messages are
+  // followed down — and a case study read from its last block is a case study
+  // skipped. So a reveal's first opening records position 0 and a "seen"
+  // count equal to the reveal's length BEFORE the thread is shown: the switch
+  // restores 0, and the follow effect sees nothing new. A fresh load of a
+  // project URL starts with the same two values. Everything after that is
+  // unchanged chat behaviour: a follow-up answer typed in a project thread is
+  // followed down, a REVISIT restores where the visitor left it (their place
+  // in their own follow-ups), and back and forward are revisits.
+  const scrollPosRef = useRef<Record<string, number>>(
+    initialSlug ? { [initialSlug]: 0 } : {}
+  )
+  const seenCountRef = useRef<Record<string, number>>(
+    initialSlug && initialThreads ? { [initialSlug]: initialThreads[initialSlug].length } : {}
+  )
 
   useLayoutEffect(() => {
     const el = paneScrollRef.current
@@ -489,8 +511,12 @@ export function AppShell({
     [messagesOf]
   )
 
-  // Open a project's thread. Streams its reveal on FIRST open only; a revisit
-  // just swaps the pane back to the transcript that is already there.
+  // Open a project's thread. On its FIRST open the reveal goes in WHOLE — no
+  // streaming, the same as a URL arrival (ruled 24 November: projects render
+  // immediately, by URL or by click; chat answers still stream) — and the
+  // thread lands at the TOP of it (see the note on scrollPosRef). A revisit
+  // just swaps the pane back to the transcript already there, at the position
+  // the visitor left it.
   //
   // The reveal content comes from buildResponse(preloadedSlug), which returns
   // projectStream — the same single definition the typed and chip paths use.
@@ -503,18 +529,26 @@ export function AppShell({
   const openProjectThread = useCallback(
     (slug: string) => {
       setCurrentProjectSlug(slug)
-      switchThread(slug)
-      if (revealedRef.current.has(slug)) return
+      if (revealedRef.current.has(slug)) {
+        switchThread(slug)
+        return
+      }
       const { response } = buildResponse("", { preloadedSlug: slug })
-      // Marked revealed only once the reveal is actually queued. Adding the
-      // slug first meant a reveal that was subsequently lost could never be
-      // re-enqueued — the thread stayed blank for the rest of the session with
-      // nothing left to retry it.
-      if (!response) return
-      queueScriptedMessages(response, slug)
-      revealedRef.current.add(slug)
+      if (response && response.length > 0) {
+        // BEFORE the switch, so the scroll effects that run on it see them.
+        // The count is the length of the array appended — not computed
+        // separately — so it cannot be off by one from what lands.
+        scrollPosRef.current[slug] = 0
+        seenCountRef.current[slug] = (seenCountRef.current[slug] ?? 0) + response.length
+        appendAll(response, slug)
+        // Marked revealed only once the reveal is actually in. Adding the
+        // slug first meant a reveal that was subsequently lost could never
+        // be re-added — the thread stayed blank for the rest of the session.
+        revealedRef.current.add(slug)
+      }
+      switchThread(slug)
     },
-    [switchThread, queueScriptedMessages]
+    [switchThread, appendAll]
   )
 
   // Opening a project: navigation if it has a URL — a push, so back returns

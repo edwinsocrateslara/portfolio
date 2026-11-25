@@ -1,12 +1,18 @@
-// The VIBE CODING row — Weekly Feedback Synthesis. Last in the visible set,
-// after the seven work rows.
-// BY SLUG, not by position. This was rows[rows.length - 1] — "the last visible
-// rail row" — which is a description of today's ordering rather than of this
-// project. sidebar.tsx carries data-project-slug for exactly this.
-const row = document.querySelector('.rail-item[data-project-slug="futurefit-ideas-dashboard"]')
-if (!row) throw new Error('vibe setup: no rail row for futurefit-ideas-dashboard')
-row.click()
+// The Ideas Dashboard — the off-rail vibe project (lib/vibe-projects.ts).
+// It left the rail on 24 November, so there is no row to click: this opens it
+// the way a visitor now does, by asking for it in the composer. (Until then it
+// clicked the rail row by slug; after the move that threw "no rail row", and
+// nothing noticed, because no gate runs the artboard setups.)
+const ta = [...document.querySelectorAll('textarea')].find(e => e.getBoundingClientRect().width > 0)
+if (!ta) throw new Error('vibe setup: no visible composer')
+Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(ta, 'tell me about the ideas dashboard')
+ta.dispatchEvent(new Event('input', { bubbles: true }))
+ta.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true }))
 
+// SINCE 24 NOVEMBER A REVEAL LANDS AT THE TOP and does not stream, so the hold
+// below no longer has anything to undo; it stays as a safety net, and costs
+// one assignment every 250ms. What it used to answer:
+//
 // THE STREAM AUTO-SCROLLS. A reveal appends 13-15 blocks and follows them
 // down, so by the time the transcript settles the scroller sits at the
 // bottom — and the artboard, which serialises layout rather than scroll
