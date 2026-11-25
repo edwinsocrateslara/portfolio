@@ -2035,6 +2035,20 @@ rail is `--bureau-rail` (`#292929`). Each is a token named for its job.
      the gap to "fix" that; it was tried, and it was worse. The top corners
      are rounded again, and the headline offset subtracts the header and the
      gap again.
+- **REJECTED (25 November): the header's line sliding down over the gap on
+  scroll.** Tried in `e5402d2` and reverted: at rest the gap showed, and once
+  the pane was scrolled the line slid 8px down to sit just above the panels,
+  so content passed under a solid edge. The behaviour read right, but the
+  header's black area visibly grew 8px with it, and that cannot be
+  separated from the movement. **The header and the gap are the same black,
+  so the line is the only thing marking where the header's black ends; the
+  header cannot visibly stay 48 while its line moves.** Measured, nothing
+  actually grew (header box 48, mark at 8, links at 0, panels at 56 in both
+  states); the growth was the line. Each way out broke something already
+  ruled: a header shade of its own (a colour change), a second line (two
+  edges), or no slide. So the line is fixed at the bottom of the 48, the gap
+  shows at all times, and nothing moves on scroll. Content being cut at the
+  pane panel's hard top edge is correct and wanted, not a defect.
 - **(History: the removal, 48489cb.) No gap under the header; content runs
   under the bar.** The first build put the same 8 under the header, ruled as *what
   makes the header its own band rather than a lid* (and `--space-between`

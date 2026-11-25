@@ -790,41 +790,6 @@ export function AppShell({
   // on viewport width changes that rewrap the field, and on font load. Those
   // are invisible to a value-keyed effect and would leave the reserve stale.
   const paneRef = useRef<HTMLElement>(null)
-
-  // ── THE HEADER'S EDGE COVERS THE GAP ONCE THE PANE IS SCROLLED ───────────
-  // (25 November.) At scroll position 0 the header's line sits at the bottom
-  // of the 48 and the --space-within gap shows below it. Once the pane's
-  // content is scrolled at all, the line slides down over the gap to sit
-  // directly above the panels, so content passes under a solid edge instead
-  // of being cut 8px below it; back at the top, the gap returns. The panels
-  // never move — only the line does (CSS: .shell[data-scrolled]).
-  //
-  // ONE FLAG, read from whichever element in the pane is actually scrolling
-  // (.pane-scroll for threads and documents, .pane-front on the front door).
-  // Scroll events do not bubble, so this listens in the CAPTURE phase on the
-  // pane. And it is RE-READ whenever the pane, the thread or the route
-  // changes, because switching to a pane that sits at 0 fires no scroll event
-  // and would otherwise leave the line down over a page that is at the top.
-  const [paneScrolled, setPaneScrolled] = useState(false)
-  const readPaneScrolled = useCallback(() => {
-    const el = paneRef.current
-    if (!el) return
-    const scroller = [...el.querySelectorAll<HTMLElement>(".pane-scroll, .pane-front")].find(
-      (s) => s.scrollHeight > s.clientHeight
-    )
-    setPaneScrolled(!!scroller && scroller.scrollTop > 0)
-  }, [])
-  const onPaneScrollCapture = useCallback((e: React.UIEvent<HTMLElement>) => {
-    const t = e.target as HTMLElement
-    if (t.classList?.contains("pane-scroll") || t.classList?.contains("pane-front")) {
-      setPaneScrolled(t.scrollTop > 0)
-    }
-  }, [])
-  useEffect(() => {
-    const id = requestAnimationFrame(readPaneScrolled)
-    return () => cancelAnimationFrame(id)
-  }, [pathname, pane, activeThread, readPaneScrolled])
-
   // The observer and the element it publishes to, remembered so the callback
   // ref below can tear both down when the dock unmounts.
   const dockObserverRef = useRef<ResizeObserver | null>(null)
@@ -979,7 +944,7 @@ export function AppShell({
     pane === "chat" && activeThread === HOME_THREAD && activeMessages.length === 0
 
   return (
-    <div className="shell" data-sheet={sheetOpen} data-scrolled={paneScrolled}>
+    <div className="shell" data-sheet={sheetOpen}>
       {/* Mobile only — the rail collapses behind this. */}
       {/* Same brand as the rail — the mark. ONE FORM AT BOTH WIDTHS, which is
           the rule this bar has kept since it once said "Edwin" while the rail
@@ -1100,7 +1065,7 @@ export function AppShell({
       {/* The pane: a rounded panel beside the rail since 25 November. (From
           24 to 25 November it sat in a .pane-column under a pane-only
           documents bar; the bar is the full-width header above now.) */}
-      <main className="pane" ref={paneRef} onScrollCapture={onPaneScrollCapture}>
+      <main className="pane" ref={paneRef}>
         {/* A DOCUMENT IS ITS ROUTE'S CONTENT — `children`, rendered on the
             server by the page file — inside the same scroller and wash it
             always had. */}
