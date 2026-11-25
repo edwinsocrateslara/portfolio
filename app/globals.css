@@ -88,8 +88,14 @@
      caught it, because contrast is not something check:design can compute from
      source. Written down so the next palette is chosen against the background
      rather than for its own sake. */
-  --aurora-1: #00ff87;
-  --aurora-2: #60efff;
+  /* RE-DERIVED FROM THE BLUE ACCENT (25 November), not swapped: the old pair's
+     36° span, rotated to start at the accent's own hue — 205° -> 241° — and
+     kept light. Checked along the whole ramp, the way the old pair was: ends
+     9.68:1 and 7.43:1 on #131313, minimum 7.43:1 (at the second stop), well
+     above the 3:1 large text needs. Was #00ff87 -> #60efff (green to cyan,
+     minimum 13.43:1). */
+  --aurora-1: #70c3ff;
+  --aurora-2: #9b99ff;
 
   /* The dot field's ink. 0.12 also happens to equal --highlight-inset. It is
      NOT the same value: that is a wash inside a control and this is a mark on
@@ -112,7 +118,18 @@
   --bureau-text-secondary:  160 160 160;   /* #a0a0a0 */
   --bureau-text-muted:      143 143 143;   /* #8f8f8f, AA-adjusted (was #767676) */
   /* ── Accent ────────────────────────────────────────────────────
-     #7fdd3c, hue 95°. The one hue in the system, and it was chosen by
+     #0496ff, hue 205°, SINCE 25 NOVEMBER — A JUDGMENT CALL BY EDWIN THAT
+     OVERRODE THE MEASUREMENT BELOW, not a finding that it was wrong. The
+     measurement still says what it said: 205° sits inside the cool mass,
+     in the 195-210° band that dominates three projects' screenshots. He
+     ruled that a 2px bar beside a 40px thumbnail will not disappear, and
+     reopened the 24 November ruling that the accent stands. Contrast as
+     #0496ff: 6.81:1 on the black backdrop, 6.03:1 on the pane's #131313,
+     4.72:1 on the rail's #292929, 4.16:1 on an active rail row (#323232) —
+     every use is a mark or an edge, so the bar is 3:1, which all clear.
+
+     UNTIL THEN, #7fdd3c, hue 95°, and this is WHY IT WAS LIME — kept as the
+     reason, not as current: The one hue in the system, and it was chosen by
      measurement rather than taste: all 32 project screenshots were
      decoded and binned into a saturation-weighted hue histogram, which
      came out as two masses — warm 0-45° at 43% of chromatic pixels and
@@ -129,8 +146,8 @@
      send fill, the IMPACT rule and marker, the Live chip. It is never a
      surface, never a large area, never a gradient; check-design rule 6
      enforces that. */
-  --bureau-accent:          127 221 60;    /* #7fdd3c */
-  --bureau-on-accent:       19 19 19;      /* #131313, 10.9:1 on the accent */
+  --bureau-accent:          4 150 255;     /* #0496ff (was #7fdd3c until 25 November) */
+  --bureau-on-accent:       19 19 19;      /* #131313, 6.03:1 on the accent (10.9:1 on the lime) */
 
   /* ── Radius ────────────────────────────────────────────────────
      Four steps, not one. The flat 2px that this system opened with

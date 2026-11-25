@@ -22,7 +22,7 @@ All colors are CSS custom properties on `:root` in `app/globals.css`.
 | `--bureau-text-primary` | `#e8e8e8` |
 | `--bureau-text-secondary` | `#a0a0a0` |
 | `--bureau-text-muted` | `#8f8f8f` |
-| `--bureau-accent` | `#7fdd3c` |
+| `--bureau-accent` | `#0496ff` (was `#7fdd3c` until 25 November; see § Accent) |
 | `--bureau-on-accent` | `#131313` |
 
 **Layers** — white at an alpha, composited over whatever is behind:
@@ -96,7 +96,36 @@ arrived**, not here. See also Known judgment call 2.*
 
 ## Accent
 
-`--bureau-accent` is `#7fdd3c`, hue 95°. It is the only hue in the system.
+`--bureau-accent` is **`#0496ff`, hue 205°, since 25 November.** It is the only
+hue in the system.
+
+**REOPENED 25 NOVEMBER, AND OVERRIDDEN BY JUDGMENT.** Edwin changed the accent
+from lime to `#0496ff`, reopening the 24 November ruling below that "the
+accent stands". The screenshot measurement that follows is kept as **the
+reason it was lime**, and it was not shown wrong: 205° sits in the 195–210°
+band it warns against, the dominant hue of three projects. The override is a
+judgment call, recorded as one: a 2px bar beside a 40px thumbnail will not
+disappear, and it is checked live rather than by the histogram.
+
+| ground | lime `#7fdd3c` | blue `#0496ff` |
+|---|---|---|
+| backdrop `#000000` | 12.31:1 | 6.81:1 |
+| pane `#131313` | 10.89:1 | 6.03:1 |
+| rail `#292929` | 8.53:1 | 4.72:1 |
+| IMPACT callout `#1c1c1c` | 9.99:1 | 5.53:1 |
+| active rail row `#323232` | 7.52:1 | 4.16:1 |
+| `#131313` drawn on the accent (SEND's arrow) | 10.89:1 | 6.03:1 |
+
+Every accent use is a mark or an edge, so the standard is 3:1, and all clear;
+the margin roughly halved. **The aurora was re-derived from the blue**, not
+swapped: `#70c3ff` → `#9b99ff`, the old 36° span rotated to start at 205°,
+minimum 7.43:1 along the ramp (see **Two chromatic colours arrived**).
+
+*Everything below, to the end of the hue measurement, is the case for the
+lime as it was made. Where this section and the inventory say "lime", read it
+as the accent at the time.*
+
+`--bureau-accent` was `#7fdd3c`, hue 95°.
 
 **It was chosen by measurement, not taste.** The site's chrome sits next to 32
 real project screenshots, so the accent's job is to stay legible against them.
@@ -257,8 +286,13 @@ found later.
 ### Two chromatic colours arrived
 
 The aurora on the front-door headline is the only chromatic thing in an
-otherwise achromatic system: `--aurora-1` and `--aurora-2` (`#00ff87`,
-`#60efff`). They are tokenised rather than inlined precisely so a later audit
+otherwise achromatic system: `--aurora-1` and `--aurora-2`, **`#70c3ff` →
+`#9b99ff` since 25 November**, re-derived from the blue accent rather than
+swapped: the old pair's 36° span, rotated to start at the accent's 205° (205° →
+241°) and kept light. Checked along the whole ramp, as below: ends **9.68:1**
+and **7.43:1** on `#131313`, minimum **7.43:1**, at the second stop. Until then
+they were `#00ff87` → `#60efff`, green to cyan, and the figures below are that
+pair's. They are tokenised rather than inlined precisely so a later audit
 sees them in the palette instead of buried in a keyframe. Raw hex is correct at
 a `:root` token definition and nowhere else — rule 4 exempts exactly that case.
 
@@ -330,11 +364,22 @@ all six surfaces rather than read from source:
 | SEND, once there is something to send | `background` + `border` | 34px |
 | the input's focus ring | `box-shadow` at 11% | 2px |
 | the lightbox's focus ring | `outline` | 2px |
+| the input's "working" pulse dot | `background` | 8px |
+| the typing indicator's sparkle | `stroke` (via `color`) | 24px glyph |
 
-Ten uses, none wider than 34px. With the wash off the accent is **purely
-structural**: active state, focus, caret, send, and two marks. (Nine until 24
-November, when the documents moved into the header and its active link took
-the rail row's 2px edge, turned to sit on the bar's bottom.)
+Twelve uses, none wider than 34px, all `#0496ff` since 25 November (lime
+before). With the wash off the accent is **purely structural**: active state,
+focus, caret, send, working, and two marks. (Ten until 25 November: the
+inventory taken for the blue found the pulse dot and the typing indicator,
+both accent all along and both described elsewhere in this file, missing from
+this table. Nine until 24 November, when the documents moved into the header
+and its active link took the rail row's 2px edge, turned to sit on the bar's
+bottom.)
+
+Defined and read by nothing: `--accent-rim` (the shimmer rim is white) and
+Tailwind's `accent` / `on-accent` colour names. Not the accent at all: the
+aurora (its own two stops), the chips' shimmer, the link card, the favicon,
+and the 32px and Apple icons.
 
 **The brand mark is not on this list, and that was decided, not missed.** It
 is in primary ink. Lime was rendered beside primary before it was built

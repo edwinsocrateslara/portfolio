@@ -43,6 +43,12 @@ const tracks = all(/--track-([a-z0-9-]+):\s*(-?[\d.]+)px/g).map((m) => ({ name: 
 const radii = all(/--bureau-radius-([a-z0-9]+):\s*(\d+)(?:px)?/g).map((m) => ({ name: m[1], v: +m[2] }))
 const colours = all(/--bureau-([a-z0-9-]+):\s*(\d+) (\d+) (\d+);/g)
   .map((m) => ({ name: m[1], css: `rgb(${m[2]}, ${m[3]}, ${m[4]})` }))
+// The spacing bars are drawn in the accent, READ FROM THE TOKEN like every
+// other colour here. It was a pasted rgb(127, 221, 60) until 25 November,
+// which kept this board lime after the accent changed to #0496ff — exactly
+// the "second source" this file exists to avoid.
+const ACCENT = colours.find((c) => c.name === "accent")?.css
+if (!ACCENT) throw new Error("legend-artboard: no --bureau-accent in app/globals.css")
 const layers = all(/--(layer-[12]|hairline[a-z-]*):\s*rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/g)
   .map((m) => ({ name: m[1], css: `rgba(${m[2]}, ${m[3]}, ${m[4]}, ${m[5]})` }))
 
@@ -73,7 +79,7 @@ rows.push(`<div style="display:flex;flex-direction:column;gap:12px">${label("Spa
   spaces.map((s) =>
     `<div style="display:flex;align-items:center;gap:16px">` +
     `<div style="font-family:${MONO};font-size:12px;line-height:18px;color:${DIM};width:120px;flex:none">--space-${esc(s.name)}</div>` +
-    `<div style="height:8px;width:${s.v}px;background:rgb(127, 221, 60)"></div>` +
+    `<div style="height:8px;width:${s.v}px;background:${ACCENT}"></div>` +
     `<div style="font-family:${MONO};font-size:12px;line-height:18px;color:${DIM}">${s.v}px</div></div>`
   ).join("") + `</div></div>`)
 
