@@ -20,26 +20,35 @@ export const IMAGE_SIZES_MEASURE = 720
 // a different job than it did and the reasoning that used to be here is gone
 // rather than edited — it described a headline that no longer exists.
 //
-// WHAT IT DOES NOW: it puts the break after "making".
+// WHAT IT DOES NOW: it puts the break after "making", so the object of the
+// sentence stays together on line two.
 //
-//   I'm Edwin, AI designer & builder making
-//   useful products and workflows.
+//   I'm Edwin, product builder making
+//   useful tools and workflows.
 //
-// Measured by reading the rendered line boxes back out with a Range, not by
-// counting characters. That break holds from 810px to 940px — below 810 the
-// line count goes to three, above 940 "useful" is pulled up onto line one.
-// 880 is the middle of that window with about 70px of clearance either side,
-// which is what makes it safe against a font-loading difference or a tracking
-// change; it is NOT a value to nudge, because the two failure modes are 130px
-// apart and both are one word wide.
+// 765 IS THE MIDDLE OF ITS WINDOW, NOT A ROUND-ISH GUESS. Measured on 25
+// November by sweeping max-width in 10px steps on the real page at 1440 and
+// reading the rendered line boxes back out with a Range: the break above
+// holds from 700px to 830px — a 130px window. Below 700 the line goes to
+// three; from 830 "useful" is pulled up onto line one ("…making useful /
+// tools and workflows."), and from 940 "tools" follows it. 765 sits 65px
+// from each edge, which is what makes it safe against a font-loading
+// difference or a tracking change. It is NOT a value to nudge: the two
+// failure modes are 130px apart and both are one word wide.
+//
+// HISTORY: this was 880 — the middle of the same-shaped window (810–940) for
+// the line it replaced, "I'm Edwin, AI designer & builder making / useful
+// products and workflows." Left at 880, the new line breaks after "useful".
+// IF THE LINE CHANGES AGAIN, THIS NUMBER IS STALE: re-sweep, don't reuse.
 //
 // Paired with `text-wrap: pretty` on the element, not `balance`: balance
 // equalises line lengths, which is what put "making" on line two.
 //
-// Below a viewport of about 1225 the pane's own content width drops under 880
-// and governs instead; below about 1155 it drops under 810 and the headline
-// goes to three lines. Both are expected and neither is this constant's job.
-export const HERO_MEASURE = 880
+// Below some viewport the pane's own content width drops under 765 and governs
+// instead, and below that the headline goes to three lines — measured at
+// 1024, where it is three. Both are expected and neither is this constant's
+// job. (The 1225 / 1155 thresholds written here were for 880 and 810.)
+export const HERO_MEASURE = 765
 
 // Bordered blocks inside the chat column, capped so they read as objects
 // sitting in the column rather than as the column itself.

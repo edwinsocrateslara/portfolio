@@ -1,8 +1,9 @@
 // Fails if any scripted answer string is not present verbatim in voice.md.
 // Guards the deliberate duplications in the source layer.
 //
-// Four kinds of duplication are checked, and they are checked for different
-// reasons. (This said "three" after the fourth was added.)
+// Five kinds of duplication are checked, and they are checked for different
+// reasons. (This said "three" after the fourth was added, and "four" until
+// the fifth, 25 November.)
 //
 //   1. voice-answers.ts paragraphs — the chat's own words.
 //   2. currently-reading.ts book fields — structured data DERIVED from a
@@ -21,6 +22,14 @@
 //      records it as "Guarded since 31 August" by this rule — and the
 //      fix it contemplated, moving the answer into VOICE_ANSWERS, would have
 //      changed the chip routing. Asserting it in place does not.
+//   5. THE FRONT-DOOR HEADLINE — the most-seen sentence on the site, and
+//      until 25 November NOT GUARDED AT ALL. It is voice.md § Intro, copied
+//      into app-shell.tsx as a JSX literal, and the owner was about to change
+//      it believing this script held the two together. It held voice.md to
+//      edwin-context.md's quote of it; it never opened the shell. Now it
+//      does, by CLASS (`front-headline`), and it asserts EQUALITY with
+//      § Intro, not containment: the headline is the whole section, so a
+//      headline that kept half the sentence would still be "in voice.md".
 //
 // BOTH ARE FOUND BY PATTERN, NOT PASTED HERE. Writing the sentence into this
 // script would make it a fifth copy, and the one that is hardest to notice is
@@ -88,6 +97,17 @@ const ledeMatch = aboutSrc.match(
 // nothing when its target moves is worse than no gate: it keeps reporting PASS
 // while the thing it guards drifts.
 const ledeStrings = []
+
+// ── 5. The front-door headline ──────────────────────────────────────────
+// Matched by the `front-headline` class on the <h1>. Its children are the
+// sentence plus JSX comments and the aurora's <span>: comments and tags are
+// stripped, entities decoded, whitespace flattened — what a reader sees.
+const shellSrc = readFileSync("components/shell/app-shell.tsx", "utf8")
+const headlineMatch = shellSrc.match(/<h1\b[^>]*className=\{?[`"][^`"]*\bfront-headline\b[^`"]*[`"]\}?[^]*?>([\s\S]*?)<\/h1>/)
+const headline = headlineMatch
+  ? unescapeJsx(flat(headlineMatch[1].replace(/\{\/\*[\s\S]*?\*\/\}/g, " ").replace(/<[^>]+>/g, "")))
+  : null
+const intro = /## Intro\n+([\s\S]*?)\n+## /.exec(readFileSync("lib/sources/voice.md", "utf8"))?.[1]
 if (!ledeMatch) {
   console.error(
     "ABOUT LEDE NOT FOUND: no element with class `about-lede` in " +
@@ -177,6 +197,27 @@ for (const s of ledeStrings) {
   }
 }
 
+if (!headlineMatch) {
+  bad++
+  console.error(
+    "FRONT-DOOR HEADLINE NOT FOUND: no <h1> with class `front-headline` in\n" +
+      "  components/shell/app-shell.tsx. If the class was renamed, update this\n" +
+      "  script in the same commit.\n"
+  )
+} else if (!intro) {
+  bad++
+  console.error("voice.md HAS NO § Intro — the headline's source is gone. Update this script in the same commit.\n")
+} else if (headline !== flat(intro)) {
+  bad++
+  console.error(
+    "FRONT-DOOR HEADLINE IS NOT voice.md § Intro:\n" +
+      "  shell:    " + headline + "\n" +
+      "  voice.md: " + flat(intro) + "\n" +
+      "  The front door renders Edwin's own words; change voice.md first,\n" +
+      "  then the shell and lib/edwin-context.md to match.\n"
+  )
+}
+
 for (const p of anchorProblems) {
   bad++
   console.error(p + "\n")
@@ -207,7 +248,7 @@ for (const d of declared) {
 
 console.log(
   `checked ${strings.length} scripted strings + ${bookFields.length} book fields` +
-    ` + ${ledeStrings.length} About lede + ${ctxQuotes.length} context quote(s)` +
+    ` + ${ledeStrings.length} About lede + ${headline ? 1 : 0} front-door headline + ${ctxQuotes.length} context quote(s)` +
     ` + ${declared.length} declared-verbatim answer(s) against lib/sources/voice.md`
 )
 if (bad) {

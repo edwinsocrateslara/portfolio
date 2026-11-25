@@ -2,7 +2,7 @@
 
 ## Who Edwin Is
 
-In his own words: "I'm Edwin, AI designer & builder making useful products and workflows."
+In his own words: "I'm Edwin, product builder making useful tools and workflows."
 
 Designer & AI Builder with 10 years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
 

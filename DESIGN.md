@@ -89,9 +89,10 @@ it did not replace it.
 
 *This list also named underlines for "hero emphasis". The front door had an
 underlined phrase until 10 August (`d3f4cea`), carried none from then until 28
-August, and since then its one emphasis is the aurora on "designer & builder"
-(`095a987`) — chromatic, so it is under **Two chromatic colours arrived**, not
-here. See also Known judgment call 2.*
+August, and since then its one emphasis is the aurora — on "designer &
+builder" (`095a987`) until 25 November, on "product builder" since, the role
+claim both times — chromatic, so it is under **Two chromatic colours
+arrived**, not here. See also Known judgment call 2.*
 
 ## Accent
 
@@ -2632,11 +2633,17 @@ new images, which is the claim that matters.*
    was "AI products and workflows": blue, then a thin `border-strong`
    underline, on the reasoning that it should read as emphasis, not a link.
    The underlined phrase left with the input-first hero (`d3f4cea`, 10
-   August). Today's headline is "I'm Edwin, AI designer & builder making
-   useful products and workflows.", and its emphasis is the aurora across
-   "designer & builder" (`095a987`, 28 August) — the one chromatic gesture in
-   the system, argued under **Two chromatic colours arrived** and at
-   `.aurora-word` in `app/globals.css`. The underline's argument still holds
+   August). From 28 August the headline was "I'm Edwin, AI designer &
+   builder making useful products and workflows.", its emphasis the aurora
+   across "designer & builder" (`095a987`) — one span because it was one
+   claim: the ampersand bound a unit, and highlighting half of it would have
+   emphasised the ordinary half. **Since 25 November** the headline is "I'm
+   Edwin, product builder making useful tools and workflows.", and the aurora
+   moved to "product builder" — the same job, on the new role claim. "AI"
+   left the line deliberately; the AI positioning lives in the site's form
+   (PRODUCT.md § Positioning), not in this sentence. It is the one chromatic
+   gesture in the system, argued under **Two chromatic colours arrived** and
+   at `.aurora-word` in `app/globals.css`. The underline's argument still holds
    for any emphasis that is not chromatic: it must not read as a link.
 3. **Status badges (In Progress / Live) used to both read as blue** — they
    became outline and filled/inverted, then were deleted outright with the

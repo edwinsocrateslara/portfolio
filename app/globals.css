@@ -2739,10 +2739,25 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* ── The front-door headline's aurora ───────────────────────────────────────
-   ONE SPAN ACROSS THE PHRASE, not a word. "designer & builder" is one claim
-   and highlighting half of it emphasised the ordinary half. The ampersand
-   binds a unit; "products and workflows" keeps its "and" because that is a
-   list of two separate things, and the different conjunction is doing work.
+   ONE SPAN ACROSS THE PHRASE, not a word — and the phrase is THE ROLE CLAIM.
+
+   Since 25 November that is "product builder", in "I'm Edwin, product builder
+   making useful tools and workflows." Same job as before: one emphasis, on
+   the one thing the sentence claims. inline-block means it never breaks
+   inside itself, which at 380 holds the line at four lines and the mobile
+   fold where it was (measured: input at 381 either side of the change;
+   without the span the line is three and the input rises to 333).
+
+   UNTIL THEN it was "designer & builder", in "I'm Edwin, AI designer &
+   builder making useful products and workflows.", and the reasoning is kept
+   because it is why the phrase is a whole claim rather than a word: "designer
+   & builder" was one claim and highlighting half of it emphasised the
+   ordinary half. The ampersand bound a unit; "products and workflows" kept its
+   "and" because that was a list of two separate things, and the different
+   conjunction was doing work. "tools and workflows" is still that list.
+
+   The measurements below were taken on "designer & builder" and are kept as
+   the evidence for the technique, which did not change with the words.
 
    The gradient runs the length of the phrase rather than restarting per word.
    Verified two ways: getClientRects() returns ONE rect at 1440 and at 380, so

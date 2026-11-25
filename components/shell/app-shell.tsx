@@ -1070,7 +1070,7 @@ export function AppShell({
                       The 1.16 leading is the ramp's one exception, bounded to
                       steps of 40 and above. */}
                   <h1
-                    className={`type-display ${fadeIn}`}
+                    className={`type-display front-headline ${fadeIn}`}
                     style={{
                       margin: 0,
                       maxWidth: HERO_MEASURE,
@@ -1092,16 +1092,30 @@ export function AppShell({
                     {/* THE AURORA SPANS THE PHRASE, not a word. (This opened
                         "LAB:" — written on the lab branch in 4dfcb06 and
                         shipped unchanged when 095a987 stripped the lab; the
-                        effect is no longer an experiment.) One span
-                        across "designer & builder" so the gradient runs the
-                        length of it — background-clip:text on a single inline
-                        box paints one continuous ramp, and box-decoration-break
-                        defaults to `slice`, so even a line break keeps it
-                        continuous rather than restarting per fragment.
+                        effect is no longer an experiment.) One span across
+                        the ROLE CLAIM so the gradient runs the length of it —
+                        background-clip:text on a single inline box paints one
+                        continuous ramp, and box-decoration-break defaults to
+                        `slice`, so even a line break keeps it continuous
+                        rather than restarting per fragment.
 
-                        "products and workflows" keeps its "and" on purpose: an
-                        ampersand binds a unit, "and" separates a list of two.
-                        The different conjunction is doing work.
+                        SINCE 25 NOVEMBER the phrase is "product builder"
+                        (the line was "I'm Edwin, AI designer & builder making
+                        useful products and workflows."). Same job as before:
+                        the emphasis sits on the role, the one thing the line
+                        claims. The span is inline-block, so it never breaks
+                        inside itself — which at 380 keeps the line at four
+                        lines and the mobile fold exactly where it was.
+
+                        The history, kept: "designer & builder" was one span
+                        because it was one claim — the ampersand bound a unit,
+                        and "products and workflows" kept its "and" because
+                        that was a list of two. "tools and workflows" is still
+                        a list, so it keeps its "and" for the same reason.
+
+                        THIS SENTENCE IS EDWIN'S OWN WORDS, from voice.md
+                        § Intro, and check:voice asserts it — matched by the
+                        `front-headline` class. Edit voice.md first.
 
                         The gradient is continuous along the phrase rather
                         than restarting per word — measured, see .aurora-word. */}
@@ -1109,9 +1123,10 @@ export function AppShell({
                         {" "} expression, and so is the one after it — the whole
                         sentence is one line for that reason. The extractor
                         drops a whitespace-only JSX child, so {" "} serialised
-                        as "AIdesigner" and then as "buildermaking". Same fault
+                        as "AIdesigner" and then as "buildermaking" (the old
+                        line's words; the rule still holds). Same fault
                         the deck hit once before. */}
-                    I&apos;m Edwin, AI <span className="aurora-word">designer &amp; builder</span> making useful products and workflows.
+                    I&apos;m Edwin, <span className="aurora-word">product builder</span> making useful tools and workflows.
                   </h1>
 
                   <div

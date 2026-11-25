@@ -23,7 +23,7 @@ that isn't traceable to this file or resume.txt is not permitted.
 
 ## Intro
 
-I'm Edwin, AI designer & builder making useful products and workflows.
+I'm Edwin, product builder making useful tools and workflows.
 
 ## Background
 
