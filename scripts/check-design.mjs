@@ -23,6 +23,7 @@
 //      tracking-budget     more --track-* tokens than TRACK_BUDGET
 //   8  RETIRED 21 October  display-face-scope; see its note below
 //      favicon-token-drift app/icon.svg's copied colours against the tokens
+//      favicon-mark-drift  app/icon.svg's copied path and box against the mark
 //
 // Rules 1-5 read .tsx under app/ and components/. Rules 1, 2, 4 and 5 also
 // read every stylesheet under app/ in a CSS dialect (css-inline-type,
@@ -1004,6 +1005,42 @@ function checkFavicon(file, svg, css) {
   return out
 }
 
+// ── The favicon's drawing ────────────────────────────────────────────────
+// THE COLOURS WERE HELD; THE DRAWING WAS NOT. favicon-token-drift above holds
+// app/icon.svg's two hex literals to the tokens, and until 25 November that
+// was the whole of what tied the favicon to anything. But the file also holds
+// its own copy of the mark's PATH and BOX — it cannot import, it is a separate
+// document — so replacing the mark in components/ui/brand-mark.tsx alone would
+// have passed every gate while every browser tab kept the old drawing. Found
+// while preparing the asterisk mark; the same class as the front-door headline
+// the day before (a gate whose name implied more coverage than it had).
+//
+// So the favicon's <path d> and <svg viewBox> must EQUAL MARK_PATH and
+// MARK_VIEWBOX, read out of brand-mark.tsx on every run. Exact equality, no
+// normalising: the favicon is a copy, and a copy that differs by a single
+// coordinate is a different drawing.
+//
+// A MISSING CONSTANT IS A FINDING. If brand-mark.tsx stops exporting either as
+// a string literal, this says so rather than comparing against nothing.
+const MARK_FILE = "components/ui/brand-mark.tsx"
+
+function checkFaviconMark(file, svg, markSrc) {
+  const out = []
+  const add = (detail) => out.push({ file, rule: "favicon-mark-drift", detail, line: 1 })
+  if (svg == null) return out // favicon-token-drift already reports the missing file
+  const markPath = /export const MARK_PATH =\s*"([^"]+)"/.exec(markSrc ?? "")?.[1]
+  const markBox = /export const MARK_VIEWBOX =\s*"([^"]+)"/.exec(markSrc ?? "")?.[1]
+  if (!markPath) add(`${MARK_FILE} exports no MARK_PATH string — nothing to hold the favicon to`)
+  if (!markBox) add(`${MARK_FILE} exports no MARK_VIEWBOX string — nothing to hold the favicon to`)
+  const paths = [...svg.matchAll(/<path\b[^>]*\bd="([^"]+)"/g)].map((m) => m[1])
+  const box = /<svg\b[^>]*\bviewBox="([^"]+)"/.exec(svg)?.[1]
+  if (paths.length !== 1) add(`app/icon.svg has ${paths.length} <path d> elements; the mark is one`)
+  else if (markPath && paths[0] !== markPath)
+    add(`app/icon.svg's path is not MARK_PATH (${paths[0].length} vs ${markPath.length} chars; first difference at ${[...paths[0]].findIndex((c, i) => c !== markPath[i])}) — the tab would show a different drawing`)
+  if (markBox && box !== markBox) add(`app/icon.svg's viewBox is "${box}", MARK_VIEWBOX is "${markBox}"`)
+  return out
+}
+
 // ── Positive control ─────────────────────────────────────────────────────
 // A clean pass is worthless if a matcher silently broke. Each rule is run
 // against a fixture that MUST trip it, and against a fixture that must NOT.
@@ -1316,6 +1353,25 @@ function selfTest() {
     faviconBad.push(...hits)
   }
 
+  // The favicon's drawing: silent when the copy matches, firing on each way
+  // it can stop matching — including the one that motivated it, the
+  // component's path changing alone.
+  const MARK_GOOD = 'export const MARK_PATH =\n  "M0 0h10v10z"\nexport const MARK_VIEWBOX = "0 0 10 10"'
+  const ICON_GOOD = '<svg viewBox="0 0 10 10"><style>x</style><path d="M0 0h10v10z"/></svg>'
+  for (const f of checkFaviconMark("<fixture-mark-good>", ICON_GOOD, MARK_GOOD))
+    problems.push(`control: favicon-mark-drift false positive — ${f.detail}`)
+  for (const [why, svg, mark] of [
+    ["component's path changed alone", ICON_GOOD, MARK_GOOD.replace("h10v10z", "h12v10z")],
+    ["favicon's path changed alone", ICON_GOOD.replace("h10v10z", "h12v10z"), MARK_GOOD],
+    ["favicon's box changed", ICON_GOOD.replace('viewBox="0 0 10 10"', 'viewBox="0 0 12 12"'), MARK_GOOD],
+    ["favicon gained a second path", ICON_GOOD.replace("</svg>", '<path d="M1 1"/></svg>'), MARK_GOOD],
+    ["component stopped exporting the box", ICON_GOOD, MARK_GOOD.replace(/export const MARK_VIEWBOX[^\n]*/, "")],
+  ]) {
+    const hits = checkFaviconMark("<fixture-mark-bad>", svg, mark)
+    if (!hits.length) problems.push(`control: favicon-mark-drift did NOT fire when the ${why}`)
+    faviconBad.push(...hits)
+  }
+
   // EVERY FINDING THAT FAILS THE BUILD MUST HAVE A ROW IN RULES. This is the
   // class, not the instance: a fatal finding with no heading prints as
   // "1 violation of nothing" and exits 2. Run through routeOf() — the SAME
@@ -1382,6 +1438,7 @@ const RULES = {
   "tracking-literal": "Letter-spacing literal (use var(--track-*))",
   "tracking-budget": `More than ${TRACK_BUDGET} --track-* tokens — a value has to earn its row`,
   "favicon-token-drift": "app/icon.svg's literal colours no longer match the tokens they copy",
+  "favicon-mark-drift": "app/icon.svg's copied drawing no longer matches the brand mark it copies",
   // THE CSS DIALECT LIVES HERE TOO, now that it fails the build. It used to
   // be report-only, so its labels lived only in CSS_RULES and this table did
   // not know the names — which meant the first CSS violation after the switch
@@ -1472,6 +1529,9 @@ for (const v of checkInheritedFills(tsxSources, cssSources)) record(v)
   try { svg = readFileSync(join(ROOT_DIR, FAVICON), "utf8") } catch {}
   const globals = cssSources.find((c) => c.file === "app/globals.css")?.raw ?? ""
   for (const v of checkFavicon(FAVICON, svg, globals)) record(v)
+  let markSrc = null
+  try { markSrc = readFileSync(join(ROOT_DIR, MARK_FILE), "utf8") } catch {}
+  for (const v of checkFaviconMark(FAVICON, svg, markSrc)) record(v)
 }
 
 // From `violations`, not `reportOnly`: CSS findings fail the build. This read

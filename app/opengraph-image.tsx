@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises"
 import { join } from "path"
 import { ImageResponse } from "next/og"
-import { MARK_PATH } from "@/components/ui/brand-mark"
+import { MARK_PATH, MARK_VIEWBOX } from "@/components/ui/brand-mark"
 import { tokenRgb, tokenValue } from "@/lib/image-tokens"
 
 // THE LINK PREVIEW. LinkedIn is where visitors arrive from (PRODUCT.md), and
@@ -39,7 +39,7 @@ export default async function OpengraphImage() {
           color: ink,
         }}
       >
-        <svg viewBox="0 0 260 260" width={128} height={128} fill={ink}>
+        <svg viewBox={MARK_VIEWBOX} width={128} height={128} fill={ink}>
           <path d={MARK_PATH} />
         </svg>
         <div style={{ display: "flex", fontFamily: "Archivo", fontWeight: 400, fontSize: 80, letterSpacing: tokenValue("track-display") }}>

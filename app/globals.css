@@ -530,14 +530,20 @@
      thumbnails change, the mark follows — and has to stay above the floor
      below, which any size this rail has used does.
 
-     LEGIBILITY IS WHAT PROMPTED IT. The mark is drawn on a 10-unit module in
-     a 260-unit box, so its narrowest gap is one device pixel at 26px on a 1x
-     screen; below that the interior closes. That floor is 26. The rail took
-     32 first (21 October), as the first --space step above it; rendered at
-     1x it cleared the floor without reading — 1.23px gaps fall between pixel
-     boundaries and the interior went grey. At 40: 1.54px gaps, 3.08px bars,
-     the arms' teeth separate cleanly; the central ring still antialiases at
-     any size this rail can hold. 36 was rendered as the fallback.
+     THE FLOOR, FOR THE CURRENT MARK (the asterisk, 25 November): about 16.
+     Its ten arms are ~50 units wide in a 550 box and all separate at 1x from
+     14px; the closest gap is 8% grey at 16 and clean from 18. At 40: arms
+     3.6px, every gap clean. Neither size below moved — both were set by
+     arguments that do not depend on the drawing.
+
+     HISTORY — LEGIBILITY IS WHAT PROMPTED 40, FOR THE PREVIOUS MARK. It was
+     drawn on a 10-unit module in a 260-unit box, so its narrowest gap was one
+     device pixel at 26px on a 1x screen; below that the interior closed. The
+     rail took 32 first (21 October), as the first --space step above that
+     floor; rendered at 1x it cleared the floor without reading — 1.23px gaps
+     fall between pixel boundaries and the interior went grey. At 40: 1.54px
+     gaps, 3.08px bars, the arms' teeth separated cleanly. 36 was rendered as
+     the fallback. The thumbnail argument above is what keeps it at 40 now.
 
      MEASURED AGAINST WHAT SURROUNDS IT: 3.58x the WORK header's cap (11.17)
      and 0.8x its width, the same 22px left edge, and 61.8px of clear space to
@@ -546,9 +552,11 @@
      at 1440x700 (32 gave 80, 17, 217).
 
      20 IN THE TOP BAR IS THE TARGET RULE: an icon-only control at 44 takes a
-     glyph half its target, 22, which is 20 on the ramp. The floor above is a
-     1x one, and the top bar is mostly a phone surface (2-3x). A desktop
-     window narrower than 900 at 1x gets it too; DESIGN.md records that case. */
+     glyph half its target, 22, which is 20 on the ramp. A desktop window
+     narrower than 900 at 1x gets it too, and since the asterisk it holds
+     there: rendered clean at 820. (For the previous mark that case was a grey
+     lump, ACCEPTED on 21 October; it is now MOOT, not accepted — DESIGN.md
+     records which.) */
   --brand-mark-size:   var(--rail-thumb-size);
   --brand-mark-topbar: var(--space-20);
   /* ── THE BRAND MARK WAS A SPARKLE, AND THIS IS ITS RECORD ─────────────
@@ -560,10 +568,18 @@
      mark: --brand-mark-size was 32 then, was 32 again for the mark's first
      hours, and is 40 now; --brand-mark-topbar was 16 and is 20.
 
-     THE NEW MARK DOES NOT COLLIDE WITH THE INDICATOR. Rendered side by side:
-     the mark is static, filled, primary, symmetric, 40; the indicator is
-     lime, stroked, animated, 24. Different objects on every axis, not on
-     size alone, so nothing below needs reopening.
+     THE MARK DOES NOT COLLIDE WITH THE INDICATOR. Rendered side by side, for
+     the asterisk (25 November): the mark is static, filled, primary, 40, ten
+     arms; the indicator is lime, stroked, animated, 24, four points. Different
+     on colour, fill, motion, size, place and form — but now the SAME FAMILY of
+     shape, both stars, which the previous mark was not. Kept as history,
+     not reopened.
+
+     CORRECTED 25 NOVEMBER: this said the mark was "symmetric", listing that
+     as one of the differences. True of the previous mark; false of the
+     asterisk, which has seven arms 30° apart above and three 45° apart below.
+     The line was corrected rather than left, because a record that states a
+     false difference is worse than no record.
 
      THE 32 WAS AN OFF-RAMP SIZE THAT EXISTED BECAUSE OF A COLLISION. At 1440
      the rail carried the sparkle alone, so no cap height governed it. The

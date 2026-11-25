@@ -953,11 +953,13 @@ export function AppShell({
           before that a 16px sparkle beside "EDWIN LARA" in Plex Mono caps.
 
           20, NOT THE RAIL'S 40: this is an icon-only control with a 44px
-          target, and the glyph is half the target on the ramp. The mark's
-          26px legibility floor is a 1x one, and phones are 2-3x — the finest
-          gap is 1.5 device pixels or more there. A desktop window narrower
-          than 900 on a 1x screen also gets this bar, and the mark is soft
-          there — ruled and accepted, not missed; DESIGN.md records it.
+          target, and the glyph is half the target on the ramp. The asterisk
+          (25 November) holds at 20 even at 1x — its floor is about 16 — so a
+          desktop window narrower than 900 on a 1x screen, which also gets
+          this bar, shows it clean. HISTORY: the previous mark's floor was
+          26px, and in that window it went soft; that was ruled and accepted
+          on 21 October, and is MOOT now, not accepted. DESIGN.md records
+          both.
 
           THE ROW WAS TIGHT at the mono brand: brand + subject + MENU filled 340
           of 340, and .shell-topbar-subject is the element that gives, by

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og"
-import { MARK_PATH } from "@/components/ui/brand-mark"
+import { MARK_PATH, MARK_VIEWBOX } from "@/components/ui/brand-mark"
 import { tokenRgb } from "@/lib/image-tokens"
 
 // THE APPLE TOUCH ICON, 180px. Opaque, because iOS fills transparency with
@@ -21,7 +21,7 @@ export default function AppleIcon() {
           background: tokenRgb("bureau-bg"),
         }}
       >
-        <svg viewBox="0 0 260 260" width={120} height={120} fill={tokenRgb("bureau-text-primary")}>
+        <svg viewBox={MARK_VIEWBOX} width={120} height={120} fill={tokenRgb("bureau-text-primary")}>
           <path d={MARK_PATH} />
         </svg>
       </div>

@@ -365,7 +365,8 @@ proven closed by putting the real mark in lime.
 **`app/icon.svg` is colour in an `.svg` on disk**, which the paragraph above
 says rule 6 must then cover. It does not need to: `check:design`'s
 `favicon-token-drift` fails the build unless the file's two fills are exactly
-`--bureau-bg` and `--bureau-text-primary`, so the accent cannot get in.
+`--bureau-bg` and `--bureau-text-primary`, so the accent cannot get in. (Its
+drawing is held separately, by `favicon-mark-drift`, since 25 November.)
 
 ### The top-of-view wash — OFF, for now
 
@@ -1550,15 +1551,39 @@ assumed to be fine.
 
 ### The brand mark: a fill, outside the ramp
 
-`components/ui/brand-mark.tsx`, from `docs/provenance/brand-mark/source.svg`
-(21 October). **A fill, not a stroke** — so nothing in this section's stroke
-machinery applies to it: no stroke width to agree or disagree with the 1:12
-ratio, and no `ICON_STROKE_*`. It is not an exception to the stroke rule; it is
-outside it.
+`components/ui/brand-mark.tsx`, from `docs/provenance/brand-mark/source.svg`.
+**A fill, not a stroke** — so nothing in this section's stroke machinery
+applies to it: no stroke width to agree or disagree with the 1:12 ratio, and no
+`ICON_STROKE_*`. It is not an exception to the stroke rule; it is outside it.
 
-**What limits a filled mark is its finest feature.** The drawing is on a
-10-unit module in a 260-unit box: bars 20, the narrowest gaps 10. A gap is one
-device pixel at 26px on a 1× screen; below that the interior closes.
+**The mark was replaced on 25 November: a ten-arm asterisk** (Edwin's
+`logo.svg`; provenance in `docs/provenance/brand-mark/`). Seven arms above the
+horizontal, 30° apart; three below, 45° apart; each about 50 units wide in a
+550 box (`MARK_VIEWBOX` is `-0.5 0 550 550` — square, centred on the hub; the
+source is 549 × 550). It is an auto-trace and is kept verbatim.
+
+**What limits a filled mark is its finest feature — and this one's are
+wedges.** The gaps between arms narrow to nothing at the hub, as in any star,
+so there is no single gap width to divide by. What was measured, on a 1×
+raster: how many of the ten arms separate in the outer ring, and how close to
+the ground the most-closed gap gets.
+
+| size | arm at 1× | arms separate | closest gap | where |
+|---|---|---|---|---|
+| 14 | 1.27px | 10 | 19% grey | — |
+| **16** | 1.45px | 10 | 8% grey | **the tab icon** (see the favicon, below) |
+| 20 | 1.82px | 10 | clean | mobile top bar — and at 1× too |
+| **40** | 3.6px | 10 | clean | **the rail** |
+
+**Its floor is about 16**, against the previous mark's 26. Neither size moved:
+40 is the thumbnail's size and 20 is the target rule, and neither argument
+depends on the drawing. Coverage is 38.6% ink against the previous mark's
+44.5% — a little lighter, not enough to change anything below.
+
+**HISTORY — the previous mark (21 October – 25 November)**, kept as written
+because it was correct for the mark it describes. Its drawing was on a 10-unit
+module in a 260-unit box: bars 20, the narrowest gaps 10. A gap was one device
+pixel at 26px on a 1× screen; below that the interior closed.
 
 | size | finest gap at 1× | bar | where |
 |---|---|---|---|
@@ -1597,16 +1622,26 @@ device pixel at 26px on a 1× screen; below that the interior closes.
   lime is under [What rule 6 cannot see](#what-rule-6-cannot-see) — lime
   means state.
 - **It does not collide with the indicator.** Rendered side by side on the
-  built site: the mark is static, filled, primary, symmetric, 40; the
-  indicator is lime, stroked, animated, 24. Different on every axis, not on
-  size alone, so the collision ruling stays history.
+  built site, for the asterisk (25 November): the mark is static, filled,
+  primary, 40, ten arms; the indicator is lime, stroked, animated, 24, four
+  points. Different on colour, fill, motion, size, place and form, so the
+  collision ruling stays history — but they are now the same family of shape,
+  both stars, which the previous mark was not.
+  **Corrected 25 November:** this listed the mark as "symmetric" among the
+  differences. True of the previous mark, false of the asterisk (seven arms
+  above, three below). Corrected rather than left: a record that states a
+  false difference is worse than no record.
+- **Colour, for the asterisk: the ruling carries, and the argument is
+  stronger.** Lime means state. The indicator is a lime star; a lime asterisk
+  would read as its sibling — the site thinking — not as the site's mark.
 - **No visible name inside the panes, accepted.** The button's
   `aria-label` — "Edwin Socrates Lara — home" — carries the name, as it did
   when the sparkle held this row; the hero's "I'm Edwin" carries it on the
   front door and the page title carries it everywhere. A mark is allowed to be
   a mark.
 
-**Measured at 1×, the floor is a floor, not a guarantee of crispness.** At 32
+**(Previous mark, history.) Measured at 1×, the floor is a floor, not a
+guarantee of crispness.** At 32
 the outer bars held, but the gaps are 1.23px and do not land on pixel
 boundaries, so the interior antialiased to grey — which is why the rail is 40.
 At 40 the arms' teeth separate cleanly and the outer bars are solid; the
@@ -1619,9 +1654,30 @@ desktop window on a 1× screen is a thin enough slice that a third size, and a
 third token to carry it, is not worth it. 24 between 641 and 899 was the
 alternative considered; its gaps would still be 0.92px, under a pixel.
 
-### The favicon: 32 and 180, no 16
+**Since 25 November that ruling is MOOT — not accepted, moot.** "Accepted"
+meant a known defect was left in place on purpose; with the asterisk there is
+no defect to accept. Rendered at 820 on a 1× screen, the 20px mark's ten arms
+separate cleanly. The paragraphs above are the previous mark's, kept as
+history.
 
-Decided 21 October, so the 16px question is answered rather than open.
+### The favicon: 32 and 180, and the drawing holds at 16
+
+**"No 16" is SUPERSEDED (25 November).** The asterisk's ten arms separate at
+true 16 on a 1× screen, light tab and dark — rendered from both the SVG and
+the PNG. So no separate 16 is drawn and none is needed: the browser's 16 is
+the same drawing, and it reads. The record below was correct for the mark it
+was written about and is kept as history.
+
+**`app/icon.svg` is a copy of the mark, held to it.** It cannot import, so its
+path and box are copies of `MARK_PATH` and `MARK_VIEWBOX`, and
+`check:design`'s **`favicon-mark-drift`** fails the build when either stops
+matching. Until 25 November nothing did: `favicon-token-drift` held the
+favicon's two colours and not its drawing, so replacing the mark in the
+component alone would have passed every gate while every browser tab kept the
+old one. Proved by breaking: the component's path changed alone fails; the
+gate as it stood the day before passes the same change.
+
+HISTORY — decided 21 October for the previous mark:
 
 - **No 16px drawing.** At 16 the mark's finest gap is 0.62px and the
   interior is a blob at 1×. No simplified 16 exists, and one was not drawn.
@@ -1635,7 +1691,8 @@ Decided 21 October, so the 16px question is answered rather than open.
   either stops matching its token, or when the file is gone.
 - **`app/icon1.tsx` → a 32px PNG**, for browsers that do not take SVG. A PNG
   cannot follow the colour scheme, so it carries the site's ground: primary
-  ink on `#131313`, full-bleed so the 1.23px gaps survive.
+  ink on `#131313`, full-bleed so the 1.23px gaps survive. (For the asterisk,
+  full-bleed is a choice, not a necessity.)
 - **`app/apple-icon.tsx` → 180px**, opaque (iOS fills transparency with
   black), the mark at 120 so iOS's corner rounding never reaches it.
 
