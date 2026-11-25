@@ -177,6 +177,10 @@
   --space-32: 32px;
   --space-40: 40px;
   --space-44: 44px;  /* touch-target floor; see .rail-sheet-close */
+  /* 48 is back, for the documents header (--header-h). It was retired on 26
+     August (a8c2b07) with no consumer; DESIGN.md's raw-scale list kept naming
+     it, which was stale until this line made it true again. */
+  --space-48: 48px;
   --space-56: 56px;
   --space-64: 64px;
   --space-80: 80px;
@@ -374,7 +378,16 @@
      pinning to 225 because a fixed anchor pushes the hero off a short
      viewport — at 500px tall it would start the headline at 225 with 290px of
      content to fit in the remaining 275. */
-  --hero-anchor: 25dvh;
+  /* ⚠ THE OFFSET COMPENSATES FOR THE DOCUMENTS HEADER. The anchor is measured
+     from the top of the VIEWPORT, and since 24 November a --header-h bar sits
+     above the pane, so the band starts that far down. Subtracting it keeps the
+     headline at 225 at 1440x900, where it has always been. If the header is
+     ever removed, remove the subtraction too — otherwise the headline sits
+     --header-h higher than it should, with nothing here to say why. (Below
+     900px the header is hidden and the anchor is overridden to --space-80
+     anyway; see the mobile block.) */
+  --header-h: var(--space-48);
+  --hero-anchor: calc(25dvh - var(--header-h));
 
   /* The About page's prose measure. The mock puts the words on a 328-588
      band inside the full-width pane; 588 is the upper end, which is where
@@ -1687,6 +1700,59 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 }
 /* Front door: the input is the centrepiece. The moment a conversation
    exists the same component docks to the pane's bottom edge instead. */
+.pane-column {
+  /* The header over the pane, and the pane. Takes the pane's old place in the
+     shell's row: grows, and may shrink below its content in either axis (the
+     same min-width/min-height trap .pane's note describes). */
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── The documents header ─────────────────────────────────────────────
+   Case Study, Resume and About, moved out of the rail on 24 November — a thin
+   bar over the pane only, in flow, text only. 48 tall, which holds a 44px
+   target in a row; the bar's hairline matches the mobile top bar's. Right-
+   aligned to the pane's 40px gutter, in .type-action like the rail rows they
+   replace, so the labels read the same in both places.
+
+   THE ACTIVE LINK takes a 2px bottom edge in the accent and primary ink — the
+   rail row's 2px left bar, turned to sit on the bar's edge. An edge, not a
+   surface, so it is inside the accent rule (DESIGN.md § Accent). Styled from
+   aria-current, which is set from the URL on the server, so a hard load of
+   /resume arrives with Resume active before any script runs. */
+.site-header {
+  flex: none;
+  height: var(--header-h);
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: var(--space-between);
+  padding: 0 var(--space-32);
+  border-bottom: 1px solid var(--hairline);
+}
+.site-header-link {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-8);
+  color: rgb(var(--bureau-text-secondary));
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-header-link:hover { color: rgb(var(--bureau-text-primary)); }
+.site-header-link[aria-current="page"] {
+  color: rgb(var(--bureau-text-primary));
+  border-bottom-color: rgb(var(--bureau-accent));
+}
+/* The rail's document group is the MOBILE SHEET's copy of these links (one
+   list, components/shell/document-links.tsx). Above the breakpoint the header
+   carries them and the group is hidden. */
+@media (min-width: 901px) {
+  .rail-docs { display: none; }
+}
+
 .pane-front {
   flex: 1;
   min-height: 0;
@@ -2290,7 +2356,11 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     min-height: 0;
     border-right: 0;
   }
-  .shell[data-sheet="true"] .pane { display: none; }
+  /* The whole pane column — header and pane — gives way to the sheet. This
+     was `.pane`, before the column existed; hiding only the pane would leave
+     the column taking half the height beside the sheet. */
+  .shell[data-sheet="true"] .pane-column { display: none; }
+  .site-header { display: none; }
   /* The top bar already shows the brand, so the rail's own row would just
      repeat it directly underneath. Contact is reachable in the sheet either
      way — it is in the footer again, which the sheet keeps. */

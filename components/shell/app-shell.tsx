@@ -9,6 +9,7 @@ import { PromptChip } from "@/components/chat/prompt-chip"
 import { frontDoorChips } from "@/lib/chips"
 import { ProjectSampler } from "@/components/chat/project-sampler"
 import { Sidebar, type Pane } from "@/components/shell/sidebar"
+import { DocumentLinks } from "@/components/shell/document-links"
 import { BrandMark } from "@/components/ui/brand-mark"
 // ── THE THREE DOCUMENTS ARE THEIR ROUTES' OWN CONTENT ──────────────────
 // /case-study/meridian-deck, /resume and /about render their pane on the
@@ -995,6 +996,18 @@ export function AppShell({
         {liveStatus}
       </div>
 
+      {/* THE PANE COLUMN: the documents header over the pane. The header is
+          OUTSIDE <main>, because site navigation is not the page's main
+          content, and inside this column so it spans the pane only — the
+          rail's mark owns the top-left. It is rendered by the shell, which
+          lives in app/(site)/layout.tsx, so it mounts once per visit and
+          survives every navigation like the rail does (proved by element
+          identity, 24 November). Hidden at 900px and below, where the top
+          bar is full and the sheet carries the three links instead. */}
+      <div className="pane-column">
+        <nav className="site-header" aria-label="Documents">
+          <DocumentLinks variant="header" activePane={pane} />
+        </nav>
       <main className="pane" ref={paneRef}>
         {/* A DOCUMENT IS ITS ROUTE'S CONTENT — `children`, rendered on the
             server by the page file — inside the same scroller and wash it
@@ -1217,6 +1230,7 @@ export function AppShell({
           </>
         )}
       </main>
+      </div>
     </div>
   )
 }

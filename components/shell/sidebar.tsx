@@ -6,10 +6,11 @@ import Image from "next/image"
 // Layers, not Layers3: Layers3 is a deprecated alias in v0.544 and resolves to
 // the same component (verified: Layers3 === Layers). Importing the live name.
 // BriefcaseBusiness and CodeXml left with the section-header glyphs.
-import { Layers, FileText, UserRound, Mail, Linkedin } from "lucide-react"
-import { ICON_STROKE_CONTROL, ICON_STROKE_RAIL } from "@/lib/icons"
+import { Mail, Linkedin } from "lucide-react"
+import { ICON_STROKE_CONTROL } from "@/lib/icons"
 import { MailMark, NewTabMark } from "@/components/ui/new-tab-mark"
 import { BrandMark } from "@/components/ui/brand-mark"
+import { DocumentLinks } from "@/components/shell/document-links"
 // NO PROJECT IMPORT. The rail draws a thumbnail, a client name and a subtitle;
 // importing lib/projects.ts to do that pulled every reveal's prose and alt text
 // into the first load. The 6 fields it needs arrive as a prop, derived on the
@@ -251,59 +252,13 @@ export function Sidebar({
           />
         )}
 
+        {/* THE MOBILE SHEET'S DOCUMENT GROUP. Above 900px the three documents
+            are the header over the pane (app-shell.tsx, .site-header) and this
+            group is hidden by CSS; at 900px and below the top bar has no room
+            for them, so they stay here. One list, components/shell/
+            document-links.tsx, renders both. */}
         <div className="rail-docs">
-          {/* REAL LINKS since 24 November: each document has its own URL —
-              /case-study/meridian-deck, /resume, /about — so it can be shared,
-              found, bookmarked and reached with back and forward. They used to
-              be buttons that swapped the pane, because a route change would
-              have remounted the shell and discarded every thread; the shell now
-              lives in app/(site)/layout.tsx and a navigation keeps it.
-
-              The pane follows the URL (PANE_FOR_PATH in app-shell.tsx), so
-              there is no handler here to keep in step with it. onNavigate only
-              closes the mobile sheet. data-pane stays: check:paint selects on
-              it. */}
-          <Link
-            href="/case-study/meridian-deck"
-            className="rail-doc"
-            data-pane="deck"
-            data-active={activePane === "deck"}
-            aria-current={activePane === "deck" ? "page" : undefined}
-            onClick={onNavigate}
-          >
-            {/* ICON_STROKE_RAIL, 1.5px of ink at 24 — the rule in
-                lib/icons.ts. (This said "1.25… See DOC_ICON_STROKE"; that
-                constant retired with the icon ramp on 28 August, 0de263b.) */}
-            <Layers className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
-            <span className="type-action rail-doc-label">Case Study</span>
-          </Link>
-
-          {/* This row opened DocHub in a new tab until the Resume pane
-              existed. NewTabMark came off with that href — it announced "opens
-              in a new tab", which would now be a lie. */}
-          <Link
-            href="/resume"
-            className="rail-doc"
-            data-pane="resume"
-            data-active={activePane === "resume"}
-            aria-current={activePane === "resume" ? "page" : undefined}
-            onClick={onNavigate}
-          >
-            <FileText className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
-            <span className="type-action rail-doc-label">Resume</span>
-          </Link>
-
-          <Link
-            href="/about"
-            className="rail-doc"
-            data-pane="about"
-            data-active={activePane === "about"}
-            aria-current={activePane === "about" ? "page" : undefined}
-            onClick={onNavigate}
-          >
-            <UserRound className="rail-icon" aria-hidden="true" strokeWidth={ICON_STROKE_RAIL} />
-            <span className="type-action rail-doc-label">About</span>
-          </Link>
+          <DocumentLinks variant="rail" activePane={activePane} onNavigate={onNavigate} />
         </div>
       </nav>
       </div>

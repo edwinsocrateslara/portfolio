@@ -1,4 +1,4 @@
-// Rail document rows, visible set only — [Case Study, Resume, About].
-// The deck is row 0.
-const rows = [...document.querySelectorAll('.rail-doc')].filter(e => e.getBoundingClientRect().width > 0)
-rows[0].click()
+// The visible Case Study link: the header above the pane on desktop, the
+// rail's document group in the mobile sheet. Selected by data-pane, not by
+// position.
+;[...document.querySelectorAll('[data-pane="deck"]')].find(e => e.getBoundingClientRect().width > 0).click()

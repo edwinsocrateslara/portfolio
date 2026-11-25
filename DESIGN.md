@@ -320,7 +320,8 @@ all six surfaces rather than read from source:
 | where | property | size |
 |---|---|---|
 | active rail row — `.rail-item[data-active]` | `border-left-color` | 2px |
-| active document row — `.rail-doc[data-active]` | `border-left-color` | 2px |
+| active document row — `.rail-doc[data-active]` (mobile sheet only, since 24 November) | `border-left-color` | 2px |
+| active header link — `.site-header-link[aria-current="page"]` | `border-bottom-color` | 2px |
 | the résumé timeline node | `background` | 8px |
 | the IMPACT callout's rule | `border-left-color` | 2px |
 | the IMPACT marker | `background` | 8px |
@@ -329,8 +330,10 @@ all six surfaces rather than read from source:
 | the input's focus ring | `box-shadow` at 11% | 2px |
 | the lightbox's focus ring | `outline` | 2px |
 
-Nine uses, none wider than 34px. With the wash off the accent is **purely
-structural**: active state, focus, caret, send, and two marks.
+Ten uses, none wider than 34px. With the wash off the accent is **purely
+structural**: active state, focus, caret, send, and two marks. (Nine until 24
+November, when the documents moved into the header and its active link took
+the rail row's 2px edge, turned to sit on the bar's bottom.)
 
 **The brand mark is not on this list, and that was decided, not missed.** It
 is in primary ink. Lime was rendered beside primary before it was built
@@ -813,6 +816,10 @@ express size rather than relatedness, and for the rare spacing case no
 level fits:
 
 `--space-4` `8` `12` `16` `20` `24` `32` `40` `48` `56` `64` `80`
+
+*`48` was retired on 26 August (`a8c2b07`) with no consumer, and this list kept
+naming it — stale for three months. It came back on 24 November as the
+documents header's height (`--header-h`), which made the list true again.*
 
 `--space-4` (4px) doubles as the documented tight half-step inside
 `within`, for optical cases where 8px is visibly too loose. `--space-44`
@@ -1921,6 +1928,15 @@ its container rather than the viewport, this is why.
 
 ## The rail
 
+**The documents left the rail on 24 November.** Case Study, Resume and About
+are a thin header over the pane on desktop — 48 tall, pane-only, in flow, text
+only, right-aligned to the pane's 40px gutter, the active link marked by a 2px
+accent bottom edge (`.site-header`, `components/shell/document-links.tsx`). At
+900px and below the top bar has no room, so they stay in the rail as its
+document group, which is now the MOBILE SHEET's only. One list renders both;
+CSS shows whichever applies. The sections below about the document group, its
+divider rule, its label edge and its glyph describe the sheet.
+
 **Two project sections, WORK and VIBE CODING**, sharing one `ProjectSection`
 component. They are the same thing with different contents; a second copy of
 the markup would be a second place for the active treatment, the thumbnail
@@ -2003,6 +2019,20 @@ rows it labels. Applied identically to both sections; the difference in how
 WORK and VIBE CODING read is the seven-rows-to-one difference, not spacing.
 
 ### Known consequence: the rail now scrolls at 1440×900
+
+**SUPERSEDED, 24 November, and the void that replaced it is ACCEPTED.** With
+the documents in the header and VIBE CODING empty, the rail is the mark, WORK's
+seven rows and the pinned contact footer — and it no longer scrolls at any
+desktop size measured. What it has instead is empty space between the last
+project row (bottom at 552) and the footer (top at 832): **280px at 1440×900,
+180 at 1280×800, 80 at 1440×700.** Ruled fine, not overlooked: the VIBE CODING
+section returns into that space when its new entries are ready (a section
+costs 128, below), and the footer stays pinned exactly where it is — the mail
+and LinkedIn icons do not move. Do not close the gap by unpinning the footer:
+it would then sit at a different height on every screen and jump 128px when
+the section returns.
+
+What follows is the history of when the rail overflowed.
 
 Measured before the second section: `.rail-scroll` was **673 / 673 — exactly
 full, zero headroom**. It already scrolled at 1440×700 (−159) and 380×820
@@ -2094,6 +2124,11 @@ the document rather than only in git history, and it is closed below.
 
 ### The document glyph stays 24 — reviewed 24 November
 
+*Since later the same day, the document rows exist only in the mobile sheet —
+the documents are text links in the desktop header — so this decision governs
+the sheet. Its measurements were taken on the desktop rail; the gap and stroke
+reasoning carries over, the rail-overflow figures do not.*
+
 **Decided, not deferred.** Four sizes were rendered on a production build at
 1440×900, changing only the glyph and its stroke; the stroke was re-picked for
 each by `lib/icons.ts`'s rule above 16 — hold the painted line at 1.5px, so
@@ -2164,6 +2199,8 @@ icon ramp on 28 August (`0de263b`); the rail's 24px glyphs take
 
 ### The document group is divided by a rule
 
+*Mobile sheet only, since 24 November (see the top of **The rail**).*
+
 CASE STUDY / RESUME / ABOUT is the one group in the rail with no header, and it
 cannot easily have one — DOCUMENTS is accurate for the first two and wrong for
 ABOUT, and MORE is filler. A header that is approximately true is worse than
@@ -2202,8 +2239,15 @@ with it, and the two could not be tuned separately. Worse, the space below the
 chips was then a *remainder*: whatever the band had left over, 161px at
 1440×900. That is why it was never on the relatedness ladder. Nobody set it.
 
-`--hero-anchor` (`25dvh`) is where the headline sits, measured from the top of
-the viewport. It resolves to 225px at 1440×900, exactly where centring put it,
+`--hero-anchor` is where the headline sits, measured from the top of the
+viewport. **Since 24 November it is `calc(25dvh - var(--header-h))`: the
+offset compensates for the documents header**, which puts the band 48px down,
+so the headline stays at 225 at 1440×900. If the header ever goes, the
+subtraction goes with it, or the headline sits 48px high with nothing to say
+why. Re-measured with the header in place: headline 225, input 373, sampler
+605, the page scrolling 62 — every figure below unchanged, because the band is
+shortened by exactly the height the pane lost. (Until 24 November it was plain
+`25dvh`.) It resolves to 225px at 1440×900, exactly where centring put it,
 so the hero did not move when the gap below it changed — verified element by
 element: headline 225, input 353, chips 419, before and after.
 

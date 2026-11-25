@@ -75,9 +75,12 @@ const CHROME =
 // so their floors are nominal. Every run prints its measurement, so a floor
 // drifting towards its surface is visible rather than discovered by a failure.
 const CASES = [
-  { name: "resume", open: `.rail-doc[data-pane="resume"]`, minInk: 3.0 },
-  { name: "about", open: `.rail-doc[data-pane="about"]`, minInk: 2.0 },
-  { name: "case-study", open: `.rail-doc[data-pane="deck"]`, minInk: 2.0 },
+  // [data-pane], not .rail-doc: since 24 November the documents are the
+  // header above the pane on desktop and the rail's group only in the mobile
+  // sheet. The VISIBLE copy is clicked (see the lookup below).
+  { name: "resume", open: `[data-pane="resume"]`, minInk: 3.0 },
+  { name: "about", open: `[data-pane="about"]`, minInk: 2.0 },
+  { name: "case-study", open: `[data-pane="deck"]`, minInk: 2.0 },
 ]
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -258,7 +261,7 @@ for (const c of CASES) {
   await send("Page.navigate", { url: ORIGIN })
   await sleep(6500)
   const opened = await js(`(() => {
-    const el = document.querySelector(${JSON.stringify(c.open)})
+    const el = [...document.querySelectorAll(${JSON.stringify(c.open)})].find((e) => e.getBoundingClientRect().width > 0)
     if (!el) return "missing"
     el.click()
     return "ok"

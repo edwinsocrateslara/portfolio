@@ -49,7 +49,9 @@ import { connect } from "./shot.mjs"
 // rather than trusting that the click did what it said.
 const bySlug = (slug) =>
   `document.querySelector('.rail-item[data-project-slug=${JSON.stringify(slug)}]')`
-const byPane = (pane) => `document.querySelector('.rail-doc[data-pane=${JSON.stringify(pane)}]')`
+// The VISIBLE document link: the header above the pane on desktop, the rail's
+// group in the mobile sheet (one list, components/shell/document-links.tsx).
+const byPane = (pane) => `[...document.querySelectorAll('[data-pane=${JSON.stringify(pane)}]')].find((e) => e.getBoundingClientRect().width > 0)`
 const CHIPS = `[...document.querySelectorAll('.chip')].filter(e=>e.getBoundingClientRect().width>0)`
 
 /** Surfaces: how to get there from a fresh load, and how long to settle. */
