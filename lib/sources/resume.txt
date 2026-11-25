@@ -86,33 +86,37 @@ FutureFit AI — Toronto, Ontario
 Designer & AI Builder
 Oct 2025 – Present
 
-- Design and build AI products for a workforce platform serving businesses and
-  governments. Worked across research, product, design, AI prototyping, data
-  integrations, and production code.
-- Miles: Designed and shipped the core UX/UI for FutureFit's trained LLM,
-  including conversational flows for career exploration, job discovery, and
-  understanding fit for specific roles. Analyzed real conversations to word the
-  prompts in the language people use, tested with participants across user
-  types, and integrated Miles across the platform through contextual prompts and
-  AI actions.
-- SideBar: Built an LLM-powered networking coach that helps job seekers
-  activate their existing networks. Piloted for the Christensen Institute's
-  Prosocial Possibilities research cohort, which selected FutureFit AI as one
-  of 10 edtech providers studying how technology can strengthen social
-  connection and expand access to opportunity.
-- Ideas Dashboard: Designed and built an AI prioritization system end to end as
-  sole contributor (Next.js, Supabase, Claude) for a customer feedback backlog
-  growing daily: 457 posts and counting. It evaluates ~300 posts weekly against
-  company strategy and technical architecture, surfacing 10 priorities and quick
-  wins; every AI field can be overridden, and accepted ideas become Jira tickets
-  that close the original post once shipped.
-- AI Evidence Layer: Built integrations across Canny, Clarify, and Heap using
-  Claude Code and LLMs to synthesize customer feedback, client conversations,
-  and behavioral data into evidence for product decisions.
-- Design System: Built an AI-compatible design system with design tokens and
-  shadcn/ui, enabling code-generation tools to assemble interfaces from
-  established components. Shipped WCAG, ARIA, and Cypress accessibility
-  improvements directly to production.
+- Design and build AI products for a workforce platform serving
+  businesses and governments. Worked across research, product,
+  design, AI prototyping, data integrations, and production code.
+
+- Designed and shipped the core UX/UI for Miles, FutureFit's trained
+  LLM, including conversational flows for career exploration, job
+  discovery, and understanding fit for specific roles. Integrated
+  Miles across the platform through contextual prompts and AI
+  actions.
+
+- Built SideBar, an LLM-powered networking coach that helps job
+  seekers activate their existing networks. Piloted for the
+  Christensen Institute's Prosocial Possibilities research cohort,
+  which selected FutureFit AI as one of 10 edtech providers studying
+  how technology can strengthen social connection and expand access
+  to opportunity.
+
+- Designed and built an AI prioritization system that evaluates
+  customer feedback against company strategy and technical
+  architecture, surfacing 10 priorities each week and quick wins
+  for the team to build.
+
+- Built integrations across Canny, Clarify, and Heap using Claude
+  Code and LLMs to synthesize customer feedback, client
+  conversations, and behavioral data into evidence for product
+  decisions.
+
+- Built an AI-compatible design system with design tokens and
+  shadcn/ui, enabling code-generation tools to assemble interfaces
+  from established components. Shipped WCAG, ARIA, and Cypress
+  accessibility improvements directly to production.
 
 
 Complex NTWRK — Toronto, Ontario
@@ -180,7 +184,7 @@ Viafoura:
 - Led the design of a commenting and chat tool utilized by USA Today,
   The Telegraph, The Globe and Mail, CBC, The Independent, and Dow Jones and
   many more to help foster community engagement on their websites.
-- Developed a data segmenting and insights tool that tracks user behaviour and
+- Developed a data segmenting and insights tool that tracks user behavior and
   engagement to help media publishers understand user preferences.
 Volkswagen:
 - Designed a car comparison tool for Volkswagen that serves 112,000+ customers a

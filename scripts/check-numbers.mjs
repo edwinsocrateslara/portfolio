@@ -165,9 +165,9 @@ const NAMED_FACTS = [
     states: {
       "lib/sources/voice.md": "457 feedback posts",
       "lib/vibe-projects.ts": "457 feedback posts",
-      // The 2026 résumé states it too. Bound the day it was added, so a figure
-      // that arrived ungoverned did not stay that way.
-      "lib/sources/resume.txt": "457 posts and counting",
+      // The 2026 résumé stated it too, bound the day it was added, and
+      // dropped it on 25 November with the rest of the Ideas Dashboard's
+      // detail. Still a two-file binding — voice.md and vibe-projects.ts.
     },
   },
   {
@@ -176,7 +176,8 @@ const NAMED_FACTS = [
     states: {
       "lib/sources/voice.md": "roughly 300 evaluated",
       "lib/vibe-projects.ts": "~300 evaluated per run",
-      "lib/sources/resume.txt": "evaluates ~300 posts weekly",
+      // The résumé said "evaluates ~300 posts weekly" until 25 November, when
+      // it dropped the figure. Still two files.
     },
   },
   {
@@ -185,6 +186,11 @@ const NAMED_FACTS = [
     states: {
       "lib/sources/voice.md": "10 strategic priorities",
       "lib/vibe-projects.ts": "10 strategic priorities per week",
+      // BOUND 25 NOVEMBER, and it should have been all along: the résumé said
+      // "surfacing 10 priorities" from the day it gained the Ideas Dashboard,
+      // ungoverned. When the résumé dropped 457 and ~300, this became the one
+      // Ideas Dashboard figure it still states — so it is the one held.
+      "lib/sources/resume.txt": "10 priorities each week",
     },
   },
   {
