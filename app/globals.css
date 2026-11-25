@@ -1855,6 +1855,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    aria-current, which is set from the URL on the server, so a hard load of
    /resume arrives with Resume active before any script runs. */
 .site-header {
+  position: relative;
   grid-column: 1 / -1;
   grid-row: 1;
   height: var(--header-h);
@@ -1863,7 +1864,47 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   align-items: stretch;
   margin: 0 calc(-1 * var(--space-within));
   padding: 0 calc(var(--space-32) + var(--space-within)) 0 calc(var(--rail-inset) + var(--space-within));
-  border-bottom: 1px solid var(--hairline);
+  /* THE LINE IS DRAWN BY ::after, NOT THIS BORDER (25 November), so it can
+     slide over the gap once the pane is scrolled. The border stays, clear,
+     so the bar's box — and every figure measured from it — is exactly what
+     it was with a real border: the line still lands on its last row, y=47. */
+  border-bottom: 1px solid transparent;
+}
+/* THE COVERING EDGE. At rest it is the header's line, on the border row. Once
+   the pane's content is scrolled (.shell[data-scrolled="true"], set from the
+   pane's scroll position in app-shell.tsx), it slides down --space-within so
+   it sits on the LAST ROW OF THE GAP, directly above the panels' top edge:
+   content then passes under a solid edge instead of being cut 8px below one.
+   On the last row of the gap, not on the panels' first row, because the
+   hairline is translucent and would read lighter over the panels than over
+   the black, uneven along its length. The panels do not move. Back at the
+   top the line returns and the gap shows again.
+
+   Quick and plain: 120ms, ease-out, transform only. Off entirely under
+   prefers-reduced-motion — it jumps, which is the point of the setting. */
+.site-header::after,
+.shell-topbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* top: 100% of the padding box is the first row of the clear border, y=47;
+     a zero-height box with a 1px top border draws the line there. A border,
+     like every other hairline here, rather than a 1px height and a -1px
+     offset, which check:design rejects as off the 4px grid. */
+  top: 100%;
+  height: 0;
+  border-top: 1px solid var(--hairline);
+  transition: transform 120ms ease-out;
+  pointer-events: none;
+}
+.shell[data-scrolled="true"] .site-header::after,
+.shell[data-scrolled="true"] .shell-topbar::after {
+  transform: translateY(var(--space-within));
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header::after,
+  .shell-topbar::after { transition: none; }
 }
 .site-header-brand {
   display: flex;
@@ -2477,7 +2518,9 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     align-items: center;
     justify-content: space-between;
     padding: var(--space-16) var(--space-20);
-    border-bottom: 1px solid var(--hairline);
+    /* Clear, with the line drawn by ::after — see .site-header::after. */
+    position: relative;
+    border-bottom: 1px solid transparent;
   }
   .pane {
     margin: 0 var(--space-within) var(--space-within);
