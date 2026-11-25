@@ -1654,6 +1654,15 @@ outside it renders silently in `next/og`'s bundled Noto Sans, so changing the
 name means regenerating the subset. Its four inline type properties are in
 `check:design`'s ALLOW with the reason: satori has no stylesheet.
 
+**Every page names it explicitly** (`lib/page-metadata.ts`, 24 November). The
+file convention attaches the card to the root's Open Graph, and a page that
+states its own Open Graph — which every routed page must, or its link preview
+would carry the home page's title — replaces that object whole, image
+included. The first build of the routing work's metadata shipped no `og:image`
+on any page for that reason; `check:routes` now fails a page without one. The
+explicit URL carries no content hash, so after changing the card, refresh it in
+LinkedIn's Post Inspector rather than waiting for the cache.
+
 ## Chat column alignment
 
 The messages pane scrolls and the input does not, so the scrollbar takes

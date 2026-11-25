@@ -1,7 +1,7 @@
 // "/" — the front door. The shell is rendered by app/(site)/layout.tsx, which
 // every route in this group shares; this page only marks the route as existing
 // and carries no content of its own. Title and description are the site's
-// defaults, from app/layout.tsx.
+// own (lib/page-metadata.ts); the canonical is "/".
 //
 // THE RÉSUMÉ USED TO BE PARSED HERE and passed down. It is not any more: a
 // prop is serialised into this page's HTML, so every visitor received 6 roles,
@@ -10,6 +10,10 @@
 // (app/(site)/resume/page.tsx), so it is in that page's HTML and no other —
 // one source, delivered to the people who ask for it. (Between 0a98e7b and 24
 // November the pane fetched it from /api/resume, which no longer exists.)
+import { pageMetadata, SITE_DESCRIPTION, SITE_TITLE } from "@/lib/page-metadata"
+
+export const metadata = pageMetadata({ path: "/", title: SITE_TITLE, description: SITE_DESCRIPTION })
+
 export default function HomePage() {
   return null
 }

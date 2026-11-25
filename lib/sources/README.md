@@ -257,8 +257,11 @@ is no ESLint config in the repo and no ESLint dependency — so the script was
 not a broken gate, it was the appearance of one.
 
 It has been removed. What actually guards this repo is `npm run build`, which
-runs `check:sources`, `check:design` and `check:chips` before `next build`, plus
-`tsc` through the build itself. Those check things a linter cannot: that a
+runs `check:sources`, `check:design` and `check:chips` before `next build`,
+`tsc` through the build itself, and `check:routes` after it — the one gate that
+reads the build's OUTPUT, because what search and link previews receive is
+decided by Next's metadata merging and can only be seen in the HTML (added 24
+November with the routing work). Those check things a linter cannot: that a
 quoted string matches its source, that a figure is stated the same way in every
 file, that alt text obeys a written rule, that a chip routes to the answer it
 names.
@@ -333,7 +336,8 @@ running it:
 
 - **It is not one of the build's gates.** `npm run build` runs
   `check:sources` (8 gates), `check:design` (2: design and fallback) and
-  `check:chips` — 11 in all. This script is in neither the build chain nor CI. Its own header says so and says why: compared against `main` from
+  `check:chips` before `next build`, and `check:routes` after it — 12 in all.
+  (It said 11 until check:routes arrived, 24 November.) This script is in neither the build chain nor CI. Its own header says so and says why: compared against `main` from
   `main` it is self-referential and passes trivially, and a gate that always
   passes is worse than no gate.
 - **There is no stored baseline to update.** `--base` is a runtime argument

@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { projects } from "@/lib/projects"
 import { vibeProjects } from "@/lib/vibe-projects"
+import { pageMetadata } from "@/lib/page-metadata"
 
 // /work/<slug> — a project's THREAD, not a page (PRODUCT.md, "A URL addresses
 // a thread, never a page"). The shell renders it: on a fresh load its first
@@ -22,13 +23,18 @@ export function generateStaticParams() {
   return LISTED.map((p) => ({ slug: p.slug }))
 }
 
-// The title is the project's own fields, from lib/projects.ts — its source of
-// truth — not copy written for this page. Descriptions and link-card details
-// are the search piece of the routing work.
+// Title and description are the project's own fields, from lib/projects.ts —
+// its source of truth for project copy — not copy written for this page. The
+// description is the tagline: the first thing the thread itself says.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const p = LISTED.find((x) => x.slug === slug)
-  return p ? { title: `${p.projectTitle} — ${p.client} · Edwin Socrates Lara` } : {}
+  if (!p) return {}
+  return pageMetadata({
+    path: `/work/${p.slug}`,
+    title: `${p.projectTitle} — ${p.client} · Edwin Socrates Lara`,
+    description: p.tagline,
+  })
 }
 
 export default function ProjectPage() {

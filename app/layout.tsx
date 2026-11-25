@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next"
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/page-metadata"
 import { Archivo, IBM_Plex_Mono } from "next/font/google"
 import "./globals.css"
 
@@ -33,20 +34,24 @@ const ibmPlexMono = IBM_Plex_Mono({
 // preload/display measurements that chose its loading strategy are kept in
 // DESIGN.md § Typography, because they are the method for the next face.
 
-const TITLE = "Edwin Socrates Lara — Product Design Portfolio"
-const DESCRIPTION =
-  "Ask me about Edwin Socrates Lara's product design work — case studies, process, and background."
-
-// THE LINK PREVIEW. og:image comes from app/opengraph-image.tsx by file
-// convention; title and description are stated here so a preview does not
-// depend on a scraper falling back to <title>. No metadataBase: on Vercel, Next
-// resolves the image URL against VERCEL_PROJECT_PRODUCTION_URL when none is
-// set (next/dist/lib/metadata/resolvers/resolve-url.js), which is the
-// production domain.
+// THE LINK PREVIEW AND THE CANONICAL ORIGIN. og:image comes from
+// app/opengraph-image.tsx by file convention. metadataBase is the production
+// origin, so every canonical, og:url and og:image is absolute and names
+// www.edwinsocrateslara.com. (Until 24 November there was none, on the
+// reasoning that Vercel resolves against VERCEL_PROJECT_PRODUCTION_URL; that
+// covered the image and nothing else, and canonical URLs need an origin.)
+//
+// Each page states its own title, description, canonical and Open Graph
+// through lib/page-metadata.ts — see the note there for why none of those
+// belongs here. These are the defaults for anything that does not.
 export const metadata: Metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "website" },
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  openGraph: { title: SITE_TITLE, description: SITE_DESCRIPTION, siteName: SITE_NAME, type: "website" },
+  // X and Bluesky fall back to og:image for the picture; this only asks for
+  // the large card rather than a thumbnail.
+  twitter: { card: "summary_large_image" },
 }
 
 export const viewport: Viewport = {

@@ -1,5 +1,6 @@
 import { ResumePane } from "@/components/resume/resume-pane"
 import { resume } from "@/lib/resume"
+import { pageMetadata } from "@/lib/page-metadata"
 
 // /resume — the résumé, rendered on the server into this page's HTML. The
 // shell (app/(site)/layout.tsx) places it in the pane and marks the rail's
@@ -13,10 +14,11 @@ import { resume } from "@/lib/resume"
 // The description is the résumé's own PROFESSIONAL SUMMARY, parsed from
 // resume.txt — not copy written for this page. A description is what a search
 // result shows, so it is a claim about Edwin and has to be sourced like one.
-export const metadata = {
+export const metadata = pageMetadata({
+  path: "/resume",
   title: "Resume — Edwin Socrates Lara",
   description: resume.summary,
-}
+})
 
 export default function ResumePage() {
   return <ResumePane resume={resume} />
