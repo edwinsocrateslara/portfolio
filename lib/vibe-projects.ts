@@ -59,7 +59,8 @@ import type { Project } from "./projects"
 // triggers open its reveal, Edwin's proudest answer still describes it, the
 // model's reference document still carries it, the résumé bullet stands, and
 // every gate still reads it. It gets no URL and no sitemap entry, and opening
-// it from chat does not change the address bar (PRODUCT.md, "A URL addresses
+// it from chat does not change the address bar, except that from another
+// project's URL the address moves to "/" (PRODUCT.md, "A URL addresses
 // a thread, never a page").
 //
 // WHY: TEMPORARY CURATION, NOT CONFIDENTIALITY. Edwin is building better

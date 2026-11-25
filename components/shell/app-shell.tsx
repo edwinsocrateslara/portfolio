@@ -517,12 +517,23 @@ export function AppShell({
   )
 
   // Opening a project: navigation if it has a URL — a push, so back returns
-  // where the visitor was — and the thread directly if it does not. The
-  // off-rail project opens without touching the address bar (PRODUCT.md).
+  // where the visitor was — and the thread directly if it does not.
+  //
+  // THE OFF-RAIL PROJECT HAS NO URL, and opening it normally leaves the
+  // address bar alone. THE ONE EXCEPTION (ruled 24 November, recorded in
+  // PRODUCT.md): opened while the address is another project's /work/<slug>,
+  // the address moves to "/". Left alone it would claim E-commerce while the
+  // screen showed the Ideas Dashboard — a refresh or a shared link would land
+  // on the wrong project. "/" claims nothing. A push, so back returns to the
+  // project the visitor was reading.
   const goToProject = useCallback(
     (slug: string) => {
-      if (addressable.has(slug)) router.push(`/work/${slug}`)
-      else openProjectThread(slug)
+      if (addressable.has(slug)) {
+        router.push(`/work/${slug}`)
+        return
+      }
+      openProjectThread(slug)
+      if (slugFromPath(pathnameRef.current, addressable)) router.push("/")
     },
     [addressable, router, openProjectThread]
   )
@@ -814,14 +825,16 @@ export function AppShell({
   const prevPathRef = useRef(pathname)
   useEffect(() => {
     if (prevPathRef.current === pathname) return
-    const from = prevPathRef.current
     prevPathRef.current = pathname
     const slug = slugFromPath(pathname, addressable)
     if (slug) {
       openProjectThread(slug)
-    } else if (pathname === "/" && slugFromPath(from, addressable)) {
-      // Leaving a project's URL for "/" leaves its thread. An off-rail thread
-      // opened AT "/" is not touched: it never had a URL to leave.
+    } else if (pathname === "/" && addressable.has(activeThreadRef.current)) {
+      // "/" never shows an ADDRESSABLE project's thread — that thread has a
+      // URL of its own, and "/" would be claiming it. So arriving at "/" with
+      // one open (back from /work/x, say) returns to home. An off-rail thread
+      // is left alone: it has no URL, so "/" is its honest address — whether
+      // it was opened at "/" or moved there by the exception in goToProject.
       setCurrentProjectSlug(null)
       switchThread(HOME_THREAD)
     }

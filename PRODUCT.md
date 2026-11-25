@@ -120,7 +120,13 @@ context but has no way to ask for one. So it is supplied, not discovered.
     address the lasting things — projects and documents.
   - A project that is in the conversation but deliberately not listed (the
     off-rail vibe project, 24 November) gets no URL either, and opening it
-    from chat does not change the address bar.
+    from chat does not change the address bar — **with one deliberate
+    exception, ruled the same day:** opened while the address is another
+    project's `/work/<slug>`, the address moves to `/`. The rule was "don't
+    give it a URL", not "leave a wrong one showing": a URL claiming
+    E-commerce while the screen shows the Ideas Dashboard is worse than no
+    URL, because a refresh or a shared link lands on the wrong project, and
+    `/` claims nothing. It is a push, so back returns to the project.
   
   The honest cost, accepted: a visitor can now arrive on a project, read it,
   and leave without typing. That was already true of a rail click; a URL makes
