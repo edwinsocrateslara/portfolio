@@ -2018,19 +2018,33 @@ rail is `--bureau-rail` (`#292929`). Each is a token named for its job.
   solved over `#131313`; over black they would land on other greys. A panel
   is an opaque ground, and the layers sit inside it and stay compositional.
 - **One gap, one level: `--space-within` (8).** "Parts of one thing": the
-  header, the rail and the pane are three parts of one surface. The same 8
-  sits under the header, between the panels and round the outside.
-  `--space-between` (16) under the header alone would make it a different
-  kind of thing from the panels, not its own band among them. At 380 the top
-  bar is the header and gets the same gap above the pane panel and the sheet.
+  header, the rail and the pane are three parts of one surface. The 8 sits
+  between the panels and round the outside.
+- **REVERSED THE SAME DAY: no gap under the header; content runs under the
+  bar.** The first build put the same 8 under the header, ruled as *what
+  makes the header its own band rather than a lid* (and `--space-between`
+  there was rejected as making it a different kind of thing). That reasoning
+  is kept here because the reversal is not a correction of it: the gap did
+  its job, and its job turned out to block the one Edwin wanted, content
+  running up under the bar the way a sticky header works. The gap stopped it
+  at the panel's top edge instead. The header is opaque black, so "under the
+  bar" and "cut at its line" look identical: the panels now **meet the
+  header's line**, both of them (the rail could have kept its gap; rendered
+  both ways, the two tops lining up was chosen), with **square top
+  corners**, because rounded ones would leave black notches at each end of the
+  line. Bottom corners keep 12. At 380 the pane and the sheet meet the top
+  bar's line the same way. The fold did not move: headline 225, input 373,
+  first chip 439 at 1440×900; 157 and 381 at 380.
 - **Radius: `--bureau-radius-card` (12),** whose table already lists "panels".
   No rule bends. The brief for this change said it would break a "2px flat
   radius" rule; that premise was outdated, Edwin's own, from a doc line rather
   than the code. The flat 2px was retired on 12 August (`2d52398`), see Radius.
 - **The rail's right border retires;** the black gap separates the panels.
-- **The header keeps a bottom border, edge to edge, AND the gap** (Edwin, 25
-  November). They do two jobs: the border marks the header's band across the
-  whole viewport, 0 to 1440; the gap separates the panels from that band.
+- **The header keeps a bottom border, edge to edge** (Edwin, 25 November),
+  ruled alongside the gap below it as two devices for two jobs: the border
+  marks the band across the whole viewport, 0 to 1440; the gap separated the
+  panels from it. The gap was then reversed (above); the line stays, and is
+  now the edge content scrolls up to and under.
   (The first build left the border out as "two devices doing one job", which
   was true only while both were read as separating the panels. Superseded by
   this ruling.) It sits at the bottom of the 48, inside it: the header is
@@ -2067,9 +2081,11 @@ header links, a rail project, back, back, forward and the mark, with 0
 document loads; with JavaScript off, the server's HTML marks Resume, About
 and Case Study active on their own routes and nothing on `/` or a project.
 
-**The fold, re-measured.** The panels start 56 down (header 48 + gap 8), so the
-headline offset now subtracts the gap as well as the header (§ the front
-door). Headline 225, input 373, first chip 439 at 1440×900, the same as
+**The fold, re-measured.** (While the gap under the header existed:) the panels
+started 56 down (header 48 + gap 8), so the headline offset subtracted the gap
+as well as the header (§ the front door). With the gap reversed they start at
+the line, 48, and the gap's subtraction is gone. Headline 225, input 373, first
+chip 439 at 1440×900 in every version, the same as
 before, and the same at 1280×800 (200) and 1440×700 (175). The pane is 8px
 shorter at the bottom, so the front door scrolls 70 instead of 62 (220 instead
 of 212 at 700 tall). At 380 the mobile offset subtracts the gap too: headline
@@ -2166,6 +2182,42 @@ THERE: run the browser tools at 1440 and 380; run a build-output gate under
 Vercel's adapter; check a deploy, not a push. A gate proved only where it was
 written has been proved somewhere else.
 
+**A SAMPLE OF 30 EXPLAINED BY INSPECTING 1** (25 November) — a third failure
+mode, distinct from both above. Those were gates checked in the wrong place;
+this is evidence read in the wrong amount. Investigating content showing in
+the gap under the header, a scroll sampler found lit pixels in that gap in up
+to 25 of 30 mid-scroll frames. ONE frame was inspected; in it the whole page,
+header included, sat 2px high (a torn capture), and that explanation was
+applied to all of them. "Nothing paints in the gap" was then reported twice,
+and the owner's own screenshot showed text in it.
+
+Re-run properly, every frame classified, the 129 lit frames were in fact all
+torn, so the conclusion happened to hold for headless Chrome. It was luck,
+not evidence, and it said nothing about the owner's screen, where the frame
+was not torn: the header and both panels sat exactly where the layout puts
+them, and only the text crossed its clip.
+
+**How the investigation ended, so it does not read as unfinished.** There was
+no clip bug. Edwin was describing THIS CHAT INTERFACE'S scroll behaviour
+(content running up under a fixed bar) while pointing at the site, where the
+pane was working as built: content clipped at the panel's top edge, 8px
+below the header's line. Every capture of the site, in headless Chrome and in
+his own Chrome mid-scroll, showed exactly that; the one frame that did not
+was never reproduced, and the investigation was closed by the
+misunderstanding being found, not by a cause. What he wanted became the
+reversal under § The shell: content runs under the bar. (His words: "I was
+describing this chat's scroll behaviour while pointing at my site, and chased
+a clip bug that was the panel working as built.")
+
+So: **when a sample disagrees with a conclusion, classify every member of it.
+Inspecting one explains one.** If the sample is too large to look at, write
+the classifier (what makes a frame "torn" and what makes it "the bug") and
+count each class. And two more things that came out of the same incident:
+layout measurements (bounding boxes, hit-tests, scroll offsets) report where
+boxes ARE, not where pixels are painted, so they cannot see a painting bug at
+all; and a still capture taken after a scroll settles cannot see anything
+that happens only while it moves.
+
 **Two project sections, WORK and VIBE CODING**, sharing one `ProjectSection`
 component. They are the same thing with different contents; a second copy of
 the markup would be a second place for the active treatment, the thumbnail
@@ -2254,10 +2306,11 @@ the documents in the header and VIBE CODING empty, the rail is WORK's seven
 rows and the pinned contact footer (the mark left for the header on 25
 November) — and it no longer scrolls at any desktop size measured. What it has
 instead is empty space between the last project row and the footer:
-**304px at 1440×900, 204 at 1280×800, 104 at 1440×700**, re-measured on the
-panels build (25 November). Each is 24 more than before: the 88px brand row
-left the rail, which now starts 56 down in a panel that ends 8 short of the
-viewport. It was 280 / 180 / 80 on 24 November. Ruled fine, not overlooked: the VIBE CODING
+**312px at 1440×900, 212 at 1280×800, 112 at 1440×700**, re-measured after
+the panels met the header's line (25 November). It was 304 / 204 / 104 on the
+first panels build, where the rail started 56 down below a gap; 8 more now
+that it starts at the line, 48. It was 280 / 180 / 80 on 24 November, before
+the 88px brand row left the rail. Ruled fine, not overlooked: the VIBE CODING
 section returns into that space when its new entries are ready (a section
 costs 128, below), and the footer stays pinned exactly where it is — the mail
 and LinkedIn icons do not move. Do not close the gap by unpinning the footer:
@@ -2472,12 +2525,13 @@ chips was then a *remainder*: whatever the band had left over, 161px at
 1440×900. That is why it was never on the relatedness ladder. Nobody set it.
 
 `--hero-anchor` is where the headline sits, measured from the top of the
-viewport. **Since 25 November it is `calc(25dvh - var(--header-h) -
-var(--space-within))`: the offset compensates for the header AND the gap below
-it**, which put the pane 56 down; re-measured, headline 225, input 373, first
-chip 439, the page scrolling 70 (62 before the pane lost 8 at the bottom).
-From 24 to 25 November it was `calc(25dvh - var(--header-h))`, which
-compensated for the documents header alone, which put the band 48px down,
+viewport. **It is `calc(25dvh - var(--header-h))`: the offset compensates for
+the header**, which puts the pane 48px down. For part of 25 November it also
+subtracted `--space-within`, for a gap between the header and the panels; the
+gap was reversed (content runs under the bar, § The shell) and the term went
+with it. Re-measured with the panels: headline 225, input 373, first chip 439,
+the page scrolling 70 (62 before the pane lost 8 at the bottom). It was first
+`calc(25dvh - var(--header-h))` on 24 November, for the documents header, which put the band 48px down,
 so the headline stays at 225 at 1440×900. If the header ever goes, the
 subtraction goes with it, or the headline sits 48px high with nothing to say
 why. Re-measured with the header in place: headline 225, input 373, sampler

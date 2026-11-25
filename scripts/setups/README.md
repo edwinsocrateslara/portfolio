@@ -39,6 +39,13 @@ and failed where they ran. Before a gate ships, ask **where does this actually
 run?** — and prove it there (DESIGN.md § The rail has both incidents). And a
 push is not the deliverable; the deploy is.
 
+**And when a sample disagrees with a conclusion, classify every member of
+it.** On 25 November a scroll sampler found lit pixels in the header's gap in
+up to 25 of 30 frames; one frame was inspected, found torn, and that
+explanation was applied to all thirty. Inspecting one explains one. Count the
+classes (DESIGN.md § The rail has the incident, and what layout measurements
+and settled captures cannot see).
+
 Select by those handles, never by position, and take the VISIBLE copy of a
 document link with a fallback to the first: at 900px and below the only copy
 is in the closed mobile sheet, hidden, and a click on it still navigates.

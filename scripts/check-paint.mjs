@@ -274,7 +274,9 @@ for (const c of CASES) {
   // must not be able to mistake "still arriving" for "arrived empty".
   await sleep(7000)
 
-  // The region, INSET BY THE PANE'S CORNER RADIUS so the rounded corners — the
+  // The region, INSET BY THE PANE'S LARGEST CORNER RADIUS (the top corners are
+  // square and the bottom ones 12 since 25 November, so the top-left alone
+  // would read 0) so the rounded corners — the
   // black backdrop showing through — are never sampled as content. And the
   // ground: the pane panel's own computed background. A pane with no opaque
   // ground is a FAILURE, not a guess: then nothing here can tell content from
@@ -286,7 +288,7 @@ for (const c of CASES) {
     const cs = getComputedStyle(panel)
     const m = /rgba?\\(([\\d.]+),\\s*([\\d.]+),\\s*([\\d.]+)(?:,\\s*([\\d.]+))?\\)/.exec(cs.backgroundColor)
     const ground = m && (m[4] === undefined || Number(m[4]) === 1) ? [+m[1], +m[2], +m[3]] : null
-    const r = Math.ceil(parseFloat(cs.borderTopLeftRadius) || 0)
+    const r = Math.ceil(Math.max(...[cs.borderTopLeftRadius, cs.borderTopRightRadius, cs.borderBottomLeftRadius, cs.borderBottomRightRadius].map((v) => parseFloat(v) || 0)))
     const b = el.getBoundingClientRect()
     const x = Math.round(b.x) + r, y = Math.round(b.y) + r
     return { ground, groundCss: cs.backgroundColor, x, y,
