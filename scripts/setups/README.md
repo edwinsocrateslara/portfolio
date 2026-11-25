@@ -32,6 +32,13 @@ were made by the gate's own author, in the same session, and found only by
 running these. The gate covers what has been seen; running the tools is how
 the next thing gets seen.
 
+**The same day, the same pattern again:** check:routes passed on this machine
+and failed every Vercel deploy, because Vercel's adapter writes the build
+output somewhere else. Both were gates that passed where they were written
+and failed where they ran. Before a gate ships, ask **where does this actually
+run?** — and prove it there (DESIGN.md § The rail has both incidents). And a
+push is not the deliverable; the deploy is.
+
 Select by those handles, never by position, and take the VISIBLE copy of a
 document link with a fallback to the first: at 900px and below the only copy
 is in the closed mobile sheet, hidden, and a click on it still navigates.

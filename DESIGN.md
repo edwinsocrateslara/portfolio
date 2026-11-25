@@ -1963,6 +1963,47 @@ the gate, and were found only by running the tools at 380.** A gate covers
 the class someone has already seen. Running the tools is how the next class
 gets seen.
 
+**A gate that reads BUILD OUTPUT can fail only in CI — a different class, and
+the first one broke the first deploy after it shipped** (24 November).
+Every gate before `check:routes` read source, so it ran the same everywhere.
+`check:routes` reads what `next build` wrote, and where Next writes depends on
+who runs it: Vercel's build machines set `NEXT_ENABLE_ADAPTER=1`, Next runs
+under Vercel's adapter ("Applying modifyConfig from Vercel" in the log), and
+prerendered pages go to `.next/server/route-cache/<kind>/<route key>/$/`
+instead of `.next/server/app/`. The gate passed here on every run, including
+`vercel build` run here, and failed every Vercel deploy from 51106e6 on, with
+13 "not static" problems right under a build log listing all 20 pages
+prerendered. Four deploys failed — piece 5 (00:26 UTC), item 3, item 4, the
+tools commit (01:59 UTC) — and the live site stayed on f08fdee, with nothing
+saying so except a red Vercel status on each commit that nobody looked at,
+until the owner read the log.
+
+So: **a gate that reads build output is proven in the deploy's environment,
+not this machine's.** For this repo that means running it after
+`NEXT_ENABLE_ADAPTER=1 npx vercel@<the version in Vercel's log> build --prod`
+on a scratch copy — that reproduced the 13 problems exactly, and is what the
+fix was proved against. And such a gate must fail as "I can't find the
+output" when it can't find the output, never as a verdict on the pages:
+check:routes now says BUILD OUTPUT LAYOUT NOT RECOGNISED when neither layout
+is present.
+
+**The push is not the deliverable; the deploy is.** "Pushed" was reported
+four times and read as "live" for two hours while every one of those deploys
+had failed. After a push, wait for the commit's Vercel status and report the
+deploy's outcome — Ready, or the failure — never the push alone.
+
+**ONE PATTERN, NOT TWO.** Both incidents on 24 November were gates that
+PASSED WHERE THEY WERE WRITTEN AND FAILED WHERE THEY RAN. check:tools was
+proved in the build and the breaks it was written for live in tools no build
+runs (the 380 class it cannot see was found only by running them).
+check:routes was proved on this machine and broke on Vercel's. In both, the
+place the gate was checked was not the place the thing it guards happens.
+So before a gate ships, ask it **"where does this actually run?"** — which
+machine, which environment, which width, which builder — and prove it
+THERE: run the browser tools at 1440 and 380; run a build-output gate under
+Vercel's adapter; check a deploy, not a push. A gate proved only where it was
+written has been proved somewhere else.
+
 **Two project sections, WORK and VIBE CODING**, sharing one `ProjectSection`
 component. They are the same thing with different contents; a second copy of
 the markup would be a second place for the active treatment, the thumbnail

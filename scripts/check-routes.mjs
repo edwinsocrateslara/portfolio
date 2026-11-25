@@ -38,16 +38,87 @@
 //
 // The addressed set is DERIVED from lib/projects.ts and lib/vibe-projects.ts,
 // the same lists the rail and app/(site)/work/[slug] read.
-import { existsSync, readFileSync } from "fs"
+//
+// ── TWO OUTPUT LAYOUTS, AND THE DEPLOY THIS GATE BROKE ───────────────────
+//
+// This gate shipped in 51106e6 reading .next/server/app/<page>.html — where a
+// plain `next build` puts prerendered pages, on this machine and in
+// `vercel build` run here. EVERY VERCEL DEPLOY FROM THAT COMMIT ON FAILED
+// with 13 problems (11 pages, the sitemap, robots), while the build output
+// directly above the failure listed all of them prerendered. The gate was
+// wrong, not the build.
+//
+// Why only there: Vercel's build machines set NEXT_ENABLE_ADAPTER=1, and
+// @vercel/next then sets NEXT_ADAPTER_PATH to its Next adapter (the log line
+// "Applying modifyConfig from Vercel"). Under the adapter, Next writes each
+// prerendered file to
+//     .next/server/route-cache/<APP_PAGE|APP_ROUTE>/<route key>/$/<page>
+// and .next/server/app keeps its directories but no .html or .body files — so
+// the old existence check found the folder and none of the files. Reproduced
+// here exactly (13 problems) with NEXT_ENABLE_ADAPTER=1 and vercel@66.6.0
+// build, the CLI version in the failing log.
+//
+// So files are resolved by their path RELATIVE to the output root, in either
+// layout (outputFile below), and when NEITHER layout is present the gate says
+// so in one line instead of reporting every page as not static. Proved on
+// both: plain `npm run build`, and the adapter build.
+import { existsSync, readFileSync, readdirSync } from "fs"
 import { join } from "path"
 
 const ROOT = process.cwd()
-const OUT = join(ROOT, ".next/server/app")
+const SERVER = join(ROOT, ".next/server")
+const APP = join(SERVER, "app")
+const ROUTE_CACHE = join(SERVER, "route-cache")
 const problems = []
 
-if (!existsSync(OUT)) {
-  console.error("check:routes — no .next/server/app. Run `next build` first.")
+// rel path ("index.html", "work/ecommerce.html", "sitemap.xml.body") → file.
+// A plain `next build` writes .next/server/app only; the adapter build writes
+// route-cache only. BUT `next start` WRITES route-cache AT RUNTIME, for the
+// pages it serves (measured: 12 files after two requests) — so a local .next
+// that has been served has both, and the route-cache half is partial and was
+// not written by the build. (The first version of this fix read route-cache
+// first and claimed a plain build writes both; it was reading a served .next.)
+// So .next/server/app wins whenever the build put pages there; route-cache is
+// read only when it did not — Vercel's adapter build. Inside route-cache, one
+// page under two route keys is a problem: which is served is unknowable here.
+const cache = new Map()
+const plain = new Map()
+const walk = (dir, base, fn) => {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, e.name), rel = base ? `${base}/${e.name}` : e.name
+    if (e.isDirectory()) walk(full, rel, fn)
+    else fn(rel, full)
+  }
+}
+if (existsSync(ROUTE_CACHE)) {
+  // .next/server/route-cache/<kind>/<route key>/$/<rel>
+  for (const kind of readdirSync(ROUTE_CACHE)) {
+    for (const key of readdirSync(join(ROUTE_CACHE, kind))) {
+      const root = join(ROUTE_CACHE, kind, key, "$")
+      if (existsSync(root)) walk(root, "", (rel, full) => cache.set(rel, [...(cache.get(rel) ?? []), full]))
+    }
+  }
+}
+if (existsSync(APP)) walk(APP, "", (rel, full) => { if (/\.(html|body)$/.test(rel)) plain.set(rel, full) })
+
+const inCache = cache.has("index.html"), inPlain = plain.has("index.html")
+const layout = inPlain ? ".next/server/app (plain next build)"
+  : inCache ? ".next/server/route-cache (Vercel's adapter build)"
+  : null
+if (!layout) {
+  console.error(
+    "check:routes — BUILD OUTPUT LAYOUT NOT RECOGNISED: no prerendered index.html in\n" +
+    "  .next/server/route-cache/*/*/$/ or .next/server/app/. Either `next build` has not run,\n" +
+    "  or Next has moved its output again: find where index.html went and teach outputFile()\n" +
+    "  in this gate. This is NOT evidence that the pages are dynamic."
+  )
   process.exit(1)
+}
+const outputFile = (rel) => {
+  if (inPlain) return plain.get(rel) ?? null
+  const hits = cache.get(rel) ?? []
+  if (hits.length > 1) problems.push(`${rel}: under ${hits.length} route keys in .next/server/route-cache — which is served is ambiguous: ${hits.map((h) => h.slice(ROOT.length + 1)).join(", ")}`)
+  return hits[0] ?? null
 }
 
 // The origin, read from the one place it is written rather than retyped.
@@ -66,13 +137,13 @@ const addressed = [...FIXED, ...listed.map((p) => `/work/${p.slug}`)]
 const decode = (s) => s.replace(/&amp;/g, "&").replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">")
 const all = (html, re) => [...html.matchAll(re)].map((m) => decode(m[1]))
 const meta = (html, attr, key) => all(html, new RegExp(`<meta ${attr}="${key.replace(/[:]/g, "\\:")}" content="([^"]*)"`, "g"))
-const fileFor = (path) => join(OUT, path === "/" ? "index.html" : `${path.slice(1)}.html`)
+const fileFor = (path) => outputFile(path === "/" ? "index.html" : `${path.slice(1)}.html`)
 const canonicalFor = (path) => (path === "/" ? SITE_URL : `${SITE_URL}${path}`)
 
 const titles = new Map()
 for (const path of addressed) {
   const file = fileFor(path)
-  if (!existsSync(file)) {
+  if (!file) {
     problems.push(`${path}: no prerendered HTML — the page is not static, or does not exist`)
     continue
   }
@@ -109,8 +180,8 @@ for (const path of addressed) {
   }
 }
 
-const sitemapFile = join(OUT, "sitemap.xml.body")
-if (!existsSync(sitemapFile)) problems.push("sitemap.xml: not in the build output")
+const sitemapFile = outputFile("sitemap.xml.body")
+if (!sitemapFile) problems.push("sitemap.xml: not in the build output")
 else {
   const locs = all(readFileSync(sitemapFile, "utf8"), /<loc>([^<]*)<\/loc>/g)
   const want = new Set(addressed.map((p) => `${SITE_URL}${p}`))
@@ -119,8 +190,8 @@ else {
   for (const p of offRailVibeProjects) if (locs.some((l) => l.endsWith(`/work/${p.slug}`))) problems.push(`sitemap.xml: lists the off-rail project ${p.slug}`)
 }
 
-const robotsFile = join(OUT, "robots.txt.body")
-if (!existsSync(robotsFile)) problems.push("robots.txt: not in the build output")
+const robotsFile = outputFile("robots.txt.body")
+if (!robotsFile) problems.push("robots.txt: not in the build output")
 else {
   const robots = readFileSync(robotsFile, "utf8")
   if (!robots.includes(`Sitemap: ${SITE_URL}/sitemap.xml`)) problems.push("robots.txt: does not name the sitemap on the production origin")
@@ -130,6 +201,7 @@ else {
 if (problems.length) {
   console.error(`\ncheck:routes — ${problems.length} problem(s)\n`)
   for (const p of problems) console.error(`  x ${p}`)
+  console.error(`\n  (read the ${layout} layout)`)
   process.exit(1)
 }
-console.log(`check:routes — PASS, ${addressed.length} pages: static, canonical, own title and preview, case study in each project's HTML; sitemap exact; robots names it`)
+console.log(`check:routes — PASS, ${addressed.length} pages: static, canonical, own title and preview, case study in each project's HTML; sitemap exact; robots names it — read the ${layout} layout`)
