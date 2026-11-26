@@ -15,7 +15,7 @@ import { SlideGrid } from "@/components/case-study/slide-grid"
 // slide count on its own line below it. Merged here into one metadata row: two
 // mono lines bracketing a heading made the heading look like a caption between
 // them, and the count and the name are the same kind of fact about the same
-// thing.
+// thing. (The count was removed from the row on 26 November.)
 export function DeckPane() {
   return (
     <div>
@@ -37,13 +37,15 @@ export function DeckPane() {
         </a>
       </div>
 
-      {/* Three peer facts, one separator. An earlier version used an em dash
-          between client and subject to bind them as one name and a middle dot
-          before the count — two weights for two kinds of join. Edwin's call is
-          that they read as a flat list, so they are punctuated as one. */}
+      {/* Two peer facts, one separator. THE SLIDE COUNT CAME OFF (26 November):
+          this read "client · subject · 21 slides", the count derived from
+          meridianDeck.slides.length, and its separator went with it so no dot
+          is left trailing. (An earlier version used an em dash between client
+          and subject to bind them as one name and a middle dot before the
+          count — two weights for two kinds of join. Edwin's call was that they
+          read as a flat list, punctuated as one.) */}
       <p className="type-label pane-meta">
-        {meridianDeck.client} · {meridianDeck.subject} ·{" "}
-        {meridianDeck.slides.length} slides
+        {meridianDeck.client} · {meridianDeck.subject}
       </p>
 
       {/* 3 columns, as on the old standalone page. The pane is narrower than
