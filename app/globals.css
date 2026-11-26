@@ -371,7 +371,7 @@
      Each bullet's word count restarts at 0, and bullet n begins n x this
      later, so a role's bullets start in a quick sequence instead of writing
      out one after another (which made the first Experience row take ~5.2s). */
-  --resume-bullet-stagger: 120ms;
+  --resume-bullet-stagger: 60ms;  /* 120ms until 26 November */
 
   /* App-shell rail. A measure, not spacing — like --prose-measure. */
   --rail-width: 264px;
