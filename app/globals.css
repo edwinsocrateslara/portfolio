@@ -2172,12 +2172,12 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   border-radius: var(--bureau-radius-chip);
   background: rgb(var(--bureau-accent));
 }
-/* Education. A ring rather than a filled mark: a degree is not an event on
-   the same axis as a job, and the ring says that without a second axis. */
-.resume-row-node[data-mark="open"] {
-  background: rgb(var(--bureau-bg));
-  border: 1px solid rgb(var(--bureau-text-muted));
-}
+/* EDUCATION'S DOTS ARE FILLED LIKE EXPERIENCE'S, since 26 November: Edwin
+   overrode the reason below, and the ring rule (data-mark="open", a
+   --bureau-bg fill with a 1px --bureau-text-muted border) is gone.
+   HISTORY — the reason it was a ring, kept as written: "A ring rather than a
+   filled mark: a degree is not an event on the same axis as a job, and the
+   ring says that without a second axis." */
 .resume-date-start {
   margin: 0;
   color: rgb(var(--bureau-text-primary));

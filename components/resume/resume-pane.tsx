@@ -372,7 +372,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
               <div className="resume-row-dates" />
               <div className="resume-row-rail" aria-hidden="true">
                 <span className="resume-row-line" />
-                <span className="resume-row-node" data-mark="open" />
+                <span className="resume-row-node" />
               </div>
               <div className="resume-row-body">
                 <p className="type-name resume-employer">{entry.qualification}</p>
