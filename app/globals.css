@@ -2103,10 +2103,16 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   margin: 0 0 var(--space-group);
   color: rgb(var(--bureau-text-secondary));
 }
-/* A thematic break, and an <hr> because that is what it is. The rules bracket
-   the tools block: one under the header, one above Experience. Education gets
-   none — it belongs to the spine above it, and a rule there would cut the one
-   axis the page is organised on. */
+/* A thematic break, and an <hr> because that is what it is. Since 26 November
+   the order is EXPERIENCE, TOOLS, EDUCATION, and the rules sit under the header
+   and either side of Tools — so Education now has a rule above it. That is
+   Edwin's override, choosing scan order (the order the three downloads were
+   always in) over the reason below, which is kept because the argument is
+   real:
+   HISTORY — when the order was Tools, Experience, Education: "The rules
+   bracket the tools block: one under the header, one above Experience.
+   Education gets none — it belongs to the spine above it, and a rule there
+   would cut the one axis the page is organised on." */
 .resume-rule {
   height: 1px;
   border: 0;

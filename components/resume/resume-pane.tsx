@@ -275,6 +275,46 @@ export function ResumePane({ resume }: { resume: Resume }) {
       <hr className="resume-rule" />
 
       <section className="resume-section">
+        <h2 className="type-section resume-heading" data-resolved="false">Experience</h2>
+        <div className="resume-spine">
+          {resume.roles.map((role) => {
+            const [start, end] = dateEnds(role.dates)
+            return (
+              <article
+                key={`${role.employer}-${role.dates}`}
+                className="resume-row"
+                data-resolved="false"
+              >
+                {/* A résumé is scanned by date and employer before it is read,
+                    so the dates take their own column rather than opening the
+                    paragraph. Start in primary, end muted: the pair reads as
+                    one fact with a beginning that matters more than its end. */}
+                <div className="resume-row-dates">
+                  <p className="type-attribute resume-date-start">{start}</p>
+                  {end && <p className="type-attribute resume-date-end">{end}</p>}
+                </div>
+                <div className="resume-row-rail" aria-hidden="true">
+                  <span className="resume-row-line" />
+                  <span className="resume-row-node" />
+                </div>
+                <div className="resume-row-body">
+                  <RoleBody role={role} />
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </section>
+
+      <hr className="resume-rule" />
+
+      {/* EXPERIENCE, TOOLS, EDUCATION since 26 November — scan order, matching
+          the three downloads, which were always in this order. Tools is
+          bracketed by the two rules either side of it. This overrides the
+          recorded reason Education used to follow Experience directly (see
+          .resume-rule in globals.css): it sat on the same spine, and the rules
+          kept off it. Edwin chose scan order over the spine. */}
+      <section className="resume-section">
         <h2 className="type-section resume-heading" data-resolved="false">Tools</h2>
         {/* Six labelled bands in source order, two columns, set in type. Not
             logos: fifty-five brand marks would be the only uncontrolled colour
@@ -329,43 +369,13 @@ export function ResumePane({ resume }: { resume: Resume }) {
       <hr className="resume-rule" />
 
       <section className="resume-section">
-        <h2 className="type-section resume-heading" data-resolved="false">Experience</h2>
-        <div className="resume-spine">
-          {resume.roles.map((role) => {
-            const [start, end] = dateEnds(role.dates)
-            return (
-              <article
-                key={`${role.employer}-${role.dates}`}
-                className="resume-row"
-                data-resolved="false"
-              >
-                {/* A résumé is scanned by date and employer before it is read,
-                    so the dates take their own column rather than opening the
-                    paragraph. Start in primary, end muted: the pair reads as
-                    one fact with a beginning that matters more than its end. */}
-                <div className="resume-row-dates">
-                  <p className="type-attribute resume-date-start">{start}</p>
-                  {end && <p className="type-attribute resume-date-end">{end}</p>}
-                </div>
-                <div className="resume-row-rail" aria-hidden="true">
-                  <span className="resume-row-line" />
-                  <span className="resume-row-node" />
-                </div>
-                <div className="resume-row-body">
-                  <RoleBody role={role} />
-                </div>
-              </article>
-            )
-          })}
-        </div>
-      </section>
-
-      <section className="resume-section">
         <h2 className="type-section resume-heading" data-resolved="false">Education</h2>
-        {/* Same spine, same columns, one difference: the node is a ring rather
-            than a filled mark. A degree is not an event on the same axis as a
-            job, and the source carries no dates for these — so the date column
-            is empty here rather than filled with a year nobody wrote down. */}
+        {/* Same spine, same columns as Experience. The node is the same filled
+            mark since 26 November; it was a ring until then ("a degree is not
+            an event on the same axis as a job"), a reason Edwin overrode, kept
+            in globals.css. The source carries no dates for these, so the date
+            column is empty here rather than filled with a year nobody wrote
+            down. */}
         <div className="resume-spine">
           {resume.education.map((entry) => (
             <article key={entry.qualification} className="resume-row" data-resolved="false">
