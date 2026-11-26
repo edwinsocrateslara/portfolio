@@ -4,7 +4,7 @@ import { DownloadMenu } from "@/components/resume/download-menu"
 import { Words, wordCount } from "@/components/chat/words"
 import { Fragment, useEffect, useRef } from "react"
 import { ArrowDownToLine } from "lucide-react"
-import { Shimmer } from "@/components/chat/shimmer"
+import { Sheen } from "@/components/chat/sheen"
 import { ICON_STROKE } from "@/lib/icons"
 import { DOCS, docFormats } from "@/lib/constants"
 import type { Resume, ResumeRole } from "@/lib/resume"
@@ -263,7 +263,7 @@ export function ResumePane({ resume }: { resume: Resume }) {
           <a className="chip type-action deck-download" href={DOCS["resume"].url} download>
             <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
             Download
-            <Shimmer />
+            <Sheen />
           </a>
         )}
       </div>

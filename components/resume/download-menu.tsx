@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { ArrowDownToLine, ChevronDown } from "lucide-react"
-import { Shimmer } from "@/components/chat/shimmer"
+import { Sheen } from "@/components/chat/sheen"
 import { ICON_STROKE } from "@/lib/icons"
 import type { DocFormat } from "@/lib/constants"
 
@@ -174,7 +174,7 @@ export function DownloadMenu({ formats, label }: { formats: readonly DocFormat[]
             the label is the affordance and the glyph only says there is more
             behind it. */}
         <ChevronDown className="download-caret" aria-hidden="true" strokeWidth={ICON_STROKE} />
-        <Shimmer />
+        <Sheen />
       </button>
 
       {open && (

@@ -63,9 +63,13 @@
   --highlight-inset:        rgb(255 255 255 / 0.12);
   --highlight-inset-strong: rgb(255 255 255 / 0.25);
 
-  /* The shimmer's rim. WHITE, not the accent — see DESIGN.md for what that
-     does to rule 6's second exception. */
-  --shimmer-ink: rgb(255 255 255);
+  /* THE SHEEN'S LIGHT (25 November): the band that sweeps a chip's face.
+     WHITE at an alpha, never the accent, so rule 6 stays out of it. Its own
+     value, not --highlight-inset's 0.12 pointed at: that is a wash inside a
+     control, this is a moving light across one. It replaced --shimmer-ink,
+     the solid white of the old shimmer's rim — white too, which is why
+     --accent-rim has had no reader since (DESIGN.md, "The masked rim"). */
+  --sheen-ink: rgb(255 255 255 / 0.10);
 
   /* THE ACCENT, DECLARED FOR A MASKED RIM. Same mechanism as --hero-glow and
      for the same reason: naming this token is a declaration of intent that a
@@ -104,7 +108,7 @@
   --dot-ink: rgb(255 255 255 / 0.12);
 
   /* --layer-1 FLATTENED over the ground, for the one place that needs an
-     opaque surface: the shimmer's backdrop, which cannot mask anything if it
+     opaque surface: the chip's backdrop (the shimmer's, now the sheen's), which cannot mask anything if it
      is translucent. Measured identical to --layer-1 on every surface a chip
      appears on — a pixel diff of the two came back 0. */
   --layer-1-flat: #1c1c1c;
@@ -3005,16 +3009,19 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   mask-image: radial-gradient(460px circle at 50% 42%, #000, transparent);
 }
 
-/* ── The shimmer on chips and download pills ────────────────────────────────
-   A rotating conic gradient behind an opaque backdrop, so what shows is a rim
-   about 0.7px wide — NARROWER THAN THE 2px RAIL BAR rule 6 already permits.
-   The declaration is a background; the rendered result is an edge, which is
-   what --accent-rim exists to say.
+/* ── The sheen on chips and download pills ─────────────────────────────────
+   A SOFT BAND OF LIGHT SWEEPING ACROSS THE PILL'S FACE, on a loop (25
+   November) — Magic UI Shiny Button's IDEA, ported the way the shimmer before
+   it was: CSS keyframes, no Motion, no library, no dependency. Looping rather
+   than on hover, so it runs on touch. White (--sheen-ink), never the accent,
+   so rule 6 has nothing to say about it. Off under reduced motion.
 
-   REPLACED THE BORDER BEAM, which failed on a pill for a geometric reason: its
-   offset-path ties the beam's radius to the beam's WIDTH, and a 9999px pill's
-   true radius is half its height. A conic gradient does not care about corner
-   radius at all.
+   It REPLACED THE SHIMMER: a rotating conic gradient masked by an opaque
+   backdrop down to a ~0.7px rim that travelled round the pill (it had itself
+   replaced the border beam, which could not follow a pill's radius). The rim's
+   measured tuning — the blur, not the inset, set its apparent width — went
+   with it; the record is in DESIGN.md. Everything below that was fixed by
+   measurement STAYS:
 
    THE BACKDROP MUST BE OPAQUE. --layer-1 is rgb(255 255 255 / 0.04) and a
    translucent backdrop cannot mask the spark — it bled through the middle of
@@ -3030,7 +3037,11 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    containing block for position:fixed descendants — the bug that broke the
    lightbox. It is a compositing hint, not a requirement, and the effect runs
    without it. */
-/* OVERFLOW: HIDDEN IS LOAD-BEARING, not tidiness. .shimmer-spark::before is
+/* (Measured on the shimmer's classes, and both still hold for the sheen: its
+   band sits a full pill-width outside the chip at rest, translateX(-100%), so
+   without the clip it would overflow the same way, and it is inset:0 absolute
+   like .shimmer was.)
+   OVERFLOW: HIDDEN IS LOAD-BEARING, not tidiness. .shimmer-spark::before is
    inset: -100%, so without the chip clipping it the pseudo-element overflows
    and inflates every ancestor's scrollHeight — measured, the résumé's
    .pane-scroll reported 7461px instead of 2887. That is invisible on screen
@@ -3045,67 +3056,50 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 
    isolation keeps the negative z-index layers inside the chip. */
 .chip { position: relative; overflow: hidden; isolation: isolate; }
-/* ── ⚠ THE PROPERTY NAMES LIE ABOUT WHICH ONE THINS THE RIM ────────────────
-   IF YOU ARE HERE TO MAKE THE RIM THINNER, CHANGE --shimmer-blur. Not the
-   inset. The names suggest the opposite and they are wrong.
 
-   --shimmer-inset is the backdrop's inset, and it sets the GEOMETRIC rim: the
-   strip of conic gradient the opaque backdrop does not cover. It is the
-   obvious lever and it is nearly powerless, because the layer is blurred.
-
-   --shimmer-blur is what you actually SEE. A 0.7px strip blurred by 1px paints
-   about 2.7px, so the blur contributes roughly four times what the strip does.
-
-   Measured, holding one and moving the other:
-
-     blur 2, inset 0.05em -> 0.69px geometric, 4.69px apparent
-     blur 2, inset 0.02em -> 0.27px geometric, 4.27px apparent    -9%
-     blur 0, inset 0.05em -> 0.69px geometric, 0.69px apparent   -85%
-
-   Cutting the geometric rim by 60% changed what you see by 9%. Turning the
-   blur off changed it by 85%.
-
-   AND NEITHER OF THE OTHER TWO NUMBERS IS A WIDTH LEVER. The spark's 100cqh
-   sets how much of the perimeter is lit at once; the conic gradient's 90deg
-   sets the wedge's angular extent. Both change the LENGTH and the brightness
-   of the travelling highlight and neither changes its thickness.
-
-   Chosen at 2.69px apparent, from four measured on the running site. The three
-   alternatives were flipped between at ?rim=fine|hair|wire and are gone with
-   the component that read them. */
-:root { --shimmer-inset: 0.05em; --shimmer-blur: 1px; }
-
-.shimmer {
+/* ── WHY NOT THE STOCK SHINY BUTTON (checked 25 November, from Magic UI's own
+   registry, https://magicui.design/r/shiny-button.json). Do not install it:
+     1. ITS BORDER SHINE IS INVALID CSS IN EVERY BROWSER. The inline
+        backgroundImage writes `var(--primary)/10%` — Tailwind's opacity
+        shorthand — inside a plain style attribute, where it is not a colour.
+        Tested: it computes to `none`, so the edge highlight never draws.
+     2. IT ASSUMES A DARK-MODE CLASS. Its dark styling is all `dark:` variants;
+        this repo sets no darkMode strategy, so Tailwind's default follows the
+        visitor's OS, and on a light-mode machine the label renders in its
+        light-mode rgb(0,0,0,65%): near-black on this site's dark pill. Its
+        glow classes also use Tailwind v4 syntax; this site is on 3.4.
+     3. IT LEAVES A TRANSFORM BEHIND. It is a motion.button animating scale
+        (0.8 -> 1 on mount, 0.95 on tap), which leaves a transform on the
+        element — the same class of thing as the transform-gpu above that
+        broke the lightbox, making it a containing block for position:fixed
+        descendants. It also ignores reduced motion, masks its own label so the
+        text fades as the band passes, needs `motion` and a `--primary` the site
+        does not have, renders a <button> only (two of these four pills are
+        <a download>), and its raw rgb() literals fail check:design ten times.
+   The transform HERE is on .sheen-band, a child, never on the pill. */
+.sheen-backdrop {
   position: absolute;
   inset: 0;
-  z-index: -30;
-  filter: blur(var(--shimmer-blur));
-  overflow: visible;
-  container-type: size;   /* without this the 100cqh below resolves to 0 */
-}
-.shimmer-spark {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: 1;
-  height: 100cqh;
-  animation: shimmer-slide 3s ease-in-out infinite alternate;
-}
-.shimmer-spark::before {
-  content: "";
-  position: absolute;
-  inset: -100%;
-  z-index: -30;
-  background: conic-gradient(from 225deg, transparent 0, var(--shimmer-ink) 90deg, transparent 90deg);
-  animation: shimmer-spin 6s infinite linear;
-}
-.shimmer-backdrop {
-  position: absolute;
-  inset: var(--shimmer-inset);
   z-index: -20;
   border-radius: inherit;
   background: var(--layer-1-flat);
 }
-.shimmer-highlight {
+/* THE BAND: a gradient as wide as the pill, its bright core a fifth of that,
+   carried from off the left edge to off the right by a transform (composited,
+   so seven of these at once cost nothing measurable), then held off the pill
+   for the rest of the cycle. 105deg leans it like light across a surface. The
+   pill's overflow: hidden is what clips it to the face. */
+.sheen-band {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, var(--sheen-ink) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: sheen-sweep 3s ease-in-out infinite;
+}
+.sheen-highlight {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -3113,14 +3107,12 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   box-shadow: inset 0 -8px 10px var(--highlight-inset);
   transition: box-shadow 0.3s ease-in-out;
 }
-.chip:hover .shimmer-highlight { box-shadow: inset 0 -6px 10px var(--highlight-inset-strong); }
-.chip:active .shimmer-highlight { box-shadow: inset 0 -10px 10px var(--highlight-inset-strong); }
-@keyframes shimmer-slide { to { transform: translate(calc(100cqw - 100%), 0); } }
-@keyframes shimmer-spin {
-  0%       { transform: rotate(0deg); }
-  15%, 35% { transform: rotate(90deg); }
-  65%, 85% { transform: rotate(270deg); }
-  100%     { transform: rotate(360deg); }
+.chip:hover .sheen-highlight { box-shadow: inset 0 -6px 10px var(--highlight-inset-strong); }
+.chip:active .sheen-highlight { box-shadow: inset 0 -10px 10px var(--highlight-inset-strong); }
+/* 0 -> 55%: the sweep, about 1.6s. 55% -> 100%: off the pill, a rest. */
+@keyframes sheen-sweep {
+  0%        { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
 }
 
 /* ── The résumé writing itself out ──────────────────────────────────────────
@@ -3189,9 +3181,9 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
     -webkit-text-fill-color: rgb(var(--bureau-text-primary));
     color: rgb(var(--bureau-text-primary));
   }
-  .shimmer-spark,
-  .shimmer-spark::before { animation: none; }
-  .shimmer-highlight { transition: none; }
+  /* Parked at translateX(-100%), off the pill: no band, not a frozen one. */
+  .sheen-band { animation: none; }
+  .sheen-highlight { transition: none; }
 }
 
 /* ── Résumé download menu ─────────────────────────────────────────
@@ -3202,7 +3194,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
    BORROWED, NOT INVENTED. The system had no floating panel before this, and
    the temptation was to draw one. Everything here is a token that already
    exists doing the same job elsewhere: --layer-1-flat is the opaque surface
-   the shimmer uses, --hairline is every border on the site, and
+   the sheen's backdrop uses, --hairline is every border on the site, and
    --bureau-radius-card is the radius of the doc-link card. The one new value
    is the drop shadow, and it is new because nothing on this site has ever
    floated over its own content before. */

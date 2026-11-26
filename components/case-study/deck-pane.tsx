@@ -1,6 +1,6 @@
 "use client"
 
-import { Shimmer } from "@/components/chat/shimmer"
+import { Sheen } from "@/components/chat/sheen"
 import { ArrowDownToLine } from "lucide-react"
 import { ICON_STROKE } from "@/lib/icons"
 import { meridianDeck } from "@/lib/case-study-deck"
@@ -32,8 +32,8 @@ export function DeckPane() {
         <a className="chip type-action deck-download" href={meridianDeck.pdf} download>
           <ArrowDownToLine className="chip-icon" aria-hidden="true" strokeWidth={ICON_STROKE} />
           Download PDF
-          {/* The shimmer on a download pill. */}
-          <Shimmer />
+          {/* The sheen on a download pill. */}
+          <Sheen />
         </a>
       </div>
 

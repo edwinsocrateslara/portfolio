@@ -1,6 +1,6 @@
 "use client"
 
-import { Shimmer } from "@/components/chat/shimmer"
+import { Sheen } from "@/components/chat/sheen"
 
 interface PromptChipProps {
   label: string
@@ -32,7 +32,7 @@ export function PromptChip({ label, onClick, disabled = false, prefix }: PromptC
       {/* Four run at once on the front door, three on a reveal — the case
           the border beam failed on. Measured at 4x CPU throttle: identical to
           baseline, 0 frames over budget. */}
-      <Shimmer />
+      <Sheen />
     </button>
   )
 }

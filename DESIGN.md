@@ -205,9 +205,49 @@ paragraphs that no longer correspond to anything.
 Recorded here so it is a live question rather than something rediscovered by
 whoever next reads the rule and cannot tell which.
 
+### The sheen replaced the shimmer (25 November)
+
+**The chips and download pills now carry a sheen:** a soft band of white light
+(`--sheen-ink`, white at 10%) that sweeps across the pill's face on a 3s loop,
+then rests off the pill. It's Magic UI **Shiny Button's idea, ported, not
+installed**, built the way the shimmer was: CSS keyframes, no Motion, no
+dependency. It loops rather than waiting for hover, so it runs on touch. It's
+white, so rule 6 has nothing to say about it, and it stops under reduced motion,
+where the band parks off the pill rather than freezing on it. The same four
+`.chip` elements carry it, the two `<a download>` links included. Everything the
+shimmer's port fixed by measurement stays: the opaque backdrop
+(`--layer-1-flat`), no `transform-gpu` (the only transform is on the band, a
+child, never on the pill), and `.chip`'s `position: relative`, `overflow:
+hidden` and `isolation: isolate`. What went is the travelling rim and its tuning
+(`--shimmer-blur`, `--shimmer-inset`, and the allow-list entry that excused the
+blur's 1px).
+
+**Do not install the stock Shiny Button.** Checked from Magic UI's own registry
+(`https://magicui.design/r/shiny-button.json`), 25 November:
+
+1. **Its border shine is invalid CSS in every browser.** The inline
+   `backgroundImage` writes `var(--primary)/10%`, Tailwind's opacity shorthand,
+   inside a plain style attribute, where it is not a colour. Tested: it
+   computes to `none`, so the edge highlight never draws.
+2. **It assumes a dark-mode class.** Its dark styling is all `dark:` variants.
+   This repo sets no `darkMode` strategy, so Tailwind's default follows the
+   visitor's OS: on a light-mode machine the label renders `rgb(0,0,0,65%)`,
+   near-black on this site's dark pill. Its glow classes also use Tailwind v4
+   syntax; this site is on 3.4.
+3. **It leaves a transform behind.** It's a `motion.button` animating scale (0.8
+   → 1 on mount, 0.95 on tap), which leaves a transform on the element: the same
+   class of thing as the `transform-gpu` that broke the lightbox, by making it a
+   containing block for `position: fixed` descendants.
+
+It also ignores reduced motion, masks its own label so the text fades as the
+band passes, needs the `motion` package and a `--primary` this site doesn't
+have, renders a `<button>` only (two of the four pills are `<a download>`), and
+its raw `rgb()` literals fail `check:design` ten times.
+
 ### The masked rim — dormant, and admitted on a bad number
 
-**The shimmer is white now, so `--accent-rim` has zero consumers and rule 6's
+*(The shimmer was replaced by the sheen on 25 November, above; the sheen is
+white too, so all of this stands.)* **The shimmer is white now, so `--accent-rim` has zero consumers and rule 6's
 second exception guards nothing.** That is the same state the top-of-view wash's
 exception is in, and it is recorded the same way: dormant pending a decision,
 not an oversight. The token, the narrowing and its four near-miss fixtures all
