@@ -6,7 +6,7 @@ In his own words: "I'm Edwin, product builder making useful tools and workflows.
 
 Product Builder with 10 years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
 
-He is currently Designer & AI Builder at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
+He is currently Product Builder at FutureFit AI, a B2B and B2G AI-powered workforce development platform, a role he started in October 2025.
 
 He is based in Toronto, Ontario, Canada.
 
@@ -976,7 +976,7 @@ In his own words: "In my downtime, I'm usually bouldering or running races, camp
 
 ### Availability
 
-Currently Designer & AI Builder at FutureFit AI. Best reached by email.
+Currently Product Builder at FutureFit AI. Best reached by email.
 
 ### Contact
 
