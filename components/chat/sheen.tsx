@@ -11,7 +11,8 @@
  *   .sheen-band       the moving light, white at --sheen-ink, never the accent
  * and the inset highlight on top, unchanged from the shimmer.
  *
- * LOOPING, NOT HOVER, so it runs on touch too. Reduced motion stops it. */
+ * LOOPING, NOT HOVER, so it runs on touch too: a 1.65s sweep in a 6s cycle.
+ * Reduced motion stops it. */
 export function Sheen() {
   return (
     <>

@@ -208,8 +208,9 @@ whoever next reads the rule and cannot tell which.
 ### The sheen replaced the shimmer (25 November)
 
 **The chips and download pills now carry a sheen:** a soft band of white light
-(`--sheen-ink`, white at 10%) that sweeps across the pill's face on a 3s loop,
-then rests off the pill. It's Magic UI **Shiny Button's idea, ported, not
+(`--sheen-ink`, white at 10%) that sweeps across the pill's face in 1.65s, then
+rests off the pill, on a **6s** loop (3s until later on 25 November: the sweep
+kept its length and only the rest grew, from 1.35s to 4.35s). It's Magic UI **Shiny Button's idea, ported, not
 installed**, built the way the shimmer was: CSS keyframes, no Motion, no
 dependency. It loops rather than waiting for hover, so it runs on touch. It's
 white, so rule 6 has nothing to say about it, and it stops under reduced motion,

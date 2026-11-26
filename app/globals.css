@@ -3087,7 +3087,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 /* THE BAND: a gradient as wide as the pill, its bright core a fifth of that,
    carried from off the left edge to off the right by a transform (composited,
    so seven of these at once cost nothing measurable), then held off the pill
-   for the rest of the cycle. 105deg leans it like light across a surface. The
+   for the rest of a 6s cycle. 105deg leans it like light across a surface. The
    pill's overflow: hidden is what clips it to the face. */
 .sheen-band {
   position: absolute;
@@ -3097,7 +3097,7 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   pointer-events: none;
   background: linear-gradient(105deg, transparent 30%, var(--sheen-ink) 50%, transparent 70%);
   transform: translateX(-100%);
-  animation: sheen-sweep 3s ease-in-out infinite;
+  animation: sheen-sweep 6s ease-in-out infinite;
 }
 .sheen-highlight {
   position: absolute;
@@ -3109,10 +3109,13 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
 }
 .chip:hover .sheen-highlight { box-shadow: inset 0 -6px 10px var(--highlight-inset-strong); }
 .chip:active .sheen-highlight { box-shadow: inset 0 -10px 10px var(--highlight-inset-strong); }
-/* 0 -> 55%: the sweep, about 1.6s. 55% -> 100%: off the pill, a rest. */
+/* 0 -> 27.5%: the sweep, 1.65s. 27.5% -> 100%: off the pill, a 4.35s rest.
+   A 6s CYCLE since 25 November (was 3s, the sweep 0 -> 55%): the sweep kept
+   its exact length and only the rest grew. The easing applies per keyframe
+   segment, so the sweep moves exactly as it did. */
 @keyframes sheen-sweep {
-  0%        { transform: translateX(-100%); }
-  55%, 100% { transform: translateX(100%); }
+  0%          { transform: translateX(-100%); }
+  27.5%, 100% { transform: translateX(100%); }
 }
 
 /* ── The résumé writing itself out ──────────────────────────────────────────
