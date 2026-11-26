@@ -1188,6 +1188,21 @@ body {
    stops at the panel's top edge, 8px below the line, and cannot run under
    the bar while the gap is there. Do not remove the gap to "fix" that.
 
+   SUPERSEDED 26 November — without removing the gap. On desktop the gap now
+   SCROLLS AWAY with the content: the pane's box starts at the header's line
+   (margin-top: -space-within) and the visible panel is a clip-path inset by
+   the gap. A scroll-driven animation (pane-gap-away) carries the clip's top
+   from +8 to -12 over the first 20px of scroll (gap + radius), so the
+   panel's top edge, rounded corners and all, travels up under the line 1:1
+   with the content, then leaves a square edge at the line and content runs
+   under the header. At rest it is unchanged — measured pixel-identical to
+   the previous build on five routes at 1440 and 380, apart from a residue of
+   at most 6 levels out of 255 along the pane's bottom edge on two routes.
+   The header's line does not move (the line-slide rejection below stands);
+   the rail keeps its gap; mobile is untouched. Behind @supports: without
+   scroll timelines (Firefox) the static at-rest clip stays and the gap is
+   fixed, as before.
+
    ⚠ AND DO NOT MOVE THE LINE ON SCROLL (rejected, e5402d2 reverted). Sliding
    the header's line down over the gap once the pane scrolls was tried: the
    header and the gap are the same black, so the line is the only thing that
@@ -1220,10 +1235,43 @@ body {
   .pane {
     grid-column: 2;
     grid-row: 2;
+    margin-top: calc(-1 * var(--space-within));
     background: rgb(var(--bureau-bg));
-    border-radius: var(--bureau-radius-card);
+    clip-path: inset(var(--space-within) 0 0 0 round var(--bureau-radius-card));
     overflow: hidden;
+    timeline-scope: --pane-scroll;
   }
+  .pane > .pane-scroll {
+    padding-top: calc(var(--space-32) + var(--space-within));
+    scroll-timeline: --pane-scroll y;
+  }
+  .pane > .pane-front {
+    padding-top: var(--space-within);
+    scroll-timeline: --pane-scroll y;
+  }
+  .pane > .pane-scroll::-webkit-scrollbar-track,
+  .pane > .pane-front::-webkit-scrollbar-track {
+    margin-top: var(--space-within);
+  }
+  /* THE DOT FIELD STARTS WHERE THE VISIBLE PANEL DOES. It is inset:0 against
+     .pane, whose box now starts --space-within higher (at the header's line);
+     left there, its 16px pattern and its fade's centre moved up 8px and the
+     front door changed at rest (measured: 23,589 pixels). Offset back, it is
+     pixel-identical at rest. Scrolled, the 8px strip under the line has no
+     dots — the field never scrolled with the content anyway. */
+  .pane .dot-field { top: var(--space-within); }
+  @supports (animation-timeline: scroll()) and (timeline-scope: --x) {
+    .pane {
+      animation: pane-gap-away linear both;
+      animation-timeline: --pane-scroll;
+      animation-range: 0 calc(var(--space-within) + var(--bureau-radius-card));
+    }
+  }
+}
+
+@keyframes pane-gap-away {
+  from { clip-path: inset(var(--space-within) 0 0 0 round var(--bureau-radius-card)); }
+  to   { clip-path: inset(calc(-1 * var(--bureau-radius-card)) 0 0 0 round var(--bureau-radius-card)); }
 }
 
 .rail {

@@ -2147,6 +2147,30 @@ rail is `--bureau-rail` (`#292929`). Each is a token named for its job.
   edges), or no slide. So the line is fixed at the bottom of the 48, the gap
   shows at all times, and nothing moves on scroll. Content being cut at the
   pane panel's hard top edge is correct and wanted, not a defect.
+- **THE GAP SCROLLS AWAY (26 November): a fourth ruling, which supersedes the
+  accepted consequence without removing the gap.** On desktop the pane's box
+  now starts at the header's line and the visible panel is a clip-path inset
+  by the 8px gap. A scroll-driven animation carries the clip's top from +8 to
+  −12 over the first 20px of scroll (the gap plus the 12px radius), so the
+  panel's top edge, rounded corners included, travels up under the header's
+  line 1:1 with the content, and content then runs under the header.
+  - **The resting state is unchanged, and was measured as such:** five routes
+    (`/`, `/resume`, `/about`, the case study, a project) at 1440 and 380,
+    pixel-diffed against the previous build at rest. Identical, apart from a
+    residue of at most 6 levels out of 255 (invisible) along the pane's bottom
+    edge on two routes. First content, the dock, and the scroll range
+    unchanged everywhere. One compensating rule was needed: the front door's
+    dot field is positioned against the pane, so it is offset by the gap,
+    or its pattern moved 8px at rest.
+  - **The scrolled state** (the panel meeting the line, square top corners) is
+    the look rejected as a *resting* state in ruling 2's reversal. It now
+    appears only after scrolling, which is the case it was wanted for.
+  - **The rail keeps its gap**; only the pane scrolls.
+  - **The line-slide rejection still stands:** the header's line never moves.
+  - **Firefox, without scroll timelines, falls back to the fixed gap.** The
+    animation is behind `@supports`; unsupported, an animation with `both`
+    fill would snap to its end state and remove the gap entirely.
+  - Mobile is untouched.
 - **(History: the removal, 48489cb.) No gap under the header; content runs
   under the bar.** The first build put the same 8 under the header, ruled as *what
   makes the header its own band rather than a lid* (and `--space-between`
