@@ -592,6 +592,18 @@ the surface has to work harder to say what is a thing.
 different questions; a future change to one should not silently move the
 other.
 
+**There is no rule that a single-sided border forces radius 0.** Edwin was
+told there was one (26 November), and a search of this file, the stylesheet
+and the components found nothing, so it is written down here to stop it being
+re-derived. A box with a border on one side and a radius renders fine: the
+border follows the corner and tapers toward the sides that have none. The Key
+Impacts card has done this all along (a 2px accent left edge, 1px elsewhere,
+`--bureau-radius-card` on all four corners), and on 26 November the rail's
+project rows and the mobile sheet's document rows took `--bureau-radius-btn`
+with their 2px active bar, letting it curve with the corner the same way.
+Rounding them needed no inset: the rows already sat `--space-8` in from the
+rail's edges, so the 22px thumbnail edge did not move.
+
 **Icon-only controls are circles, not rounded squares.** Anything whose whole
 job is one glyph — the lightbox's close and arrows, the chat's SEND — takes
 `chip` and equal width and height. A rounded square reads as a small panel

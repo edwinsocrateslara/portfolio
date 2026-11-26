@@ -1384,6 +1384,13 @@ body {
   /* Reserved on every row, transparent when inactive, so the active bar
      does not shift the label sideways when it appears. */
   border-left: 2px solid transparent;
+  /* ROUNDED, --bureau-radius-btn (26 November). The 2px left bar is a border,
+     so it curves with the corner and tapers toward top and bottom, the way
+     the Key Impacts card's accent edge already does. No inset was needed: the
+     row already sits --space-8 in from the rail's edges (.rail-list), so the
+     22px thumbnail edge (--rail-inset) does not move. There is NO rule here
+     that a single-sided border forces radius 0 (DESIGN.md § Radius). */
+  border-radius: var(--bureau-radius-btn);
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
 }
@@ -1491,6 +1498,8 @@ body {
   background: none;
   border: 0;
   border-left: 2px solid transparent;
+  /* Rounded like .rail-item, for the same reason, on the same day. */
+  border-radius: var(--bureau-radius-btn);
   cursor: pointer;
   color: rgb(var(--bureau-text-secondary));
   transition: background-color 0.15s, border-color 0.15s;
