@@ -1,7 +1,7 @@
 "use client"
 
 import { DownloadMenu } from "@/components/resume/download-menu"
-import { Words, wordCount } from "@/components/chat/words"
+import { Words } from "@/components/chat/words"
 import { Fragment, useEffect, useRef } from "react"
 import { ArrowDownToLine } from "lucide-react"
 import { Sheen } from "@/components/chat/sheen"
@@ -83,21 +83,23 @@ function RoleBody({ role }: { role: ResumeRole }) {
               is what separates it from the inventory it sits near. */}
           {group.label && <p className="type-attribute resume-group-label">{group.label}</p>}
           <ul className="resume-bullets">
-            {/* LAB — the counter continues across the group so four bullets in
-                one role cascade instead of all writing at once. Plain text
-                under every other mode; the spans only ever change opacity. */}
-            {(() => {
-              let n = 0
-              return group.bullets.map((bullet) => {
-                const at = n
-                n += wordCount(bullet)
-                return (
-                  <li key={bullet} className="type-body resume-bullet">
-                    <Words text={bullet} offset={at} />
-                  </li>
-                )
-              })
-            })()}
+            {/* THE WORD COUNT RESTARTS AT EACH BULLET (26 November). It used to
+                carry on across the whole group, so a role's bullets wrote out
+                one after another — the first Experience row's ~200 words took
+                ~5.2s, most of the page's 7.6s. Now every bullet starts at word
+                0, and --bullet (this bullet's index) adds
+                --resume-bullet-stagger before it, so they start in a quick
+                sequence rather than all at once. The per-word 26ms is
+                untouched. The spans only ever change opacity. */}
+            {group.bullets.map((bullet, bi) => (
+              <li
+                key={bullet}
+                className="type-body resume-bullet"
+                style={{ "--bullet": bi } as React.CSSProperties}
+              >
+                <Words text={bullet} />
+              </li>
+            ))}
           </ul>
         </div>
       ))}

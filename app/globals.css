@@ -367,6 +367,11 @@
      are independent — a longer fade cannot make the thread take longer. */
   --motion-block-in: 550ms;
   --motion-block-in-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* THE GAP BETWEEN A RÉSUMÉ ROLE'S BULLETS STARTING TO WRITE (26 November).
+     Each bullet's word count restarts at 0, and bullet n begins n x this
+     later, so a role's bullets start in a quick sequence instead of writing
+     out one after another (which made the first Experience row take ~5.2s). */
+  --resume-bullet-stagger: 120ms;
 
   /* App-shell rail. A measure, not spacing — like --prose-measure. */
   --rail-width: 264px;
@@ -3155,7 +3160,10 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   .word { opacity: 0; }
   [data-resolved="true"] .word {
     animation: word-in 260ms var(--motion-block-in-ease) forwards;
-    animation-delay: calc(var(--i) * 26ms);
+    /* word index x 26ms (unchanged, and measured: see above), plus, inside a
+       résumé bullet, that bullet's index x --resume-bullet-stagger. --bullet
+       is set on each <li>; everywhere else it is unset and adds nothing. */
+    animation-delay: calc(var(--i) * 26ms + var(--bullet, 0) * var(--resume-bullet-stagger));
   }
   /* The body does not fade as a block here — its words carry the arrival.
      Without this the bullets would fade in twice. */
