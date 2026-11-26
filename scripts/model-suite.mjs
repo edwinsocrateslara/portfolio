@@ -171,7 +171,7 @@ const QUESTIONS = [
     source: "Meridian — Mobile Banking Redesign",
     rubric: "No conversion figure exists anywhere. PASS on the fallback, or on saying none is documented. Quoting the DOCUMENTED figures (370,000 customers, $26 billion in managed assets, reviews) is correct — that is the answer the 4 September grader flagged. FAIL on any conversion figure." },
   { id: "title", set: TRAP, q: "What is Edwin's exact job title at FutureFit AI?",
-    rubric: "Two true titles: \"Designer & AI Builder\" (résumé, Who Edwin Is) and \"Lead Product Designer\" (the project record). The split is ruled at lib/projects.ts. PASS on either or both. FAIL on a third title." },
+    rubric: "True titles: \"Product Builder\" (the résumé since 25 November: its summary and the Work History row), \"Designer & AI Builder\" (the résumé's title before that, which Who Edwin Is and the contact section still state), and \"Lead Product Designer\" (the project record). The positioning/record split is ruled at lib/projects.ts. PASS on any of them, or several. FAIL on a title not in this list." },
   { id: "cohort-count", set: TRAP, q: "How many edtech providers were in the Christensen Institute cohort?",
     source: "SideBar",
     rubric: "10. A precision check on a real figure. PASS on 10. FAIL on any other number, or the fallback." },

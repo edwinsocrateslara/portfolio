@@ -22,7 +22,7 @@ PROFESSIONAL SUMMARY
 # being the only seniority claim left in the sentence. It now leads with the
 # same two words the FutureFit row uses, so the summary and the current role
 # describe the same practice.
-Designer & AI Builder with 10 years of experience across fintech, e-commerce,
+Product Builder with 10 years of experience across fintech, e-commerce,
 and workforce development, focused on AI products, conversational interfaces,
 and agentic workflows. Works end to end from user research and prototyping
 through production code, designing and building products from early ideas to
@@ -76,14 +76,14 @@ EXPERIENCE
 
 FutureFit AI — Toronto, Ontario
 # TITLE, AND IT DIVERGES FROM lib/projects.ts DELIBERATELY. This row says
-# "Designer & AI Builder"; the project entries say "Lead Product Designer".
+# "Product Builder"; the project entries say "Lead Product Designer".
 # Both are true and they are answering different questions. This is
 # positioning — what Edwin does, on the document whose job is positioning. The
 # project field is a record of what he was hired as, and it renders in a rail
 # beside six other roles that are all real titles, where a self-description
 # would read as a different kind of thing. See the note on `role` in
 # lib/projects.ts, which records the same split from the other side.
-Designer & AI Builder
+Product Builder
 Oct 2025 – Present
 
 - Design and build AI products for a workforce platform serving

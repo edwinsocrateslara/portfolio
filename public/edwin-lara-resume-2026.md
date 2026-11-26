@@ -1,16 +1,16 @@
-<!-- resume-source-hash:2ffa3002c1ddc1ad -->
+<!-- resume-source-hash:8ae718cf4d626132 -->
 <!-- Generated from lib/sources/resume.txt by scripts/build-resume.mjs. Do not edit. -->
 
 # EDWIN SOCRATES LARA
 
 edwinsocrateslara@gmail.com · linkedin.com/in/edwinsocrateslara · edwinsocrateslara.com
 
-Designer & AI Builder with 10 years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
+Product Builder with 10 years of experience across fintech, e-commerce, and workforce development, focused on AI products, conversational interfaces, and agentic workflows. Works end to end from user research and prototyping through production code, designing and building products from early ideas to shipped experiences.
 
 ## Experience
 
 ### FutureFit AI — Toronto, Ontario
-**Designer & AI Builder** · Oct 2025 – Present
+**Product Builder** · Oct 2025 – Present
 
 - Design and build AI products for a workforce platform serving businesses and governments. Worked across research, product, design, AI prototyping, data integrations, and production code.
 - Designed and shipped the core UX/UI for Miles, FutureFit's trained LLM, including conversational flows for career exploration, job discovery, and understanding fit for specific roles. Integrated Miles across the platform through contextual prompts and AI actions.
