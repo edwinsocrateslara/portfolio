@@ -1922,17 +1922,38 @@ a:hover > .link-ext { color: rgb(var(--bureau-text-primary)); }
   gap: var(--space-between);
 }
 .site-header-link {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 var(--space-8);
   color: rgb(var(--bureau-text-secondary));
+  /* Clear, and kept: it holds the 2px the underline sits on, so the link's box
+     is the same whether or not it is active. */
   border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.15s;
 }
 .site-header-link:hover { color: rgb(var(--bureau-text-primary)); }
 .site-header-link[aria-current="page"] {
   color: rgb(var(--bureau-text-primary));
-  border-bottom-color: rgb(var(--bureau-accent));
+}
+/* THE ACTIVE UNDERLINE, ROUNDED (26 November): 2px tall, a 1px radius, the
+   link's full width (padding included, not the word). It was this link's
+   bottom border, which cannot round as a bar — a radius on the link only
+   curves the border's outer bottom corners. So it is drawn here: a zero-height
+   box whose 2px top border is the bar, placed with top: 100% on exactly the
+   rows the border used (the clear border below it holds them), rounded on all
+   four corners. Still an edge in the accent, not a surface, so rule 6 is
+   content. At 1x a 1px radius only softens the ends; ruled noticeable enough. */
+.site-header-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 0;
+  border-top: 2px solid rgb(var(--bureau-accent));
+  border-radius: 1px;
+  pointer-events: none;
 }
 /* The rail's document group is the MOBILE SHEET's copy of these links (one
    list, components/shell/document-links.tsx). Above the breakpoint the header
